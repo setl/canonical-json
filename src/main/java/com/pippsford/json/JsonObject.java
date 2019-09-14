@@ -455,9 +455,9 @@ public class JsonObject extends TreeMap<String, Primitive> {
    *          the default
    * @return the long, or the default
    */
-  public long getLong(String key, ToLongFunction<String> dflt) {
+  public long getLong(String key, long dflt) {
     Number n = getQuiet(Number.class, key);
-    return (n != null) ? n.longValue() : dflt.applyAsLong(key);
+    return (n != null) ? n.longValue() : dflt;
   }
 
 
@@ -470,9 +470,9 @@ public class JsonObject extends TreeMap<String, Primitive> {
    *          the default
    * @return the long, or the default
    */
-  public long getLong(String key, long dflt) {
+  public long getLong(String key, ToLongFunction<String> dflt) {
     Number n = getQuiet(Number.class, key);
-    return (n != null) ? n.longValue() : dflt;
+    return (n != null) ? n.longValue() : dflt.applyAsLong(key);
   }
 
 
@@ -617,6 +617,120 @@ public class JsonObject extends TreeMap<String, Primitive> {
    */
   public String getStringSafe(String key) {
     return getSafe(String.class, Type.STRING, key);
+  }
+
+
+  public boolean isType(String key, Type type) {
+    Primitive primitive = get(key);
+    return (primitive != null) ? primitive.getType() == type : false;
+  }
+
+
+  public void put(String key) {
+    put(key, new Primitive(Type.NULL, null));
+  }
+
+
+  public void put(String key, Boolean value) {
+    if( value != null ) {
+      put(key, new Primitive(Type.BOOLEAN, value));
+    } else {
+      put(key, new Primitive(Type.NULL, null));
+    }
+  }
+
+
+  public void put(String key, JsonArray value) {
+    if( value != null ) {
+      put(key, new Primitive(Type.ARRAY, value));
+    } else {
+      put(key, new Primitive(Type.NULL, null));
+    }
+  }
+
+
+  public void put(String key, JsonObject value) {
+    if( value != null ) {
+      put(key, new Primitive(Type.OBJECT, value));
+    } else {
+      put(key, new Primitive(Type.NULL, null));
+    }
+  }
+
+
+  public void put(String key, Number value) {
+    if( value != null ) {
+      put(key, new Primitive(Type.NUMBER, value));
+    } else {
+      put(key, new Primitive(Type.NULL, null));
+    }
+  }
+
+
+  public void put(String key, String value) {
+    if( value != null ) {
+      put(key, new Primitive(Type.STRING, value));
+    } else {
+      put(key, new Primitive(Type.NULL, null));
+    }
+  }
+
+
+  public JsonArray removeArray(String key) {
+    Primitive primitive = get(key);
+    if( primitive == null || primitive.getType() != Type.ARRAY ) {
+      return null;
+    }
+    remove(key);
+    return JsonArray.class.cast(primitive.getValue());
+  }
+
+
+  public Boolean removeBoolean(String key) {
+    Primitive primitive = get(key);
+    if( primitive == null || primitive.getType() != Type.BOOLEAN ) {
+      return null;
+    }
+    remove(key);
+    return Boolean.class.cast(primitive.getValue());
+  }
+
+
+  public void removeNull(String key) {
+    Primitive primitive = get(key);
+    if( primitive != null && primitive.getType() == Type.NULL ) {
+      remove(key);
+    }
+  }
+
+
+  public Number removeNumber(String key) {
+    Primitive primitive = get(key);
+    if( primitive == null || primitive.getType() != Type.NUMBER ) {
+      return null;
+    }
+    remove(key);
+    return Number.class.cast(primitive.getValue());
+  }
+
+
+  public JsonObject removeObject(String key) {
+    Primitive primitive = get(key);
+    if( primitive == null || primitive.getType() != Type.OBJECT ) {
+      return null;
+    }
+    remove(key);
+    return JsonObject.class.cast(primitive.getValue());
+  }
+
+
+  public String removeString(String key) {
+    Primitive primitive = get(key);
+    if( primitive == null || primitive.getType() != Type.STRING ) {
+      return null;
+    }
+    remove(key);
+    return String.class.cast(primitive.getValue());
   }
 
 

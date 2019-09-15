@@ -4,15 +4,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 
 /**
- * Generate canonical JSON as a binary stream. Note that simply writing out the JSON's textual representation as UTF-8 <b>DOES NOT</b> produce the correct
- * output for surrogates, as the Java CharsetEncoder for UTF-8 considers isolated surrogates to be malformed input.
- * 
- * @author Simon
+ * Correctly present text and numeric data in the canonical form. 
+ * @author Simon Greatrix
  *
  */
-public class Generator {
+class Canonical {
 
   /** Canonical form uses upper-case hexadecimal. */
   private static final char[] HEX = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
@@ -38,7 +37,7 @@ public class Generator {
    *          the string to represent
    * @return the canonical representation.
    */
-  static String escapeString(String input) {
+  static String format(String input) {
     StringBuilder buf = new StringBuilder();
     // opening quote
     buf.append('"');
@@ -119,7 +118,7 @@ public class Generator {
   }
 
 
-  static String escapeNumber(Number number) {
+  static String format(Number number) {
     // Standard Java integers all provide the canonical representation naturally.
     if( number instanceof BigInteger || number instanceof Long || number instanceof Integer || number instanceof Short || number instanceof Byte ) {
       return number.toString();
@@ -183,63 +182,6 @@ public class Generator {
    */
   public static void stream(OutputStream output, Primitive primitive) throws IOException {
     String text = primitive.toString();
-
-    char highSurrogate = '\0';
-    boolean sawHighSurrogate = false;
-
-    int l = text.length();
-    for(int i = 0;i < l;i++) {
-      char ch = text.charAt(i);
-      if( sawHighSurrogate ) {
-        sawHighSurrogate = false;
-        if( Character.isLowSurrogate(ch) ) {
-          // Good surrogate pair.
-          utf8(output, Character.toCodePoint(highSurrogate, ch));
-          continue;
-        }
-
-        // previous high surrogate was an isolate
-        utf8(output, highSurrogate);
-      }
-
-      // if we get a high surrogate, hold it to compare with the next character. NB. No primitive can create a String which has an isolated high surrogate as
-      // its final character, so we don't have to worry about that edge case.
-      if( Character.isHighSurrogate(ch) ) {
-        sawHighSurrogate = true;
-        highSurrogate = ch;
-        continue;
-      }
-
-      // we have a normal character, or an isolated low surrogate
-      utf8(output, ch);
-    }
-  }
-
-
-  /**
-   * Output a code point in UTF-8.
-   * 
-   * @param output
-   *          the stream
-   * @param codePoint
-   *          the code point
-   * @throws IOException
-   */
-  private static void utf8(OutputStream output, int codePoint) throws IOException {
-    if( codePoint < 0x80 ) {
-      output.write((byte) codePoint);
-    } else if( codePoint < 0x800 ) {
-      output.write((byte) (0b1100_0000 | ((codePoint >> 6) & 0x1f)));
-      output.write((byte) (0b1000_0000 | (codePoint & 0x3f)));
-    } else if( codePoint < 0x1_0000 ) {
-      output.write((byte) (0b1110_0000 | ((codePoint >> 12) & 0x0f)));
-      output.write((byte) (0b1000_0000 | ((codePoint >> 6) & 0x3f)));
-      output.write((byte) (0b1000_0000 | (codePoint & 0x3f)));
-    } else {
-      output.write((byte) (0b1111_0000 | ((codePoint >> 18) & 0x07)));
-      output.write((byte) (0b1000_0000 | ((codePoint >> 12) & 0x3f)));
-      output.write((byte) (0b1000_0000 | ((codePoint >> 6) & 0x3f)));
-      output.write((byte) (0b1000_0000 | (codePoint & 0x3f)));
-    }
+    output.write(text.getBytes(StandardCharsets.UTF_8));
   }
 }

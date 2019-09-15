@@ -90,8 +90,8 @@ public class Primitive {
 
   @Override
   public String toString() {
-    if( type == Type.STRING ) return Generator.escapeString((String) value);
-    if( type == Type.NUMBER ) return Generator.escapeNumber((Number) value);
+    if( type == Type.STRING ) return Canonical.format((String) value);
+    if( type == Type.NUMBER ) return Canonical.format((Number) value);
     return String.valueOf(value);
   }
 }

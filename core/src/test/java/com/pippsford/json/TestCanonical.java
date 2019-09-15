@@ -53,7 +53,7 @@ public class TestCanonical {
         throw new AssertionError("ABEND processing " + f, re);
       }
       output.reset();
-      Generator.stream(output, primitive);
+      Canonical.stream(output, primitive);
 
       // HACK! Every expected.json file has a terminal NL character as that is how they are in the original repository. The NL character is not a correct part
       // of the output.

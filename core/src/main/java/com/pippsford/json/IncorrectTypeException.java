@@ -28,7 +28,7 @@ public class IncorrectTypeException extends RequiredItemException {
 
 
   public IncorrectTypeException(String key, Type required, Type actual) {
-    super("Item at " + Generator.escapeString(key) + " has type " + actual + ". Required " + required);
+    super("Item at " + Canonical.format(key) + " has type " + actual + ". Required " + required);
     this.index = -1;
     this.key = key;
     this.required = required;

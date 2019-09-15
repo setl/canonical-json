@@ -8,13 +8,16 @@ import java.util.TreeMap;
 import java.util.function.*;
 
 /**
- * Representation of an object in JSON
+ * Representation of an object in JSON.
  */
 public class JsonObject extends TreeMap<String, Primitive> {
   /** serial version UID */
   private static final long serialVersionUID = 1l;
 
-  private static Comparator<String> UNICODE_ORDER = new Comparator<String>() {
+  /**
+   * Sort object keys into Unicode code point order.
+   */
+  public static Comparator<String> CODE_POINT_ORDER = new Comparator<String>() {
     @Override
     public int compare(String s1, String s2) {
       int len1 = s1.length();
@@ -36,7 +39,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   public JsonObject() {
-    super(UNICODE_ORDER);
+    super(CODE_POINT_ORDER);
   }
 
 
@@ -739,7 +742,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
     StringBuilder buf = new StringBuilder();
     buf.append('{');
     for(Map.Entry<String, Primitive> e:entrySet()) {
-      buf.append(Generator.escapeString(e.getKey()));
+      buf.append(Canonical.format(e.getKey()));
       buf.append(':');
       buf.append(String.valueOf(e.getValue()));
       buf.append(',');

@@ -11,14 +11,7 @@ import java.io.IOException;
 public class InvalidJson extends IOException {
   private static final long serialVersionUID = 1L;
 
-
   public InvalidJson(String message) {
     super(message);
   }
-
-
-  public InvalidJson(String message, Throwable cause) {
-    super(message, cause);
-  }
-
 }

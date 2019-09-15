@@ -1,12 +1,14 @@
-plugins {
-    id 'java'
+
+allprojects {
+  apply plugin: 'java'
 }
 
-repositories {
+subprojects {
+  repositories {
     mavenCentral()
-}
-
-dependencies {
+  }
+  
+  dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
+  }
 }
-

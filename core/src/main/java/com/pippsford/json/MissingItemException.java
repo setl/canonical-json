@@ -19,7 +19,7 @@ public class MissingItemException extends RequiredItemException {
 
 
   public MissingItemException(String key, Type expected) {
-    super("Item at " + Generator.escapeString(key) + " was missing and should have had type " + expected);
+    super("Item at " + Canonical.format(key) + " was missing and should have had type " + expected);
     this.index = -1;
     this.key = key;
     this.expected = expected;

@@ -1,0 +1,4 @@
+include 'cj-core', 'cj-jackson'
+
+project(':cj-core').projectDir = file('core')
+project(':cj-jackson').projectDir = file('jackson')

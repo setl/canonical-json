@@ -168,7 +168,7 @@ public class Parser {
    * @throws IOException
    */
   private static Primitive parseBoolean(Reader input, int r) throws IOException {
-    Boolean val = Boolean.valueOf(r == 'T' || r == 't');
+    Boolean val = Boolean.valueOf(r == 't');
     matchLiteral(val.booleanValue() ? LITERAL_TRUE : LITERAL_FALSE, input);
     return new Primitive(Type.BOOLEAN, val);
   }

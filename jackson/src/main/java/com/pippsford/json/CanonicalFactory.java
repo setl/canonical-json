@@ -25,7 +25,6 @@ public class CanonicalFactory extends JsonFactory {
       throw new IllegalArgumentException("Canonical encoding must be UTF-8, not " + enc);
     }
     
-    
     // TODO Auto-generated method stub
     return super.createGenerator(out, enc);
   }

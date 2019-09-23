@@ -38,13 +38,49 @@ public class JsonObject extends TreeMap<String, Primitive> {
   };
 
 
+  /**
+   * Convert any map into a JsonObject.
+   * 
+   * @param map
+   *          the map to convert
+   * @return the equivalent JsonObject
+   */
+  static JsonObject fixMap(Map<?, ?> map) {
+    if( map instanceof JsonObject ) {
+      return (JsonObject) map;
+    }
+
+    JsonObject out = new JsonObject();
+    for(Map.Entry<?, ?> entry:map.entrySet()) {
+      Object key = entry.getKey();
+      if( key == null ) {
+        throw new IllegalArgumentException("Map keys must not be null");
+      }
+      if( !(key instanceof String) ) {
+        throw new IllegalArgumentException("Map keys must be Strings, not " + key.getClass());
+      }
+
+      Object value = entry.getValue();
+      Primitive primitive = Primitive.create(value);
+      out.put((String) key, primitive);
+    }
+    return out;
+  }
+
+
   public JsonObject() {
     super(CODE_POINT_ORDER);
   }
 
 
+  public JsonObject(Map<String, ?> map) {
+    super(CODE_POINT_ORDER);
+    putAll(fixMap(map));
+  }
+
+
   /**
-   * Get an array from the array.
+   * Get an array from the object.
    * 
    * @param key
    * @return the array, or null
@@ -55,7 +91,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   /**
-   * Get an array from the array.
+   * Get an array from the object.
    * 
    * @param key
    *          the key
@@ -69,7 +105,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   /**
-   * Get an array from the array.
+   * Get an array from the object.
    * 
    * @param key
    *          the key
@@ -83,7 +119,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   /**
-   * Get an array from the array.
+   * Get an array from the object.
    * 
    * @param key
    * @return the array
@@ -92,30 +128,20 @@ public class JsonObject extends TreeMap<String, Primitive> {
     return getSafe(JsonArray.class, Type.ARRAY, key);
   }
 
-
   /**
-   * Get a big decimal from the array.
+   * Get a big decimal from the object.
    * 
    * @param key
    * @return the big decimal, or null
    */
   public BigDecimal getBigDecimal(String key) {
     Number n = getQuiet(Number.class, key);
-    if( n == null ) {
-      return null;
-    }
-    if( n instanceof BigDecimal ) {
-      return (BigDecimal) n;
-    }
-    if( n instanceof BigInteger ) {
-      return new BigDecimal((BigInteger) n);
-    }
-    return new BigDecimal(n.toString());
+    return Primitive.toBigDecimal(n);
   }
 
 
   /**
-   * Get a big decimal from the array.
+   * Get a big decimal from the object.
    * 
    * @param key
    *          the key
@@ -128,18 +154,12 @@ public class JsonObject extends TreeMap<String, Primitive> {
     if( n == null ) {
       return dflt;
     }
-    if( n instanceof BigDecimal ) {
-      return (BigDecimal) n;
-    }
-    if( n instanceof BigInteger ) {
-      return new BigDecimal((BigInteger) n);
-    }
-    return new BigDecimal(n.toString());
+    return Primitive.toBigDecimal(n);
   }
 
 
   /**
-   * Get a big decimal from the array.
+   * Get a big decimal from the object.
    * 
    * @param key
    *          the key
@@ -152,60 +172,35 @@ public class JsonObject extends TreeMap<String, Primitive> {
     if( n == null ) {
       return dflt.apply(key);
     }
-    if( n instanceof BigDecimal ) {
-      return (BigDecimal) n;
-    }
-    if( n instanceof BigInteger ) {
-      return new BigDecimal((BigInteger) n);
-    }
-    return new BigDecimal(n.toString());
+    return Primitive.toBigDecimal(n);
   }
 
 
   /**
-   * Get a big decimal from the array.
+   * Get a big decimal from the object.
    * 
    * @param key
    * @return the big decimal
    */
   public BigDecimal getBigDecimalSafe(String key) {
     Number n = getSafe(Number.class, Type.NUMBER, key);
-    if( n instanceof BigDecimal ) {
-      return (BigDecimal) n;
-    }
-    if( n instanceof BigInteger ) {
-      return new BigDecimal((BigInteger) n);
-    }
-    return new BigDecimal(n.toString());
+    return Primitive.toBigDecimal(n);
   }
 
-
   /**
-   * Get a big integer from the array.
+   * Get a big integer from the object.
    * 
    * @param key
    * @return the big integer, or null
    */
   public BigInteger getBigInteger(String key) {
     Number n = getQuiet(Number.class, key);
-    if( n == null ) {
-      return null;
-    }
-    if( n instanceof BigInteger ) {
-      return (BigInteger) n;
-    }
-    if( n instanceof BigDecimal ) {
-      return ((BigDecimal) n).toBigInteger();
-    }
-    if( n instanceof Long || n instanceof Integer || n instanceof Short || n instanceof Byte ) {
-      return BigInteger.valueOf(n.longValue());
-    }
-    return new BigDecimal(n.toString()).toBigInteger();
+    return Primitive.toBigInteger(n);
   }
 
 
   /**
-   * Get a big integer from the array.
+   * Get a big integer from the object.
    * 
    * @param key
    *          the key
@@ -218,21 +213,12 @@ public class JsonObject extends TreeMap<String, Primitive> {
     if( n == null ) {
       return dflt;
     }
-    if( n instanceof BigInteger ) {
-      return (BigInteger) n;
-    }
-    if( n instanceof BigDecimal ) {
-      return ((BigDecimal) n).toBigInteger();
-    }
-    if( n instanceof Long || n instanceof Integer || n instanceof Short || n instanceof Byte ) {
-      return BigInteger.valueOf(n.longValue());
-    }
-    return new BigDecimal(n.toString()).toBigInteger();
+    return Primitive.toBigInteger(n);
   }
 
 
   /**
-   * Get a big integer from the array.
+   * Get a big integer from the object.
    * 
    * @param key
    *          the key
@@ -245,42 +231,24 @@ public class JsonObject extends TreeMap<String, Primitive> {
     if( n == null ) {
       return dflt.apply(key);
     }
-    if( n instanceof BigInteger ) {
-      return (BigInteger) n;
-    }
-    if( n instanceof BigDecimal ) {
-      return ((BigDecimal) n).toBigInteger();
-    }
-    if( n instanceof Long || n instanceof Integer || n instanceof Short || n instanceof Byte ) {
-      return BigInteger.valueOf(n.longValue());
-    }
-    return new BigDecimal(n.toString()).toBigInteger();
+    return Primitive.toBigInteger(n);
   }
 
 
   /**
-   * Get a big integer from the array.
+   * Get a big integer from the object.
    * 
    * @param key
    * @return the big integer
    */
   public BigInteger getBigIntegerSafe(String key) {
     Number n = getSafe(Number.class, Type.NUMBER, key);
-    if( n instanceof BigInteger ) {
-      return (BigInteger) n;
-    }
-    if( n instanceof BigDecimal ) {
-      return ((BigDecimal) n).toBigInteger();
-    }
-    if( n instanceof Long || n instanceof Integer || n instanceof Short || n instanceof Byte ) {
-      return BigInteger.valueOf(n.longValue());
-    }
-    return new BigDecimal(n.toString()).toBigInteger();
+    return Primitive.toBigInteger(n);
   }
 
 
   /**
-   * Get a Boolean from the array.
+   * Get a Boolean from the object.
    * 
    * @param key
    * @return the Boolean, or null
@@ -291,7 +259,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   /**
-   * Get a Boolean from the array.
+   * Get a Boolean from the object.
    * 
    * @param key
    *          the key
@@ -305,7 +273,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   /**
-   * Get a Boolean from the array.
+   * Get a Boolean from the object.
    * 
    * @param key
    *          the key
@@ -320,7 +288,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   /**
-   * Get a Boolean from the array.
+   * Get a Boolean from the object.
    * 
    * @param key
    * @return the Boolean, or null
@@ -331,7 +299,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   /**
-   * Get a double from the array.
+   * Get a double from the object.
    * 
    * @param key
    * @return the double, or null
@@ -343,7 +311,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   /**
-   * Get a double from the array.
+   * Get a double from the object.
    * 
    * @param key
    *          the key
@@ -358,7 +326,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   /**
-   * Get a double from the array.
+   * Get a double from the object.
    * 
    * @param key
    *          the key
@@ -373,7 +341,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   /**
-   * Get a double from the array.
+   * Get a double from the object.
    * 
    * @param key
    * @return the double
@@ -385,7 +353,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   /**
-   * Get an integer from the array.
+   * Get an integer from the object.
    * 
    * @param key
    * @return the integer, or null
@@ -397,7 +365,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   /**
-   * Get an integer from the array.
+   * Get an integer from the object.
    * 
    * @param key
    *          the key
@@ -412,7 +380,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   /**
-   * Get an integer from the array.
+   * Get an integer from the object.
    * 
    * @param key
    *          the key
@@ -427,7 +395,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   /**
-   * Get an integer from the array.
+   * Get an integer from the object.
    * 
    * @param key
    * @return the integer
@@ -438,7 +406,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   /**
-   * Get a long from the array.
+   * Get a long from the object.
    * 
    * @param key
    * @return the long, or null
@@ -450,7 +418,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   /**
-   * Get a long from the array.
+   * Get a long from the object.
    * 
    * @param key
    *          the key
@@ -465,7 +433,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   /**
-   * Get a long from the array.
+   * Get a long from the object.
    * 
    * @param key
    *          the key
@@ -480,7 +448,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   /**
-   * Get a long from the array.
+   * Get a long from the object.
    * 
    * @param key
    * @return the long
@@ -492,7 +460,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   /**
-   * Get an object from the array.
+   * Get an object from the object.
    * 
    * @param key
    * @return the object, or null
@@ -503,7 +471,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   /**
-   * Get an object from the array.
+   * Get an object from the object.
    * 
    * @param key
    *          the key
@@ -517,7 +485,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   /**
-   * Get an object from the array.
+   * Get an object from the object.
    * 
    * @param key
    *          the key
@@ -531,7 +499,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   /**
-   * Get an object from the array.
+   * Get an object from the object.
    * 
    * @param key
    * @return the object
@@ -547,7 +515,11 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   private <T> T getQuiet(Class<T> clazz, String key, Function<String, T> function) {
-    Object value = get(key).getValue();
+    Primitive primitive = get(key);
+    if( primitive==null ) {
+      return function.apply(key);
+    }
+    Object value = primitive.getValue();
     if( clazz.isInstance(value) ) {
       return clazz.cast(value);
     }
@@ -574,7 +546,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   /**
-   * Get a String from the array.
+   * Get a String from the object.
    * 
    * @param key
    * @return the String, or null
@@ -585,7 +557,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   /**
-   * Get a String from the array.
+   * Get a String from the object.
    * 
    * @param key
    *          the key
@@ -599,7 +571,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   /**
-   * Get a String from the array.
+   * Get a String from the object.
    * 
    * @param key
    *          the key
@@ -613,7 +585,7 @@ public class JsonObject extends TreeMap<String, Primitive> {
 
 
   /**
-   * Get a String from the array.
+   * Get a String from the object.
    * 
    * @param key
    * @return the String

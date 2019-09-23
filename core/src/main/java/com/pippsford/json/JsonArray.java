@@ -63,13 +63,38 @@ public class JsonArray extends ArrayList<Primitive> {
 
 
   /**
+   * Convert a collection into a JsonArray.
+   * 
+   * @param c
+   *          the collection
+   * @return the JsonArray
+   */
+  static JsonArray fixCollection(Collection<?> c) {
+    if( c instanceof JsonArray ) {
+      return (JsonArray) c;
+    }
+    JsonArray out = new JsonArray();
+    out.ensureCapacity(c.size());
+    for(Object o:c) {
+      out.add(Primitive.create(o));
+    }
+    return out;
+  }
+
+
+  private static Primitive fixNull(Primitive element) {
+    return element != null ? element : Primitive.NULL;
+  }
+
+
+  /**
    * Ensure a collection contains no actual nulls.
    * 
    * @param c
    *          the collection
    * @return a collection with the nulls replaced with JSON nulls.
    */
-  private static Collection<Primitive> fixCollection(Collection<? extends Primitive> c) {
+  static Collection<Primitive> fixPrimitiveCollection(Collection<? extends Primitive> c) {
     Primitive[] array = c.toArray(new Primitive[0]);
     for(int i = array.length - 1;i >= 0;i--) {
       if( array[i] == null ) {
@@ -80,8 +105,48 @@ public class JsonArray extends ArrayList<Primitive> {
   }
 
 
-  private static Primitive fixNull(Primitive element) {
-    return element != null ? element : Primitive.NULL;
+  public JsonArray() {
+    // as super-class
+  }
+
+
+  public JsonArray(Collection<?> c) {
+    super(fixCollection(c));
+  }
+
+
+  public boolean addNull() {
+    return add(Primitive.NULL);
+  }
+
+
+  public boolean add(Boolean value) {
+    return add(value != null ? (value.booleanValue() ? Primitive.TRUE : Primitive.FALSE) : Primitive.NULL);
+  }
+
+
+  public void addNull(int index) {
+    add(index, Primitive.NULL);
+  }
+
+
+  public void add(int index, Boolean value) {
+    add(index, value != null ? (value.booleanValue() ? Primitive.TRUE : Primitive.FALSE) : Primitive.NULL);
+  }
+
+
+  public void add(int index, JsonArray array) {
+    add(index, array != null ? new Primitive(Type.ARRAY, array) : Primitive.NULL);
+  }
+
+
+  public void add(int index, JsonObject object) {
+    add(index, object != null ? new Primitive(Type.OBJECT, object) : Primitive.NULL);
+  }
+
+
+  public void add(int index, Number number) {
+    add(index, number != null ? new Primitive(Type.NUMBER, number) : Primitive.NULL);
   }
 
 
@@ -91,21 +156,46 @@ public class JsonArray extends ArrayList<Primitive> {
   }
 
 
+  public void add(int index, String string) {
+    add(index, string != null ? new Primitive(Type.STRING, string) : Primitive.NULL);
+  }
+
+
+  public boolean add(JsonArray array) {
+    return add(array != null ? new Primitive(Type.ARRAY, array) : Primitive.NULL);
+  }
+
+
+  public boolean add(JsonObject object) {
+    return add(object != null ? new Primitive(Type.OBJECT, object) : Primitive.NULL);
+  }
+
+
+  public boolean add(Number number) {
+    return add(number != null ? new Primitive(Type.NUMBER, number) : Primitive.NULL);
+  }
+
+
   @Override
   public boolean add(Primitive e) {
     return super.add(fixNull(e));
   }
 
 
+  public boolean add(String string) {
+    return add(string != null ? new Primitive(Type.STRING, string) : Primitive.NULL);
+  }
+
+
   @Override
   public boolean addAll(Collection<? extends Primitive> c) {
-    return super.addAll(fixCollection(c));
+    return super.addAll(fixPrimitiveCollection(c));
   }
 
 
   @Override
   public boolean addAll(int index, Collection<? extends Primitive> c) {
-    return super.addAll(index, fixCollection(c));
+    return super.addAll(index, fixPrimitiveCollection(c));
   }
 
 
@@ -167,16 +257,7 @@ public class JsonArray extends ArrayList<Primitive> {
    */
   public BigDecimal getBigDecimal(int index) {
     Number n = getQuiet(Number.class, index);
-    if( n == null ) {
-      return null;
-    }
-    if( n instanceof BigDecimal ) {
-      return (BigDecimal) n;
-    }
-    if( n instanceof BigInteger ) {
-      return new BigDecimal((BigInteger) n);
-    }
-    return new BigDecimal(n.toString());
+    return Primitive.toBigDecimal(n);
   }
 
 
@@ -194,13 +275,7 @@ public class JsonArray extends ArrayList<Primitive> {
     if( n == null ) {
       return dflt;
     }
-    if( n instanceof BigDecimal ) {
-      return (BigDecimal) n;
-    }
-    if( n instanceof BigInteger ) {
-      return new BigDecimal((BigInteger) n);
-    }
-    return new BigDecimal(n.toString());
+    return Primitive.toBigDecimal(n);
   }
 
 
@@ -218,13 +293,7 @@ public class JsonArray extends ArrayList<Primitive> {
     if( n == null ) {
       return dflt.apply(index);
     }
-    if( n instanceof BigDecimal ) {
-      return (BigDecimal) n;
-    }
-    if( n instanceof BigInteger ) {
-      return new BigDecimal((BigInteger) n);
-    }
-    return new BigDecimal(n.toString());
+    return Primitive.toBigDecimal(n);
   }
 
 
@@ -236,13 +305,7 @@ public class JsonArray extends ArrayList<Primitive> {
    */
   public BigDecimal getBigDecimalSafe(int index) {
     Number n = getSafe(Number.class, Type.NUMBER, index);
-    if( n instanceof BigDecimal ) {
-      return (BigDecimal) n;
-    }
-    if( n instanceof BigInteger ) {
-      return new BigDecimal((BigInteger) n);
-    }
-    return new BigDecimal(n.toString());
+    return Primitive.toBigDecimal(n);
   }
 
 
@@ -254,19 +317,7 @@ public class JsonArray extends ArrayList<Primitive> {
    */
   public BigInteger getBigInteger(int index) {
     Number n = getQuiet(Number.class, index);
-    if( n == null ) {
-      return null;
-    }
-    if( n instanceof BigInteger ) {
-      return (BigInteger) n;
-    }
-    if( n instanceof BigDecimal ) {
-      return ((BigDecimal) n).toBigInteger();
-    }
-    if( n instanceof Long || n instanceof Integer || n instanceof Short || n instanceof Byte ) {
-      return BigInteger.valueOf(n.longValue());
-    }
-    return new BigDecimal(n.toString()).toBigInteger();
+    return Primitive.toBigInteger(n);
   }
 
 
@@ -284,16 +335,7 @@ public class JsonArray extends ArrayList<Primitive> {
     if( n == null ) {
       return dflt;
     }
-    if( n instanceof BigInteger ) {
-      return (BigInteger) n;
-    }
-    if( n instanceof BigDecimal ) {
-      return ((BigDecimal) n).toBigInteger();
-    }
-    if( n instanceof Long || n instanceof Integer || n instanceof Short || n instanceof Byte ) {
-      return BigInteger.valueOf(n.longValue());
-    }
-    return new BigDecimal(n.toString()).toBigInteger();
+    return Primitive.toBigInteger(n);
   }
 
 
@@ -311,16 +353,7 @@ public class JsonArray extends ArrayList<Primitive> {
     if( n == null ) {
       return dflt.apply(index);
     }
-    if( n instanceof BigInteger ) {
-      return (BigInteger) n;
-    }
-    if( n instanceof BigDecimal ) {
-      return ((BigDecimal) n).toBigInteger();
-    }
-    if( n instanceof Long || n instanceof Integer || n instanceof Short || n instanceof Byte ) {
-      return BigInteger.valueOf(n.longValue());
-    }
-    return new BigDecimal(n.toString()).toBigInteger();
+    return Primitive.toBigInteger(n);
   }
 
 
@@ -332,16 +365,7 @@ public class JsonArray extends ArrayList<Primitive> {
    */
   public BigInteger getBigIntegerSafe(int index) {
     Number n = getSafe(Number.class, Type.NUMBER, index);
-    if( n instanceof BigInteger ) {
-      return (BigInteger) n;
-    }
-    if( n instanceof BigDecimal ) {
-      return ((BigDecimal) n).toBigInteger();
-    }
-    if( n instanceof Long || n instanceof Integer || n instanceof Short || n instanceof Byte ) {
-      return BigInteger.valueOf(n.longValue());
-    }
-    return new BigDecimal(n.toString()).toBigInteger();
+    return Primitive.toBigInteger(n);
   }
 
 
@@ -701,6 +725,41 @@ public class JsonArray extends ArrayList<Primitive> {
   @Override
   public Primitive set(int index, Primitive element) {
     return super.set(index, fixNull(element));
+  }
+
+
+  public Primitive set(int index, JsonArray array) {
+    Primitive p = (array != null) ? new Primitive(Type.ARRAY, array) : Primitive.NULL;
+    return super.set(index, p);
+  }
+
+
+  public Primitive set(int index, JsonObject object) {
+    Primitive p = (object != null) ? new Primitive(Type.OBJECT, object) : Primitive.NULL;
+    return super.set(index, p);
+  }
+
+
+  public Primitive set(int index, Boolean value) {
+    Primitive p = (value != null) ? (value.booleanValue() ? Primitive.TRUE : Primitive.FALSE) : Primitive.NULL;
+    return super.set(index, p);
+  }
+
+
+  public Primitive set(int index, Number number) {
+    Primitive p = (number != null) ? new Primitive(Type.NUMBER, number) : Primitive.NULL;
+    return super.set(index, p);
+  }
+
+
+  public Primitive set(int index, String string) {
+    Primitive p = (string != null) ? new Primitive(Type.STRING, string) : Primitive.NULL;
+    return super.set(index, p);
+  }
+
+
+  public Primitive setNull(int index) {
+    return super.set(index, Primitive.NULL);
   }
 
 

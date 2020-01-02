@@ -27,8 +27,8 @@
  *     <ol>
  *       <li>including a nonzero single-digit significand integer part, and</li>
  *       <li>including a nonempty significand fractional part, and</li>
- *       <li>including no trailing zeroes in the significand fractional part (other than as part of a ì.0î required to satisfy the preceding point), and</li>
- *       <li>including a capital ìEî, and</li>
+ *       <li>including no trailing zeroes in the significand fractional part (other than as part of a ‚Äú.0‚Äù required to satisfy the preceding point), and</li>
+ *       <li>including a capital ‚ÄúE‚Äù, and</li>
  *       <li>including no plus sign in the exponent, and</li>
  *       <li>including no insignificant leading zeroes in the exponent</li>
  *     </ol>
@@ -40,12 +40,12 @@
  *       <li>using two-character escape sequences where possible for characters that require escaping:
  *         <ul>
  *           <li><code>&#92;b</code> U+0008 BACKSPACE</li>
- *           <li><code>&#92;t</code> U+0009 CHARACTER TABULATION (ìtabî)</li>
- *           <li><code>&#92;n</code> U+000A LINE FEED (ìnewlineî)</li>
+ *           <li><code>&#92;t</code> U+0009 CHARACTER TABULATION (‚Äútab‚Äù)</li>
+ *           <li><code>&#92;n</code> U+000A LINE FEED (‚Äúnewline‚Äù)</li>
  *           <li><code>&#92;f</code> U+000C FORM FEED</li>
  *           <li><code>&#92;r</code> U+000D CARRIAGE RETURN</li>
  *           <li><code>&#92;"</code> U+0022 QUOTATION MARK</li>
- *           <li><code>&#92;&#92;</code> U+005C REVERSE SOLIDUS (ìbackslashî), and</li>
+ *           <li><code>&#92;&#92;</code> U+005C REVERSE SOLIDUS (‚Äúbackslash‚Äù), and</li>
  *         </ul>
  *       </li>
  *       <li>using six-character <code>&#92;u00xx</code> uppercase hexadecimal escape sequences for control characters that require escaping but lack a two-character sequence, and</li>

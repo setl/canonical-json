@@ -1,14 +1,21 @@
+repositories {
+    mavenCentral()
+}
 
 allprojects {
-  apply plugin: 'java'
+    apply plugin: 'java'
+}
+
+dependencies {
+    implementation 'junit:junit:4.12'
 }
 
 subprojects {
-  repositories {
-    mavenCentral()
-  }
-  
-  dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-  }
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        testCompile group: 'junit', name: 'junit', version: '4.12'
+    }
 }

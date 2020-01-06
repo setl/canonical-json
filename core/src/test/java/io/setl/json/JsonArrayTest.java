@@ -1,6 +1,11 @@
 package io.setl.json;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -8,55 +13,25 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.Test;
 
 public class JsonArrayTest extends JsonArray {
 
   @Test
-  public void testFixCollection() {
+  public void testAddAllCollectionOfQextendsPrimitive() {
     JsonArray ja = new JsonArray();
-    assertSame(ja, fixCollection(ja));
-    ja.add("abc");
-    ja.add(123);
-    ja.addNull();
-    ja.add(true);
-    assertEquals(ja, fixCollection(Arrays.asList("abc", 123, null, true)));
+    ja.addAll(Arrays.asList(Primitive.TRUE, null));
+    assertEquals(Primitive.TRUE, ja.get(0));
+    assertEquals(Primitive.NULL, ja.get(1));
   }
 
 
   @Test
-  public void testFixPrimitveCollection() {
-    JsonArray ja = new JsonArray();
-    ja.add(true);
-    ja.addNull();
-    ja.add(123);
-    assertEquals(ja, fixPrimitiveCollection(Arrays.asList(Primitive.TRUE, null, Primitive.create(123))));
-  }
-
-
-  @Test
-  public void testJsonArray() {
-    JsonArray ja = new JsonArray();
-    assertTrue(ja.isEmpty());
-    assertEquals(0, ja.size());
-  }
-
-
-  @Test
-  public void testJsonArrayCollectionOfQ() {
-    JsonArray ja = new JsonArray(Arrays.asList("abc", 123, true, null));
-    assertEquals(4, ja.size());
-    assertEquals(123, ja.getInt(1, -1));
-  }
-
-
-  @Test
-  public void testAddNull() {
-    JsonArray ja = new JsonArray();
-    ja.addNull();
-    assertEquals(1, ja.size());
-    assertEquals(Primitive.NULL, ja.get(0));
+  public void testAddAllIntCollectionOfQextendsPrimitive() {
+    JsonArray ja = new JsonArray(Arrays.asList(0, 1, 2));
+    ja.addAll(1, Arrays.asList(Primitive.TRUE, null));
+    assertEquals(Primitive.TRUE, ja.get(1));
+    assertEquals(Primitive.NULL, ja.get(2));
   }
 
 
@@ -70,16 +45,6 @@ public class JsonArrayTest extends JsonArray {
     assertEquals(Boolean.FALSE, ja.getBoolean(0));
     assertEquals(Boolean.TRUE, ja.getBoolean(1));
     assertNull(ja.getBoolean(2));
-  }
-
-
-  @Test
-  public void testAddNullInt() {
-    JsonArray ja = new JsonArray(Arrays.asList(0, 1, 2));
-    ja.addNull(2);
-    assertEquals(1, ja.getInt(1, -1));
-    assertNull(ja.getInt(2));
-    assertEquals(2, ja.getInt(3, -1));
   }
 
 
@@ -184,6 +149,25 @@ public class JsonArrayTest extends JsonArray {
 
 
   @Test
+  public void testAddNull() {
+    JsonArray ja = new JsonArray();
+    ja.addNull();
+    assertEquals(1, ja.size());
+    assertEquals(Primitive.NULL, ja.get(0));
+  }
+
+
+  @Test
+  public void testAddNullInt() {
+    JsonArray ja = new JsonArray(Arrays.asList(0, 1, 2));
+    ja.addNull(2);
+    assertEquals(1, ja.getInt(1, -1));
+    assertNull(ja.getInt(2));
+    assertEquals(2, ja.getInt(3, -1));
+  }
+
+
+  @Test
   public void testAddNumber() {
     JsonArray ja = new JsonArray(Arrays.asList(0, 1, 2));
     ja.add(3);
@@ -217,20 +201,24 @@ public class JsonArrayTest extends JsonArray {
 
 
   @Test
-  public void testAddAllCollectionOfQextendsPrimitive() {
+  public void testFixCollection() {
     JsonArray ja = new JsonArray();
-    ja.addAll(Arrays.asList(Primitive.TRUE, null));
-    assertEquals(Primitive.TRUE, ja.get(0));
-    assertEquals(Primitive.NULL, ja.get(1));
+    assertSame(ja, fixCollection(ja));
+    ja.add("abc");
+    ja.add(123);
+    ja.addNull();
+    ja.add(true);
+    assertEquals(ja, fixCollection(Arrays.asList("abc", 123, null, true)));
   }
 
 
   @Test
-  public void testAddAllIntCollectionOfQextendsPrimitive() {
-    JsonArray ja = new JsonArray(Arrays.asList(0, 1, 2));
-    ja.addAll(1, Arrays.asList(Primitive.TRUE, null));
-    assertEquals(Primitive.TRUE, ja.get(1));
-    assertEquals(Primitive.NULL, ja.get(2));
+  public void testFixPrimitveCollection() {
+    JsonArray ja = new JsonArray();
+    ja.add(true);
+    ja.addNull();
+    ja.add(123);
+    assertEquals(ja, fixPrimitiveCollection(Arrays.asList(Primitive.TRUE, null, Primitive.create(123))));
   }
 
 
@@ -568,20 +556,26 @@ public class JsonArrayTest extends JsonArray {
 
 
   @Test
-  public void testReplaceAllUnaryOperatorOfPrimitive() {
-    JsonArray ja = new JsonArray(Arrays.asList(1, 2, 3));
-    ja.replaceAll(p -> Primitive.create(p.toString()));
-    assertEquals("1", ja.getString(0));
+  public void testJsonArray() {
+    JsonArray ja = new JsonArray();
+    assertTrue(ja.isEmpty());
+    assertEquals(0, ja.size());
   }
 
 
   @Test
-  public void testSetPrimitive() {
+  public void testJsonArrayCollectionOfQ() {
+    JsonArray ja = new JsonArray(Arrays.asList("abc", 123, true, null));
+    assertEquals(4, ja.size());
+    assertEquals(123, ja.getInt(1, -1));
+  }
+
+
+  @Test
+  public void testReplaceAllUnaryOperatorOfPrimitive() {
     JsonArray ja = new JsonArray(Arrays.asList(1, 2, 3));
-    ja.set(0, (Primitive) null);
-    ja.set(1, Primitive.TRUE);
-    assertEquals(Primitive.NULL, ja.get(0));
-    assertEquals(Primitive.TRUE, ja.get(1));
+    ja.replaceAll(p -> Primitive.create(p.toString()));
+    assertEquals("1", ja.getString(0));
   }
 
 
@@ -593,17 +587,6 @@ public class JsonArrayTest extends JsonArray {
     ja.set(1, j2);
     assertEquals(Primitive.NULL, ja.get(0));
     assertEquals(j2, ja.getArray(1));
-  }
-
-
-  @Test
-  public void testSetObject() {
-    JsonArray ja = new JsonArray(Arrays.asList(1, 2, 3));
-    JsonObject j2 = new JsonObject(Collections.singletonMap("x", "y"));
-    ja.set(0, (JsonObject) null);
-    ja.set(1, j2);
-    assertEquals(Primitive.NULL, ja.get(0));
-    assertEquals(j2, ja.getObject(1));
   }
 
 
@@ -620,6 +603,14 @@ public class JsonArrayTest extends JsonArray {
 
 
   @Test
+  public void testSetNull() {
+    JsonArray ja = new JsonArray(Arrays.asList(1, 2, 3));
+    ja.setNull(0);
+    assertEquals(Primitive.NULL, ja.get(0));
+  }
+
+
+  @Test
   public void testSetNumber() {
     JsonArray ja = new JsonArray(Arrays.asList(1, 2, 3));
     ja.set(0, (Number) null);
@@ -630,10 +621,23 @@ public class JsonArrayTest extends JsonArray {
 
 
   @Test
-  public void testSetNull() {
+  public void testSetObject() {
     JsonArray ja = new JsonArray(Arrays.asList(1, 2, 3));
-    ja.setNull(0);
+    JsonObject j2 = new JsonObject(Collections.singletonMap("x", "y"));
+    ja.set(0, (JsonObject) null);
+    ja.set(1, j2);
     assertEquals(Primitive.NULL, ja.get(0));
+    assertEquals(j2, ja.getObject(1));
+  }
+
+
+  @Test
+  public void testSetPrimitive() {
+    JsonArray ja = new JsonArray(Arrays.asList(1, 2, 3));
+    ja.set(0, (Primitive) null);
+    ja.set(1, Primitive.TRUE);
+    assertEquals(Primitive.NULL, ja.get(0));
+    assertEquals(Primitive.TRUE, ja.get(1));
   }
 
 

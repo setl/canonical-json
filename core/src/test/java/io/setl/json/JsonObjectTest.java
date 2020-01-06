@@ -1,15 +1,22 @@
 package io.setl.json;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.HashMap;
-
 import org.junit.Before;
 import org.junit.Test;
 
+@SuppressWarnings("checkstyle:AvoidEscapedUnicodeCharacters")
 public class JsonObjectTest {
 
   private JsonObject json = new JsonObject();
@@ -27,26 +34,67 @@ public class JsonObjectTest {
     json.put("big number", new BigDecimal("1e+5"));
     json.put("object", new JsonObject());
     json.put("array", new JsonArray());
-    json.put("boolean", true);    
+    json.put("boolean", true);
   }
 
 
   @Test
-  public void testJsonObject() {
-    assertEquals(11, json.size());
-    assertEquals(
-        "{\"\\u0007\":\"bell\",\"array\":[],\"big number\":100000,\"boolean\":true,\"null\":null,\"object\":{},\"small number\":1.0E-5,\"string\":\"string\",\"\uEEEE\":\"private use\",\"\uD83D\uDE09\":\"winking\",\"\uD83D\uDE2A\":\"sleepy\"}",
-        json.toString());
+  public void testFixMap() {
+    HashMap<Object, Object> hm = new HashMap<>();
+    hm.put("a", Arrays.asList(1, 2, 3));
+    hm.put("b", true);
+    hm.put("c", null);
+    hm.put("d", 5);
+    hm.put("e", new HashMap<>());
+    hm.put("f", "text");
+    hm.put("g", Primitive.TRUE);
 
-    json.clear();
-    StringBuilder buf = new StringBuilder();
-    for(int i = 0;i < 4;i++) {
-      buf.append("\uD83D\uDE2A");
-      json.put(buf.toString(), i);
+    JsonObject fixed = JsonObject.fixMap(hm);
+    assertEquals("{\"a\":[1,2,3],\"b\":true,\"c\":null,\"d\":5,\"e\":{},\"f\":\"text\",\"g\":true}", fixed.toString());
+    JsonObject fixed2 = JsonObject.fixMap(fixed);
+    assertSame(fixed, fixed2);
+
+    HashMap<String, Object> hm2 = new HashMap<>();
+    hm.forEach((k, v) -> hm2.put(String.valueOf(k), v));
+    JsonObject fixed3 = new JsonObject(hm2);
+    assertEquals(fixed, fixed3);
+    assertNotSame(fixed, fixed3);
+
+    hm.clear();
+    hm.put(1, 2);
+    try {
+      JsonObject.fixMap(hm);
+      fail();
+    } catch (IllegalArgumentException e) {
+      // correct
     }
-    assertEquals(
-        "{\"\uD83D\uDE2A\":0,\"\uD83D\uDE2A\uD83D\uDE2A\":1,\"\uD83D\uDE2A\uD83D\uDE2A\uD83D\uDE2A\":2,\"\uD83D\uDE2A\uD83D\uDE2A\uD83D\uDE2A\uD83D\uDE2A\":3}",
-        json.toString());
+
+    hm.clear();
+    hm.put(null, null);
+    try {
+      JsonObject.fixMap(hm);
+      fail();
+    } catch (IllegalArgumentException e) {
+      // correct
+    }
+  }
+
+
+  @Test
+  public void testGetArraySafe() {
+    assertNotNull(json.getArraySafe("array"));
+    try {
+      json.getArraySafe("string");
+      fail();
+    } catch (IncorrectTypeException e) {
+      // correct
+    }
+    try {
+      json.getArraySafe("n/a");
+      fail();
+    } catch (MissingItemException e) {
+      // correct
+    }
   }
 
 
@@ -93,16 +141,16 @@ public class JsonObjectTest {
 
 
   @Test
-  public void testGetArraySafe() {
-    assertNotNull(json.getArraySafe("array"));
+  public void testGetBigDecimalSafe() {
+    assertNotNull(json.getBigDecimalSafe("big number"));
     try {
-      json.getArraySafe("string");
+      json.getBigDecimalSafe("string");
       fail();
     } catch (IncorrectTypeException e) {
       // correct
     }
     try {
-      json.getArraySafe("n/a");
+      json.getBigDecimalSafe("n/a");
       fail();
     } catch (MissingItemException e) {
       // correct
@@ -146,16 +194,16 @@ public class JsonObjectTest {
 
 
   @Test
-  public void testGetBigDecimalSafe() {
-    assertNotNull(json.getBigDecimalSafe("big number"));
+  public void testGetBigIntegerSafe() {
+    assertNotNull(json.getBigIntegerSafe("big number"));
     try {
-      json.getBigDecimalSafe("string");
+      json.getBigIntegerSafe("string");
       fail();
     } catch (IncorrectTypeException e) {
       // correct
     }
     try {
-      json.getBigDecimalSafe("n/a");
+      json.getBigIntegerSafe("n/a");
       fail();
     } catch (MissingItemException e) {
       // correct
@@ -199,16 +247,17 @@ public class JsonObjectTest {
 
 
   @Test
-  public void testGetBigIntegerSafe() {
-    assertNotNull(json.getBigIntegerSafe("big number"));
+  public void testGetBooleanSafe() {
+    json.put("a", true);
+    assertTrue(json.getBooleanSafe("a"));
     try {
-      json.getBigIntegerSafe("string");
+      json.getBooleanSafe("string");
       fail();
     } catch (IncorrectTypeException e) {
       // correct
     }
     try {
-      json.getBigIntegerSafe("n/a");
+      json.getBooleanSafe("n/a");
       fail();
     } catch (MissingItemException e) {
       // correct
@@ -247,17 +296,17 @@ public class JsonObjectTest {
 
 
   @Test
-  public void testGetBooleanSafe() {
-    json.put("a", true);
-    assertTrue(json.getBooleanSafe("a"));
+  public void testGetDoubleSafe() {
+    json.put("a", Math.PI);
+    assertEquals(Math.PI, json.getDoubleSafe("a"), 0.0000001d);
     try {
-      json.getBooleanSafe("string");
+      json.getDoubleSafe("string");
       fail();
     } catch (IncorrectTypeException e) {
       // correct
     }
     try {
-      json.getBooleanSafe("n/a");
+      json.getDoubleSafe("n/a");
       fail();
     } catch (MissingItemException e) {
       // correct
@@ -297,17 +346,17 @@ public class JsonObjectTest {
 
 
   @Test
-  public void testGetDoubleSafe() {
-    json.put("a", Math.PI);
-    assertEquals(Math.PI, json.getDoubleSafe("a"), 0.0000001d);
+  public void testGetIntSafe() {
+    json.put("a", 3);
+    assertEquals(3, json.getIntSafe("a"));
     try {
-      json.getDoubleSafe("string");
+      json.getIntSafe("string");
       fail();
     } catch (IncorrectTypeException e) {
       // correct
     }
     try {
-      json.getDoubleSafe("n/a");
+      json.getIntSafe("n/a");
       fail();
     } catch (MissingItemException e) {
       // correct
@@ -346,17 +395,17 @@ public class JsonObjectTest {
 
 
   @Test
-  public void testGetIntSafe() {
-    json.put("a", 3);
-    assertEquals(3, json.getIntSafe("a"));
+  public void testGetLongSafe() {
+    json.put("a", 3L);
+    assertEquals(3L, json.getLongSafe("a"));
     try {
-      json.getIntSafe("string");
+      json.getLongSafe("string");
       fail();
     } catch (IncorrectTypeException e) {
       // correct
     }
     try {
-      json.getIntSafe("n/a");
+      json.getLongSafe("n/a");
       fail();
     } catch (MissingItemException e) {
       // correct
@@ -395,17 +444,16 @@ public class JsonObjectTest {
 
 
   @Test
-  public void testGetLongSafe() {
-    json.put("a", 3L);
-    assertEquals(3L, json.getLongSafe("a"));
+  public void testGetObjectSafe() {
+    assertNotNull(json.getObjectSafe("object"));
     try {
-      json.getLongSafe("string");
+      json.getObjectSafe("string");
       fail();
     } catch (IncorrectTypeException e) {
       // correct
     }
     try {
-      json.getLongSafe("n/a");
+      json.getObjectSafe("n/a");
       fail();
     } catch (MissingItemException e) {
       // correct
@@ -456,16 +504,17 @@ public class JsonObjectTest {
 
 
   @Test
-  public void testGetObjectSafe() {
-    assertNotNull(json.getObjectSafe("object"));
+  public void testGetStringSafe() {
+    json.put("string", "text");
+    assertEquals("text", json.getStringSafe("string"));
     try {
-      json.getObjectSafe("string");
+      json.getStringSafe("array");
       fail();
     } catch (IncorrectTypeException e) {
       // correct
     }
     try {
-      json.getObjectSafe("n/a");
+      json.getStringSafe("n/a");
       fail();
     } catch (MissingItemException e) {
       // correct
@@ -489,10 +538,10 @@ public class JsonObjectTest {
     String s1 = "text";
     String s2 = "not-present";
     json.put("string", s1);
-    assertEquals(s2, json.getString("null", k->s2));
-    assertEquals(s2, json.getString("n/a", k->s2));
-    assertEquals(s2, json.getString("array", k->s2));
-    assertEquals(s1, json.getString("string", k->s2));
+    assertEquals(s2, json.getString("null", k -> s2));
+    assertEquals(s2, json.getString("n/a", k -> s2));
+    assertEquals(s2, json.getString("array", k -> s2));
+    assertEquals(s1, json.getString("string", k -> s2));
   }
 
 
@@ -509,30 +558,33 @@ public class JsonObjectTest {
 
 
   @Test
-  public void testGetStringSafe() {
-    json.put("string", "text");
-    assertEquals("text", json.getStringSafe("string"));
-    try {
-      json.getStringSafe("array");
-      fail();
-    } catch (IncorrectTypeException e) {
-      // correct
-    }
-    try {
-      json.getStringSafe("n/a");
-      fail();
-    } catch (MissingItemException e) {
-      // correct
-    }
+  public void testIsType() {
+    assertTrue(json.isType("string", Type.STRING));
+    assertFalse(json.isType("big number", Type.STRING));
+    assertTrue(json.isType("big number", Type.NUMBER));
+    assertFalse(json.isType("n/a", Type.NUMBER));
   }
 
 
   @Test
-  public void testIsType() {
-    assertTrue(json.isType("string",Type.STRING));
-    assertFalse(json.isType("big number",Type.STRING));
-    assertTrue(json.isType("big number",Type.NUMBER));
-    assertFalse(json.isType("n/a",Type.NUMBER));    
+  public void testJsonObject() {
+    assertEquals(11, json.size());
+    assertEquals(
+        "{\"\\u0007\":\"bell\",\"array\":[],\"big number\":100000,\"boolean\":true,\"null\":null,\"object\":{},\"small number\":1.0E-5,"
+            + "\"string\":\"string\",\"\uEEEE\":\"private use\",\"\uD83D\uDE09\":\"winking\",\"\uD83D\uDE2A\":\"sleepy\"}",
+        json.toString()
+    );
+
+    json.clear();
+    StringBuilder buf = new StringBuilder();
+    for (int i = 0; i < 4; i++) {
+      buf.append("\uD83D\uDE2A");
+      json.put(buf.toString(), i);
+    }
+    assertEquals(
+        "{\"\uD83D\uDE2A\":0,\"\uD83D\uDE2A\uD83D\uDE2A\":1,\"\uD83D\uDE2A\uD83D\uDE2A\uD83D\uDE2A\":2,\"\uD83D\uDE2A\uD83D\uDE2A\uD83D\uDE2A\uD83D\uDE2A\":3}",
+        json.toString()
+    );
   }
 
 
@@ -669,7 +721,8 @@ public class JsonObjectTest {
     json.removeNumber(k1);
     json.removeNumber(k2);
     assertFalse(json.containsKey(k1));
-    assertTrue(json.containsKey(k2));  }
+    assertTrue(json.containsKey(k2));
+  }
 
 
   @Test
@@ -681,7 +734,8 @@ public class JsonObjectTest {
     json.removeObject(k1);
     json.removeObject(k2);
     assertFalse(json.containsKey(k1));
-    assertTrue(json.containsKey(k2));  }
+    assertTrue(json.containsKey(k2));
+  }
 
 
   @Test
@@ -694,47 +748,5 @@ public class JsonObjectTest {
     json.removeString(k2);
     assertFalse(json.containsKey(k1));
     assertTrue(json.containsKey(k2));
-  }
-  
-  
-  @Test
-  public void testFixMap() {
-    HashMap<Object,Object> hm = new HashMap<>();
-    hm.put("a",Arrays.asList(1,2,3));
-    hm.put("b",true);
-    hm.put("c",null);
-    hm.put("d",5);
-    hm.put("e",new HashMap<>());
-    hm.put("f","text");
-    hm.put("g",Primitive.TRUE);
-    
-    JsonObject fixed = JsonObject.fixMap(hm);
-    assertEquals("{\"a\":[1,2,3],\"b\":true,\"c\":null,\"d\":5,\"e\":{},\"f\":\"text\",\"g\":true}",fixed.toString());
-    JsonObject fixed2 = JsonObject.fixMap(fixed);
-    assertSame(fixed,fixed2);
-    
-    HashMap<String,Object> hm2 = new HashMap<>();
-    hm.forEach((k,v) -> hm2.put(String.valueOf(k),v));
-    JsonObject fixed3 = new JsonObject(hm2);
-    assertEquals(fixed,fixed3);
-    assertNotSame(fixed,fixed3);
-    
-    hm.clear();
-    hm.put(1,2);
-    try {
-      JsonObject.fixMap(hm);
-      fail();
-    } catch ( IllegalArgumentException e ) {
-      // correct
-    }
-    
-    hm.clear();
-    hm.put(null,null);
-    try {
-      JsonObject.fixMap(hm);
-      fail();
-    } catch ( IllegalArgumentException e ) {
-      // correct
-    }
   }
 }

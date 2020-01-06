@@ -25,6 +25,12 @@ public class Pojo {
   }
 
 
+  /**
+   * New instance.
+   *
+   * @param random      source of data
+   * @param hasChildren if true, create a sibling
+   */
   public Pojo(Random random, boolean hasChildren) {
     count = random.nextInt(100);
     text = Long.toString(random.nextLong(), 36);

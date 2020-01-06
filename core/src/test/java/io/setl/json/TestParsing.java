@@ -7,12 +7,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-
 import org.junit.Test;
 
 /**
  * Apply the unit tests defined at: https://github.com/nst/JSONTestSuite
- * 
+ *
  * @author Simon
  */
 public class TestParsing {
@@ -21,8 +20,10 @@ public class TestParsing {
 
 
   private Primitive loadResource(String resource) throws IOException {
-    try (InputStream input = TestParsing.class.getClassLoader().getResourceAsStream(PATH + resource);
-        Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8)) {
+    try (
+        InputStream input = TestParsing.class.getClassLoader().getResourceAsStream(PATH + resource);
+        Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8)
+    ) {
       return Parser.parse(reader);
     }
   }
@@ -32,7 +33,7 @@ public class TestParsing {
   public void testParse() throws IOException {
     Primitive p = loadResource("all_files.json");
     JsonArray array = p.getValueSafe(JsonArray.class);
-    for(Primitive p2:array) {
+    for (Primitive p2 : array) {
       String f = p2.getValueSafe(String.class);
       IOException thrown = null;
       try {
@@ -45,9 +46,9 @@ public class TestParsing {
         throw new AssertionError("ABEND processing " + f, re);
       }
 
-      if( f.startsWith("y_") ) {
+      if (f.startsWith("y_")) {
         // Required to parse successfully
-        if( thrown == null ) {
+        if (thrown == null) {
           System.out.println("PASS: " + f);
         } else {
           System.out.println("FAIL: " + f);
@@ -56,9 +57,9 @@ public class TestParsing {
         }
       }
 
-      if( f.startsWith("n_") ) {
+      if (f.startsWith("n_")) {
         // Required to parse successfully
-        if( thrown != null ) {
+        if (thrown != null) {
           System.out.println("PASS: " + f + " : " + thrown.getMessage());
         } else {
           System.out.println("FAIL: " + f);
@@ -66,8 +67,8 @@ public class TestParsing {
           fail(f);
         }
       }
-      if( f.startsWith("i_") ) {
-        if( thrown == null ) {
+      if (f.startsWith("i_")) {
+        if (thrown == null) {
           System.out.println("INFO: " + f + " parsed OK");
         } else {
           System.out.println("INFO: " + f + " failed with message: " + thrown.getMessage());

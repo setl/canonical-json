@@ -12,6 +12,8 @@ import java.util.function.Predicate;
 import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Representation of an object in JSON.
@@ -190,6 +192,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements Writable {
    *
    * @return the big integer, or null
    */
+  @Nullable
   public BigInteger getBigInteger(String key) {
     Number n = getQuiet(Number.class, key);
     return Primitive.toBigInteger(n);
@@ -246,6 +249,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements Writable {
    *
    * @return the Boolean, or null
    */
+  @Nullable
   public Boolean getBoolean(String key) {
     return getQuiet(Boolean.class, key);
   }
@@ -281,8 +285,9 @@ public class JsonObject extends TreeMap<String, Primitive> implements Writable {
   /**
    * Get a Boolean from the object.
    *
-   * @return the Boolean, or null
+   * @return the Boolean
    */
+  @Nonnull
   public Boolean getBooleanSafe(String key) {
     return getSafe(Boolean.class, Type.BOOLEAN, key);
   }
@@ -293,6 +298,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements Writable {
    *
    * @return the double, or null
    */
+  @Nullable
   public Double getDouble(String key) {
     Number n = getQuiet(Number.class, key);
     return (n != null) ? Double.valueOf(n.doubleValue()) : null;
@@ -343,6 +349,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements Writable {
    *
    * @return the integer, or null
    */
+  @Nullable
   public Integer getInt(String key) {
     Number n = getQuiet(Number.class, key);
     return (n != null) ? Integer.valueOf(n.intValue()) : null;
@@ -392,6 +399,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements Writable {
    *
    * @return the long, or null
    */
+  @Nullable
   public Long getLong(String key) {
     Number n = getQuiet(Number.class, key);
     return (n != null) ? Long.valueOf(n.longValue()) : null;
@@ -442,6 +450,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements Writable {
    *
    * @return the object, or null
    */
+  @Nullable
   public JsonObject getObject(String key) {
     return getQuiet(JsonObject.class, key);
   }
@@ -478,6 +487,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements Writable {
    *
    * @return the object
    */
+  @Nonnull
   public JsonObject getObjectSafe(String key) {
     return getSafe(JsonObject.class, Type.OBJECT, key);
   }
@@ -524,6 +534,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements Writable {
    *
    * @return the String, or null
    */
+  @Nullable
   public String getString(String key) {
     return getQuiet(String.class, key);
   }
@@ -560,6 +571,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements Writable {
    *
    * @return the String
    */
+  @Nonnull
   public String getStringSafe(String key) {
     return getSafe(String.class, Type.STRING, key);
   }
@@ -663,6 +675,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements Writable {
    *
    * @return the array removed
    */
+  @Nullable
   public JsonArray removeArray(String key) {
     Primitive primitive = get(key);
     if (primitive == null || primitive.getType() != Type.ARRAY) {
@@ -680,6 +693,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements Writable {
    *
    * @return the Boolean removed
    */
+  @Nullable
   public Boolean removeBoolean(String key) {
     Primitive primitive = get(key);
     if (primitive == null || primitive.getType() != Type.BOOLEAN) {
@@ -695,7 +709,6 @@ public class JsonObject extends TreeMap<String, Primitive> implements Writable {
    *
    * @param key the key to remove, if it is null
    */
-
   public void removeNull(String key) {
     Primitive primitive = get(key);
     if (primitive != null && primitive.getType() == Type.NULL) {
@@ -711,7 +724,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements Writable {
    *
    * @return the number removed
    */
-
+  @Nullable
   public Number removeNumber(String key) {
     Primitive primitive = get(key);
     if (primitive == null || primitive.getType() != Type.NUMBER) {
@@ -729,6 +742,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements Writable {
    *
    * @return the object removed
    */
+  @Nullable
   public JsonObject removeObject(String key) {
     Primitive primitive = get(key);
     if (primitive == null || primitive.getType() != Type.OBJECT) {
@@ -746,6 +760,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements Writable {
    *
    * @return the String that was removed
    */
+  @Nullable
   public String removeString(String key) {
     Primitive primitive = get(key);
     if (primitive == null || primitive.getType() != Type.STRING) {

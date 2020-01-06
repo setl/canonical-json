@@ -1,9 +1,29 @@
+buildscript {
+    repositories {
+        maven { url "http://si-nexus01.dev.setl.io:8081/repository/maven-public/" }
+    }
+    dependencies {
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.7"
+    }
+}
+
+plugins {
+    id "com.github.spotbugs" version "2.0.0"
+}
+
 repositories {
+    //Allow local repository for snapshot builds
+    if (version.endsWith("SNAPSHOT")) {
+        mavenLocal()
+    }
+    maven { url "http://si-nexus01.dev.setl.io:8081/repository/maven-public/" }
     mavenCentral()
 }
 
 allprojects {
     apply plugin: 'java'
+    apply plugin: 'maven-publish'
+    apply plugin: 'org.sonarqube'
 }
 
 dependencies {
@@ -11,11 +31,77 @@ dependencies {
 }
 
 subprojects {
+    group 'io.setl'
+    version '1.0-SNAPSHOT'
+
+    apply plugin: 'jacoco'
+    apply plugin: 'com.github.spotbugs'
+    apply plugin: 'checkstyle'
+    apply plugin: 'maven-publish'
+
+    checkstyle {
+        toolVersion = "7.8.2"
+        configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+    }
+
+    spotbugs {
+        toolVersion = '3.1.12'
+        sourceSets = [sourceSets.main]
+        ignoreFailures = true
+        reportsDir = file("$project.buildDir/findbugsReports")
+    }
+
+    task findSecurityBugs(type: com.github.spotbugs.SpotBugsTask) {
+        classes = fileTree(project.rootDir.absolutePath).include("**/*.class");
+        source = fileTree(project.rootDir.absolutePath).include("**/*.java");
+        classpath = files()
+        pluginClasspath = project.configurations.spotbugsPlugins
+    }
+
+    jacoco {
+        toolVersion = "0.8.2"
+    }
+
     repositories {
+        //Allow local repository for snapshot builds
+        if (version.endsWith("SNAPSHOT")) {
+            mavenLocal()
+        }
+        maven { url "http://si-nexus01.dev.setl.io:8081/repository/maven-public/" }
         mavenCentral()
+    }
+
+    task sourceJar(type: Jar) {
+        from sourceSets.main.allJava
     }
 
     dependencies {
         testCompile group: 'junit', name: 'junit', version: '4.12'
+        spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.10.0'
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+
+                artifact sourceJar {
+                    classifier "sources"
+                }
+            }
+        }
+        repositories {
+            maven {
+                credentials {
+                    username = 'publisher'
+                    password = 'publish'
+                }
+                if (version.endsWith("SNAPSHOT")) {
+                    url 'http://si-nexus01.dev.setl.io:8081/repository/setl-snaps'
+                } else {
+                    url 'http://si-nexus01.dev.setl.io:8081/repository/setl-libs'
+                }
+            }
+        }
     }
 }

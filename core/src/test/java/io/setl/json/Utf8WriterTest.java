@@ -41,26 +41,12 @@ public class Utf8WriterTest {
     }
   }
 
-
-
-  Utf8Writer writer;
-
   Utf8Appendable appendable;
 
   MockOutputStream output = new MockOutputStream();
 
-  private void verifyUtf8(char[] expected) throws IOException {
-    output.flush();
-    ByteBuffer byteBuffer = ByteBuffer.wrap(output.toByteArray());
+  Utf8Writer writer;
 
-    Charset utf8 = StandardCharsets.UTF_8;
-    CharsetDecoder decoder = utf8.newDecoder();
-    decoder.onMalformedInput(CodingErrorAction.REPORT);
-    decoder.onUnmappableCharacter(CodingErrorAction.REPORT);
-
-    CharBuffer charBuffer = decoder.decode(byteBuffer);
-    assertEquals(new String(expected), charBuffer.toString());
-  }
 
   @Test
   public void close() throws IOException {
@@ -77,25 +63,51 @@ public class Utf8WriterTest {
     assertTrue(output.isFlushed);
   }
 
-  @Test
-  public void writeString() throws IOException {
-    String test = "Hello, World!";
-    writer.write(test,3,6);
-    verifyUtf8("lo, Wo".toCharArray());
+
+  @Before
+  public void setUp() {
+    output = new MockOutputStream();
+    writer = new Utf8Writer(output);
+    appendable = new Utf8Appendable(output);
   }
 
 
-  @Test
-  public void writeCharArray() throws IOException {
-    String test = "Hello, World!";
-    writer.write(test.toCharArray(),3,6);
-    verifyUtf8("lo, Wo".toCharArray());
+  @Test(expected = IOException.class)
+  public void testBadSurrogates1() throws IOException {
+    char[] pair = Character.toChars(0x14444);
+    appendable.append(pair[0]);
+    appendable.close();
   }
+
+
+  @Test(expected = IOException.class)
+  public void testBadSurrogates2() throws IOException {
+    char[] pair = Character.toChars(0x14444);
+    appendable.append(pair[0]);
+    appendable.append('A');
+    appendable.close();
+  }
+
+
+  @Test(expected = IOException.class)
+  public void testBadSurrogates3() throws IOException {
+    char[] pair = Character.toChars(0x14444);
+    appendable.append(pair[1]);
+  }
+
+
+  @Test(expected = IOException.class)
+  public void testBadSurrogates4() throws IOException {
+    char[] pair = Character.toChars(0x14444);
+    appendable.append(pair[0]);
+    appendable.append(pair[0]);
+  }
+
 
   @Test
   public void testUtf8() throws IOException {
     StringBuilder buf = new StringBuilder();
-    for(int i=0;i<10;i++) {
+    for (int i = 0; i < 10; i++) {
       buf.appendCodePoint(0x40 + i);
       buf.appendCodePoint(0x440 + i);
       buf.appendCodePoint(0xA40 + i);
@@ -106,38 +118,33 @@ public class Utf8WriterTest {
     verifyUtf8(chars);
   }
 
-  @Test(expected = IOException.class)
-  public void testBadSurrogates1() throws IOException {
-    char[] pair = Character.toChars(0x14444);
-    appendable.append(pair[0]);
-    appendable.close();
+
+  private void verifyUtf8(char[] expected) throws IOException {
+    output.flush();
+    ByteBuffer byteBuffer = ByteBuffer.wrap(output.toByteArray());
+
+    Charset utf8 = StandardCharsets.UTF_8;
+    CharsetDecoder decoder = utf8.newDecoder();
+    decoder.onMalformedInput(CodingErrorAction.REPORT);
+    decoder.onUnmappableCharacter(CodingErrorAction.REPORT);
+
+    CharBuffer charBuffer = decoder.decode(byteBuffer);
+    assertEquals(new String(expected), charBuffer.toString());
   }
 
-  @Test(expected = IOException.class)
-  public void testBadSurrogates2() throws IOException {
-    char[] pair = Character.toChars(0x14444);
-    appendable.append(pair[0]);
-    appendable.append('A');
-    appendable.close();
+
+  @Test
+  public void writeCharArray() throws IOException {
+    String test = "Hello, World!";
+    writer.write(test.toCharArray(), 3, 6);
+    verifyUtf8("lo, Wo".toCharArray());
   }
 
-  @Test(expected = IOException.class)
-  public void testBadSurrogates3() throws IOException {
-    char[] pair = Character.toChars(0x14444);
-    appendable.append(pair[1]);
-  }
 
-  @Test(expected = IOException.class)
-  public void testBadSurrogates4() throws IOException {
-    char[] pair = Character.toChars(0x14444);
-    appendable.append(pair[0]);
-    appendable.append(pair[0]);
-  }
-
-  @Before
-  public void setUp() {
-    output = new MockOutputStream();
-    writer = new Utf8Writer(output);
-    appendable = new Utf8Appendable(output);
+  @Test
+  public void writeString() throws IOException {
+    String test = "Hello, World!";
+    writer.write(test, 3, 6);
+    verifyUtf8("lo, Wo".toCharArray());
   }
 }

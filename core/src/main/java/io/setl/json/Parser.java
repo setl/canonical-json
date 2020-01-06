@@ -1,7 +1,6 @@
 package io.setl.json;
 
 import java.io.EOFException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
@@ -34,23 +33,6 @@ public class Parser {
    */
   private static boolean isWhite(int r) {
     return (r == ' ' || r == '\n' || r == '\r' || r == '\t');
-  }
-
-
-  /**
-   * Test reading a file.
-   *
-   * @param args the file name
-   *
-   * @throws IOException if the file cannot be read
-   */
-  public static void main(String[] args) throws IOException {
-    Primitive prim;
-    try (FileReader reader = new FileReader(args[0])) {
-      prim = parseFirst(reader);
-    }
-    System.out.println("Type = " + prim.getType());
-    System.out.println("Value = " + prim.getValue());
   }
 
 

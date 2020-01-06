@@ -1,35 +1,39 @@
 package io.setl.json;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
  * Test the expected output from unit tests defined at https://github.com/gibson042/canonicaljson-spec
- * 
- * @author Simon
  *
+ * @author Simon
  */
 public class TestCanonical {
-
-  private Primitive loadJson(String resource) throws IOException {
-    try (InputStream input = TestParsing.class.getClassLoader().getResourceAsStream(resource);
-        Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8)) {
-      return Parser.parse(reader);
-    }
-  }
-
 
   private byte[] loadBytes(String resource) throws IOException {
     try (InputStream input = TestParsing.class.getClassLoader().getResourceAsStream(resource); ByteArrayOutputStream output = new ByteArrayOutputStream()) {
       byte[] transfer = new byte[8192];
       int r;
-      while( (r = input.read(transfer)) != -1 ) {
+      while ((r = input.read(transfer)) != -1) {
         output.write(transfer, 0, r);
       }
       return output.toByteArray();
+    }
+  }
+
+
+  private Primitive loadJson(String resource) throws IOException {
+    try (
+        InputStream input = TestParsing.class.getClassLoader().getResourceAsStream(resource);
+        Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8)
+    ) {
+      return Parser.parse(reader);
     }
   }
 
@@ -39,7 +43,7 @@ public class TestCanonical {
     Primitive p = loadJson("expected.json");
     JsonArray array = p.getValueSafe(JsonArray.class);
     ByteArrayOutputStream output = new ByteArrayOutputStream();
-    for(Primitive p2:array) {
+    for (Primitive p2 : array) {
       String f = p2.getValueSafe(String.class);
 
       Primitive primitive;

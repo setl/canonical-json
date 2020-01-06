@@ -7,12 +7,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-
 import org.junit.Test;
 
 /**
  * Apply the malformed JSON tests defined at: https://github.com/gibson042/canonicaljson-spec
- * 
+ *
  * @author Simon
  */
 public class TestMalformed {
@@ -21,8 +20,10 @@ public class TestMalformed {
 
 
   private Primitive loadResource(String resource) throws IOException {
-    try (InputStream input = TestMalformed.class.getClassLoader().getResourceAsStream(PATH + resource);
-        Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8)) {
+    try (
+        InputStream input = TestMalformed.class.getClassLoader().getResourceAsStream(PATH + resource);
+        Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8)
+    ) {
       return Parser.parse(reader);
     }
   }
@@ -32,7 +33,7 @@ public class TestMalformed {
   public void testParse() throws IOException {
     Primitive p = loadResource("all_input.json");
     JsonArray array = p.getValueSafe(JsonArray.class);
-    for(Primitive p2:array) {
+    for (Primitive p2 : array) {
       String f = p2.getValueSafe(String.class);
       IOException thrown = null;
       try {
@@ -44,9 +45,9 @@ public class TestMalformed {
       } catch (RuntimeException re) {
         throw new AssertionError("ABEND processing " + f, re);
       }
-      
+
       // Required to parse unsuccessfully
-      if( thrown != null ) {
+      if (thrown != null) {
         System.out.println("PASS: " + f + " : " + thrown.getMessage());
       } else {
         System.out.println("FAIL: " + f);

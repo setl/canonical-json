@@ -62,9 +62,12 @@ public class Utf8Appendable implements Appendable {
   }
 
 
+  /**
+   * Close the output.
+   */
   public void close() throws IOException {
     if (highSurrogate != 0) {
-      throw new IOException("Isolated high surroget");
+      throw new IOException("Isolated high surrogate");
     }
     output.close();
   }

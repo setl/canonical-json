@@ -2,12 +2,14 @@ package io.setl.json;
 
 /**
  * An exception thrown when a type-checking accessor finds data of the wrong type.
- * 
- * @author Simon Greatrix
  *
+ * @author Simon Greatrix
  */
 public class IncorrectTypeException extends RequiredItemException {
+
   private static final long serialVersionUID = 1L;
+
+  private final Type actual;
 
   private final int index;
 
@@ -15,9 +17,14 @@ public class IncorrectTypeException extends RequiredItemException {
 
   private final Type required;
 
-  private final Type actual;
 
-
+  /**
+   * New instance.
+   *
+   * @param index    the array index that was accessed
+   * @param required the required data type
+   * @param actual   the actual data type
+   */
   public IncorrectTypeException(int index, Type required, Type actual) {
     super("Item at " + index + " has type " + actual + ". Required " + required);
     this.index = index;
@@ -27,6 +34,13 @@ public class IncorrectTypeException extends RequiredItemException {
   }
 
 
+  /**
+   * New instance.
+   *
+   * @param key      the object key that was accessed
+   * @param required the required data type
+   * @param actual   the actual data type
+   */
   public IncorrectTypeException(String key, Type required, Type actual) {
     super("Item at " + Canonical.format(key) + " has type " + actual + ". Required " + required);
     this.index = -1;
@@ -35,9 +49,20 @@ public class IncorrectTypeException extends RequiredItemException {
     this.actual = actual;
   }
 
+
+  /**
+   * The actual type.
+   *
+   * @return the actual type
+   */
+  public Type getActual() {
+    return actual;
+  }
+
+
   /**
    * The index in the array where the problem item was encountered.
-   * 
+   *
    * @return the index (or -1 if the item came from a JSON Object)
    */
   public int getIndex() {
@@ -47,7 +72,7 @@ public class IncorrectTypeException extends RequiredItemException {
 
   /**
    * The object key in the object where the problem item was encountered.
-   * 
+   *
    * @return the key (or null if the item came from a JSON Array)
    */
   public String getKey() {
@@ -57,21 +82,11 @@ public class IncorrectTypeException extends RequiredItemException {
 
   /**
    * The required type.
-   * 
+   *
    * @return the required type
    */
   public Type getRequired() {
     return required;
-  }
-
-
-  /**
-   * The actual type.
-   * 
-   * @return the actual type
-   */
-  public Type getActual() {
-    return actual;
   }
 
 }

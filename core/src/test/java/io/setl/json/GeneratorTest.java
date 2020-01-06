@@ -10,9 +10,6 @@ import org.junit.Test;
 
 public class GeneratorTest {
 
-  @Before
-  public void setUp() throws Exception {}
-
 
   @Test
   public void testByte() {

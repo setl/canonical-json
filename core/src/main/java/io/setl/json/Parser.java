@@ -22,7 +22,7 @@ public class Parser {
   /** Letters for the "true" literal. */
   private static final char[] LITERAL_TRUE = new char[]{'r', 'u', 'e'};
 
-  private static final int MAX_RECURSION_DEPTH = Integer.getInteger("com.pippsford.Parser.maxRecursion", 1_000);
+  private static final int MAX_RECURSION_DEPTH = Integer.getInteger(Parser.class.getName() + ".maxRecursion", 1_000);
 
 
   /**
@@ -166,8 +166,8 @@ public class Parser {
         return parseNumber(input, r);
       }
       throw new InvalidJson("Invalid input byte 0x" + Integer.toHexString(r));
-    } catch ( StackOverflowError e ) {
-      throw new InvalidJson("Json structure was less than configured maximum nesting depth of "+MAX_RECURSION_DEPTH+" but failed at "+depth);
+    } catch (StackOverflowError e) {
+      throw new InvalidJson("Json structure was less than configured maximum nesting depth of " + MAX_RECURSION_DEPTH + " but failed at " + depth);
     }
   }
 
@@ -210,7 +210,7 @@ public class Parser {
 
 
   /**
-   * Parse a boolean from the input
+   * Parse a boolean from the input.
    *
    * @param input the input
    * @param r     the initial character of the literal
@@ -368,16 +368,10 @@ public class Parser {
           }
           break;
         case 21:
-          // seen 'e' or 'E' followed by '+' or '-'. Must have a digit
-          if ('0' <= r && r <= '9') {
-            buf.append((char) r);
-            s = 22;
-          } else {
-            throw new InvalidJson("Invalid character in JSON number: \"" + buf.toString() + "\" was followed by 0x" + Integer.toHexString(r));
-          }
-          break;
+          // fall thru
+          // seen 'e' or 'E' followed by '+' or '-'. Must have a digit next. Cannot end in this state.
         case 22:
-          // read exponent, must be all digits
+          // reading exponent, must be all digits
           if ('0' <= r && r <= '9') {
             buf.append((char) r);
             s = 22;
@@ -385,6 +379,8 @@ public class Parser {
             throw new InvalidJson("Invalid character in JSON number: \"" + buf.toString() + "\" was followed by 0x" + Integer.toHexString(r));
           }
           break;
+        default:
+          throw new InternalError("Impossible parser state");
       }
     }
     if (r != -1) {
@@ -536,6 +532,8 @@ public class Parser {
             buf.append((char) u);
           }
           break;
+        default:
+          throw new InternalError("Impossible parser state");
       }
     }
 
@@ -556,7 +554,8 @@ public class Parser {
     int r;
     do {
       r = input.read();
-    } while (isWhite(r));
+    }
+    while (isWhite(r));
     if (r == -1) {
       throw new EOFException();
     }

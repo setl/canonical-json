@@ -9,7 +9,8 @@
  * <p>JSON text in canonical form:</p>
  * <ol>
  *   <li>MUST be encoded in <a href="https://tools.ietf.org/html/rfc3629">UTF-8</a></li>
- *   <li>MUST NOT include insignificant (i.e., inter-token) whitespace (defined in <a href="https://tools.ietf.org/html/rfc7159#section-2">section 2 of RFC 7159</a>)</li>
+ *   <li>MUST NOT include insignificant (i.e., inter-token) whitespace (defined in <a href="https://tools.ietf.org/html/rfc7159#section-2">section 2 of
+ *   RFC 7159</a>)</li>
  *   <li>MUST order the members of all objects lexicographically by the UCS (Unicode Character Set) code points of their names
  *     <ol>
  *       <li>preserving and utilizing the code points in U+D800 through U+DFFF (inclusive) for all lone surrogates</li>
@@ -35,7 +36,8 @@
  *   </li>
  *   <li>MUST represent all strings (including object member names) in their minimal-length UTF-8 encoding
  *     <ol>
- *       <li>avoiding escape sequences for characters except those otherwise inexpressible in JSON (U+0022 QUOTATION MARK, U+005C REVERSE SOLIDUS, and ASCII control characters U+0000 through U+001F) or UTF-8 (U+D800 through U+DFFF), and</li>
+ *       <li>avoiding escape sequences for characters except those otherwise inexpressible in JSON (U+0022 QUOTATION MARK, U+005C REVERSE SOLIDUS, and ASCII
+ *       control characters U+0000 through U+001F) or UTF-8 (U+D800 through U+DFFF), and</li>
  *       <li>avoiding escape sequences for combining characters, variation selectors, and other code points that affect preceding characters, and</li>
  *       <li>using two-character escape sequences where possible for characters that require escaping:
  *         <ul>
@@ -48,7 +50,8 @@
  *           <li><code>&#92;&#92;</code> U+005C REVERSE SOLIDUS (“backslash”), and</li>
  *         </ul>
  *       </li>
- *       <li>using six-character <code>&#92;u00xx</code> uppercase hexadecimal escape sequences for control characters that require escaping but lack a two-character sequence, and</li>
+ *       <li>using six-character <code>&#92;u00xx</code> uppercase hexadecimal escape sequences for control characters that require escaping but lack a
+ *       two-character sequence, and</li>
  *       <li>using six-character <code>&#92;uDxxx</code> uppercase hexadecimal escape sequences for lone surrogates</li>
  *     </ol>
  *   </li>

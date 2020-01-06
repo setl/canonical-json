@@ -117,15 +117,15 @@ public class PrimitiveTest {
     Primitive primitive = new Primitive(Type.STRING,"123");
     primitive.hashCode();
     Primitive.NULL.hashCode();
-    assertTrue(primitive.equals(primitive));
-    assertFalse(primitive.equals(null));
-    assertTrue(primitive.equals(new Primitive(Type.STRING,"123")));
-    assertFalse(primitive.equals(new Primitive(Type.STRING,"456")));
-    assertFalse(primitive.equals(new Primitive(Type.NUMBER,123)));
-    assertFalse(primitive.equals(new Primitive(Type.NULL,null)));
-    assertTrue(Primitive.NULL.equals(new Primitive(Type.NULL,null)));
-    assertFalse(Primitive.NULL.equals(new Primitive(Type.STRING,"123")));
-    assertFalse(Primitive.NULL.equals("null"));
+    assertEquals(primitive, primitive);
+    assertNotEquals(null, primitive);
+    assertEquals(primitive, new Primitive(Type.STRING, "123"));
+    assertNotEquals(primitive, new Primitive(Type.STRING, "456"));
+    assertNotEquals(primitive, new Primitive(Type.NUMBER, 123));
+    assertNotEquals(primitive, new Primitive(Type.NULL, null));
+    assertEquals(Primitive.NULL, new Primitive(Type.NULL, null));
+    assertNotEquals(Primitive.NULL, new Primitive(Type.STRING, "123"));
+    assertNotEquals("null", Primitive.NULL);
   }
   
   @Test

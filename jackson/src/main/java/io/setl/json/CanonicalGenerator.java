@@ -114,6 +114,14 @@ public class CanonicalGenerator extends JsonGenerator {
   private Writer writer;
 
 
+  /**
+   * New instance.
+   *
+   * @param ioContext   the context
+   * @param features    the generator features that are enabled
+   * @param objectCodec the object codec
+   * @param writer      the output's writer
+   */
   public CanonicalGenerator(IOContext ioContext, int features, ObjectCodec objectCodec, Writer writer) {
     this.ioContext = ioContext;
     this.objectCodec = objectCodec;

@@ -24,24 +24,21 @@ public class JsonObject extends TreeMap<String, Primitive> implements Writable {
   /**
    * Sort object keys into Unicode code point order.
    */
-  public static Comparator<String> CODE_POINT_ORDER = new Comparator<String>() {
-    @Override
-    public int compare(String s1, String s2) {
-      int len1 = s1.length();
-      int len2 = s2.length();
-      int lim = Math.min(len1, len2);
-      for (int i = 0; i < lim; i++) {
-        int cp1 = s1.codePointAt(i);
-        int cp2 = s2.codePointAt(i);
-        if (cp1 != cp2) {
-          return cp1 - cp2;
-        }
-        if (cp1 > 0xffff) {
-          i++;
-        }
+  public static final Comparator<String> CODE_POINT_ORDER = (s1, s2) -> {
+    int len1 = s1.length();
+    int len2 = s2.length();
+    int lim = Math.min(len1, len2);
+    for (int i = 0; i < lim; i++) {
+      int cp1 = s1.codePointAt(i);
+      int cp2 = s2.codePointAt(i);
+      if (cp1 != cp2) {
+        return cp1 - cp2;
       }
-      return len1 - len2;
+      if (cp1 > 0xffff) {
+        i++;
+      }
     }
+    return len1 - len2;
   };
 
 
@@ -570,15 +567,26 @@ public class JsonObject extends TreeMap<String, Primitive> implements Writable {
 
   public boolean isType(String key, Type type) {
     Primitive primitive = get(key);
-    return (primitive != null) ? primitive.getType() == type : false;
+    return (primitive != null) && primitive.getType() == type;
   }
 
 
+  /**
+   * Put a null value into this.
+   *
+   * @param key the key
+   */
   public void put(String key) {
     put(key, new Primitive(Type.NULL, null));
   }
 
 
+  /**
+   * Put a value into this.
+   *
+   * @param key   the key
+   * @param value the value
+   */
   public void put(String key, Boolean value) {
     if (value != null) {
       put(key, new Primitive(Type.BOOLEAN, value));
@@ -588,6 +596,12 @@ public class JsonObject extends TreeMap<String, Primitive> implements Writable {
   }
 
 
+  /**
+   * Put a value into this.
+   *
+   * @param key   the key
+   * @param value the value
+   */
   public void put(String key, JsonArray value) {
     if (value != null) {
       put(key, new Primitive(Type.ARRAY, value));
@@ -597,6 +611,12 @@ public class JsonObject extends TreeMap<String, Primitive> implements Writable {
   }
 
 
+  /**
+   * Put a value into this.
+   *
+   * @param key   the key
+   * @param value the value
+   */
   public void put(String key, JsonObject value) {
     if (value != null) {
       put(key, new Primitive(Type.OBJECT, value));
@@ -606,6 +626,12 @@ public class JsonObject extends TreeMap<String, Primitive> implements Writable {
   }
 
 
+  /**
+   * Put a value into this.
+   *
+   * @param key   the key
+   * @param value the value
+   */
   public void put(String key, Number value) {
     if (value != null) {
       put(key, new Primitive(Type.NUMBER, value));
@@ -615,6 +641,12 @@ public class JsonObject extends TreeMap<String, Primitive> implements Writable {
   }
 
 
+  /**
+   * Put a value into this.
+   *
+   * @param key   the key
+   * @param value the value
+   */
   public void put(String key, String value) {
     if (value != null) {
       put(key, new Primitive(Type.STRING, value));
@@ -624,25 +656,45 @@ public class JsonObject extends TreeMap<String, Primitive> implements Writable {
   }
 
 
+  /**
+   * Remove a JSON array from this.
+   *
+   * @param key the key to remove, if it is an array
+   *
+   * @return the array removed
+   */
   public JsonArray removeArray(String key) {
     Primitive primitive = get(key);
     if (primitive == null || primitive.getType() != Type.ARRAY) {
       return null;
     }
     remove(key);
-    return JsonArray.class.cast(primitive.getValue());
+    return (JsonArray) primitive.getValue();
   }
 
 
+  /**
+   * Remove a Boolean from this.
+   *
+   * @param key the key to remove, if it is a Boolean
+   *
+   * @return the Boolean removed
+   */
   public Boolean removeBoolean(String key) {
     Primitive primitive = get(key);
     if (primitive == null || primitive.getType() != Type.BOOLEAN) {
       return null;
     }
     remove(key);
-    return Boolean.class.cast(primitive.getValue());
+    return (Boolean) primitive.getValue();
   }
 
+
+  /**
+   * Remove a null from this.
+   *
+   * @param key the key to remove, if it is null
+   */
 
   public void removeNull(String key) {
     Primitive primitive = get(key);
@@ -652,33 +704,55 @@ public class JsonObject extends TreeMap<String, Primitive> implements Writable {
   }
 
 
+  /**
+   * Remove a number from this.
+   *
+   * @param key the key to remove, if it is a number
+   *
+   * @return the number removed
+   */
+
   public Number removeNumber(String key) {
     Primitive primitive = get(key);
     if (primitive == null || primitive.getType() != Type.NUMBER) {
       return null;
     }
     remove(key);
-    return Number.class.cast(primitive.getValue());
+    return (Number) primitive.getValue();
   }
 
 
+  /**
+   * Remove a JSON object from this.
+   *
+   * @param key the key to remove, if it is an object
+   *
+   * @return the object removed
+   */
   public JsonObject removeObject(String key) {
     Primitive primitive = get(key);
     if (primitive == null || primitive.getType() != Type.OBJECT) {
       return null;
     }
     remove(key);
-    return JsonObject.class.cast(primitive.getValue());
+    return (JsonObject) primitive.getValue();
   }
 
 
+  /**
+   * Remove a String from this.
+   *
+   * @param key the key to remove, if it is a String
+   *
+   * @return the String that was removed
+   */
   public String removeString(String key) {
     Primitive primitive = get(key);
     if (primitive == null || primitive.getType() != Type.STRING) {
       return null;
     }
     remove(key);
-    return String.class.cast(primitive.getValue());
+    return (String) primitive.getValue();
   }
 
 

@@ -46,6 +46,12 @@ public class Canonical {
   }
 
 
+  /**
+   * Format text in its canonical JSON representation and append to the buffer.
+   *
+   * @param buf   the output buffer
+   * @param input the text to format
+   */
   public static void format(Appendable buf, String input) throws IOException {
     // opening quote
     buf.append('"');
@@ -125,6 +131,13 @@ public class Canonical {
   }
 
 
+  /**
+   * Convert a number to its canonical JSON representation.
+   *
+   * @param number the number
+   *
+   * @return the representation
+   */
   public static String format(Number number) {
     StringBuilder buf = new StringBuilder();
     try {
@@ -136,6 +149,12 @@ public class Canonical {
   }
 
 
+  /**
+   * Append the canonically formatter number to the buffer.
+   *
+   * @param buf    the output buffer
+   * @param number the number
+   */
   public static void format(Appendable buf, Number number) throws IOException {
     // Standard Java integers all provide the canonical representation naturally.
     if (number instanceof BigInteger || number instanceof Long || number instanceof Integer || number instanceof Short || number instanceof Byte) {
@@ -148,14 +167,14 @@ public class Canonical {
     if (number instanceof BigDecimal) {
       bigDecimal = (BigDecimal) number;
     } else {
-      // Going via the string representation is recommended practice
-      if (number instanceof Double) {
-        // Special handling of the non-number numbers
-        if (Double.isNaN(number.doubleValue()) || Double.isInfinite(number.doubleValue())) {
-          buf.append('\"').append(number.toString()).append('\"');
-          return;
-        }
+      // Special handling for NaN and infinity.
+      if ((number instanceof Double || number instanceof Float)
+          && (Double.isNaN(number.doubleValue()) || Double.isInfinite(number.doubleValue()))
+      ) {
+        buf.append('\"').append(number.toString()).append('\"');
+        return;
       }
+      // Going via the string representation is recommended practice
       bigDecimal = new BigDecimal(number.toString());
     }
 

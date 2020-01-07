@@ -12,9 +12,12 @@ import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.core.io.IOContext;
 import com.fasterxml.jackson.core.json.DupDetector;
 import com.fasterxml.jackson.core.json.JsonWriteContext;
+import com.fasterxml.jackson.core.util.VersionUtil;
 import io.setl.json.JsonArray;
 import io.setl.json.JsonObject;
+import io.setl.json.JsonValue;
 import io.setl.json.Primitive;
+import io.setl.json.Type;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,10 +33,12 @@ import java.util.LinkedList;
  * @author Simon Greatrix on 16/09/2019.
  */
 public class CanonicalGenerator extends JsonGenerator {
+  public static final Version VERSION = VersionUtil.parseVersion("1.0", "io.setl", "canonical-json");
 
   private static final int DISALLOWED_FEATURES = Feature.WRITE_NUMBERS_AS_STRINGS.getMask()
       + Feature.WRITE_BIGDECIMAL_AS_PLAIN.getMask()
       + Feature.ESCAPE_NON_ASCII.getMask();
+
 
   private static final int REQUIRED_FEATURES = Feature.QUOTE_FIELD_NAMES.getMask()
       + Feature.QUOTE_NON_NUMERIC_NUMBERS.getMask();
@@ -47,12 +52,9 @@ public class CanonicalGenerator extends JsonGenerator {
 
   interface Container {
 
-    /**
-     * Array or object?.
-     *
-     * @return true if an array
-     */
-    boolean isArray();
+    void add(String key, Primitive value);
+
+    void set(JsonWriteContext parent, Primitive raw);
 
     /**
      * Write the container.
@@ -66,12 +68,18 @@ public class CanonicalGenerator extends JsonGenerator {
 
   static class ArrayContainer implements Container {
 
-    JsonArray array = new JsonArray();
+    final JsonArray array = new JsonArray();
 
 
     @Override
-    public boolean isArray() {
-      return true;
+    public void add(String key, Primitive value) {
+      array.add(value);
+    }
+
+
+    @Override
+    public void set(JsonWriteContext parent, Primitive raw) {
+      array.set(parent.getCurrentIndex(), raw);
     }
 
 
@@ -85,12 +93,18 @@ public class CanonicalGenerator extends JsonGenerator {
 
   static class ObjectContainer implements Container {
 
-    JsonObject object = new JsonObject();
+    final JsonObject object = new JsonObject();
 
 
     @Override
-    public boolean isArray() {
-      return false;
+    public void add(String key, Primitive value) {
+      object.put(key, value);
+    }
+
+
+    @Override
+    public void set(JsonWriteContext parent, Primitive raw) {
+      object.put(parent.getCurrentName(), raw);
     }
 
 
@@ -102,19 +116,49 @@ public class CanonicalGenerator extends JsonGenerator {
 
 
 
+  static class RawContainer implements Container {
+
+    private final String raw;
+
+
+    RawContainer(String raw) {
+      this.raw = raw;
+    }
+
+
+    @Override
+    public void add(String key, Primitive value) {
+      throw new UnsupportedOperationException("Raw containers cannot be added to");
+    }
+
+
+    @Override
+    public void set(JsonWriteContext parent, Primitive raw) {
+      throw new UnsupportedOperationException("Raw containers cannot be reset.");
+    }
+
+
+    @Override
+    public void writeTo(Writer writer) throws IOException {
+      writer.write(raw);
+    }
+  }
+
+
+
+  private final IOContext ioContext;
+
+  private final LinkedList<Container> stack = new LinkedList<>();
+
+  private final Writer writer;
+
   private boolean closed = false;
 
   private int featureMask = DEFAULT_FEATURE_MASK;
 
-  private IOContext ioContext;
-
   private ObjectCodec objectCodec;
 
-  private LinkedList<Container> stack = new LinkedList<>();
-
   private JsonWriteContext writeContext;
-
-  private Writer writer;
 
 
   /**
@@ -240,7 +284,6 @@ public class CanonicalGenerator extends JsonGenerator {
   }
 
 
-  @Deprecated
   @Override
   public JsonGenerator setFeatureMask(int values) {
     if ((values & DISALLOWED_FEATURES) != 0) {
@@ -279,7 +322,7 @@ public class CanonicalGenerator extends JsonGenerator {
 
   @Override
   public Version version() {
-    return PackageVersion.VERSION;
+    return VERSION;
   }
 
 
@@ -450,7 +493,7 @@ public class CanonicalGenerator extends JsonGenerator {
       return;
     }
 
-    if(value instanceof Primitive) {
+    if (value instanceof Primitive) {
       writePrimitive((Primitive) value);
       return;
     }
@@ -470,12 +513,7 @@ public class CanonicalGenerator extends JsonGenerator {
       return;
     }
     Container container = stack.peek();
-    if (container.isArray()) {
-      ((ArrayContainer) container).array.add(primitive);
-    } else {
-      String key = writeContext.getCurrentName();
-      ((ObjectContainer) container).object.put(key, primitive);
-    }
+    container.add(writeContext.getCurrentName(), primitive);
   }
 
 
@@ -503,6 +541,45 @@ public class CanonicalGenerator extends JsonGenerator {
   }
 
 
+  /**
+   * Write a Json Value which is being processed as a type. This means the start and end markers are being written by the type processor.
+   *
+   * @param object      the value to write
+   * @param isContainer is the value a container? i.e. does it have start and end markers?
+   */
+  void writeRawCanonicalType(JsonValue object, boolean isContainer) throws IOException {
+    String json = object.toString();
+    Primitive raw = new Primitive(Type.JSON, json);
+
+    if (isContainer) {
+      // The caller has already pushed the start marker, creating the container. We pop the new container off the stack and discard it.
+      RawContainer rawContainer = new RawContainer(json);
+      stack.pop();
+      if (!stack.isEmpty()) {
+        // have to replace the link to the new container in the parent with the raw JSON
+        Container parent = stack.peek();
+        parent.set(writeContext.getParent(), raw);
+      }
+      stack.push(rawContainer);
+
+      return;
+    }
+
+    // Not a container, so no markers to handle
+    writePrimitive(raw);
+  }
+
+
+  /**
+   * Write a Json Value as a value.
+   *
+   * @param object the value
+   */
+  void writeRawCanonicalValue(JsonValue object) throws IOException {
+    writePrimitive(new Primitive(Type.JSON, object.toString()));
+  }
+
+
   @Override
   public void writeRawUTF8String(byte[] text, int offset, int length) {
     rawNotSupported();
@@ -512,18 +589,6 @@ public class CanonicalGenerator extends JsonGenerator {
   @Override
   public void writeRawValue(String text) {
     rawNotSupported();
-  }
-
-  void writeRawCanonicalValue(JsonObject object) {
-    // TODO
-  }
-
-  void writeRawCanonicalValue(JsonArray array) {
-    // TODO
-  }
-
-  void writeRawCanonicalValue(Primitive primitive) {
-    // TODO
   }
 
 
@@ -546,12 +611,7 @@ public class CanonicalGenerator extends JsonGenerator {
     ArrayContainer arrayContainer = new ArrayContainer();
     if (!stack.isEmpty()) {
       Container container = stack.peek();
-      if (container.isArray()) {
-        ((ArrayContainer) container).array.add(arrayContainer.array);
-      } else {
-        String key = writeContext.getCurrentName();
-        ((ObjectContainer) container).object.put(key, arrayContainer.array);
-      }
+      container.add(writeContext.getCurrentName(), new Primitive(Type.ARRAY, arrayContainer.array));
     }
 
     writeContext = writeContext.createChildArrayContext();
@@ -566,12 +626,7 @@ public class CanonicalGenerator extends JsonGenerator {
     ObjectContainer objectContainer = new ObjectContainer();
     if (!stack.isEmpty()) {
       Container container = stack.peek();
-      if (container.isArray()) {
-        ((ArrayContainer) container).array.add(objectContainer.object);
-      } else {
-        String key = writeContext.getCurrentName();
-        ((ObjectContainer) container).object.put(key, objectContainer.object);
-      }
+      container.add(writeContext.getCurrentName(), new Primitive(Type.OBJECT, objectContainer.object));
     }
 
     writeContext = writeContext.createChildObjectContext();

@@ -1,5 +1,7 @@
 package io.setl.json;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.setl.json.jackson.PrimitiveSerializer;
 import java.io.IOException;
 import java.io.Writer;
 import java.math.BigDecimal;
@@ -8,7 +10,11 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class Primitive implements Writable {
+/**
+ * Representation of a value in a JSON object or array.
+ */
+@JsonSerialize(using = PrimitiveSerializer.class)
+public class Primitive implements JsonValue {
 
   /** Common value for false. */
   public static final Primitive FALSE = new Primitive(Type.BOOLEAN, Boolean.FALSE);
@@ -144,6 +150,7 @@ public class Primitive implements Writable {
    *
    * @return the type
    */
+  @Override
   public Type getType() {
     return type;
   }
@@ -201,24 +208,29 @@ public class Primitive implements Writable {
 
   @Override
   public String toString() {
-    if (type == Type.STRING) {
-      return Canonical.format((String) value);
+    switch (type) {
+      case STRING:
+        return Canonical.format((String) value);
+      case NUMBER:
+        return Canonical.format((Number) value);
+      default:
+        return String.valueOf(value);
     }
-    if (type == Type.NUMBER) {
-      return Canonical.format((Number) value);
-    }
-    return String.valueOf(value);
   }
 
 
   @Override
   public void writeTo(Writer writer) throws IOException {
-    if (type == Type.STRING) {
-      Canonical.format(writer, (String) value);
-    } else if (type == Type.NUMBER) {
-      Canonical.format(writer, (Number) value);
-    } else {
-      writer.write(String.valueOf(value));
+    switch (type) {
+      case STRING:
+        Canonical.format(writer, (String) value);
+        break;
+      case NUMBER:
+        Canonical.format(writer, (Number) value);
+        break;
+      default:
+        writer.write(String.valueOf(value));
+        break;
     }
   }
 }

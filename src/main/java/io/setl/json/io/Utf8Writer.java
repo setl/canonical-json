@@ -3,6 +3,7 @@ package io.setl.json.io;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import javax.annotation.Nonnull;
 
 /**
  * @author Simon Greatrix on 03/01/2020.
@@ -30,13 +31,7 @@ public class Utf8Writer extends Writer implements Appendable {
 
 
   @Override
-  public void write(char[] cbuf, int off, int len) throws IOException {
+  public void write(@Nonnull char[] cbuf, int off, int len) throws IOException {
     appendable.append(cbuf, off, len);
-  }
-
-
-  @Override
-  public void write(String str, int off, int len) throws IOException {
-    super.write(str, off, len);
   }
 }

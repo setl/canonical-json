@@ -21,9 +21,55 @@ import javax.annotation.Nullable;
 
 /**
  * Representation of an object in JSON.
+ *
+ * <p>No value in the object can be null. If you try to add one, it will be replaced by a Primitive instance holding a null.
+ *
+ * <p>As JSON objects can contain mixed content, this class provides type-checking accessors to the array members. There are multiple varieties of each accessor
+ * which obey these contracts:
+ *
+ * <dl>
+ * <dt><code>get<i>Type</i>(key)</code></dt>
+ * <dd>
+ * <ul>
+ * <li>If the key is not present, returns null.</li>
+ * <li>If the entry is not the required type, returns null.
+ * <li>Otherwise returns the entry
+ * </ul>
+ * </dd>
+ *
+ * <dt><code>get<i>Type</i>(index, default)</code></dt>
+ * <dd>
+ * <ul>
+ * <li>If the key is not present, returns the default.
+ * <li>If the entry is not the required type, returns the default.
+ * <li>Otherwise returns the entry
+ * </ul>
+ * </dd>
+ * <dt><code>get<i>Type</i>(index, function)</code></dt>
+ * <dd>
+ * <ul>
+ * <li>If the key is not present, invokes the function to derive a suitable value.
+ * <li>If the entry is not the required type, invokes the function to derive a suitable value.
+ * <li>Otherwise returns the entry
+ * </ul>
+ * </dd>
+ * <dt><code>get<i>Type</i>Safe(index)</code></dt>
+ * <dd>
+ * <ul>
+ * <li>If the key is not present, throws a <code>MissingItemException</code>.
+ * <li>If the entry is not the required type, throws an <code>IncorrectTypeException</code>.
+ * <li>Otherwise returns the entry
+ * </ul>
+ * </dd>
+ * </dl>
+ *
+ * <p>The numeric accessors follow the normal Java rules for primitive type conversions and consider any number to be the correct type. For example, if you
+ * call <code>getIntSafe(key)</code> and element 0 contains the Long value 1L<<50, then the call returns the value of Integer.MAX_VALUE, as would be expected
+ * for a narrowing primitive conversion, rather than throwing a <code>IncorrectTypeException</code>.
  */
+
 @JsonSerialize(using = JsonObjectSerializer.class)
-public class JsonObject extends TreeMap<String, Primitive> implements Writable {
+public class JsonObject extends TreeMap<String, Primitive> implements JsonContainer {
 
   /**
    * Sort object keys into Unicode code point order.
@@ -579,6 +625,17 @@ public class JsonObject extends TreeMap<String, Primitive> implements Writable {
   @Nonnull
   public String getStringSafe(String key) {
     return getSafe(String.class, Type.STRING, key);
+  }
+
+
+  @Override
+  public Type getType() {
+    return Type.OBJECT;
+  }
+
+
+  public boolean isArray() {
+    return false;
   }
 
 

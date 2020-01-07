@@ -10,13 +10,12 @@ import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.core.Base64Variants;
 import com.fasterxml.jackson.core.JsonGenerator.Feature;
+import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.core.io.SerializedString;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.IntNode;
 import io.setl.json.JsonArray;
 import io.setl.json.JsonObject;
-import io.setl.json.jackson.CanonicalFactory;
-import io.setl.json.jackson.CanonicalGenerator;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigDecimal;
@@ -158,6 +157,23 @@ public class CanonicalGeneratorTest {
     instance = (CanonicalGenerator) new CanonicalFactory(new ObjectMapper()).createGenerator(writer);
   }
 
+
+  @Test
+  public void testWritingJson() throws IOException {
+    JsonArray array = new JsonArray();
+    array.add("A");
+    array.add(1);
+    JsonObject object = new JsonObject();
+    object.put("A", 1);
+    object.put("B", 2);
+    array.add(object);
+
+    instance.writeObject(array);
+
+    assertEquals("[\"A\",1,{\"A\":1,\"B\":2}]", writer.toString());
+  }
+
+
   @Test(expected = UnsupportedOperationException.class)
   public void useDefaultPrettyPrinter() {
     instance.useDefaultPrettyPrinter();
@@ -166,7 +182,8 @@ public class CanonicalGeneratorTest {
 
   @Test
   public void version() {
-    assertNotNull(instance.version());
+    Version pv = instance.version();
+    assertNotNull(pv);
   }
 
 
@@ -380,20 +397,5 @@ public class CanonicalGeneratorTest {
     byte[] data = "Hello, World!".getBytes(UTF_8);
     instance.writeUTF8String(data, 0, data.length);
     assertEquals("\"Hello, World!\"", writer.toString());
-  }
-
-  @Test
-  public void testWritingJson() throws IOException {
-    JsonArray array = new JsonArray();
-    array.add("A");
-    array.add(1);
-    JsonObject object = new JsonObject();
-    object.put("A",1);
-    object.put("B",2);
-    array.add(object);
-
-    instance.writeObject(array);
-
-    assertEquals("[\"A\",1,{\"A\":1,\"B\":2}]", writer.toString());
   }
 }

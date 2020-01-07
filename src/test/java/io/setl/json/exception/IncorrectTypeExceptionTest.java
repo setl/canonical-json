@@ -20,7 +20,7 @@ public class IncorrectTypeExceptionTest {
 
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     object = new JsonObject();
     object.put("array", new JsonArray());
     object.put("boolean", true);

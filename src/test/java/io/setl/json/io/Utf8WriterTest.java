@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import io.setl.json.io.Utf8Appendable;
-import io.setl.json.io.Utf8Writer;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -42,6 +40,8 @@ public class Utf8WriterTest {
       super.flush();
     }
   }
+
+
 
   Utf8Appendable appendable;
 

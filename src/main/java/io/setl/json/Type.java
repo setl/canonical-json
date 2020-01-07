@@ -10,6 +10,9 @@ public enum Type {
   /** A true or a false. */
   BOOLEAN(Boolean.class),
 
+  /** A block of canonical JSON. */
+  JSON(String.class),
+
   /** A null. */
   NULL(Void.class),
 
@@ -23,17 +26,17 @@ public enum Type {
   STRING(String.class);
 
   /** Class of associated encapsulated values. */
-  private final Class<?> type;
+  private final Class<?> valueType;
 
 
   /**
    * Create type.
    * 
-   * @param type
+   * @param valueType
    *          encapsulated value class
    */
-  Type(Class<?> type) {
-    this.type = type;
+  Type(Class<?> valueType) {
+    this.valueType = valueType;
   }
 
 
@@ -43,6 +46,6 @@ public enum Type {
    * @return the type of the encapsulated value
    */
   public Class<?> getType() {
-    return type;
+    return valueType;
   }
 }

@@ -1,7 +1,9 @@
 package io.setl.json;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.setl.json.exception.IncorrectTypeException;
 import io.setl.json.exception.MissingItemException;
+import io.setl.json.jackson.JsonArraySerializer;
 import java.io.IOException;
 import java.io.Writer;
 import java.math.BigDecimal;
@@ -66,7 +68,8 @@ import javax.annotation.Nullable;
  * call <code>getIntSafe(0)</code> and element 0 contains the Long value 1L<<50, then the call returns the value of Integer.MAX_VALUE, as would be expected
  * for a narrowing primitive conversion, rather than throwing a <code>IncorrectTypeException</code>.
  */
-public class JsonArray extends ArrayList<Primitive> implements Writable {
+@JsonSerialize(using = JsonArraySerializer.class)
+public class JsonArray extends ArrayList<Primitive> implements JsonContainer {
 
   /** serial version UID. */
   private static final long serialVersionUID = 2L;
@@ -702,6 +705,17 @@ public class JsonArray extends ArrayList<Primitive> implements Writable {
   @Nonnull
   public String getStringSafe(int index) {
     return getSafe(String.class, Type.STRING, index);
+  }
+
+
+  @Override
+  public Type getType() {
+    return Type.ARRAY;
+  }
+
+
+  public boolean isArray() {
+    return true;
   }
 
 

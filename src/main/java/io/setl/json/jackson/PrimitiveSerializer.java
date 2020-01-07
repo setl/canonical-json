@@ -1,24 +1,32 @@
 package io.setl.json.jackson;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.setl.json.Primitive;
-import java.io.IOException;
 
 /**
  * @author Simon Greatrix on 06/01/2020.
  */
-public class PrimitiveSerializer extends JsonSerializer<Primitive> {
+public class PrimitiveSerializer extends JsonValueSerializer<Primitive> {
 
-  public static final JavaType TYPE = TypeFactory.defaultInstance().constructType(Primitive.class);
+  static final PrimitiveSerializer INSTANCE = new PrimitiveSerializer();
 
-  public static final PrimitiveSerializer INSTANCE = new PrimitiveSerializer();
+  static final JavaType TYPE = TypeFactory.defaultInstance().constructType(Primitive.class);
+
 
   @Override
-  public void serialize(Primitive value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-
+  public void acceptJsonFormatVisitor(JsonFormatVisitorWrapper visitor, JavaType type) throws JsonMappingException {
+    // Cannot narrow the format down as a Primitive could be anything.
+    visitor.expectAnyFormat(type);
   }
+
+
+  @Override
+  public Class<Primitive> handledType() {
+    return Primitive.class;
+  }
+
+
 }

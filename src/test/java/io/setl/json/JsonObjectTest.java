@@ -25,7 +25,7 @@ public class JsonObjectTest {
 
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     json.put("string", "string");
     json.put("\07", "bell");
     json.put("\uD83D\uDE09", "winking");

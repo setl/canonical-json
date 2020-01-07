@@ -1,7 +1,7 @@
 package io.setl.json.exception;
 
 /**
- * Base exception used when the "safe" accessors of JsonObject and JsonArray encounter a problem.
+ * Base exception used when the "safe" accessors of JObject and JArray encounter a problem.
  *
  * @author Simon Greatrix
  */

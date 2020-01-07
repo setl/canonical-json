@@ -1,7 +1,7 @@
 package io.setl.json.exception;
 
 import io.setl.json.Canonical;
-import io.setl.json.Type;
+import io.setl.json.JType;
 
 /**
  * An exception thrown when a type-checking accessor finds data of the wrong type.
@@ -12,13 +12,13 @@ public class IncorrectTypeException extends RequiredItemException {
 
   private static final long serialVersionUID = 1L;
 
-  private final Type actual;
+  private final JType actual;
 
   private final int index;
 
   private final String key;
 
-  private final Type required;
+  private final JType required;
 
 
   /**
@@ -28,7 +28,7 @@ public class IncorrectTypeException extends RequiredItemException {
    * @param required the required data type
    * @param actual   the actual data type
    */
-  public IncorrectTypeException(int index, Type required, Type actual) {
+  public IncorrectTypeException(int index, JType required, JType actual) {
     super("Item at " + index + " has type " + actual + ". Required " + required);
     this.index = index;
     this.key = null;
@@ -44,7 +44,7 @@ public class IncorrectTypeException extends RequiredItemException {
    * @param required the required data type
    * @param actual   the actual data type
    */
-  public IncorrectTypeException(String key, Type required, Type actual) {
+  public IncorrectTypeException(String key, JType required, JType actual) {
     super("Item at " + Canonical.format(key) + " has type " + actual + ". Required " + required);
     this.index = -1;
     this.key = key;
@@ -58,7 +58,7 @@ public class IncorrectTypeException extends RequiredItemException {
    *
    * @return the actual type
    */
-  public Type getActual() {
+  public JType getActual() {
     return actual;
   }
 
@@ -88,7 +88,7 @@ public class IncorrectTypeException extends RequiredItemException {
    *
    * @return the required type
    */
-  public Type getRequired() {
+  public JType getRequired() {
     return required;
   }
 

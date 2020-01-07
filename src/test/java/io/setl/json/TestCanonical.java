@@ -41,7 +41,7 @@ public class TestCanonical {
   @Test
   public void testParse() throws IOException {
     Primitive p = loadJson("expected.json");
-    JsonArray array = p.getValueSafe(JsonArray.class);
+    JArray array = p.getValueSafe(JArray.class);
     ByteArrayOutputStream output = new ByteArrayOutputStream();
     for (Primitive p2 : array) {
       String f = p2.getValueSafe(String.class);

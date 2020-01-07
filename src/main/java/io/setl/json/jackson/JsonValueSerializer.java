@@ -6,16 +6,16 @@ import com.fasterxml.jackson.core.type.WritableTypeId;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
-import io.setl.json.JsonValue;
+import io.setl.json.JValue;
 import java.io.IOException;
 
 /**
  * @author Simon Greatrix on 2020-01-07.
  */
-public class JsonValueSerializer<T extends JsonValue> extends JsonSerializer<T> {
+public class JsonValueSerializer<T extends JValue> extends JsonSerializer<T> {
 
   @Override
-  public void serialize(JsonValue value, JsonGenerator gen, SerializerProvider serializerProvider) throws IOException {
+  public void serialize(JValue value, JsonGenerator gen, SerializerProvider serializerProvider) throws IOException {
     if (gen instanceof CanonicalGenerator) {
       ((CanonicalGenerator) gen).writeRawCanonicalValue(value);
       return;
@@ -26,7 +26,7 @@ public class JsonValueSerializer<T extends JsonValue> extends JsonSerializer<T> 
 
 
   @Override
-  public void serializeWithType(JsonValue object, JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
+  public void serializeWithType(JValue object, JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
     gen.setCurrentValue(object);
     JsonToken token;
     switch (object.getType()) {

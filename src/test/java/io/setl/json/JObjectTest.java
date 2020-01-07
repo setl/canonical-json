@@ -19,9 +19,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 @SuppressWarnings("checkstyle:AvoidEscapedUnicodeCharacters")
-public class JsonObjectTest {
+public class JObjectTest {
 
-  private JsonObject json = new JsonObject();
+  private JObject json = new JObject();
 
 
   @Before
@@ -34,8 +34,8 @@ public class JsonObjectTest {
     json.put("null");
     json.put("small number", new BigDecimal("1e-5"));
     json.put("big number", new BigDecimal("1e+5"));
-    json.put("object", new JsonObject());
-    json.put("array", new JsonArray());
+    json.put("object", new JObject());
+    json.put("array", new JArray());
     json.put("boolean", true);
   }
 
@@ -51,21 +51,21 @@ public class JsonObjectTest {
     hm.put("f", "text");
     hm.put("g", Primitive.TRUE);
 
-    JsonObject fixed = JsonObject.fixMap(hm);
+    JObject fixed = JObject.fixMap(hm);
     assertEquals("{\"a\":[1,2,3],\"b\":true,\"c\":null,\"d\":5,\"e\":{},\"f\":\"text\",\"g\":true}", fixed.toString());
-    JsonObject fixed2 = JsonObject.fixMap(fixed);
+    JObject fixed2 = JObject.fixMap(fixed);
     assertSame(fixed, fixed2);
 
     HashMap<String, Object> hm2 = new HashMap<>();
     hm.forEach((k, v) -> hm2.put(String.valueOf(k), v));
-    JsonObject fixed3 = new JsonObject(hm2);
+    JObject fixed3 = new JObject(hm2);
     assertEquals(fixed, fixed3);
     assertNotSame(fixed, fixed3);
 
     hm.clear();
     hm.put(1, 2);
     try {
-      JsonObject.fixMap(hm);
+      JObject.fixMap(hm);
       fail();
     } catch (IllegalArgumentException e) {
       // correct
@@ -74,7 +74,7 @@ public class JsonObjectTest {
     hm.clear();
     hm.put(null, null);
     try {
-      JsonObject.fixMap(hm);
+      JObject.fixMap(hm);
       fail();
     } catch (IllegalArgumentException e) {
       // correct
@@ -102,7 +102,7 @@ public class JsonObjectTest {
 
   @Test
   public void testGetArrayString() {
-    JsonArray a1 = new JsonArray();
+    JArray a1 = new JArray();
     a1.add(1.0);
     json.put("array", a1);
     assertNull(json.getArray("null"));
@@ -114,10 +114,10 @@ public class JsonObjectTest {
 
   @Test
   public void testGetArrayStringFunctionOfStringJsonArray() {
-    JsonArray a1 = new JsonArray();
+    JArray a1 = new JArray();
     a1.add(1);
     json.put("array", a1);
-    final JsonArray a2 = new JsonArray();
+    final JArray a2 = new JArray();
     a1.add(2);
 
     assertEquals(a2, json.getArray("null", k -> a2));
@@ -129,10 +129,10 @@ public class JsonObjectTest {
 
   @Test
   public void testGetArrayStringJsonArray() {
-    JsonArray a1 = new JsonArray();
+    JArray a1 = new JArray();
     a1.add(1);
     json.put("array", a1);
-    final JsonArray a2 = new JsonArray();
+    final JArray a2 = new JArray();
     a1.add(2);
 
     assertEquals(a2, json.getArray("null", a2));
@@ -465,7 +465,7 @@ public class JsonObjectTest {
 
   @Test
   public void testGetObjectString() {
-    JsonObject o1 = new JsonObject();
+    JObject o1 = new JObject();
     o1.put("a", 3);
     json.put("object", o1);
     assertNull(json.getArray("null"));
@@ -477,9 +477,9 @@ public class JsonObjectTest {
 
   @Test
   public void testGetObjectStringFunctionOfStringJsonObject() {
-    JsonObject o1 = new JsonObject();
+    JObject o1 = new JObject();
     o1.put("a", 3);
-    JsonObject o2 = new JsonObject();
+    JObject o2 = new JObject();
     o1.put("a", "three");
 
     json.put("object", o1);
@@ -492,9 +492,9 @@ public class JsonObjectTest {
 
   @Test
   public void testGetObjectStringJsonObject() {
-    JsonObject o1 = new JsonObject();
+    JObject o1 = new JObject();
     o1.put("a", 3);
-    JsonObject o2 = new JsonObject();
+    JObject o2 = new JObject();
     o1.put("a", "three");
 
     json.put("object", o1);
@@ -561,10 +561,10 @@ public class JsonObjectTest {
 
   @Test
   public void testIsType() {
-    assertTrue(json.isType("string", Type.STRING));
-    assertFalse(json.isType("big number", Type.STRING));
-    assertTrue(json.isType("big number", Type.NUMBER));
-    assertFalse(json.isType("n/a", Type.NUMBER));
+    assertTrue(json.isType("string", JType.STRING));
+    assertFalse(json.isType("big number", JType.STRING));
+    assertTrue(json.isType("big number", JType.NUMBER));
+    assertFalse(json.isType("n/a", JType.NUMBER));
   }
 
 
@@ -615,7 +615,7 @@ public class JsonObjectTest {
 
   @Test
   public void testPutStringJsonArray() {
-    JsonArray a1 = new JsonArray();
+    JArray a1 = new JArray();
     a1.add(3.5);
     assertFalse(json.containsKey("a"));
     json.put("a", a1);
@@ -623,7 +623,7 @@ public class JsonObjectTest {
     assertEquals(a1, json.getArray("a"));
 
     assertFalse(json.containsKey("b"));
-    json.put("b", (JsonArray) null);
+    json.put("b", (JArray) null);
     assertTrue(json.containsKey("b"));
     assertEquals(Primitive.NULL, json.get("b"));
   }
@@ -631,7 +631,7 @@ public class JsonObjectTest {
 
   @Test
   public void testPutStringJsonObject() {
-    JsonObject o1 = new JsonObject();
+    JObject o1 = new JObject();
     o1.put("x", 3.5);
     assertFalse(json.containsKey("a"));
     json.put("a", o1);
@@ -639,7 +639,7 @@ public class JsonObjectTest {
     assertEquals(o1, json.getObject("a"));
 
     assertFalse(json.containsKey("b"));
-    json.put("b", (JsonObject) null);
+    json.put("b", (JObject) null);
     assertTrue(json.containsKey("b"));
     assertEquals(Primitive.NULL, json.get("b"));
   }

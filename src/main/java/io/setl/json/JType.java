@@ -3,9 +3,9 @@ package io.setl.json;
 /**
  * Enumeration of JSON types.
  */
-public enum Type {
+public enum JType {
   /** A JSON [...] construct. */
-  ARRAY(JsonArray.class),
+  ARRAY(JArray.class),
 
   /** A true or a false. */
   BOOLEAN(Boolean.class),
@@ -20,7 +20,7 @@ public enum Type {
   NUMBER(Number.class),
 
   /** A JSON { ... } construct. */
-  OBJECT(JsonObject.class),
+  OBJECT(JObject.class),
 
   /** A string. */
   STRING(String.class);
@@ -35,7 +35,7 @@ public enum Type {
    * @param valueType
    *          encapsulated value class
    */
-  Type(Class<?> valueType) {
+  JType(Class<?> valueType) {
     this.valueType = valueType;
   }
 

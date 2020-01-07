@@ -18,6 +18,10 @@ import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.json.JsonArray;
+import javax.json.JsonNumber;
+import javax.json.JsonObject;
+import javax.json.JsonString;
 
 /**
  * Representation of an object in JSON.
@@ -69,7 +73,7 @@ import javax.annotation.Nullable;
  */
 
 @JsonSerialize(using = JsonObjectSerializer.class)
-public class JsonObject extends TreeMap<String, Primitive> implements JsonContainer {
+public class JObject extends TreeMap<String, Primitive> implements JContainer, JsonObject {
 
   /**
    * Sort object keys into Unicode code point order.
@@ -96,18 +100,18 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
 
 
   /**
-   * Convert any map into a JsonObject.
+   * Convert any map into a JObject.
    *
    * @param map the map to convert
    *
-   * @return the equivalent JsonObject
+   * @return the equivalent JObject
    */
-  static JsonObject fixMap(Map<?, ?> map) {
-    if (map instanceof JsonObject) {
-      return (JsonObject) map;
+  static JObject fixMap(Map<?, ?> map) {
+    if (map instanceof JObject) {
+      return (JObject) map;
     }
 
-    JsonObject out = new JsonObject();
+    JObject out = new JObject();
     for (Map.Entry<?, ?> entry : map.entrySet()) {
       Object key = entry.getKey();
       if (key == null) {
@@ -125,12 +129,12 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
   }
 
 
-  public JsonObject() {
+  public JObject() {
     super(CODE_POINT_ORDER);
   }
 
 
-  public JsonObject(Map<String, ?> map) {
+  public JObject(Map<String, ?> map) {
     super(CODE_POINT_ORDER);
     putAll(fixMap(map));
   }
@@ -141,8 +145,8 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    *
    * @return the array, or null
    */
-  public JsonArray getArray(String key) {
-    return getQuiet(JsonArray.class, key);
+  public JArray getArray(String key) {
+    return getQuiet(JArray.class, key);
   }
 
 
@@ -154,8 +158,8 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    *
    * @return the array, or the default
    */
-  public JsonArray getArray(String key, Function<String, JsonArray> dflt) {
-    return getQuiet(JsonArray.class, key, dflt);
+  public JArray getArray(String key, Function<String, JArray> dflt) {
+    return getQuiet(JArray.class, key, dflt);
   }
 
 
@@ -167,8 +171,8 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    *
    * @return the array, or the default
    */
-  public JsonArray getArray(String key, JsonArray dflt) {
-    return getQuiet(JsonArray.class, key, dflt);
+  public JArray getArray(String key, JArray dflt) {
+    return getQuiet(JArray.class, key, dflt);
   }
 
 
@@ -177,8 +181,8 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    *
    * @return the array
    */
-  public JsonArray getArraySafe(String key) {
-    return getSafe(JsonArray.class, Type.ARRAY, key);
+  public JArray getArraySafe(String key) {
+    return getSafe(JArray.class, JType.ARRAY, key);
   }
 
 
@@ -233,7 +237,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    * @return the big decimal
    */
   public BigDecimal getBigDecimalSafe(String key) {
-    Number n = getSafe(Number.class, Type.NUMBER, key);
+    Number n = getSafe(Number.class, JType.NUMBER, key);
     return Primitive.toBigDecimal(n);
   }
 
@@ -290,7 +294,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    * @return the big integer
    */
   public BigInteger getBigIntegerSafe(String key) {
-    Number n = getSafe(Number.class, Type.NUMBER, key);
+    Number n = getSafe(Number.class, JType.NUMBER, key);
     return Primitive.toBigInteger(n);
   }
 
@@ -319,6 +323,12 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
   }
 
 
+  @Override
+  public boolean isNull(String name) {
+    return get(name).getType() == JType.NULL;
+  }
+
+
   /**
    * Get a Boolean from the object.
    *
@@ -340,7 +350,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    */
   @Nonnull
   public Boolean getBooleanSafe(String key) {
-    return getSafe(Boolean.class, Type.BOOLEAN, key);
+    return getSafe(Boolean.class, JType.BOOLEAN, key);
   }
 
 
@@ -390,7 +400,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    * @return the double
    */
   public double getDoubleSafe(String key) {
-    Number n = getSafe(Number.class, Type.NUMBER, key);
+    Number n = getSafe(Number.class, JType.NUMBER, key);
     return n.doubleValue();
   }
 
@@ -401,7 +411,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    * @return the integer, or null
    */
   @Nullable
-  public Integer getInt(String key) {
+  public Integer getInteger(String key) {
     Number n = getQuiet(Number.class, key);
     return (n != null) ? Integer.valueOf(n.intValue()) : null;
   }
@@ -415,7 +425,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    *
    * @return the integer, or the default
    */
-  public int getInt(String key, int dflt) {
+  public int getInteger(String key, int dflt) {
     Number n = getQuiet(Number.class, key);
     return (n != null) ? n.intValue() : dflt;
   }
@@ -429,7 +439,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    *
    * @return the integer, or the default
    */
-  public int getInt(String key, ToIntFunction<String> dflt) {
+  public int getInteger(String key, ToIntFunction<String> dflt) {
     Number n = getQuiet(Number.class, key);
     return (n != null) ? n.intValue() : dflt.applyAsInt(key);
   }
@@ -440,8 +450,8 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    *
    * @return the integer
    */
-  public int getIntSafe(String key) {
-    return getSafe(Number.class, Type.NUMBER, key).intValue();
+  public int getIntegerSafe(String key) {
+    return getSafe(Number.class, JType.NUMBER, key).intValue();
   }
 
 
@@ -491,7 +501,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    * @return the long
    */
   public long getLongSafe(String key) {
-    Number n = getSafe(Number.class, Type.NUMBER, key);
+    Number n = getSafe(Number.class, JType.NUMBER, key);
     return n.longValue();
   }
 
@@ -502,8 +512,8 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    * @return the object, or null
    */
   @Nullable
-  public JsonObject getObject(String key) {
-    return getQuiet(JsonObject.class, key);
+  public JObject getObject(String key) {
+    return getQuiet(JObject.class, key);
   }
 
 
@@ -515,8 +525,8 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    *
    * @return the object, or the default
    */
-  public JsonObject getObject(String key, Function<String, JsonObject> dflt) {
-    return getQuiet(JsonObject.class, key, dflt);
+  public JObject getObject(String key, Function<String, JObject> dflt) {
+    return getQuiet(JObject.class, key, dflt);
   }
 
 
@@ -528,8 +538,8 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    *
    * @return the object, or the default
    */
-  public JsonObject getObject(String key, JsonObject dflt) {
-    return getQuiet(JsonObject.class, key, dflt);
+  public JObject getObject(String key, JObject dflt) {
+    return getQuiet(JObject.class, key, dflt);
   }
 
 
@@ -539,8 +549,8 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    * @return the object
    */
   @Nonnull
-  public JsonObject getObjectSafe(String key) {
-    return getSafe(JsonObject.class, Type.OBJECT, key);
+  public JObject getObjectSafe(String key) {
+    return getSafe(JObject.class, JType.OBJECT, key);
   }
 
 
@@ -567,7 +577,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
   }
 
 
-  private <T> T getSafe(Class<T> clazz, Type type, String key) {
+  private <T> T getSafe(Class<T> clazz, JType type, String key) {
     Primitive primitive = get(key);
     if (primitive == null) {
       throw new MissingItemException(key, type);
@@ -577,6 +587,30 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
       return clazz.cast(value);
     }
     throw new IncorrectTypeException(key, type, primitive.getType());
+  }
+
+
+  @Override
+  public JsonArray getJsonArray(String name) {
+    return null;
+  }
+
+
+  @Override
+  public JsonObject getJsonObject(String name) {
+    return null;
+  }
+
+
+  @Override
+  public JsonNumber getJsonNumber(String name) {
+    return null;
+  }
+
+
+  @Override
+  public JsonString getJsonString(String name) {
+    return null;
   }
 
 
@@ -624,13 +658,13 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    */
   @Nonnull
   public String getStringSafe(String key) {
-    return getSafe(String.class, Type.STRING, key);
+    return getSafe(String.class, JType.STRING, key);
   }
 
 
   @Override
-  public Type getType() {
-    return Type.OBJECT;
+  public JType getType() {
+    return JType.OBJECT;
   }
 
 
@@ -639,7 +673,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
   }
 
 
-  public boolean isType(String key, Type type) {
+  public boolean isType(String key, JType type) {
     Primitive primitive = get(key);
     return (primitive != null) && primitive.getType() == type;
   }
@@ -651,7 +685,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    * @param key the key
    */
   public void put(String key) {
-    put(key, new Primitive(Type.NULL, null));
+    put(key, new Primitive(JType.NULL, null));
   }
 
 
@@ -663,9 +697,9 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    */
   public void put(String key, Boolean value) {
     if (value != null) {
-      put(key, new Primitive(Type.BOOLEAN, value));
+      put(key, new Primitive(JType.BOOLEAN, value));
     } else {
-      put(key, new Primitive(Type.NULL, null));
+      put(key, new Primitive(JType.NULL, null));
     }
   }
 
@@ -676,11 +710,11 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    * @param key   the key
    * @param value the value
    */
-  public void put(String key, JsonArray value) {
+  public void put(String key, JArray value) {
     if (value != null) {
-      put(key, new Primitive(Type.ARRAY, value));
+      put(key, new Primitive(JType.ARRAY, value));
     } else {
-      put(key, new Primitive(Type.NULL, null));
+      put(key, new Primitive(JType.NULL, null));
     }
   }
 
@@ -691,11 +725,11 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    * @param key   the key
    * @param value the value
    */
-  public void put(String key, JsonObject value) {
+  public void put(String key, JObject value) {
     if (value != null) {
-      put(key, new Primitive(Type.OBJECT, value));
+      put(key, new Primitive(JType.OBJECT, value));
     } else {
-      put(key, new Primitive(Type.NULL, null));
+      put(key, new Primitive(JType.NULL, null));
     }
   }
 
@@ -708,9 +742,9 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    */
   public void put(String key, Number value) {
     if (value != null) {
-      put(key, new Primitive(Type.NUMBER, value));
+      put(key, new Primitive(JType.NUMBER, value));
     } else {
-      put(key, new Primitive(Type.NULL, null));
+      put(key, new Primitive(JType.NULL, null));
     }
   }
 
@@ -723,9 +757,9 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    */
   public void put(String key, String value) {
     if (value != null) {
-      put(key, new Primitive(Type.STRING, value));
+      put(key, new Primitive(JType.STRING, value));
     } else {
-      put(key, new Primitive(Type.NULL, null));
+      put(key, new Primitive(JType.NULL, null));
     }
   }
 
@@ -738,13 +772,13 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    * @return the array removed
    */
   @Nullable
-  public JsonArray removeArray(String key) {
+  public JArray removeArray(String key) {
     Primitive primitive = get(key);
-    if (primitive == null || primitive.getType() != Type.ARRAY) {
+    if (primitive == null || primitive.getType() != JType.ARRAY) {
       return null;
     }
     remove(key);
-    return (JsonArray) primitive.getValue();
+    return (JArray) primitive.getValue();
   }
 
 
@@ -758,7 +792,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
   @Nullable
   public Boolean removeBoolean(String key) {
     Primitive primitive = get(key);
-    if (primitive == null || primitive.getType() != Type.BOOLEAN) {
+    if (primitive == null || primitive.getType() != JType.BOOLEAN) {
       return null;
     }
     remove(key);
@@ -773,7 +807,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    */
   public void removeNull(String key) {
     Primitive primitive = get(key);
-    if (primitive != null && primitive.getType() == Type.NULL) {
+    if (primitive != null && primitive.getType() == JType.NULL) {
       remove(key);
     }
   }
@@ -789,7 +823,7 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
   @Nullable
   public Number removeNumber(String key) {
     Primitive primitive = get(key);
-    if (primitive == null || primitive.getType() != Type.NUMBER) {
+    if (primitive == null || primitive.getType() != JType.NUMBER) {
       return null;
     }
     remove(key);
@@ -805,13 +839,13 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
    * @return the object removed
    */
   @Nullable
-  public JsonObject removeObject(String key) {
+  public JObject removeObject(String key) {
     Primitive primitive = get(key);
-    if (primitive == null || primitive.getType() != Type.OBJECT) {
+    if (primitive == null || primitive.getType() != JType.OBJECT) {
       return null;
     }
     remove(key);
-    return (JsonObject) primitive.getValue();
+    return (JObject) primitive.getValue();
   }
 
 
@@ -825,11 +859,17 @@ public class JsonObject extends TreeMap<String, Primitive> implements JsonContai
   @Nullable
   public String removeString(String key) {
     Primitive primitive = get(key);
-    if (primitive == null || primitive.getType() != Type.STRING) {
+    if (primitive == null || primitive.getType() != JType.STRING) {
       return null;
     }
     remove(key);
     return (String) primitive.getValue();
+  }
+
+
+  @Override
+  public ValueType getValueType() {
+    return ValueType.OBJECT;
   }
 
 

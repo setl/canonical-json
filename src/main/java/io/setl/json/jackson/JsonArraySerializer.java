@@ -4,12 +4,12 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonArrayFormatVisitor;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
-import io.setl.json.JsonArray;
+import io.setl.json.JArray;
 
 /**
  * @author Simon Greatrix on 06/01/2020.
  */
-public class JsonArraySerializer extends JsonValueSerializer<JsonArray> {
+public class JsonArraySerializer extends JsonValueSerializer<JArray> {
 
   @Override
   public void acceptJsonFormatVisitor(
@@ -23,7 +23,7 @@ public class JsonArraySerializer extends JsonValueSerializer<JsonArray> {
 
 
   @Override
-  public Class<JsonArray> handledType() {
-    return JsonArray.class;
+  public Class<JArray> handledType() {
+    return JArray.class;
   }
 }

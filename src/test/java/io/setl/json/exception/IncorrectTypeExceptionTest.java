@@ -4,32 +4,31 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
-import io.setl.json.JsonArray;
-import io.setl.json.JsonObject;
-import io.setl.json.Type;
-import io.setl.json.exception.IncorrectTypeException;
+import io.setl.json.JArray;
+import io.setl.json.JObject;
+import io.setl.json.JType;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 public class IncorrectTypeExceptionTest {
 
-  JsonArray array;
+  JArray array;
 
-  JsonObject object;
+  JObject object;
 
 
   @Before
   public void setUp() {
-    object = new JsonObject();
-    object.put("array", new JsonArray());
+    object = new JObject();
+    object.put("array", new JArray());
     object.put("boolean", true);
     object.put("null");
     object.put("string", "text");
     object.put("number", 123);
-    object.put("object", new JsonObject());
+    object.put("object", new JObject());
 
-    array = new JsonArray();
+    array = new JArray();
     array.addAll(object.values());
   }
 
@@ -46,8 +45,8 @@ public class IncorrectTypeExceptionTest {
 
     assertEquals(0, e.getIndex());
     assertNull(e.getKey());
-    Assert.assertEquals(Type.ARRAY, e.getActual());
-    assertEquals(Type.STRING, e.getRequired());
+    Assert.assertEquals(JType.ARRAY, e.getActual());
+    assertEquals(JType.STRING, e.getRequired());
   }
 
 
@@ -63,8 +62,8 @@ public class IncorrectTypeExceptionTest {
 
     assertEquals(-1, e.getIndex());
     assertEquals("array", e.getKey());
-    assertEquals(Type.ARRAY, e.getActual());
-    assertEquals(Type.STRING, e.getRequired());
+    assertEquals(JType.ARRAY, e.getActual());
+    assertEquals(JType.STRING, e.getRequired());
   }
 
 }

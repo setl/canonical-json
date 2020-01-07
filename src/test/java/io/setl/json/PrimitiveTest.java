@@ -17,25 +17,25 @@ public class PrimitiveTest {
   @Test
   public void test() {
     try {
-      new Primitive(Type.NULL, "");
+      new Primitive(JType.NULL, "");
       fail();
     } catch (IllegalArgumentException e) {
       // correct
     }
     try {
-      new Primitive(Type.STRING, null);
+      new Primitive(JType.STRING, null);
       fail();
     } catch (IllegalArgumentException e) {
       // correct
     }
     try {
-      new Primitive(Type.STRING, 123);
+      new Primitive(JType.STRING, 123);
       fail();
     } catch (ClassCastException e) {
       // correct
     }
-    Primitive primitive = new Primitive(Type.STRING, "123");
-    assertEquals(Type.STRING, primitive.getType());
+    Primitive primitive = new Primitive(JType.STRING, "123");
+    assertEquals(JType.STRING, primitive.getType());
     assertEquals("123", primitive.getValue());
     assertEquals(123, primitive.getValue(Number.class, 123));
     assertEquals("123", primitive.getValue(String.class, "abc"));
@@ -52,16 +52,16 @@ public class PrimitiveTest {
 
   @Test
   public void testCreate() {
-    testCreate(Type.NULL, null, null);
-    testCreate(Type.NULL, null, Primitive.NULL);
-    testCreate(Type.BOOLEAN, true, true);
-    testCreate(Type.BOOLEAN, false, false);
-    testCreate(Type.STRING, "abc", "abc");
-    testCreate(Type.NUMBER, 123, 123);
-    testCreate(Type.ARRAY, new JsonArray(), new JsonArray());
-    testCreate(Type.OBJECT, new JsonObject(), new JsonObject());
-    testCreate(Type.ARRAY, new JsonArray(), new ArrayList<>());
-    testCreate(Type.OBJECT, new JsonObject(), new HashMap<>());
+    testCreate(JType.NULL, null, null);
+    testCreate(JType.NULL, null, Primitive.NULL);
+    testCreate(JType.BOOLEAN, true, true);
+    testCreate(JType.BOOLEAN, false, false);
+    testCreate(JType.STRING, "abc", "abc");
+    testCreate(JType.NUMBER, 123, 123);
+    testCreate(JType.ARRAY, new JArray(), new JArray());
+    testCreate(JType.OBJECT, new JObject(), new JObject());
+    testCreate(JType.ARRAY, new JArray(), new ArrayList<>());
+    testCreate(JType.OBJECT, new JObject(), new HashMap<>());
 
     try {
       Primitive.create(this.getClass());
@@ -72,7 +72,7 @@ public class PrimitiveTest {
   }
 
 
-  private void testCreate(Type type, Object check, Object value) {
+  private void testCreate(JType type, Object check, Object value) {
     Primitive primitive = Primitive.create(value);
     assertEquals(type, primitive.getType());
     assertEquals(check, primitive.getValue());
@@ -82,17 +82,17 @@ public class PrimitiveTest {
   @SuppressWarnings("unlikely-arg-type")
   @Test
   public void testEquals() {
-    Primitive primitive = new Primitive(Type.STRING, "123");
+    Primitive primitive = new Primitive(JType.STRING, "123");
     primitive.hashCode();
     Primitive.NULL.hashCode();
     assertEquals(primitive, primitive);
     assertNotEquals(null, primitive);
-    assertEquals(primitive, new Primitive(Type.STRING, "123"));
-    assertNotEquals(primitive, new Primitive(Type.STRING, "456"));
-    assertNotEquals(primitive, new Primitive(Type.NUMBER, 123));
-    assertNotEquals(primitive, new Primitive(Type.NULL, null));
-    assertEquals(Primitive.NULL, new Primitive(Type.NULL, null));
-    assertNotEquals(Primitive.NULL, new Primitive(Type.STRING, "123"));
+    assertEquals(primitive, new Primitive(JType.STRING, "123"));
+    assertNotEquals(primitive, new Primitive(JType.STRING, "456"));
+    assertNotEquals(primitive, new Primitive(JType.NUMBER, 123));
+    assertNotEquals(primitive, new Primitive(JType.NULL, null));
+    assertEquals(Primitive.NULL, new Primitive(JType.NULL, null));
+    assertNotEquals(Primitive.NULL, new Primitive(JType.STRING, "123"));
     assertNotEquals("null", Primitive.NULL);
   }
 
@@ -136,8 +136,8 @@ public class PrimitiveTest {
 
   @Test
   public void testToString() {
-    assertEquals("\"abc\"", new Primitive(Type.STRING, "abc").toString());
+    assertEquals("\"abc\"", new Primitive(JType.STRING, "abc").toString());
     assertEquals("true", Primitive.TRUE.toString());
-    assertEquals("5.0E-1", new Primitive(Type.NUMBER, 0.5).toString());
+    assertEquals("5.0E-1", new Primitive(JType.NUMBER, 0.5).toString());
   }
 }

@@ -13,11 +13,11 @@ import com.fasterxml.jackson.core.io.IOContext;
 import com.fasterxml.jackson.core.json.DupDetector;
 import com.fasterxml.jackson.core.json.JsonWriteContext;
 import com.fasterxml.jackson.core.util.VersionUtil;
-import io.setl.json.JsonArray;
-import io.setl.json.JsonObject;
-import io.setl.json.JsonValue;
+import io.setl.json.JArray;
+import io.setl.json.JObject;
+import io.setl.json.JValue;
 import io.setl.json.Primitive;
-import io.setl.json.Type;
+import io.setl.json.JType;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,7 +68,7 @@ public class CanonicalGenerator extends JsonGenerator {
 
   static class ArrayContainer implements Container {
 
-    final JsonArray array = new JsonArray();
+    final JArray array = new JArray();
 
 
     @Override
@@ -93,7 +93,7 @@ public class CanonicalGenerator extends JsonGenerator {
 
   static class ObjectContainer implements Container {
 
-    final JsonObject object = new JsonObject();
+    final JObject object = new JObject();
 
 
     @Override
@@ -547,9 +547,9 @@ public class CanonicalGenerator extends JsonGenerator {
    * @param object      the value to write
    * @param isContainer is the value a container? i.e. does it have start and end markers?
    */
-  void writeRawCanonicalType(JsonValue object, boolean isContainer) throws IOException {
+  void writeRawCanonicalType(JValue object, boolean isContainer) throws IOException {
     String json = object.toString();
-    Primitive raw = new Primitive(Type.JSON, json);
+    Primitive raw = new Primitive(JType.JSON, json);
 
     if (isContainer) {
       // The caller has already pushed the start marker, creating the container. We pop the new container off the stack and discard it.
@@ -575,8 +575,8 @@ public class CanonicalGenerator extends JsonGenerator {
    *
    * @param object the value
    */
-  void writeRawCanonicalValue(JsonValue object) throws IOException {
-    writePrimitive(new Primitive(Type.JSON, object.toString()));
+  void writeRawCanonicalValue(JValue object) throws IOException {
+    writePrimitive(new Primitive(JType.JSON, object.toString()));
   }
 
 
@@ -611,7 +611,7 @@ public class CanonicalGenerator extends JsonGenerator {
     ArrayContainer arrayContainer = new ArrayContainer();
     if (!stack.isEmpty()) {
       Container container = stack.peek();
-      container.add(writeContext.getCurrentName(), new Primitive(Type.ARRAY, arrayContainer.array));
+      container.add(writeContext.getCurrentName(), new Primitive(JType.ARRAY, arrayContainer.array));
     }
 
     writeContext = writeContext.createChildArrayContext();
@@ -626,7 +626,7 @@ public class CanonicalGenerator extends JsonGenerator {
     ObjectContainer objectContainer = new ObjectContainer();
     if (!stack.isEmpty()) {
       Container container = stack.peek();
-      container.add(writeContext.getCurrentName(), new Primitive(Type.OBJECT, objectContainer.object));
+      container.add(writeContext.getCurrentName(), new Primitive(JType.OBJECT, objectContainer.object));
     }
 
     writeContext = writeContext.createChildObjectContext();

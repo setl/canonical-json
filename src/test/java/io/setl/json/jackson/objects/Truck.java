@@ -1,13 +1,13 @@
 package io.setl.json.jackson.objects;
 
-import io.setl.json.JsonObject;
+import io.setl.json.JObject;
 
 /**
  * @author Simon Greatrix on 2020-01-07.
  */
 public class Truck extends Vehicle {
 
-  private JsonObject documents;
+  private JObject documents;
 
   private double payloadCapacity;
 
@@ -23,7 +23,7 @@ public class Truck extends Vehicle {
   }
 
 
-  public JsonObject getDocuments() {
+  public JObject getDocuments() {
     return documents;
   }
 
@@ -33,7 +33,7 @@ public class Truck extends Vehicle {
   }
 
 
-  public void setDocuments(JsonObject documents) {
+  public void setDocuments(JObject documents) {
     this.documents = documents;
   }
 

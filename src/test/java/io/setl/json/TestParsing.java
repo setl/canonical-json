@@ -32,7 +32,7 @@ public class TestParsing {
   @Test
   public void testParse() throws IOException {
     Primitive p = loadResource("all_files.json");
-    JsonArray array = p.getValueSafe(JsonArray.class);
+    JArray array = p.getValueSafe(JArray.class);
     for (Primitive p2 : array) {
       String f = p2.getValueSafe(String.class);
       IOException thrown = null;

@@ -14,8 +14,8 @@ import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.core.io.SerializedString;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.IntNode;
-import io.setl.json.JsonArray;
-import io.setl.json.JsonObject;
+import io.setl.json.JArray;
+import io.setl.json.JObject;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigDecimal;
@@ -160,10 +160,10 @@ public class CanonicalGeneratorTest {
 
   @Test
   public void testWritingJson() throws IOException {
-    JsonArray array = new JsonArray();
+    JArray array = new JArray();
     array.add("A");
     array.add(1);
-    JsonObject object = new JsonObject();
+    JObject object = new JObject();
     object.put("A", 1);
     object.put("B", 2);
     array.add(object);

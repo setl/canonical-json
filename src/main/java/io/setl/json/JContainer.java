@@ -5,7 +5,7 @@ package io.setl.json;
  *
  * @author Simon Greatrix on 2020-01-07.
  */
-public interface JsonContainer extends JsonValue {
+public interface JContainer extends JValue {
 
   boolean isArray();
 }

@@ -6,9 +6,9 @@ import java.io.Writer;
 /**
  * @author Simon Greatrix on 2020-01-07.
  */
-public interface JsonValue {
+public interface JValue {
 
-  Type getType();
+  JType getType();
 
   void writeTo(Writer writer) throws IOException;
 }

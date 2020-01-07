@@ -9,21 +9,22 @@ import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import javax.json.JsonValue;
 
 /**
  * Representation of a value in a JSON object or array.
  */
 @JsonSerialize(using = PrimitiveSerializer.class)
-public class Primitive implements JsonValue {
+public class Primitive implements JValue, JsonValue {
 
   /** Common value for false. */
-  public static final Primitive FALSE = new Primitive(Type.BOOLEAN, Boolean.FALSE);
+  public static final Primitive FALSE = new Primitive(JType.BOOLEAN, Boolean.FALSE);
 
   /** Common value for NULL. */
-  public static final Primitive NULL = new Primitive(Type.NULL, null);
+  public static final Primitive NULL = new Primitive(JType.NULL, null);
 
   /** Common value for true. */
-  public static final Primitive TRUE = new Primitive(Type.BOOLEAN, Boolean.TRUE);
+  public static final Primitive TRUE = new Primitive(JType.BOOLEAN, Boolean.TRUE);
 
 
   /**
@@ -47,22 +48,22 @@ public class Primitive implements JsonValue {
       return ((AtomicBoolean) value).get() ? TRUE : FALSE;
     }
     if (value instanceof String) {
-      return new Primitive(Type.STRING, value);
+      return new Primitive(JType.STRING, value);
     }
     if (value instanceof Number) {
-      return new Primitive(Type.NUMBER, value);
+      return new Primitive(JType.NUMBER, value);
     }
-    if (value instanceof JsonArray) {
-      return new Primitive(Type.ARRAY, value);
+    if (value instanceof JArray) {
+      return new Primitive(JType.ARRAY, value);
     }
-    if (value instanceof JsonObject) {
-      return new Primitive(Type.OBJECT, value);
+    if (value instanceof JObject) {
+      return new Primitive(JType.OBJECT, value);
     }
     if (value instanceof Collection<?>) {
-      return new Primitive(Type.ARRAY, JsonArray.fixCollection((Collection<?>) value));
+      return new Primitive(JType.ARRAY, JArray.fixCollection((Collection<?>) value));
     }
     if (value instanceof Map<?, ?>) {
-      return new Primitive(Type.OBJECT, JsonObject.fixMap((Map<?, ?>) value));
+      return new Primitive(JType.OBJECT, JObject.fixMap((Map<?, ?>) value));
     }
     throw new IllegalArgumentException("Cannot include item of class " + value.getClass() + " in JSON");
   }
@@ -100,7 +101,7 @@ public class Primitive implements JsonValue {
 
 
   /** The type represented by this primitive. */
-  final Type type;
+  final JType type;
 
   /** The encapsulated value. */
   final Object value;
@@ -112,8 +113,8 @@ public class Primitive implements JsonValue {
    * @param type  contained type
    * @param value contained value
    */
-  public Primitive(Type type, Object value) {
-    if ((type == Type.NULL) != (value == null)) {
+  public Primitive(JType type, Object value) {
+    if ((type == JType.NULL) != (value == null)) {
       throw new IllegalArgumentException("Null if and only if NULL");
     }
     type.getType().cast(value);
@@ -151,7 +152,7 @@ public class Primitive implements JsonValue {
    * @return the type
    */
   @Override
-  public Type getType() {
+  public JType getType() {
     return type;
   }
 
@@ -193,6 +194,27 @@ public class Primitive implements JsonValue {
    */
   public <T> T getValueSafe(Class<T> reqType) {
     return reqType.cast(value);
+  }
+
+
+  @Override
+  public ValueType getValueType() {
+    switch (type) {
+      case ARRAY:
+        return ValueType.ARRAY;
+      case BOOLEAN:
+        return ((Boolean) value) ? ValueType.TRUE : ValueType.FALSE;
+      case NULL:
+        return ValueType.NULL;
+      case NUMBER:
+        return ValueType.NUMBER;
+      case OBJECT:
+        return ValueType.OBJECT;
+      case STRING:
+        return ValueType.STRING;
+      default: // Raw JSON generated during serialization
+        throw new IllegalStateException("Cannot get type of generated JSON");
+    }
   }
 
 

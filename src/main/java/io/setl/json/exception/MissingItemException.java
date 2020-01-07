@@ -1,16 +1,16 @@
 package io.setl.json.exception;
 
 import io.setl.json.Canonical;
-import io.setl.json.Type;
+import io.setl.json.JType;
 
 /**
- * Exception thrown when at attempt to retrieve a required datum from a JsonObject or JsonArray fails because the datum is missing.
+ * Exception thrown when at attempt to retrieve a required datum from a JObject or JArray fails because the datum is missing.
  */
 public class MissingItemException extends RequiredItemException {
 
   private static final long serialVersionUID = 1L;
 
-  private final Type expected;
+  private final JType expected;
 
   private final int index;
 
@@ -23,7 +23,7 @@ public class MissingItemException extends RequiredItemException {
    * @param index    the index that was missing
    * @param expected the expected type
    */
-  public MissingItemException(int index, Type expected) {
+  public MissingItemException(int index, JType expected) {
     super("Item at " + index + " was missing and should have had type " + expected);
     this.index = index;
     this.key = null;
@@ -37,7 +37,7 @@ public class MissingItemException extends RequiredItemException {
    * @param key      the key that was missing.
    * @param expected the type that was expected
    */
-  public MissingItemException(String key, Type expected) {
+  public MissingItemException(String key, JType expected) {
     super("Item at " + Canonical.format(key) + " was missing and should have had type " + expected);
     this.index = -1;
     this.key = key;
@@ -50,7 +50,7 @@ public class MissingItemException extends RequiredItemException {
    *
    * @return the expected type
    */
-  public Type getExpected() {
+  public JType getExpected() {
     return expected;
   }
 

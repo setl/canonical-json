@@ -37,7 +37,7 @@ public class MissingItemExceptionTest {
   public void testArray() {
     MissingItemException e = null;
     try {
-      array.getStringSafe(-5);
+      array.getString(-5);
       fail();
     } catch (MissingItemException e2) {
       e = e2;
@@ -53,7 +53,7 @@ public class MissingItemExceptionTest {
   public void testObject() {
     MissingItemException e = null;
     try {
-      object.getStringSafe("missing");
+      object.getString("missing");
       fail();
     } catch (MissingItemException e2) {
       e = e2;

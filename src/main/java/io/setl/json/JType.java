@@ -1,5 +1,7 @@
 package io.setl.json;
 
+import javax.json.JsonValue.ValueType;
+
 /**
  * Enumeration of JSON types.
  */

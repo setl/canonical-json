@@ -9,7 +9,7 @@ import io.setl.json.JArray;
 /**
  * @author Simon Greatrix on 06/01/2020.
  */
-public class JsonArraySerializer extends JsonValueSerializer<JArray> {
+public class JsonArraySerializer extends PrimitiveSerializer<JArray> {
 
   @Override
   public void acceptJsonFormatVisitor(
@@ -17,7 +17,7 @@ public class JsonArraySerializer extends JsonValueSerializer<JArray> {
   ) throws JsonMappingException {
     JsonArrayFormatVisitor v2 = visitor.expectArrayFormat(type);
     if (v2 != null) {
-      v2.itemsFormat(PrimitiveSerializer.INSTANCE, PrimitiveSerializer.TYPE);
+      v2.itemsFormat(PBaseSerializer.INSTANCE, PBaseSerializer.TYPE);
     }
   }
 

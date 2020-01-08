@@ -6,6 +6,10 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
+import io.setl.json.primitive.PBase;
+import io.setl.json.primitive.PNull;
+import io.setl.json.primitive.PNumber;
+import io.setl.json.primitive.PString;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -16,25 +20,7 @@ public class PrimitiveTest {
 
   @Test
   public void test() {
-    try {
-      new Primitive(JType.NULL, "");
-      fail();
-    } catch (IllegalArgumentException e) {
-      // correct
-    }
-    try {
-      new Primitive(JType.STRING, null);
-      fail();
-    } catch (IllegalArgumentException e) {
-      // correct
-    }
-    try {
-      new Primitive(JType.STRING, 123);
-      fail();
-    } catch (ClassCastException e) {
-      // correct
-    }
-    Primitive primitive = new Primitive(JType.STRING, "123");
+    Primitive primitive = Primitive.create("123");
     assertEquals(JType.STRING, primitive.getType());
     assertEquals("123", primitive.getValue());
     assertEquals(123, primitive.getValue(Number.class, 123));
@@ -82,17 +68,17 @@ public class PrimitiveTest {
   @SuppressWarnings("unlikely-arg-type")
   @Test
   public void testEquals() {
-    Primitive primitive = new Primitive(JType.STRING, "123");
+    Primitive primitive = Primitive.create("123");
     primitive.hashCode();
     Primitive.NULL.hashCode();
     assertEquals(primitive, primitive);
     assertNotEquals(null, primitive);
-    assertEquals(primitive, new Primitive(JType.STRING, "123"));
-    assertNotEquals(primitive, new Primitive(JType.STRING, "456"));
-    assertNotEquals(primitive, new Primitive(JType.NUMBER, 123));
-    assertNotEquals(primitive, new Primitive(JType.NULL, null));
-    assertEquals(Primitive.NULL, new Primitive(JType.NULL, null));
-    assertNotEquals(Primitive.NULL, new Primitive(JType.STRING, "123"));
+    assertEquals(primitive, new PString("123"));
+    assertNotEquals(primitive, new PString("456"));
+    assertNotEquals(primitive, new PNumber(123));
+    assertNotEquals(primitive, PNull.NULL);
+    assertEquals(Primitive.NULL, PNull.NULL);
+    assertNotEquals(Primitive.NULL, new PString("123"));
     assertNotEquals("null", Primitive.NULL);
   }
 
@@ -136,8 +122,8 @@ public class PrimitiveTest {
 
   @Test
   public void testToString() {
-    assertEquals("\"abc\"", new Primitive(JType.STRING, "abc").toString());
+    assertEquals("\"abc\"", new PString("abc").toString());
     assertEquals("true", Primitive.TRUE.toString());
-    assertEquals("5.0E-1", new Primitive(JType.NUMBER, 0.5).toString());
+    assertEquals("5.0E-1", new PNumber(0.5).toString());
   }
 }

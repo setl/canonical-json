@@ -37,7 +37,7 @@ public class IncorrectTypeExceptionTest {
   public void testArray() {
     IncorrectTypeException e = null;
     try {
-      array.getStringSafe(0);
+      array.getString(0);
       fail();
     } catch (IncorrectTypeException e2) {
       e = e2;
@@ -54,7 +54,7 @@ public class IncorrectTypeExceptionTest {
   public void testObject() {
     IncorrectTypeException e = null;
     try {
-      object.getStringSafe("array");
+      object.getString("array");
       fail();
     } catch (IncorrectTypeException e2) {
       e = e2;

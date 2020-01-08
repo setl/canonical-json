@@ -15,9 +15,8 @@ import com.fasterxml.jackson.core.json.JsonWriteContext;
 import com.fasterxml.jackson.core.util.VersionUtil;
 import io.setl.json.JArray;
 import io.setl.json.JObject;
-import io.setl.json.JValue;
 import io.setl.json.Primitive;
-import io.setl.json.JType;
+import io.setl.json.primitive.PJson;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,6 +32,7 @@ import java.util.LinkedList;
  * @author Simon Greatrix on 16/09/2019.
  */
 public class CanonicalGenerator extends JsonGenerator {
+
   public static final Version VERSION = VersionUtil.parseVersion("1.0", "io.setl", "canonical-json");
 
   private static final int DISALLOWED_FEATURES = Feature.WRITE_NUMBERS_AS_STRINGS.getMask()
@@ -547,9 +547,9 @@ public class CanonicalGenerator extends JsonGenerator {
    * @param object      the value to write
    * @param isContainer is the value a container? i.e. does it have start and end markers?
    */
-  void writeRawCanonicalType(JValue object, boolean isContainer) throws IOException {
+  void writeRawCanonicalType(Primitive object, boolean isContainer) throws IOException {
     String json = object.toString();
-    Primitive raw = new Primitive(JType.JSON, json);
+    Primitive raw = new PJson(json);
 
     if (isContainer) {
       // The caller has already pushed the start marker, creating the container. We pop the new container off the stack and discard it.
@@ -575,8 +575,8 @@ public class CanonicalGenerator extends JsonGenerator {
    *
    * @param object the value
    */
-  void writeRawCanonicalValue(JValue object) throws IOException {
-    writePrimitive(new Primitive(JType.JSON, object.toString()));
+  void writeRawCanonicalValue(Primitive object) throws IOException {
+    writePrimitive(new PJson(object.toString()));
   }
 
 
@@ -611,7 +611,7 @@ public class CanonicalGenerator extends JsonGenerator {
     ArrayContainer arrayContainer = new ArrayContainer();
     if (!stack.isEmpty()) {
       Container container = stack.peek();
-      container.add(writeContext.getCurrentName(), new Primitive(JType.ARRAY, arrayContainer.array));
+      container.add(writeContext.getCurrentName(), arrayContainer.array);
     }
 
     writeContext = writeContext.createChildArrayContext();
@@ -626,7 +626,7 @@ public class CanonicalGenerator extends JsonGenerator {
     ObjectContainer objectContainer = new ObjectContainer();
     if (!stack.isEmpty()) {
       Container container = stack.peek();
-      container.add(writeContext.getCurrentName(), new Primitive(JType.OBJECT, objectContainer.object));
+      container.add(writeContext.getCurrentName(), objectContainer.object);
     }
 
     writeContext = writeContext.createChildObjectContext();

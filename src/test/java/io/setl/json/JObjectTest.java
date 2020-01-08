@@ -83,16 +83,16 @@ public class JObjectTest {
 
 
   @Test
-  public void testGetArraySafe() {
-    assertNotNull(json.getArraySafe("array"));
+  public void testGetArray() {
+    assertNotNull(json.getArray("array"));
     try {
-      json.getArraySafe("string");
+      json.getArray("string");
       fail();
     } catch (IncorrectTypeException e) {
       // correct
     }
     try {
-      json.getArraySafe("n/a");
+      json.getArray("n/a");
       fail();
     } catch (MissingItemException e) {
       // correct
@@ -101,14 +101,14 @@ public class JObjectTest {
 
 
   @Test
-  public void testGetArrayString() {
+  public void testOptArrayString() {
     JArray a1 = new JArray();
     a1.add(1.0);
     json.put("array", a1);
-    assertNull(json.getArray("null"));
-    assertNull(json.getArray("n/a"));
-    assertNull(json.getArray("string"));
-    assertEquals(a1, json.getArray("array"));
+    assertNull(json.optArray("null"));
+    assertNull(json.optArray("n/a"));
+    assertNull(json.optArray("string"));
+    assertEquals(a1, json.optArray("array"));
   }
 
 
@@ -143,16 +143,16 @@ public class JObjectTest {
 
 
   @Test
-  public void testGetBigDecimalSafe() {
-    assertNotNull(json.getBigDecimalSafe("big number"));
+  public void testGetBigDecimal() {
+    assertNotNull(json.getBigDecimal("big number"));
     try {
-      json.getBigDecimalSafe("string");
+      json.getBigDecimal("string");
       fail();
     } catch (IncorrectTypeException e) {
       // correct
     }
     try {
-      json.getBigDecimalSafe("n/a");
+      json.getBigDecimal("n/a");
       fail();
     } catch (MissingItemException e) {
       // correct
@@ -161,13 +161,13 @@ public class JObjectTest {
 
 
   @Test
-  public void testGetBigDecimalString() {
+  public void testOptBigDecimalString() {
     BigDecimal bd = new BigDecimal(Math.PI);
     json.put("bd", bd);
-    assertNull(json.getBigDecimal("null"));
-    assertNull(json.getBigDecimal("n/a"));
-    assertNull(json.getBigDecimal("string"));
-    assertEquals(bd, json.getBigDecimal("bd"));
+    assertNull(json.optBigDecimal("null"));
+    assertNull(json.optBigDecimal("n/a"));
+    assertNull(json.optBigDecimal("string"));
+    assertEquals(bd, json.optBigDecimal("bd"));
   }
 
 
@@ -197,15 +197,15 @@ public class JObjectTest {
 
   @Test
   public void testGetBigIntegerSafe() {
-    assertNotNull(json.getBigIntegerSafe("big number"));
+    assertNotNull(json.getBigInteger("big number"));
     try {
-      json.getBigIntegerSafe("string");
+      json.getBigInteger("string");
       fail();
     } catch (IncorrectTypeException e) {
       // correct
     }
     try {
-      json.getBigIntegerSafe("n/a");
+      json.getBigInteger("n/a");
       fail();
     } catch (MissingItemException e) {
       // correct
@@ -214,13 +214,13 @@ public class JObjectTest {
 
 
   @Test
-  public void testGetBigIntegerString() {
+  public void testOptBigIntegerString() {
     BigInteger bi = new BigInteger("1234567890");
     json.put("bi", bi);
-    assertNull(json.getBigInteger("null"));
-    assertNull(json.getBigInteger("n/a"));
-    assertNull(json.getBigInteger("string"));
-    assertEquals(bi, json.getBigInteger("bi"));
+    assertNull(json.optBigInteger("null"));
+    assertNull(json.optBigInteger("n/a"));
+    assertNull(json.optBigInteger("string"));
+    assertEquals(bi, json.optBigInteger("bi"));
   }
 
 
@@ -249,17 +249,17 @@ public class JObjectTest {
 
 
   @Test
-  public void testGetBooleanSafe() {
+  public void testGetBoolean() {
     json.put("a", true);
-    assertTrue(json.getBooleanSafe("a"));
+    assertTrue(json.getBoolean("a"));
     try {
-      json.getBooleanSafe("string");
+      json.getBoolean("string");
       fail();
     } catch (IncorrectTypeException e) {
       // correct
     }
     try {
-      json.getBooleanSafe("n/a");
+      json.getBoolean("n/a");
       fail();
     } catch (MissingItemException e) {
       // correct
@@ -268,12 +268,12 @@ public class JObjectTest {
 
 
   @Test
-  public void testGetBooleanString() {
+  public void testOptBooleanString() {
     json.put("a", true);
-    assertNull(json.getBoolean("null"));
-    assertNull(json.getBoolean("n/a"));
-    assertNull(json.getBoolean("string"));
-    assertEquals(Boolean.TRUE, json.getBoolean("a"));
+    assertNull(json.optBoolean("null"));
+    assertNull(json.optBoolean("n/a"));
+    assertNull(json.optBoolean("string"));
+    assertEquals(Boolean.TRUE, json.optBoolean("a"));
   }
 
 
@@ -298,17 +298,17 @@ public class JObjectTest {
 
 
   @Test
-  public void testGetDoubleSafe() {
+  public void testGetDouble() {
     json.put("a", Math.PI);
-    assertEquals(Math.PI, json.getDoubleSafe("a"), 0.0000001d);
+    assertEquals(Math.PI, json.getDouble("a"), 0.0000001d);
     try {
-      json.getDoubleSafe("string");
+      json.getDouble("string");
       fail();
     } catch (IncorrectTypeException e) {
       // correct
     }
     try {
-      json.getDoubleSafe("n/a");
+      json.getDouble("n/a");
       fail();
     } catch (MissingItemException e) {
       // correct
@@ -317,13 +317,13 @@ public class JObjectTest {
 
 
   @Test
-  public void testGetDoubleString() {
+  public void testOptDoubleString() {
     Double d = Math.PI;
     json.put("a", d);
-    assertNull(json.getDouble("null"));
-    assertNull(json.getDouble("n/a"));
-    assertNull(json.getDouble("string"));
-    assertEquals(d, json.getDouble("a"));
+    assertNull(json.optDouble("null"));
+    assertNull(json.optDouble("n/a"));
+    assertNull(json.optDouble("string"));
+    assertEquals(d, json.optDouble("a"));
   }
 
 
@@ -348,17 +348,17 @@ public class JObjectTest {
 
 
   @Test
-  public void testGetIntSafe() {
+  public void testGetInt() {
     json.put("a", 3);
-    assertEquals(3, json.getIntSafe("a"));
+    assertEquals(3, json.getInt("a"));
     try {
-      json.getIntSafe("string");
+      json.getInt("string");
       fail();
     } catch (IncorrectTypeException e) {
       // correct
     }
     try {
-      json.getIntSafe("n/a");
+      json.getInt("n/a");
       fail();
     } catch (MissingItemException e) {
       // correct
@@ -367,12 +367,12 @@ public class JObjectTest {
 
 
   @Test
-  public void testGetIntString() {
+  public void testOptIntString() {
     json.put("a", 3);
-    assertNull(json.getInt("null"));
-    assertNull(json.getInt("n/a"));
-    assertNull(json.getInt("string"));
-    assertEquals(Integer.valueOf(3), json.getInt("a"));
+    assertNull(json.optInt("null"));
+    assertNull(json.optInt("n/a"));
+    assertNull(json.optInt("string"));
+    assertEquals(Integer.valueOf(3), json.optInt("a"));
   }
 
 
@@ -399,15 +399,15 @@ public class JObjectTest {
   @Test
   public void testGetLongSafe() {
     json.put("a", 3L);
-    assertEquals(3L, json.getLongSafe("a"));
+    assertEquals(3L, json.getLong("a"));
     try {
-      json.getLongSafe("string");
+      json.getLong("string");
       fail();
     } catch (IncorrectTypeException e) {
       // correct
     }
     try {
-      json.getLongSafe("n/a");
+      json.getLong("n/a");
       fail();
     } catch (MissingItemException e) {
       // correct
@@ -416,12 +416,12 @@ public class JObjectTest {
 
 
   @Test
-  public void testGetLongString() {
+  public void testOptLong() {
     json.put("a", 3);
-    assertNull(json.getLong("null"));
-    assertNull(json.getLong("n/a"));
-    assertNull(json.getLong("string"));
-    assertEquals(Long.valueOf(3), json.getLong("a"));
+    assertNull(json.optLong("null"));
+    assertNull(json.optLong("n/a"));
+    assertNull(json.optLong("string"));
+    assertEquals(Long.valueOf(3), json.optLong("a"));
   }
 
 
@@ -446,16 +446,16 @@ public class JObjectTest {
 
 
   @Test
-  public void testGetObjectSafe() {
-    assertNotNull(json.getObjectSafe("object"));
+  public void testGetObject() {
+    assertNotNull(json.getObject("object"));
     try {
-      json.getObjectSafe("string");
+      json.getObject("string");
       fail();
     } catch (IncorrectTypeException e) {
       // correct
     }
     try {
-      json.getObjectSafe("n/a");
+      json.getObject("n/a");
       fail();
     } catch (MissingItemException e) {
       // correct
@@ -464,14 +464,14 @@ public class JObjectTest {
 
 
   @Test
-  public void testGetObjectString() {
+  public void testOptObject() {
     JObject o1 = new JObject();
     o1.put("a", 3);
     json.put("object", o1);
-    assertNull(json.getArray("null"));
-    assertNull(json.getArray("n/a"));
-    assertNull(json.getArray("string"));
-    assertEquals(o1, json.getObject("array", o1));
+    assertNull(json.optObject("null"));
+    assertNull(json.optObject("n/a"));
+    assertNull(json.optObject("string"));
+    assertEquals(o1, json.optObject("object"));
   }
 
 
@@ -506,17 +506,17 @@ public class JObjectTest {
 
 
   @Test
-  public void testGetStringSafe() {
+  public void testGetString() {
     json.put("string", "text");
-    assertEquals("text", json.getStringSafe("string"));
+    assertEquals("text", json.getString("string"));
     try {
-      json.getStringSafe("array");
+      json.getString("array");
       fail();
     } catch (IncorrectTypeException e) {
       // correct
     }
     try {
-      json.getStringSafe("n/a");
+      json.getString("n/a");
       fail();
     } catch (MissingItemException e) {
       // correct
@@ -525,13 +525,13 @@ public class JObjectTest {
 
 
   @Test
-  public void testGetStringString() {
+  public void testOptString() {
     String s1 = "text";
     json.put("string", s1);
-    assertNull(json.getString("null"));
-    assertNull(json.getString("n/a"));
-    assertNull(json.getString("array"));
-    assertEquals(s1, json.getString("string", s1));
+    assertNull(json.optString("null"));
+    assertNull(json.optString("n/a"));
+    assertNull(json.optString("array"));
+    assertEquals(s1, json.optString("string"));
   }
 
 
@@ -651,7 +651,7 @@ public class JObjectTest {
     assertFalse(json.containsKey("a"));
     json.put("a", n);
     assertTrue(json.containsKey("a"));
-    assertEquals(n, json.getDouble("a"));
+    assertEquals(n, json.optDouble("a"));
 
     assertFalse(json.containsKey("b"));
     json.put("b", (Number) null);

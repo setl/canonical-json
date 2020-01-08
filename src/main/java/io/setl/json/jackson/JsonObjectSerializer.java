@@ -12,7 +12,7 @@ import io.setl.json.JObject;
 /**
  * @author Simon Greatrix on 06/01/2020.
  */
-public class JsonObjectSerializer extends JsonValueSerializer<JObject> {
+public class JsonObjectSerializer extends PrimitiveSerializer<JObject> {
 
   /** Serialize the string key as strings. Weirdly Jackson defines the String Key Serializer as serializing Objects. */
   private static final JsonSerializer<Object> KEY_SERIALIZER = new StringKeySerializer();
@@ -27,7 +27,7 @@ public class JsonObjectSerializer extends JsonValueSerializer<JObject> {
     JsonMapFormatVisitor v2 = visitor.expectMapFormat(type);
     if (v2 != null) {
       v2.keyFormat(KEY_SERIALIZER, KEY_TYPE);
-      v2.valueFormat(PrimitiveSerializer.INSTANCE, PrimitiveSerializer.TYPE);
+      v2.valueFormat(PBaseSerializer.INSTANCE, PBaseSerializer.TYPE);
     }
   }
 

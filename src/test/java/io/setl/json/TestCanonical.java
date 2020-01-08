@@ -43,7 +43,7 @@ public class TestCanonical {
     Primitive p = loadJson("expected.json");
     JArray array = p.getValueSafe(JArray.class);
     ByteArrayOutputStream output = new ByteArrayOutputStream();
-    for (Primitive p2 : array) {
+    for (Primitive p2 : array.primitives()) {
       String f = p2.getValueSafe(String.class);
 
       Primitive primitive;

@@ -1,6 +1,11 @@
 package io.setl.json;
 
 import io.setl.json.exception.InvalidJson;
+import io.setl.json.primitive.PBase;
+import io.setl.json.primitive.PNull;
+import io.setl.json.primitive.PNumber;
+import io.setl.json.primitive.PString;
+import io.setl.json.primitive.PTrue;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.PushbackReader;
@@ -165,7 +170,7 @@ public class Parser {
    */
   private static Primitive parseArray(PushbackReader input, int depth) throws IOException {
     JArray arr = new JArray();
-    Primitive prim = new Primitive(JType.ARRAY, arr);
+    Primitive prim = arr;
     int r = skipWhite(input);
     if (r == ']') {
       // empty array
@@ -201,9 +206,12 @@ public class Parser {
    * @return the boolean
    */
   private static Primitive parseBoolean(Reader input, int r) throws IOException {
-    Boolean val = Boolean.valueOf(r == 't');
-    matchLiteral(val.booleanValue() ? LITERAL_TRUE : LITERAL_FALSE, input);
-    return new Primitive(JType.BOOLEAN, val);
+    if (r == 't') {
+      matchLiteral(LITERAL_TRUE, input);
+      return PTrue.TRUE;
+    }
+    matchLiteral(LITERAL_FALSE, input);
+    return PTrue.FALSE;
   }
 
 
@@ -231,9 +239,9 @@ public class Parser {
    *
    * @return the null
    */
-  private static Primitive parseNull(Reader input) throws IOException {
+  private static PBase parseNull(Reader input) throws IOException {
     matchLiteral(LITERAL_NULL, input);
-    return new Primitive(JType.NULL, null);
+    return PNull.NULL;
   }
 
 
@@ -245,7 +253,7 @@ public class Parser {
    *
    * @return the number
    */
-  private static Primitive parseNumber(PushbackReader input, int r) throws IOException {
+  private static PBase parseNumber(PushbackReader input, int r) throws IOException {
     StringBuilder buf = new StringBuilder();
     // process first character
     int s;
@@ -371,7 +379,7 @@ public class Parser {
     }
     try {
       Number val = new BigDecimal(buf.toString());
-      return new Primitive(JType.NUMBER, val);
+      return new PNumber(val);
     } catch (NumberFormatException nfe) {
       throw new InvalidJson("Number in JSON is too extreme to process: \"" + buf.toString() + "\"");
     }
@@ -388,7 +396,7 @@ public class Parser {
    */
   private static Primitive parseObject(PushbackReader input, int depth) throws IOException {
     JObject obj = new JObject();
-    Primitive prim = new Primitive(JType.OBJECT, obj);
+    Primitive prim = obj;
     while (true) {
       int r = skipWhite(input);
       // name must start with a quote
@@ -422,13 +430,13 @@ public class Parser {
 
 
   /**
-   * Parse an array from the input.
+   * Parse a string from the input.
    *
    * @param input the input
    *
-   * @return the array
+   * @return the string
    */
-  private static Primitive parseString(Reader input) throws IOException {
+  private static PBase parseString(Reader input) throws IOException {
     int s = 0;
     int u = 0;
     StringBuilder buf = new StringBuilder();
@@ -521,7 +529,7 @@ public class Parser {
     }
 
     // finally create the string
-    return new Primitive(JType.STRING, buf.toString());
+    return new PString(buf.toString());
   }
 
 

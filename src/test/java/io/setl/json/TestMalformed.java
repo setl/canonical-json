@@ -2,6 +2,7 @@ package io.setl.json;
 
 import static org.junit.Assert.fail;
 
+import io.setl.json.primitive.PBase;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -33,7 +34,7 @@ public class TestMalformed {
   public void testParse() throws IOException {
     Primitive p = loadResource("all_input.json");
     JArray array = p.getValueSafe(JArray.class);
-    for (Primitive p2 : array) {
+    for (Primitive p2 : array.primitives()) {
       String f = p2.getValueSafe(String.class);
       IOException thrown = null;
       try {

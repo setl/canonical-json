@@ -203,18 +203,22 @@ public class Canonical {
 
     // Get the digits and we will insert the decimal separator and append the exponent.
     String unscaled = bigDecimal.unscaledValue().toString(10);
+    String unscaledInt;
+    String unscaledFraction;
     if (unscaled.length() == 1) {
       // A value like "0.03" has an unscaled value of "3" but the canonical representation requires a non-empty fractional part, so we have to add it.
-      unscaled = unscaled + ".0";
+      unscaledInt = unscaled;
+      unscaledFraction = "0";
     } else {
       // insert the decimal separator just after the first digit
-      unscaled = unscaled.substring(0, 1) + "." + unscaled.substring(1);
+      unscaledInt = unscaled.substring(0, 1);
+      unscaledFraction = unscaled.substring(1);
     }
 
     // use the scale and precision to calculate the correct exponent
     int scale = bigDecimal.scale();
     int precision = bigDecimal.precision();
-    buf.append(sign).append(unscaled).append('E').append(Integer.toString(precision - scale - 1));
+    buf.append(sign).append(unscaledInt).append('.').append(unscaledFraction).append('E').append(Integer.toString(precision - scale - 1));
   }
 
 

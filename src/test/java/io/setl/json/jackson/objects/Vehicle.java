@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
-import io.setl.json.JValue;
+import io.setl.json.Primitive;
 
 /**
  * @author Simon Greatrix on 2020-01-07.
@@ -16,7 +16,7 @@ public abstract class Vehicle {
 
   private String make;
 
-  private JValue metadata;
+  private Primitive metadata;
 
   private String model;
 
@@ -37,8 +37,7 @@ public abstract class Vehicle {
   }
 
 
-  @JsonTypeInfo(use = Id.CLASS, include = As.WRAPPER_OBJECT)
-  public JValue getMetadata() {
+  public Primitive getMetadata() {
     return metadata;
   }
 
@@ -53,7 +52,7 @@ public abstract class Vehicle {
   }
 
 
-  public void setMetadata(JValue metadata) {
+  public void setMetadata(Primitive metadata) {
     this.metadata = metadata;
   }
 

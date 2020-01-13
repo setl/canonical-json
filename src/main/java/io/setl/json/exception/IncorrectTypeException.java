@@ -4,11 +4,11 @@ import io.setl.json.Canonical;
 import io.setl.json.JType;
 
 /**
- * An exception thrown when a type-checking accessor finds data of the wrong type.
+ * An exception thrown when a type-checking accessor finds data of the wrong type. The javax.json API requires that this extends from ClassCastException.
  *
  * @author Simon Greatrix
  */
-public class IncorrectTypeException extends RequiredItemException {
+public class IncorrectTypeException extends ClassCastException {
 
   private static final long serialVersionUID = 1L;
 

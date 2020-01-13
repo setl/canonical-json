@@ -16,7 +16,10 @@ import com.fasterxml.jackson.core.util.VersionUtil;
 import io.setl.json.JArray;
 import io.setl.json.JObject;
 import io.setl.json.Primitive;
+import io.setl.json.primitive.PFalse;
 import io.setl.json.primitive.PJson;
+import io.setl.json.primitive.PNull;
+import io.setl.json.primitive.PTrue;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +27,7 @@ import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.LinkedList;
+import javax.json.JsonValue;
 
 /**
  * Generator for canonical JSON. Note that as the canonical form requires a specific ordering of object properties, no output is created until the root object
@@ -146,7 +150,7 @@ public class CanonicalGenerator extends JsonGenerator {
 
 
 
-  private final IOContext ioContext;
+  private final boolean isResourceManaged;
 
   private final LinkedList<Container> stack = new LinkedList<>();
 
@@ -170,13 +174,27 @@ public class CanonicalGenerator extends JsonGenerator {
    * @param writer      the output's writer
    */
   public CanonicalGenerator(IOContext ioContext, int features, ObjectCodec objectCodec, Writer writer) {
-    this.ioContext = ioContext;
+    this.isResourceManaged = ioContext.isResourceManaged();
     this.objectCodec = objectCodec;
     this.writer = writer;
     setFeatureMask(features);
     DupDetector dups = Feature.STRICT_DUPLICATE_DETECTION.enabledIn(features)
         ? DupDetector.rootDetector(this) : null;
     writeContext = JsonWriteContext.createRootContext(dups);
+  }
+
+
+  /**
+   * New instance.
+   *
+   * @param writer            the output's writer
+   * @param isResourceManaged should closing this generator close the output writer?
+   */
+  public CanonicalGenerator(Writer writer, boolean isResourceManaged) {
+    this.isResourceManaged = isResourceManaged;
+    this.objectCodec = null;
+    this.writer = writer;
+    writeContext = JsonWriteContext.createRootContext(null);
   }
 
 
@@ -201,7 +219,7 @@ public class CanonicalGenerator extends JsonGenerator {
       }
     }
 
-    if (ioContext.isResourceManaged() || isEnabled(Feature.AUTO_CLOSE_TARGET)) {
+    if (isResourceManaged || isEnabled(Feature.AUTO_CLOSE_TARGET)) {
       writer.close();
     } else if (isEnabled(Feature.FLUSH_PASSED_TO_STREAM)) {
       writer.flush();
@@ -392,7 +410,7 @@ public class CanonicalGenerator extends JsonGenerator {
 
   @Override
   public void writeBoolean(boolean state) throws IOException {
-    writePrimitive(state ? Primitive.TRUE : Primitive.FALSE);
+    writePrimitive(state ? PTrue.TRUE : PFalse.FALSE);
   }
 
 
@@ -439,7 +457,7 @@ public class CanonicalGenerator extends JsonGenerator {
 
   @Override
   public void writeNull() throws IOException {
-    writePrimitive(Primitive.NULL);
+    writePrimitive(PNull.NULL);
   }
 
 
@@ -497,6 +515,10 @@ public class CanonicalGenerator extends JsonGenerator {
       writePrimitive((Primitive) value);
       return;
     }
+    if (value instanceof JsonValue) {
+      writePrimitive(Primitive.create((JsonValue) value));
+      return;
+    }
 
     if (objectCodec != null) {
       objectCodec.writeValue(this, value);
@@ -542,12 +564,12 @@ public class CanonicalGenerator extends JsonGenerator {
 
 
   /**
-   * Write a Json Value which is being processed as a type. This means the start and end markers are being written by the type processor.
+   * Write a Json Value which is being processed as a type. This means the start and end markers are being written by the Jackson type processor.
    *
    * @param object      the value to write
    * @param isContainer is the value a container? i.e. does it have start and end markers?
    */
-  void writeRawCanonicalType(Primitive object, boolean isContainer) throws IOException {
+  public void writeRawCanonicalType(Primitive object, boolean isContainer) throws IOException {
     String json = object.toString();
     Primitive raw = new PJson(json);
 
@@ -575,7 +597,7 @@ public class CanonicalGenerator extends JsonGenerator {
    *
    * @param object the value
    */
-  void writeRawCanonicalValue(Primitive object) throws IOException {
+  public void writeRawCanonicalValue(Primitive object) throws IOException {
     writePrimitive(new PJson(object.toString()));
   }
 

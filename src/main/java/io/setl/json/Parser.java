@@ -1,14 +1,15 @@
 package io.setl.json;
 
-import io.setl.json.exception.InvalidJson;
+import io.setl.json.exception.InvalidJsonException;
+import io.setl.json.io.Input;
 import io.setl.json.primitive.PBase;
+import io.setl.json.primitive.PFalse;
 import io.setl.json.primitive.PNull;
 import io.setl.json.primitive.PNumber;
 import io.setl.json.primitive.PString;
 import io.setl.json.primitive.PTrue;
 import java.io.EOFException;
 import java.io.IOException;
-import java.io.PushbackReader;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.util.LinkedList;
@@ -28,6 +29,19 @@ public class Parser {
   private static final char[] LITERAL_TRUE = new char[]{'r', 'u', 'e'};
 
   private static final int MAX_RECURSION_DEPTH = Integer.getInteger(Parser.class.getName() + ".maxRecursion", 1_000);
+
+
+  private static InvalidJsonException badCharacter(int actual, char expected) {
+    return new InvalidJsonException("Invalid character in literal 0x" + Integer.toHexString(actual) + " when expecting '" + expected + "'", null);
+  }
+
+
+  private static InvalidJsonException badNumber(StringBuilder buf, int r, Input input) {
+    return new InvalidJsonException(
+        "Invalid character in JSON number: \"" + buf.toString() + "\" was followed by 0x" + Integer.toHexString(r),
+        input.getLocation()
+    );
+  }
 
 
   /**
@@ -50,14 +64,14 @@ public class Parser {
    *
    * @throws IOException if literal is not matched
    */
-  private static void matchLiteral(char[] literal, Reader input) throws IOException {
+  private static void matchLiteral(char[] literal, Input input) throws IOException {
     for (int i = 0; i < literal.length; i++) {
       int r = input.read();
       if (r == -1) {
         throw new EOFException();
       }
       if (r != literal[i]) {
-        throw new InvalidJson("Invalid character in literal 0x" + Integer.toHexString(r) + " when expecting '" + literal[i] + "'");
+        throw badCharacter(r, literal[i]);
       }
     }
   }
@@ -66,17 +80,15 @@ public class Parser {
   /**
    * Read the primitive from the input. There must be no non-whitespace characters left on the input after reading the primitive.
    *
-   * @param input the input
+   * @param reader the input
    *
    * @return the primitive
    *
    * @throws IOException if the input cannot be read, or there is invalid JSON data
    */
-  public static Primitive parse(Reader input) throws IOException {
-    if (!(input instanceof PushbackReader)) {
-      input = new PushbackReader(input);
-    }
-    Primitive primitive = parseAny((PushbackReader) input, skipWhite(input), 0);
+  public static Primitive parse(Reader reader) throws IOException {
+    Input input = new Input(reader);
+    Primitive primitive = parseAny(input, skipWhite(input), 0);
 
     while (true) {
       int ch = input.read();
@@ -84,7 +96,7 @@ public class Parser {
         return primitive;
       }
       if (!isWhite(ch)) {
-        throw new InvalidJson("Additional characters found after JSON data. Saw 0x" + Integer.toHexString(ch));
+        throw new InvalidJsonException("Additional characters found after JSON data. Saw 0x" + Integer.toHexString(ch), input.getLocation());
       }
     }
   }
@@ -93,18 +105,15 @@ public class Parser {
   /**
    * Read a list of whitespace separated primitives from the input.
    *
-   * @param input the input
+   * @param reader the input
    *
    * @return the primitives
    *
    * @throws IOException if the input cannot be read, or there is invalid JSON data
    */
-  public static List<Primitive> parseAll(Reader input) throws IOException {
+  public static List<Primitive> parseAll(Reader reader) throws IOException {
+    Input input = new Input(reader);
     final LinkedList<Primitive> list = new LinkedList<>();
-    if (!(input instanceof PushbackReader)) {
-      input = new PushbackReader(input);
-    }
-
     while (true) {
       int r = input.read();
       if (r == -1) {
@@ -114,7 +123,7 @@ public class Parser {
         continue;
       }
 
-      Primitive primitive = parseAny((PushbackReader) input, r, 0);
+      Primitive primitive = parseAny(input, r, 0);
       list.add(primitive);
     }
   }
@@ -130,9 +139,9 @@ public class Parser {
    *
    * @throws IOException if the input cannot be read, or there is invalid JSON data
    */
-  private static Primitive parseAny(PushbackReader input, int r, int depth) throws IOException {
+  private static Primitive parseAny(Input input, int r, int depth) throws IOException {
     if (depth >= MAX_RECURSION_DEPTH) {
-      throw new InvalidJson("Json structure has exceeded the configured maximum nesting depth of " + MAX_RECURSION_DEPTH);
+      throw new InvalidJsonException("Json structure has exceeded the configured maximum nesting depth of " + MAX_RECURSION_DEPTH, input.getLocation());
     }
     try {
       if (r == '{') {
@@ -153,9 +162,12 @@ public class Parser {
       if (r == '-' || ('0' <= r && r <= '9')) {
         return parseNumber(input, r);
       }
-      throw new InvalidJson("Invalid input byte 0x" + Integer.toHexString(r));
+      throw new InvalidJsonException("Invalid input byte 0x" + Integer.toHexString(r), input.getLocation());
     } catch (StackOverflowError e) {
-      throw new InvalidJson("Json structure was less than configured maximum nesting depth of " + MAX_RECURSION_DEPTH + " but failed at " + depth);
+      throw new InvalidJsonException(
+          "Json structure was less than configured maximum nesting depth of " + MAX_RECURSION_DEPTH + " but failed at " + depth,
+          input.getLocation()
+      );
     }
   }
 
@@ -168,7 +180,7 @@ public class Parser {
    *
    * @return the array
    */
-  private static Primitive parseArray(PushbackReader input, int depth) throws IOException {
+  private static Primitive parseArray(Input input, int depth) throws IOException {
     JArray arr = new JArray();
     Primitive prim = arr;
     int r = skipWhite(input);
@@ -187,7 +199,7 @@ public class Parser {
         return prim;
       }
       if (r != ',') {
-        throw new InvalidJson("Array continuation was not ',' but 0x" + Integer.toHexString(r));
+        throw new InvalidJsonException("Array continuation was not ',' but 0x" + Integer.toHexString(r), input.getLocation());
       }
 
       // skip whitespace post comma
@@ -205,30 +217,28 @@ public class Parser {
    *
    * @return the boolean
    */
-  private static Primitive parseBoolean(Reader input, int r) throws IOException {
+  private static Primitive parseBoolean(Input input, int r) throws IOException {
     if (r == 't') {
       matchLiteral(LITERAL_TRUE, input);
       return PTrue.TRUE;
     }
     matchLiteral(LITERAL_FALSE, input);
-    return PTrue.FALSE;
+    return PFalse.FALSE;
   }
 
 
   /**
    * Read the next primitive from the input.
    *
-   * @param input the input
+   * @param reader the input
    *
    * @return the next primitive
    *
    * @throws IOException if the input cannot be read, or there is invalid JSON data
    */
-  public static Primitive parseFirst(Reader input) throws IOException {
-    if (!(input instanceof PushbackReader)) {
-      input = new PushbackReader(input);
-    }
-    return parseAny((PushbackReader) input, skipWhite(input), 0);
+  public static Primitive parseFirst(Reader reader) throws IOException {
+    Input input = new Input(reader);
+    return parseAny(input, skipWhite(input), 0);
   }
 
 
@@ -239,7 +249,7 @@ public class Parser {
    *
    * @return the null
    */
-  private static PBase parseNull(Reader input) throws IOException {
+  private static PBase parseNull(Input input) throws IOException {
     matchLiteral(LITERAL_NULL, input);
     return PNull.NULL;
   }
@@ -253,7 +263,7 @@ public class Parser {
    *
    * @return the number
    */
-  private static PBase parseNumber(PushbackReader input, int r) throws IOException {
+  private static PBase parseNumber(Input input, int r) throws IOException {
     StringBuilder buf = new StringBuilder();
     // process first character
     int s;
@@ -274,7 +284,7 @@ public class Parser {
       if (r == -1 || isWhite(r) || r == ',' || r == ']' || r == '}') {
         // Check for an invalid number
         if (s == 0 || s == 10 || s == 20 || s == 21) {
-          throw new InvalidJson("Incomplete JSON number: \"" + buf.toString() + "\"");
+          throw new InvalidJsonException("Incomplete JSON number: \"" + buf.toString() + "\"", input.getLocation());
         }
         break;
       }
@@ -289,7 +299,7 @@ public class Parser {
             buf.append((char) r);
             s = 2;
           } else {
-            throw new InvalidJson("Invalid character in JSON number: \"" + buf.toString() + "\" was followed by 0x" + Integer.toHexString(r));
+            throw badNumber(buf, r, input);
           }
           break;
         case 1:
@@ -303,7 +313,7 @@ public class Parser {
             buf.append((char) r);
             s = 20;
           } else {
-            throw new InvalidJson("Invalid character in JSON number: \"" + buf.toString() + "\" was followed by 0x" + Integer.toHexString(r));
+            throw badNumber(buf, r, input);
           }
           break;
         case 2:
@@ -320,7 +330,7 @@ public class Parser {
             buf.append((char) r);
             s = 20;
           } else {
-            throw new InvalidJson("Invalid character in JSON number: \"" + buf.toString() + "\" was followed by 0x" + Integer.toHexString(r));
+            throw badNumber(buf, r, input);
           }
           break;
         case 10: // falls through
@@ -330,7 +340,7 @@ public class Parser {
             buf.append((char) r);
             s = 11;
           } else {
-            throw new InvalidJson("Invalid character in JSON number: \"" + buf.toString() + "\" was followed by 0x" + Integer.toHexString(r));
+            throw badNumber(buf, r, input);
           }
           break;
         case 11:
@@ -343,7 +353,7 @@ public class Parser {
             buf.append((char) r);
             s = 20;
           } else {
-            throw new InvalidJson("Invalid character in JSON number: \"" + buf.toString() + "\" was followed by 0x" + Integer.toHexString(r));
+            throw badNumber(buf, r, input);
           }
           break;
         case 20:
@@ -355,7 +365,7 @@ public class Parser {
             buf.append('+').append((char) r);
             s = 22;
           } else {
-            throw new InvalidJson("Invalid character in JSON number: \"" + buf.toString() + "\" was followed by 0x" + Integer.toHexString(r));
+            throw badNumber(buf, r, input);
           }
           break;
         case 21:
@@ -367,7 +377,7 @@ public class Parser {
             buf.append((char) r);
             s = 22;
           } else {
-            throw new InvalidJson("Invalid character in JSON number: \"" + buf.toString() + "\" was followed by 0x" + Integer.toHexString(r));
+            throw badNumber(buf, r, input);
           }
           break;
         default:
@@ -381,7 +391,7 @@ public class Parser {
       Number val = new BigDecimal(buf.toString());
       return new PNumber(val);
     } catch (NumberFormatException nfe) {
-      throw new InvalidJson("Number in JSON is too extreme to process: \"" + buf.toString() + "\"");
+      throw new InvalidJsonException("Number in JSON is too extreme to process: \"" + buf.toString() + "\"", input.getLocation());
     }
   }
 
@@ -394,7 +404,7 @@ public class Parser {
    *
    * @return the object
    */
-  private static Primitive parseObject(PushbackReader input, int depth) throws IOException {
+  private static Primitive parseObject(Input input, int depth) throws IOException {
     JObject obj = new JObject();
     Primitive prim = obj;
     while (true) {
@@ -405,14 +415,14 @@ public class Parser {
           // Empty object is OK
           return prim;
         }
-        throw new InvalidJson("Object pair's name did not start with '\"' but with 0x" + Integer.toHexString(r));
+        throw new InvalidJsonException("Object pair's name did not start with '\"' but with 0x" + Integer.toHexString(r), input.getLocation());
       }
       Primitive name = parseString(input);
 
       // then comes the ':'
       r = skipWhite(input);
       if (r != ':') {
-        throw new InvalidJson("Object pair-value separator was not start with ':' but 0x" + Integer.toHexString(r));
+        throw new InvalidJsonException("Object pair-value separator was not start with ':' but 0x" + Integer.toHexString(r), input.getLocation());
       }
 
       // and then the value
@@ -423,7 +433,7 @@ public class Parser {
         return prim;
       }
       if (r != ',') {
-        throw new InvalidJson("Object continuation was not ',' but 0x" + Integer.toHexString(r));
+        throw new InvalidJsonException("Object continuation was not ',' but 0x" + Integer.toHexString(r), input.getLocation());
       }
     }
   }
@@ -436,7 +446,7 @@ public class Parser {
    *
    * @return the string
    */
-  private static PBase parseString(Reader input) throws IOException {
+  private static PBase parseString(Input input) throws IOException {
     int s = 0;
     int u = 0;
     StringBuilder buf = new StringBuilder();
@@ -458,7 +468,7 @@ public class Parser {
             throw new EOFException("Unterminated string");
           }
           if (r < 32) {
-            throw new InvalidJson("JSON strings must not contain C0 control codes, including 0x" + Integer.toHexString(r));
+            throw new InvalidJsonException("JSON strings must not contain C0 control codes, including 0x" + Integer.toHexString(r), input.getLocation());
           }
           buf.append((char) r);
           break;
@@ -495,7 +505,7 @@ public class Parser {
               s = 2;
               break;
             default:
-              throw new InvalidJson("Invalid escape sequence \"\\" + ((char) r) + "\"");
+              throw new InvalidJsonException("Invalid escape sequence \"\\" + ((char) r) + "\"", input.getLocation());
           }
           if (s == 1) {
             s = 0;
@@ -515,7 +525,7 @@ public class Parser {
           } else if ('A' <= r && r <= 'F') {
             u += r - 'A' + 10;
           } else {
-            throw new InvalidJson("Invalid hex character in \\u escape");
+            throw new InvalidJsonException("Invalid hex character in \\u escape", input.getLocation());
           }
           s++;
           if (s == 6) {
@@ -540,7 +550,7 @@ public class Parser {
    *
    * @return the first non-white character
    */
-  private static int skipWhite(Reader input) throws IOException {
+  private static int skipWhite(Input input) throws IOException {
     // whitespace allowed
     int r;
     do {

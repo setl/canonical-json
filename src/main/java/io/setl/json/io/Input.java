@@ -1,0 +1,94 @@
+package io.setl.json.io;
+
+import java.io.IOException;
+import java.io.Reader;
+import javax.json.stream.JsonLocation;
+import javax.json.stream.JsonParsingException;
+
+/**
+ * @author Simon Greatrix on 10/01/2020.
+ */
+public class Input {
+
+  private final Reader reader;
+
+  private MutableLocation location = new MutableLocation();
+
+  private boolean seenEOF = false;
+
+  private int unread = -2;
+
+
+  /**
+   * New instance.
+   *
+   * @param reader the reader
+   */
+  public Input(Reader reader) {
+    this.reader = reader;
+  }
+
+
+  /**
+   * Close the reader.
+   *
+   * @throws JsonParsingException if an IOException occurs
+   */
+  public void close() {
+    try {
+      reader.close();
+    } catch (IOException e) {
+      throw new JsonParsingException("I/O failure", e, getLocation());
+    }
+  }
+
+
+  public JsonLocation getLocation() {
+    return new Location(location);
+  }
+
+
+  public boolean isSeenEOF() {
+    return seenEOF;
+  }
+
+
+  /**
+   * Read the next character.
+   *
+   * @return the next character, or -1 on end of stream.
+   *
+   * @throws JsonParsingException if an IOException occurs
+   */
+  public int read() {
+    int r;
+    if (unread != -2) {
+      r = unread;
+      unread = -2;
+      return r;
+    }
+    if (seenEOF) {
+      return -1;
+    }
+    try {
+      r = reader.read();
+    } catch (IOException e) {
+      throw new JsonParsingException("I/O failure", e, getLocation());
+    }
+    location.update(r);
+
+    if (r == -1) {
+      seenEOF = true;
+    }
+    return r;
+  }
+
+
+  public void unread(int r) {
+    if (r != -1) {
+      seenEOF = false;
+    }
+    unread = r;
+  }
+
+}

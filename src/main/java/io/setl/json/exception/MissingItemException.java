@@ -4,9 +4,10 @@ import io.setl.json.Canonical;
 import io.setl.json.JType;
 
 /**
- * Exception thrown when at attempt to retrieve a required datum from a JObject or JArray fails because the datum is missing.
+ * Exception thrown when at attempt to retrieve a required datum from a JObject or JArray fails because the datum is missing. The javax.json API requires that
+ * this extend from NullPointerException.
  */
-public class MissingItemException extends RequiredItemException {
+public class MissingItemException extends NullPointerException {
 
   private static final long serialVersionUID = 1L;
 

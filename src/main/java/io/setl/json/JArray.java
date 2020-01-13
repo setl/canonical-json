@@ -4,8 +4,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.setl.json.exception.IncorrectTypeException;
 import io.setl.json.exception.MissingItemException;
 import io.setl.json.jackson.JsonArraySerializer;
+import io.setl.json.primitive.PFalse;
+import io.setl.json.primitive.PNull;
 import io.setl.json.primitive.PNumber;
 import io.setl.json.primitive.PString;
+import io.setl.json.primitive.PTrue;
 import java.io.IOException;
 import java.io.Writer;
 import java.math.BigDecimal;
@@ -36,7 +39,7 @@ import javax.json.JsonValue;
  * which obey these contracts:
  *
  * <dl>
- * <dt><code>get<i>Type</i>(index)</code></dt>
+ * <dt><code>opt<i>Type</i>(index)</code></dt>
  * <dd>
  * <ul>
  * <li>If the index is less than zero, or greater than or equal to the size of this array, returns null.
@@ -61,7 +64,7 @@ import javax.json.JsonValue;
  * <li>Otherwise returns the entry
  * </ul>
  * </dd>
- * <dt><code>get<i>Type</i>Safe(index)</code></dt>
+ * <dt><code>get<i>Type</i>(index)</code></dt>
  * <dd>
  * <ul>
  * <li>If the index is less than zero, or greater than or equal to the size of this array, throws a <code>MissingItemException</code>.
@@ -110,6 +113,12 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
    * @return a collection with the nulls replaced with JSON nulls.
    */
   static Collection<Primitive> fixPrimitiveCollection(Collection<? extends JsonValue> c) {
+    if (c instanceof JArray) {
+      // already fixed
+      @SuppressWarnings("unchecked")
+      List<Primitive> fixed = (List<Primitive>) c;
+      return fixed;
+    }
     ArrayList<Primitive> list = new ArrayList<>(c.size());
     for (JsonValue jv : c) {
       list.add(Primitive.create(jv));
@@ -214,6 +223,14 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
 
   public void addNull(int index) {
     add(index, Primitive.NULL);
+  }
+
+
+  @Override
+  public JArray copy() {
+    JArray other = new JArray(this);
+    other.replaceAll(jv -> ((Primitive) jv).copy());
+    return other;
   }
 
 
@@ -848,42 +865,42 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
 
   @Nonnull
   public Primitive set(int index, JArray array) {
-    Primitive p = (array != null) ? array : Primitive.NULL;
+    Primitive p = (array != null) ? array : PNull.NULL;
     return (Primitive) super.set(index, p);
   }
 
 
   @Nonnull
   public Primitive set(int index, JObject object) {
-    Primitive p = (object != null) ? object : Primitive.NULL;
+    Primitive p = (object != null) ? object : PNull.NULL;
     return (Primitive) super.set(index, p);
   }
 
 
   @Nonnull
   public Primitive set(int index, Boolean value) {
-    Primitive p = (value != null) ? (value ? Primitive.TRUE : Primitive.FALSE) : Primitive.NULL;
+    Primitive p = (value != null) ? (value ? PTrue.TRUE : PFalse.FALSE) : PNull.NULL;
     return (Primitive) super.set(index, p);
   }
 
 
   @Nonnull
   public Primitive set(int index, Number number) {
-    Primitive p = (number != null) ? new PNumber(number) : Primitive.NULL;
+    Primitive p = (number != null) ? new PNumber(number) : PNull.NULL;
     return (Primitive) super.set(index, p);
   }
 
 
   @Nonnull
   public Primitive set(int index, String string) {
-    Primitive p = (string != null) ? new PString(string) : Primitive.NULL;
+    Primitive p = (string != null) ? new PString(string) : PNull.NULL;
     return (Primitive) super.set(index, p);
   }
 
 
   @Nonnull
   public Primitive setNull(int index) {
-    return (Primitive) super.set(index, Primitive.NULL);
+    return (Primitive) super.set(index, PNull.NULL);
   }
 
 
@@ -897,7 +914,7 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
     StringBuilder buf = new StringBuilder();
     buf.append('[');
     for (JsonValue e : this) {
-      buf.append(String.valueOf(e));
+      buf.append(e);
       buf.append(',');
     }
     // remove final comma
@@ -906,6 +923,26 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
     }
     buf.append(']');
     return buf.toString();
+  }
+
+
+  public List<Object> unwrap() {
+    ArrayList<Object> list = new ArrayList<>(size());
+    forEach(v -> {
+      Object o;
+      switch (v.getValueType()) {
+        case OBJECT:
+          o = ((JObject) v).unwrap();
+          break;
+        case ARRAY:
+          o = ((JArray) v).unwrap();
+          break;
+        default:
+          o = ((Primitive) v).getValue();
+      }
+      list.add(o);
+    });
+    return list;
   }
 
 

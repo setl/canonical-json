@@ -1,11 +1,11 @@
 /**
  * This package implements the creation and verification of canonical JSON.
- * 
+ *
  * <p>The definition of canonical JSON was taken from the <a href="http://gibson042.github.io/canonicaljson-spec/">canonicaljson</a>
  * project. The definition is reproduced below for convenience.</p>
- * 
+ *
  * <h2 id="definition">Definition</h2>
- * 
+ *
  * <p>JSON text in canonical form:</p>
  * <ol>
  *   <li>MUST be encoded in <a href="https://tools.ietf.org/html/rfc3629">UTF-8</a></li>
@@ -56,8 +56,7 @@
  *     </ol>
  *   </li>
  * </ol>
- * 
- * 
+ *
  * @author Dr Simon Greatrix
  */
 package io.setl.json;

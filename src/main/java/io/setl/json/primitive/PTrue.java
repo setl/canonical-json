@@ -11,9 +11,11 @@ public class PTrue extends PBase {
 
   public static final PTrue TRUE = new PTrue();
 
+
   private PTrue() {
     // do nothing
   }
+
 
   @Override
   public JType getType() {

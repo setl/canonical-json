@@ -14,6 +14,7 @@ import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Function;
@@ -38,7 +39,7 @@ import javax.json.JsonValue;
  * which obey these contracts:
  *
  * <dl>
- * <dt><code>get<i>Type</i>(key)</code></dt>
+ * <dt><code>opt<i>Type</i>(key)</code></dt>
  * <dd>
  * <ul>
  * <li>If the key is not present, returns null.</li>
@@ -63,7 +64,7 @@ import javax.json.JsonValue;
  * <li>Otherwise returns the entry
  * </ul>
  * </dd>
- * <dt><code>get<i>Type</i>Safe(index)</code></dt>
+ * <dt><code>get<i>Type</i>(index)</code></dt>
  * <dd>
  * <ul>
  * <li>If the key is not present, throws a <code>MissingItemException</code>.
@@ -143,6 +144,14 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
   public JObject(Map<String, ?> map) {
     super(CODE_POINT_ORDER);
     putAll(fixMap(map));
+  }
+
+
+  @Override
+  public JObject copy() {
+    JObject other = new JObject(this);
+    other.replaceAll((k, jv) -> ((Primitive) jv).copy());
+    return other;
   }
 
 
@@ -929,7 +938,7 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
     for (Map.Entry<String, JsonValue> e : entrySet()) {
       buf.append(Canonical.format(e.getKey()));
       buf.append(':');
-      buf.append(String.valueOf(e.getValue()));
+      buf.append(e.getValue());
       buf.append(',');
     }
     if (buf.length() > 1) {
@@ -938,6 +947,26 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
     }
     buf.append('}');
     return buf.toString();
+  }
+
+
+  public Map<String, Object> unwrap() {
+    HashMap<String, Object> map = new HashMap<>();
+    forEach((k, v) -> {
+      Object o;
+      switch (v.getValueType()) {
+        case OBJECT:
+          o = ((JObject) v).unwrap();
+          break;
+        case ARRAY:
+          o = ((JArray) v).unwrap();
+          break;
+        default:
+          o = ((Primitive) v).getValue();
+      }
+      map.put(k, o);
+    });
+    return map;
   }
 
 

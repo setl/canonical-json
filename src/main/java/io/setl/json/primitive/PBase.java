@@ -11,6 +11,35 @@ import java.util.Objects;
 @JsonSerialize(using = PBaseSerializer.class)
 public abstract class PBase implements Primitive {
 
+  /**
+   * Returns this. As most primitives are not mutable, this is the sensible default.
+   *
+   * @return this
+   */
+  @Override
+  public Primitive copy() {
+    return this;
+  }
+
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof PBase)) {
+      return false;
+    }
+    PBase other = (PBase) obj;
+    if (getType() != other.getType()) {
+      return false;
+    }
+    return Objects.equals(getValue(), other.getValue());
+  }
+
 
   /**
    * Get the value encapsulated by this primitive.
@@ -31,7 +60,6 @@ public abstract class PBase implements Primitive {
   }
 
 
-
   /**
    * Get the value encapsulated by this primitive. Throws a ClassCastException if the type is incorrect.
    *
@@ -45,23 +73,6 @@ public abstract class PBase implements Primitive {
     return reqType.cast(getValue());
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
-    if (! PBase.class.isInstance(obj)) {
-      return false;
-    }
-    PBase other = (PBase) obj;
-    if (getType() != other.getType()) {
-      return false;
-    }
-    return Objects.equals(getValue(),other.getValue());
-  }
 
   @Override
   public int hashCode() {

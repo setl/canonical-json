@@ -39,18 +39,10 @@ import javax.json.JsonValue;
 )
 public interface Primitive extends JsonValue {
 
-  /** Common value for false. */
-  Primitive FALSE = PFalse.FALSE;
-
-  /** Common value for NULL. */
-  Primitive NULL = PNull.NULL;
-
-  /** Common value for true. */
-  Primitive TRUE = PTrue.TRUE;
 
   static Primitive create(JsonValue value) {
     if (value == null) {
-      return NULL;
+      return PNull.NULL;
     }
     if (value instanceof Primitive) {
       return (Primitive) value;
@@ -59,17 +51,17 @@ public interface Primitive extends JsonValue {
       case ARRAY:
         return JArray.fixCollection(value.asJsonArray());
       case FALSE:
-        return FALSE;
+        return PFalse.FALSE;
       case NUMBER:
         return new PNumber(((JsonNumber) value).numberValue());
       case NULL:
-        return NULL;
+        return PNull.NULL;
       case OBJECT:
         return JObject.fixMap(value.asJsonObject());
       case STRING:
         return new PString(((JsonString) value).getString());
       case TRUE:
-        return TRUE;
+        return PTrue.TRUE;
       default:
         throw new IllegalArgumentException("Unknown Json Value type:" + value.getValueType());
     }
@@ -84,7 +76,7 @@ public interface Primitive extends JsonValue {
    */
   static Primitive create(Object value) {
     if (value == null) {
-      return NULL;
+      return PNull.NULL;
     }
     if (value instanceof Primitive) {
       return (Primitive) value;
@@ -93,10 +85,10 @@ public interface Primitive extends JsonValue {
       return create((JsonValue) value);
     }
     if (value instanceof Boolean) {
-      return ((Boolean) value) ? TRUE : FALSE;
+      return ((Boolean) value) ? PTrue.TRUE : PFalse.FALSE;
     }
     if (value instanceof AtomicBoolean) {
-      return ((AtomicBoolean) value).get() ? TRUE : FALSE;
+      return ((AtomicBoolean) value).get() ? PTrue.TRUE : PFalse.FALSE;
     }
     if (value instanceof String) {
       return new PString((String) value);
@@ -156,6 +148,18 @@ public interface Primitive extends JsonValue {
     return new BigDecimal(n.toString()).toBigInteger();
   }
 
+  /**
+   * Get a copy of this. If this is immutable, then returns this. Otherwise returns a deep copy.
+   *
+   * @return a copy of this
+   */
+  Primitive copy();
+
+  /**
+   * Get the type of this primitive.
+   *
+   * @return the type
+   */
   JType getType();
 
   /**
@@ -186,5 +190,12 @@ public interface Primitive extends JsonValue {
    */
   <T> T getValueSafe(Class<T> reqType);
 
+  /**
+   * Write this to the specified writer.
+   *
+   * @param writer the writer
+   *
+   * @throws IOException if writing fails
+   */
   void writeTo(Writer writer) throws IOException;
 }

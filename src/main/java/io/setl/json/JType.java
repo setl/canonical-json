@@ -1,7 +1,5 @@
 package io.setl.json;
 
-import javax.json.JsonValue.ValueType;
-
 /**
  * Enumeration of JSON types.
  */
@@ -33,9 +31,8 @@ public enum JType {
 
   /**
    * Create type.
-   * 
-   * @param valueType
-   *          encapsulated value class
+   *
+   * @param valueType encapsulated value class
    */
   JType(Class<?> valueType) {
     this.valueType = valueType;
@@ -44,7 +41,7 @@ public enum JType {
 
   /**
    * Get encapsulated value class.
-   * 
+   *
    * @return the type of the encapsulated value
    */
   public Class<?> getType() {

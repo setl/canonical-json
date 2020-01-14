@@ -37,7 +37,6 @@ public class TestParsing {
         InputStream input = TestParsing.class.getClassLoader().getResourceAsStream(PATH + resource);
         Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8)
     ) {
-      System.out.println("Processing " + resource);
       JParser parser = new JParser(reader);
       if (!parser.hasNext()) {
         throw new JsonParsingException("Input was expected", null);

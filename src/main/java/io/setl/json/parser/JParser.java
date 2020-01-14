@@ -10,7 +10,6 @@ import io.setl.json.primitive.PNull;
 import io.setl.json.primitive.PNumber;
 import io.setl.json.primitive.PString;
 import io.setl.json.primitive.PTrue;
-import java.io.IOException;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.util.AbstractMap;
@@ -48,14 +47,6 @@ public class JParser implements JsonParser {
   private static final int MAX_RECURSION_DEPTH = Integer.getInteger(JParser.class.getPackageName() + ".maxRecursion", 1_000);
 
 
-  private static JsonParsingException badNumber(StringBuilder buf, int r, Input input) {
-    return new JsonParsingException(
-        "Invalid character in JSON number: \"" + buf.toString() + "\" was followed by " + safe(r),
-        input.getLocation()
-    );
-  }
-
-
   /**
    * Check if input represents whitespace.
    *
@@ -63,12 +54,12 @@ public class JParser implements JsonParser {
    *
    * @return true if whitespace
    */
-  private static boolean isWhite(int r) {
+  static boolean isWhite(int r) {
     return (r == ' ' || r == '\n' || r == '\r' || r == '\t');
   }
 
 
-  private static String safe(int r) {
+  static String safe(int r) {
     if (r == -1) {
       return "EOF";
     }
@@ -179,76 +170,55 @@ public class JParser implements JsonParser {
    * Advance the parser.
    */
   private void doNext() {
-    int r = skipWhite();
-
-    // If the last event was a key-name, then the only legitimate follow-on is a ':' and a value.
-    if (lastEvent == Event.KEY_NAME) {
-      if (r != ':') {
-        throw new JsonParsingException(String.format("A ':' is required after a field name. Saw %s", safe(r)), input.getLocation());
-      }
-      r = skipWhite();
-    } else {
-
-      // do we expect a normal post-value symbol?
-      switch (r) {
-        case ':':
-          throw new JsonParsingException("A ':' can only occur after a field name.", input.getLocation());
-        case ',':
-          if (depth == -1) {
-            throw new JsonParsingException("Saw ',' at the root level", input.getLocation());
-          }
-          if (lastEvent == Event.START_OBJECT || lastEvent == Event.START_ARRAY) {
-            throw new JsonParsingException("Saw ',' immediately after " + lastEvent, input.getLocation());
-          }
-          r = skipWhite();
-          break;
-        case ']':
-          if (depth >= 0 && !isObject[depth]) {
-            depth--;
-            nextEvent = Event.END_ARRAY;
-            checkSingleRoot();
-            return;
-          } else {
-            throw new JsonParsingException("Saw ']' when the current container was not an array.", input.getLocation());
-          }
-        case '}':
-          if (depth >= 0 && isObject[depth]) {
-            depth--;
-            nextEvent = Event.END_OBJECT;
-            checkSingleRoot();
-            return;
-          } else {
-            throw new JsonParsingException("Saw '}' when the current container was not an object.", input.getLocation());
-          }
-        case -1:
-          if (depth == -1) {
-            nextEvent = null;
-            isRunning = false;
-            return;
-          }
-          throw new JsonParsingException("Saw EOF when there were " + (depth + 1) + " unclosed structures", input.getLocation());
-        default:
-          if (depth >= 0 && lastEvent != Event.START_ARRAY && lastEvent != Event.START_OBJECT) {
-            throw new JsonParsingException(String.format("Expected a legitimate post-value character, but saw %s", safe(r)), input.getLocation());
-          }
-      }
-    }
-
-    // Expecting either a key-name or a value. Either way, a string is legitimate.
-    if (r == '\"') {
-      parseString();
-      checkSingleRoot();
-      nextEvent = expectingKey ? Event.KEY_NAME : Event.VALUE_STRING;
-      if (expectingKey) {
-        expectingKey = false;
-      } else {
-        expectingKey = depth >= 0 && isObject[depth];
-      }
+    if (depth == -1) {
+      doNextInRoot();
       return;
     }
+    if (isObject[depth]) {
+      if (expectingKey) {
+        expectingKey = false;
+        doNextKeyName();
+      } else {
+        expectingKey = true;
+        doNextInObject();
+      }
+    } else {
+      doNextInArray();
+    }
+  }
 
-    if (expectingKey) {
-      throw new JsonParsingException(String.format("Expecting a key-name, but saw %s", safe(r)), input.getLocation());
+
+  private void doNextInArray() {
+    int r = skipWhite();
+
+    // do we expect a normal post-value symbol?
+    switch (r) {
+      case ',':
+        if (lastEvent == Event.START_ARRAY) {
+          throw new JsonParsingException("Saw ',' immediately after " + lastEvent, input.getLocation());
+        }
+        r = skipWhite();
+        break;
+      case ']':
+        endStructure(false);
+        return;
+      case -1:
+        throw new JsonParsingException("Saw EOF when there were " + (depth + 1) + " unclosed structures", input.getLocation());
+      default:
+        if (lastEvent != Event.START_ARRAY && lastEvent != Event.START_OBJECT) {
+          throw new JsonParsingException(String.format("Expected a legitimate post-value character, but saw %s", safe(r)), input.getLocation());
+        }
+    }
+
+    doNextInContainer(r);
+  }
+
+
+  private void doNextInContainer(int r) {
+    if (r == '\"') {
+      parseString();
+      nextEvent = Event.VALUE_STRING;
+      return;
     }
 
     if (r == '[') {
@@ -265,23 +235,110 @@ public class JParser implements JsonParser {
 
     if (r == 't' || r == 'f') {
       parseBoolean(r);
-      expectingKey = depth >= 0 && isObject[depth];
-      checkSingleRoot();
       return;
     }
     if (r == 'n') {
       parseNull();
-      expectingKey = depth >= 0 && isObject[depth];
-      checkSingleRoot();
       return;
     }
     if (r == '-' || ('0' <= r && r <= '9')) {
       parseNumber(r);
-      expectingKey = depth >= 0 && isObject[depth];
-      checkSingleRoot();
       return;
     }
     throw new JsonParsingException(String.format("Invalid input: %s", safe(r)), input.getLocation());
+  }
+
+
+  private void doNextInObject() {
+    int r = skipWhite();
+
+    // If the last event was a key-name, then the only legitimate follow-on is a ':' and a value.
+    if (r != ':') {
+      throw new JsonParsingException(String.format("A ':' is required after a field name. Saw %s", safe(r)), input.getLocation());
+    }
+
+    doNextInContainer(skipWhite());
+  }
+
+
+  private void doNextInRoot() {
+    int r = skipWhite();
+
+    switch (r) {
+      case -1:
+        nextEvent = null;
+        isRunning = false;
+        return;
+
+      case '\"':
+        parseString();
+        checkSingleRoot();
+        nextEvent = Event.VALUE_STRING;
+        return;
+
+      case '[':
+        nextEvent = Event.START_ARRAY;
+        startStructure(false);
+        return;
+
+      case '{':
+        nextEvent = Event.START_OBJECT;
+        startStructure(true);
+        expectingKey = true;
+        return;
+
+      case 't': // falls through
+      case 'f':
+        parseBoolean(r);
+        checkSingleRoot();
+        return;
+
+      case 'n':
+        parseNull();
+        checkSingleRoot();
+        return;
+
+      default:
+        if (r == '-' || ('0' <= r && r <= '9')) {
+          parseNumber(r);
+          checkSingleRoot();
+          return;
+        }
+        throw new JsonParsingException(String.format("Invalid input: %s", safe(r)), input.getLocation());
+    }
+  }
+
+
+  private void doNextKeyName() {
+    int r = skipWhite();
+
+    // do we expect a normal post-value symbol?
+    switch (r) {
+      case ',':
+        if (lastEvent == Event.START_OBJECT) {
+          throw new JsonParsingException("Saw ',' immediately after " + lastEvent, input.getLocation());
+        }
+        r = skipWhite();
+        break;
+      case '}':
+        endStructure(true);
+        return;
+      case -1:
+        throw new JsonParsingException("Saw EOF when there were " + (depth + 1) + " unclosed structures", input.getLocation());
+      default:
+        if (lastEvent != Event.START_OBJECT) {
+          throw new JsonParsingException(String.format("Expected a legitimate post-value character, but saw %s", safe(r)), input.getLocation());
+        }
+    }
+
+    // Expecting either a key-name or a value. Either way, a string is legitimate.
+    if (r == '\"') {
+      parseString();
+      nextEvent = Event.KEY_NAME;
+      return;
+    }
+
+    throw new JsonParsingException(String.format("Expecting a key-name, but saw %s", safe(r)), input.getLocation());
   }
 
 
@@ -313,18 +370,36 @@ public class JParser implements JsonParser {
 
 
   private Primitive doValue(int recursion) {
+    if (recursion > MAX_RECURSION_DEPTH) {
+      throw new JsonParsingException("Json structure has exceeded the configured maximum nesting depth of " + MAX_RECURSION_DEPTH, input.getLocation());
+    }
     if (lastEvent == Event.KEY_NAME || lastEvent == Event.END_ARRAY || lastEvent == Event.END_OBJECT) {
       throw new IllegalStateException("Parser is not at start of value, but at " + lastEvent);
     }
 
-    if (lastEvent == Event.START_ARRAY) {
-      return doArray(recursion + 1);
-    }
-    if (lastEvent == Event.START_OBJECT) {
-      return doObject(recursion + 1);
+    try {
+      if (lastEvent == Event.START_ARRAY) {
+        return doArray(recursion + 1);
+      }
+      if (lastEvent == Event.START_OBJECT) {
+        return doObject(recursion + 1);
+      }
+    } catch (StackOverflowError e) {
+      throw new JsonParsingException(
+          "Json structure was less than configured maximum nesting depth of " + MAX_RECURSION_DEPTH + " but parsing failed at " + depth,
+          input.getLocation()
+      );
     }
 
     return value;
+  }
+
+
+  private void endStructure(boolean endObject) {
+    depth--;
+    nextEvent = endObject ? Event.END_OBJECT : Event.END_ARRAY;
+    checkSingleRoot();
+    expectingKey = depth >= 0 && isObject[depth];
   }
 
 
@@ -337,13 +412,16 @@ public class JParser implements JsonParser {
   @Override
   public Stream<JsonValue> getArrayStream() {
     checkState(Event.START_ARRAY);
-    Iterator<JsonValue> iter = new Iterator<JsonValue>() {
+    Iterator<JsonValue> iter = new Iterator<>() {
       boolean hasNextCalled = false;
 
       boolean nextExists = false;
 
 
       public boolean hasNext() {
+        if (hasNextCalled) {
+          return nextExists;
+        }
         hasNextCalled = true;
         nextExists = false;
         if (!JParser.this.hasNext()) {
@@ -358,14 +436,11 @@ public class JParser implements JsonParser {
 
 
       public JsonValue next() {
-        if (!hasNextCalled) {
-          hasNext();
+        if (hasNext()) {
+          hasNextCalled = false;
+          return getValue();
         }
-        hasNextCalled = false;
-        if (!nextExists) {
-          throw new NoSuchElementException();
-        }
-        return getValue();
+        throw new NoSuchElementException();
       }
     };
     return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iter, 0), false);
@@ -408,7 +483,7 @@ public class JParser implements JsonParser {
   @Override
   public Stream<Entry<String, JsonValue>> getObjectStream() {
     checkState(Event.START_OBJECT);
-    Iterator<Entry<String, JsonValue>> iter = new Iterator<Entry<String, JsonValue>>() {
+    Iterator<Entry<String, JsonValue>> iter = new Iterator<>() {
       boolean hasNextCalled = false;
 
       String key;
@@ -417,26 +492,34 @@ public class JParser implements JsonParser {
 
 
       public boolean hasNext() {
+        if (hasNextCalled) {
+          return nextExists;
+        }
         hasNextCalled = true;
         nextExists = false;
+
         if (!JParser.this.hasNext()) {
           throw new JsonParsingException("Object was not terminated.", input.getLocation());
         }
-        if (JParser.this.next() == Event.END_OBJECT) {
+
+        Event event = JParser.this.next();
+        if (event == Event.END_OBJECT) {
           return false;
         }
-        nextExists = true;
+        if (event != Event.KEY_NAME) {
+          throw new JsonParsingException("Saw event " + event + " when only KEY_NAME was valid.", input.getLocation());
+        }
         key = getString();
-        hasNext();
+
+        if (!JParser.this.hasNext()) {
+          throw new JsonParsingException("Object was not terminated.", input.getLocation());
+        }
         return true;
       }
 
 
       public Entry<String, JsonValue> next() {
-        if (!hasNextCalled) {
-          hasNext();
-        }
-        if (!nextExists) {
+        if (!hasNext()) {
           throw new NoSuchElementException();
         }
         return new AbstractMap.SimpleEntry<>(key, getValue());
@@ -487,18 +570,16 @@ public class JParser implements JsonParser {
    * Match a literal.
    *
    * @param literal the literal to match (excluding first character)
-   *
-   * @throws IOException if literal is not matched
    */
   private void matchLiteral(char[] literal) {
-    for (int i = 0; i < literal.length; i++) {
+    for (char c : literal) {
       int r = input.read();
       if (r == -1) {
         throw new JsonParsingException("Encountered EOF when parsing literal.", input.getLocation());
       }
-      if (r != literal[i]) {
+      if (r != c) {
         throw new JsonParsingException(
-            "Invalid character in literal. Saw " + safe(r) + " when expecting '" + literal[i] + "'",
+            "Invalid character in literal. Saw " + safe(r) + " when expecting '" + c + "'",
             input.getLocation()
         );
       }
@@ -555,135 +636,8 @@ public class JParser implements JsonParser {
    * @param r the initial character of the number
    */
   private void parseNumber(int r) {
-    StringBuilder buf = new StringBuilder();
-    // process first character
-    int s;
-    if (r == '-') {
-      buf.append('-');
-      s = 0;
-    } else if (r == '0') {
-      buf.append('0');
-      s = 1;
-    } else {
-      buf.append((char) r);
-      s = 2;
-    }
-
-    // read rest of number
-    while (true) {
-      r = input.read();
-      if (r == -1 || isWhite(r) || r == ',' || r == ']' || r == '}') {
-        // Check for an invalid number
-        if (s == 0 || s == 10 || s == 20 || s == 21) {
-          throw new JsonParsingException("Incomplete JSON number: \"" + buf.toString() + "\"", input.getLocation());
-        }
-        break;
-      }
-
-      switch (s) {
-        case 0:
-          // seen leading minus sign, must be followed by digit
-          if (r == '0') {
-            buf.append('0');
-            s = 1;
-          } else if ('1' <= r && r <= '9') {
-            buf.append((char) r);
-            s = 2;
-          } else {
-            throw badNumber(buf, r, input);
-          }
-          break;
-        case 1:
-          // seen leading zero, must be followed by '.', 'e', or 'E'
-          if (r == '.') {
-            // start fractional part
-            buf.append('.');
-            s = 10;
-          } else if (r == 'e' || r == 'E') {
-            // start exponent part
-            buf.append((char) r);
-            s = 20;
-          } else {
-            throw badNumber(buf, r, input);
-          }
-          break;
-        case 2:
-          // seen leading 1 to 9, can be followed by any digit, '.', 'e', or 'E'
-          if ('0' <= r && r <= '9') {
-            // carry on with integer part
-            buf.append((char) r);
-          } else if (r == '.') {
-            // start fractional part
-            buf.append('.');
-            s = 10;
-          } else if (r == 'e' || r == 'E') {
-            // start exponent part
-            buf.append((char) r);
-            s = 20;
-          } else {
-            throw badNumber(buf, r, input);
-          }
-          break;
-        case 10: // falls through
-          // seen '.', read fractional part
-          if ('0' <= r && r <= '9') {
-            // carry on with fractional part
-            buf.append((char) r);
-            s = 11;
-          } else {
-            throw badNumber(buf, r, input);
-          }
-          break;
-        case 11:
-          // seen '.' and a digit, read fractional part
-          if ('0' <= r && r <= '9') {
-            // carry on with fractional part
-            buf.append((char) r);
-          } else if (r == 'e' || r == 'E') {
-            // start exponent part
-            buf.append((char) r);
-            s = 20;
-          } else {
-            throw badNumber(buf, r, input);
-          }
-          break;
-        case 20:
-          // seen 'e' or 'E', read exponent part. Can be '+', '-' or '0' to '9'
-          if (r == '+' || r == '-') {
-            buf.append((char) r);
-            s = 21;
-          } else if ('0' <= r && r <= '9') {
-            buf.append('+').append((char) r);
-            s = 22;
-          } else {
-            throw badNumber(buf, r, input);
-          }
-          break;
-        case 21:
-          // fall thru
-          // seen 'e' or 'E' followed by '+' or '-'. Must have a digit next. Cannot end in this state.
-        case 22:
-          // reading exponent, must be all digits
-          if ('0' <= r && r <= '9') {
-            buf.append((char) r);
-            s = 22;
-          } else {
-            throw badNumber(buf, r, input);
-          }
-          break;
-        default:
-          throw new InternalError("Impossible parser state");
-      }
-    }
-    if (r != -1) {
-      input.unread(r);
-    }
-    Number val;
-    try {
-      val = new BigDecimal(buf.toString());
-    } catch (NumberFormatException nfe) {
-      throw new JsonParsingException("Number in JSON is too extreme to process: \"" + buf.toString() + "\"", input.getLocation());
-    }
+    NumberParser numberParser = new NumberParser(input);
+    BigDecimal val = numberParser.parse(r);
     value = new PNumber(val);
     nextEvent = Event.VALUE_NUMBER;
   }
@@ -693,99 +647,9 @@ public class JParser implements JsonParser {
    * Parse a string from the input.
    */
   private void parseString() {
-    int s = 0;
-    int u = 0;
-    StringBuilder buf = new StringBuilder();
-    boolean notDone = true;
-    while (notDone) {
-      int r = input.read();
-      switch (s) {
-        case 0:
-          // regular character probable
-          if (r == '"') {
-            notDone = false;
-            break;
-          }
-          if (r == '\\') {
-            s = 1;
-            break;
-          }
-          if (r == -1) {
-            throw new JsonParsingException("Unterminated string", input.getLocation());
-          }
-          if (r < 32) {
-            throw new JsonParsingException(String.format("JSON strings must not contain C0 control codes, including 0x%04x", r), input.getLocation());
-          }
-          buf.append((char) r);
-          break;
-
-        case 1:
-          // expecting an escape sequence
-          switch (r) {
-            case '"':
-              buf.append('\"');
-              break;
-            case '\\':
-              buf.append('\\');
-              break;
-            case '/':
-              buf.append('/');
-              break;
-            case 'b':
-              buf.append('\b');
-              break;
-            case 'f':
-              buf.append('\f');
-              break;
-            case 'n':
-              buf.append('\n');
-              break;
-            case 'r':
-              buf.append('\r');
-              break;
-            case 't':
-              buf.append('\t');
-              break;
-            case 'u':
-              u = 0;
-              s = 2;
-              break;
-            default:
-              throw new JsonParsingException(String.format("Invalid escape sequence '\\' followed by %s", safe(r)), input.getLocation());
-          }
-          if (s == 1) {
-            s = 0;
-          }
-          break;
-
-        case 2: // fall thru
-        case 3: // fall thru
-        case 4: // fall thru
-        case 5: // fall thru
-          // Unicode escape
-          u = u * 16;
-          if ('0' <= r && r <= '9') {
-            u += r - '0';
-          } else if ('a' <= r && r <= 'f') {
-            u += r - 'a' + 10;
-          } else if ('A' <= r && r <= 'F') {
-            u += r - 'A' + 10;
-          } else {
-            throw new JsonParsingException(String.format("Invalid hex character in \\u escape. Saw %s", safe(r)), input.getLocation());
-          }
-          s++;
-          if (s == 6) {
-            s = 0;
-            buf.append((char) u);
-          }
-          break;
-        default:
-          throw new InternalError("Impossible parser state");
-      }
-    }
-
-    // finally create the string
-    value = new PString(buf.toString());
+    StringParser parser = new StringParser(input);
+    String val = parser.parse();
+    value = new PString(val);
   }
 
 
@@ -859,5 +723,4 @@ public class JParser implements JsonParser {
     }
     isObject[depth] = startObject;
   }
-
 }

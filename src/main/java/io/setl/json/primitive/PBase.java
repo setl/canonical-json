@@ -27,9 +27,6 @@ public abstract class PBase implements Primitive {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
     if (!(obj instanceof PBase)) {
       return false;
     }

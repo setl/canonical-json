@@ -5,6 +5,7 @@ import static io.setl.json.parser.JParser.safe;
 
 import io.setl.json.io.Input;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import javax.json.stream.JsonParsingException;
 
 /**
@@ -193,7 +194,7 @@ class NumberParser {
    *
    * @return the number
    */
-  public BigDecimal parse(int r) {
+  public Number parse(int r) {
     StringBuilder buf = new StringBuilder();
     buf.append((char) r);
 
@@ -212,10 +213,26 @@ class NumberParser {
       }
     }
 
+    BigDecimal bigDecimal;
     try {
-      return new BigDecimal(buf.toString());
+      bigDecimal = new BigDecimal(buf.toString());
     } catch (NumberFormatException nfe) {
       throw new JsonParsingException("Number in JSON is too extreme to process: \"" + buf.toString() + "\"", input.getLocation());
     }
+
+    bigDecimal = bigDecimal.stripTrailingZeros();
+    if (bigDecimal.scale() > 0) {
+      return bigDecimal;
+    }
+
+    BigInteger bigInteger = bigDecimal.toBigIntegerExact();
+    int bitLength = bigInteger.bitLength();
+    if (bitLength < 32) {
+      return bigInteger.intValueExact();
+    }
+    if (bitLength < 64) {
+      return bigInteger.longValueExact();
+    }
+    return bigInteger;
   }
 }

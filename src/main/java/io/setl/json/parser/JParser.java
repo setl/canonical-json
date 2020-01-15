@@ -12,13 +12,10 @@ import io.setl.json.primitive.PString;
 import io.setl.json.primitive.PTrue;
 import java.io.Reader;
 import java.math.BigDecimal;
-import java.util.AbstractMap;
-import java.util.Iterator;
+import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.ConcurrentModificationException;
 import java.util.Map.Entry;
-import java.util.NoSuchElementException;
-import java.util.Spliterators;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 import javax.json.JsonValue;
 import javax.json.stream.JsonLocation;
 import javax.json.stream.JsonParser;
@@ -27,7 +24,7 @@ import javax.json.stream.JsonParsingException;
 /**
  * @author Simon Greatrix on 10/01/2020.
  */
-public class JParser implements JsonParser {
+public class JParser extends BaseIterator<JsonParser.Event> implements JsonParser {
 
   /**
    * Letters for the "false" literal.
@@ -75,6 +72,8 @@ public class JParser implements JsonParser {
    */
   private final Input input;
 
+  private BaseIterator<?> currentIterator = null;
+
   /**
    * Depth of nesting containers from document root.
    */
@@ -112,6 +111,27 @@ public class JParser implements JsonParser {
 
   public JParser(Reader reader) {
     input = new Input(reader);
+  }
+
+
+  /**
+   * Advance the parser.
+   */
+  protected boolean checkNext() {
+    if (depth == -1) {
+      doNextInRoot();
+    } else if (isObject[depth]) {
+      if (expectingKey) {
+        expectingKey = false;
+        doNextKeyName();
+      } else {
+        expectingKey = true;
+        doNextInObject();
+      }
+    } else {
+      doNextInArray();
+    }
+    return nextEvent != null;
   }
 
 
@@ -156,35 +176,13 @@ public class JParser implements JsonParser {
       if (!hasNext()) {
         throw new JsonParsingException("Array was not terminated.", input.getLocation());
       }
-      Event event = next();
-      if (event == Event.END_ARRAY) {
+      iteratorFetchNext();
+      if (lastEvent == Event.END_ARRAY) {
         break;
       }
       jArray.add(doValue(recursion));
     }
     return jArray;
-  }
-
-
-  /**
-   * Advance the parser.
-   */
-  private void doNext() {
-    if (depth == -1) {
-      doNextInRoot();
-      return;
-    }
-    if (isObject[depth]) {
-      if (expectingKey) {
-        expectingKey = false;
-        doNextKeyName();
-      } else {
-        expectingKey = true;
-        doNextInObject();
-      }
-    } else {
-      doNextInArray();
-    }
   }
 
 
@@ -346,21 +344,20 @@ public class JParser implements JsonParser {
     checkState(Event.START_OBJECT);
     JObject jObject = new JObject();
     while (true) {
-      if (!hasNext()) {
-        throw new JsonParsingException("Object was not terminated.", input.getLocation());
-      }
-      Event event = next();
-      if (event == Event.END_OBJECT) {
+      ensureNextInObject();
+      iteratorFetchNext();
+      if (lastEvent == Event.END_OBJECT) {
         break;
       }
-      if (event != Event.KEY_NAME) {
-        throw new JsonParsingException("Encountered " + event + " when only key name was valid.", input.getLocation());
+      if (lastEvent != Event.KEY_NAME) {
+        throw new JsonParsingException("Encountered " + lastEvent + " when only key name was valid.", input.getLocation());
       }
       String key = getString();
 
-      event = next();
-      if (event == Event.KEY_NAME || event == Event.END_ARRAY || event == Event.END_OBJECT) {
-        throw new IllegalStateException("Invalid event generated during parsing: " + event);
+      ensureNextInObject();
+      iteratorFetchNext();
+      if (lastEvent == Event.KEY_NAME || lastEvent == Event.END_ARRAY || lastEvent == Event.END_OBJECT) {
+        throw new IllegalStateException("Invalid event generated during parsing: " + lastEvent);
       }
       jObject.put(key, doValue(recursion));
     }
@@ -403,6 +400,22 @@ public class JParser implements JsonParser {
   }
 
 
+  private void ensureNextInObject() {
+    if (!hasNext()) {
+      throw new JsonParsingException("Object was not terminated.", input.getLocation());
+    }
+  }
+
+
+  @Override
+  protected Event fetchNext() {
+    lastEvent = nextEvent;
+    nextEvent = null;
+    currentIterator = null;
+    return lastEvent;
+  }
+
+
   @Override
   public JArray getArray() {
     return doArray(0);
@@ -412,38 +425,35 @@ public class JParser implements JsonParser {
   @Override
   public Stream<JsonValue> getArrayStream() {
     checkState(Event.START_ARRAY);
-    Iterator<JsonValue> iter = new Iterator<>() {
-      boolean hasNextCalled = false;
+    BaseIterator<JsonValue> iter = new BaseIterator<>() {
 
-      boolean nextExists = false;
-
-
-      public boolean hasNext() {
-        if (hasNextCalled) {
-          return nextExists;
+      @Override
+      protected boolean checkNext() {
+        if (JParser.this.currentIterator != this) {
+          throw new ConcurrentModificationException();
         }
-        hasNextCalled = true;
-        nextExists = false;
         if (!JParser.this.hasNext()) {
           throw new JsonParsingException("Array was not terminated.", input.getLocation());
         }
-        if (JParser.this.next() == Event.END_ARRAY) {
+        JParser.this.iteratorFetchNext();
+        if (JParser.this.lastEvent == Event.END_ARRAY) {
+          JParser.this.currentIterator = null;
           return false;
         }
-        nextExists = true;
         return true;
       }
 
 
-      public JsonValue next() {
-        if (hasNext()) {
-          hasNextCalled = false;
-          return getValue();
+      @Override
+      protected JsonValue fetchNext() {
+        if (JParser.this.currentIterator != this) {
+          throw new ConcurrentModificationException();
         }
-        throw new NoSuchElementException();
+        return JParser.this.getValue();
       }
     };
-    return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iter, 0), false);
+    currentIterator = iter;
+    return iter.asStream();
   }
 
 
@@ -458,6 +468,16 @@ public class JParser implements JsonParser {
   public int getInt() {
     checkNumber();
     return ((PNumber) value).intValue();
+  }
+
+
+  /**
+   * Get the last event returned from "next".
+   *
+   * @return the last event
+   */
+  public Event getLastEvent() {
+    return lastEvent;
   }
 
 
@@ -483,49 +503,42 @@ public class JParser implements JsonParser {
   @Override
   public Stream<Entry<String, JsonValue>> getObjectStream() {
     checkState(Event.START_OBJECT);
-    Iterator<Entry<String, JsonValue>> iter = new Iterator<>() {
-      boolean hasNextCalled = false;
-
-      String key;
-
-      boolean nextExists = false;
+    BaseIterator<Entry<String, JsonValue>> iter = new BaseIterator<>() {
 
 
-      public boolean hasNext() {
-        if (hasNextCalled) {
-          return nextExists;
+      @Override
+      protected boolean checkNext() {
+        if (JParser.this.currentIterator != this) {
+          throw new ConcurrentModificationException();
         }
-        hasNextCalled = true;
-        nextExists = false;
-
-        if (!JParser.this.hasNext()) {
-          throw new JsonParsingException("Object was not terminated.", input.getLocation());
-        }
-
-        Event event = JParser.this.next();
-        if (event == Event.END_OBJECT) {
+        ensureNextInObject();
+        JParser.this.iteratorFetchNext();
+        if (JParser.this.lastEvent == Event.END_OBJECT) {
+          JParser.this.currentIterator = null;
           return false;
         }
-        if (event != Event.KEY_NAME) {
-          throw new JsonParsingException("Saw event " + event + " when only KEY_NAME was valid.", input.getLocation());
-        }
-        key = getString();
-
-        if (!JParser.this.hasNext()) {
-          throw new JsonParsingException("Object was not terminated.", input.getLocation());
+        if (JParser.this.lastEvent != Event.KEY_NAME) {
+          throw new JsonParsingException("Saw event " + JParser.this.lastEvent + " when only KEY_NAME was valid.", input.getLocation());
         }
         return true;
       }
 
 
-      public Entry<String, JsonValue> next() {
-        if (!hasNext()) {
-          throw new NoSuchElementException();
+      @Override
+      protected Entry<String, JsonValue> fetchNext() {
+        if (JParser.this.currentIterator != this) {
+          throw new ConcurrentModificationException();
         }
-        return new AbstractMap.SimpleEntry<>(key, getValue());
+        String key = JParser.this.getString();
+        if (!JParser.this.hasNext()) {
+          throw new JsonParsingException("Object was not terminated. Saw key but no value.", input.getLocation());
+        }
+        JParser.this.iteratorFetchNext();
+        return new SimpleImmutableEntry<>(key, JParser.this.getValue());
       }
     };
-    return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iter, 0), false);
+    currentIterator = iter;
+    return iter.asStream();
   }
 
 
@@ -546,16 +559,34 @@ public class JParser implements JsonParser {
 
   @Override
   public Stream<JsonValue> getValueStream() {
-    return null;
-  }
-
-
-  @Override
-  public boolean hasNext() {
-    if (nextEvent == null && isRunning) {
-      doNext();
+    if (depth != -1) {
+      throw new IllegalStateException("Parser is within a JSON structure");
     }
-    return nextEvent != null;
+    BaseIterator<JsonValue> iterator = new BaseIterator<>() {
+      @Override
+      protected boolean checkNext() {
+        if (JParser.this.currentIterator != this) {
+          throw new ConcurrentModificationException();
+        }
+        if (JParser.this.hasNext()) {
+          return true;
+        }
+        JParser.this.currentIterator = null;
+        return false;
+      }
+
+
+      @Override
+      protected JsonValue fetchNext() {
+        if (JParser.this.currentIterator != this) {
+          throw new ConcurrentModificationException();
+        }
+        JParser.this.iteratorFetchNext();
+        return JParser.this.getValue();
+      }
+    };
+    currentIterator = iterator;
+    return iterator.asStream();
   }
 
 
@@ -563,6 +594,13 @@ public class JParser implements JsonParser {
   public boolean isIntegralNumber() {
     checkNumber();
     return ((PNumber) value).isIntegral();
+  }
+
+
+  void iteratorFetchNext() {
+    hasNextCalled = false;
+    lastEvent = nextEvent;
+    nextEvent = null;
   }
 
 
@@ -584,18 +622,6 @@ public class JParser implements JsonParser {
         );
       }
     }
-  }
-
-
-  @Override
-  public Event next() {
-    lastEvent = nextEvent;
-    if (hasNext()) {
-      Event event = nextEvent;
-      nextEvent = null;
-      return event;
-    }
-    throw new NoSuchElementException();
   }
 
 
@@ -637,8 +663,7 @@ public class JParser implements JsonParser {
    */
   private void parseNumber(int r) {
     NumberParser numberParser = new NumberParser(input);
-    BigDecimal val = numberParser.parse(r);
-    value = new PNumber(val);
+    value = new PNumber(numberParser.parse(r));
     nextEvent = Event.VALUE_NUMBER;
   }
 
@@ -660,17 +685,21 @@ public class JParser implements JsonParser {
 
   @Override
   public void skipArray() {
-    if (depth == -1 || !isObject[depth]) {
+    if (depth == -1 || isObject[depth]) {
       // not in an array, so do nothing
       return;
     }
-    int startDepth = depth;
+    if (currentIterator != null) {
+      currentIterator.nextExists = false;
+      currentIterator.hasNextCalled = true;
+    }
+    int endDepth = depth-1;
     while (true) {
       if (!hasNext()) {
         throw new JsonParsingException("Array was not terminated", input.getLocation());
       }
       Event event = next();
-      if (event == Event.END_ARRAY && depth == startDepth) {
+      if (event == Event.END_ARRAY && depth == endDepth) {
         break;
       }
     }
@@ -679,17 +708,21 @@ public class JParser implements JsonParser {
 
   @Override
   public void skipObject() {
-    if (depth == -1 || isObject[depth]) {
+    if (depth == -1 || !isObject[depth]) {
       // not in an object, so do nothing
       return;
     }
-    int startDepth = depth;
+    if (currentIterator != null) {
+      currentIterator.nextExists = false;
+      currentIterator.hasNextCalled = true;
+    }
+    int endDepth = depth-1;
     while (true) {
       if (!hasNext()) {
         throw new JsonParsingException("Object was not terminated", input.getLocation());
       }
       Event event = next();
-      if (event == Event.END_OBJECT && depth == startDepth) {
+      if (event == Event.END_OBJECT && depth == endDepth) {
         break;
       }
     }

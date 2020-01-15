@@ -25,7 +25,7 @@ public class JParserFactory implements JsonParserFactory {
   private boolean singleRoot = true;
 
 
-  public JParserFactory(Map<String, Object> config) {
+  public JParserFactory(Map<String, ?> config) {
     if (config != null && config.containsKey(REQUIRE_SINGLE_ROOT)) {
       singleRoot = Boolean.valueOf(String.valueOf(config.get(REQUIRE_SINGLE_ROOT)));
     }
@@ -54,13 +54,13 @@ public class JParserFactory implements JsonParserFactory {
 
   @Override
   public JsonParser createParser(JsonObject obj) {
-    return null; // TODO
+    return new JStructureParser(obj);
   }
 
 
   @Override
   public JsonParser createParser(JsonArray array) {
-    return null; // TODO
+    return new JStructureParser(array);
   }
 
 

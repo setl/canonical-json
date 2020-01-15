@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.json.JsonNumber;
@@ -16,10 +17,17 @@ import javax.json.JsonNumber;
  */
 public class PNumber extends PBase implements JsonNumber {
 
+
   private final Number value;
 
 
   public PNumber(Number value) {
+    if (value instanceof Double || value instanceof Float) {
+      double d = value.doubleValue();
+      if (Double.isInfinite(d) || Double.isNaN(d)) {
+        throw new IllegalArgumentException("The IEEE float point value \"" + d + "\" is illegal in JSON");
+      }
+    }
     this.value = value;
   }
 
@@ -51,6 +59,32 @@ public class PNumber extends PBase implements JsonNumber {
   }
 
 
+  /**
+   * The JSON API requires we test for equality via BigDecimal values. As the canonical JSON does not retain trailing zeros, we actually test for equality by
+   * the total ordering of real numbers.
+   */
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof JsonNumber)) {
+      return false;
+    }
+
+    // API requires comparison as BigDecimals.
+    PNumber pNumber = (PNumber) o;
+    Number myNumber = numberValue();
+    Number otherNumber = numberValue();
+
+    // TODO finish me
+    if (myNumber.equals(otherNumber)) {
+      return true;
+    }
+    return Objects.equals(value, pNumber.value);
+  }
+
+
   @Override
   public JType getType() {
     return JType.NUMBER;
@@ -66,6 +100,12 @@ public class PNumber extends PBase implements JsonNumber {
   @Override
   public ValueType getValueType() {
     return ValueType.NUMBER;
+  }
+
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
 

@@ -2,6 +2,7 @@ package io.setl.json.builder;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -285,5 +286,11 @@ public class JArrayBuilderTest {
     b.add("A").add(9);
     builder.addNull().set(0, b);
     test(ValueType.ARRAY, "[\"A\",9]");
+  }
+
+
+  @Test
+  public void testToString() {
+    assertNotNull(builder.toString());
   }
 }

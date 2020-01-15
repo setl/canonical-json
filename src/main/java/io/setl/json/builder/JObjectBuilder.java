@@ -93,12 +93,6 @@ public class JObjectBuilder implements JsonObjectBuilder {
   }
 
 
-  public JsonObjectBuilder addAll(JsonObject object) {
-    object.putAll(object);
-    return this;
-  }
-
-
   @Override
   public JsonObjectBuilder addNull(String name) {
     object.put(name);

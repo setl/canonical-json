@@ -692,13 +692,13 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
 
   @Override
   public <T extends JsonValue> List<T> getValuesAs(Class<T> clazz) {
-    return null;
+    return null; // TODO
   }
 
 
   @Override
   public <T, K extends JsonValue> List<T> getValuesAs(Function<K, T> func) {
-    return null;
+    return null;  // TODO
   }
 
 
@@ -709,7 +709,7 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
 
   @Override
   public boolean isNull(int index) {
-    return false;
+    return get(index).getValueType().equals(ValueType.NULL);
   }
 
 

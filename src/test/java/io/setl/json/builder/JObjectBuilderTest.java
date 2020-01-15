@@ -1,6 +1,7 @@
 package io.setl.json.builder;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -14,14 +15,39 @@ public class JObjectBuilderTest {
 
   private JObjectBuilder builder = new JObjectBuilder();
 
-  private void test(String txt) {
-    assertEquals(txt,builder.build().toString());
-  }
 
   @Test
   public void add() {
     builder.add("A", JsonValue.EMPTY_JSON_ARRAY);
     test("{\"A\":[]}");
+  }
+
+
+  @Test
+  public void addAll() {
+    JObjectBuilder b = new JObjectBuilder();
+    b.add("@", 0).add("Z", 3);
+    builder.addAll(b);
+    test("{\"@\":0,\"Z\":3}");
+  }
+
+
+  @Test
+  public void addNull() {
+    builder.addNull("A");
+    test("{\"A\":null}");
+  }
+
+
+  @Test
+  public void remove() {
+    builder.add("A", true).remove("A");
+    test("{}");
+  }
+
+
+  private void test(String txt) {
+    assertEquals(txt, builder.build().toString());
   }
 
 
@@ -89,24 +115,7 @@ public class JObjectBuilderTest {
 
 
   @Test
-  public void addAll() {
-    JObjectBuilder b = new JObjectBuilder();
-    b.add("@",0).add("Z",3);
-    builder.addAll(b);
-    test("{\"@\":0,\"Z\":3}");
-  }
-
-
-  @Test
-  public void addNull() {
-    builder.addNull("A");
-    test("{\"A\":null}");
-  }
-
-
-  @Test
-  public void remove() {
-    builder.add("A", true).remove("A");
-    test("{}");
+  public void testToString() {
+    assertNotNull(builder.toString());
   }
 }

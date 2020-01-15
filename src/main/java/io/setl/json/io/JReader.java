@@ -1,7 +1,6 @@
 package io.setl.json.io;
 
-import io.setl.json.Parser;
-import io.setl.json.exception.InvalidJsonException;
+import io.setl.json.parser.JParser;
 import java.io.IOException;
 import java.io.Reader;
 import javax.json.JsonArray;
@@ -19,6 +18,8 @@ public class JReader implements JsonReader {
 
   private final Reader reader;
 
+  private boolean isUsed = false;
+
 
   /**
    * New instance.
@@ -32,36 +33,56 @@ public class JReader implements JsonReader {
 
   @Override
   public void close() {
-
+    isUsed = true;
+    try {
+      reader.close();
+    } catch (IOException e) {
+      throw new JsonException("I/O failure", e);
+    }
   }
 
 
   @Override
   public JsonStructure read() {
-    return null;
+    JsonValue value = readValue();
+    if (value instanceof JsonStructure) {
+      return (JsonStructure) value;
+    }
+    throw new JsonParsingException("Datum was a " + value.getValueType() + ", not a structure", Location.UNSET);
   }
 
 
   @Override
   public JsonArray readArray() {
-    return null;
+    JsonValue value = readValue();
+    if (value instanceof JsonArray) {
+      return (JsonArray) value;
+    }
+    throw new JsonParsingException("Datum was a " + value.getValueType() + ", not an array", Location.UNSET);
   }
 
 
   @Override
   public JsonObject readObject() {
-    return null;
+    JsonValue value = readValue();
+    if (value instanceof JsonObject) {
+      return (JsonObject) value;
+    }
+    throw new JsonParsingException("Datum was a " + value.getValueType() + ", not an object", Location.UNSET);
   }
 
 
   @Override
   public JsonValue readValue() {
-    try {
-      return Parser.parse(reader);
-    } catch (InvalidJsonException e) {
-      throw new JsonParsingException(e.getMessage(), e.getLocation());
-    } catch (IOException e) {
-      throw new JsonException("I/O failure", e);
+    if (isUsed) {
+      throw new IllegalStateException("This JsonReader has already been used");
     }
+    isUsed = true;
+    JParser jParser = new JParser(reader);
+    if (!jParser.hasNext()) {
+      throw new JsonParsingException("No data found in document", Location.UNSET);
+    }
+    jParser.next();
+    return jParser.getValue();
   }
 }

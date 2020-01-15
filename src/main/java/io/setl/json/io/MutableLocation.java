@@ -78,7 +78,7 @@ public class MutableLocation extends Location {
 
     // Either \n or second part of \r\n
     if (ch == '\n') {
-      columnNumber = 1;
+      columnNumber = 0;
       if (lastWasCR) {
         lastWasCR = false;
       } else {
@@ -88,7 +88,7 @@ public class MutableLocation extends Location {
     }
 
     if (ch == '\r') {
-      columnNumber = 1;
+      columnNumber = 0;
       lineNumber++;
       lastWasCR = true;
       return;

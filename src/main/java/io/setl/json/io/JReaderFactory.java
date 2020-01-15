@@ -1,6 +1,9 @@
 package io.setl.json.io;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.Collections;
@@ -15,19 +18,19 @@ public class JReaderFactory implements JsonReaderFactory {
 
   @Override
   public JsonReader createReader(Reader reader) {
-    return null;
+    return new JReader(reader);
   }
 
 
   @Override
   public JsonReader createReader(InputStream in) {
-    return null;
+    return createReader(in, UTF_8);
   }
 
 
   @Override
   public JsonReader createReader(InputStream in, Charset charset) {
-    return null;
+    return new JReader(new InputStreamReader(in, charset));
   }
 
 

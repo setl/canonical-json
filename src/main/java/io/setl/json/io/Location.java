@@ -29,6 +29,8 @@ import javax.json.stream.JsonLocation;
  */
 public class Location implements JsonLocation {
 
+  public static final Location UNSET = new Location(-1,-1,-1);
+
   protected long columnNumber = 0L;
 
   protected long lineNumber = 1L;
@@ -38,6 +40,13 @@ public class Location implements JsonLocation {
 
   protected Location() {
     // do nothing
+  }
+
+
+  public Location(long columnNumber, long lineNumber, long streamOffset) {
+    this.columnNumber = columnNumber;
+    this.lineNumber = lineNumber;
+    this.streamOffset = streamOffset;
   }
 
 

@@ -1,11 +1,18 @@
 package io.setl.json;
 
+import io.setl.json.io.JReaderFactory;
+import io.setl.json.parser.JParser;
+import io.setl.json.parser.JParserFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.util.function.Function;
+import javax.json.JsonReader;
+import javax.json.stream.JsonParser;
+import javax.json.stream.JsonParsingException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -28,19 +35,18 @@ public class TestCanonical {
   }
 
 
-  private Primitive loadJson(String resource) throws IOException {
+  private Primitive loadJson(String resource, Function<Reader,Primitive> parser) throws IOException {
     try (
         InputStream input = TestParsing.class.getClassLoader().getResourceAsStream(resource);
         Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8)
     ) {
-      return Parser.parse(reader);
+      return parser.apply(reader);
     }
   }
 
 
-  @Test
-  public void testParse() throws IOException {
-    Primitive p = loadJson("expected.json");
+  private void testParse(Function<Reader,Primitive> parser) throws IOException {
+    Primitive p = loadJson("expected.json", parser);
     JArray array = p.getValueSafe(JArray.class);
     ByteArrayOutputStream output = new ByteArrayOutputStream();
     for (Primitive p2 : array.primitives()) {
@@ -48,12 +54,15 @@ public class TestCanonical {
 
       Primitive primitive;
       try {
-        primitive = loadJson(f + "input.json");
+        primitive = loadJson(f + "input.json", parser);
       } catch (IOException ioe) {
         throw new AssertionError("FAIL processing " + f + " : " + ioe.getMessage(), ioe);
       } catch (Error err) {
         throw new AssertionError("CRASH processing " + f, err);
       } catch (RuntimeException re) {
+        if( re instanceof JsonParsingException ) {
+          System.out.println("location: "+((JsonParsingException) re).getLocation());
+        }
         throw new AssertionError("ABEND processing " + f, re);
       }
       output.reset();
@@ -67,4 +76,25 @@ public class TestCanonical {
       Assert.assertArrayEquals(expected, output.toByteArray());
     }
   }
+
+  @Test
+  public void testParser() throws IOException {
+    testParse(r -> {
+      try {
+        return Parser.parse(r);
+      } catch ( IOException e ) {
+        throw new JsonParsingException("I/O failure",e,null);
+      }
+    });
+  }
+
+
+  @Test
+  public void testStream() throws IOException {
+    testParse(r -> {
+      JsonReader jr = new JReaderFactory().createReader(r);
+      return (Primitive) jr.readValue();
+    });
+  }
+
 }

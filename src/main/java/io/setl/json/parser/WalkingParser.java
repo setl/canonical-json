@@ -45,7 +45,7 @@ abstract class WalkingParser extends BaseIterator<Event> implements JsonParser {
   }
 
 
-  abstract protected boolean checkNextImpl();
+  protected abstract boolean checkNextImpl();
 
 
   private void checkType(JsonValue value, ValueType expected) {

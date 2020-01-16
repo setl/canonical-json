@@ -12,7 +12,7 @@ public class Input {
 
   private final Reader reader;
 
-  private MutableLocation location = new MutableLocation();
+  private final MutableLocation location = new MutableLocation();
 
   private boolean seenEOF = false;
 
@@ -84,6 +84,11 @@ public class Input {
   }
 
 
+  /**
+   * Unread the given value. The next call to read() will return it.
+   *
+   * @param r the value to unread
+   */
   public void unread(int r) {
     if (r != -1) {
       seenEOF = false;

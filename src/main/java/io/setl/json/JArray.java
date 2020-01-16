@@ -806,6 +806,13 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
   }
 
 
+  /**
+   * Get the primitive at the given array index. Will be null if the index is out of range.
+   *
+   * @param i the array index
+   *
+   * @return the primitive or null.
+   */
   @Nullable
   public Primitive optPrimitive(int i) {
     if (i < 0 || size() <= i) {
@@ -826,9 +833,14 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
   }
 
 
+  /**
+   * Iterate across the primitives in this array.
+   *
+   * @return an iterable over the primitives.
+   */
   public Iterable<Primitive> primitives() {
     final Iterator<JsonValue> values = iterator();
-    final Iterator<Primitive> iterator = new Iterator<Primitive>() {
+    final Iterator<Primitive> iterator = new Iterator<>() {
       @Override
       public boolean hasNext() {
         return values.hasNext();
@@ -926,6 +938,11 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
   }
 
 
+  /**
+   * Unwrap this array into a List.
+   *
+   * @return the list of values.
+   */
   public List<Object> unwrap() {
     ArrayList<Object> list = new ArrayList<>(size());
     forEach(v -> {

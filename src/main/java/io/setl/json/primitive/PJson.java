@@ -11,7 +11,7 @@ import java.io.Writer;
  */
 public class PJson extends PBase {
 
-  private String json;
+  private final String json;
 
 
   public PJson(String json) {

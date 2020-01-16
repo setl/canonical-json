@@ -2,7 +2,6 @@ package io.setl.json;
 
 import static org.junit.Assert.fail;
 
-import io.setl.json.primitive.PBase;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;

@@ -21,6 +21,11 @@ public class PNumber extends PBase implements JsonNumber {
   private final Number value;
 
 
+  /**
+   * New instance.
+   *
+   * @param value the numeric value
+   */
   public PNumber(Number value) {
     if (value instanceof Double || value instanceof Float) {
       double d = value.doubleValue();

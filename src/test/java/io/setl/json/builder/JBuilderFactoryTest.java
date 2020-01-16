@@ -1,6 +1,9 @@
 package io.setl.json.builder;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
 
 import io.setl.json.JArray;
 import io.setl.json.JObject;
@@ -17,6 +20,7 @@ public class JBuilderFactoryTest {
 
   JBuilderFactory factory = new JBuilderFactory();
 
+
   @Test
   public void createArrayBuilder() {
     JsonArrayBuilder builder = factory.createArrayBuilder();
@@ -26,37 +30,43 @@ public class JBuilderFactoryTest {
 
 
   @Test
+  public void createObjectBuilder() {
+  }
+
+
+  @Test
+  public void getConfigInUse() {
+    assertTrue(factory.getConfigInUse().isEmpty());
+  }
+
+
+  @Test
   public void testCreateArrayBuilder() {
     JObject object = new JObject();
-    object.put("A",1);
+    object.put("A", 1);
     JArray array = new JArray();
     array.add(object);
     JsonArrayBuilder builder = factory.createArrayBuilder(array);
     assertNotNull(builder);
     JsonArray output = builder.build();
     assertEquals(1, output.size());
-    assertNotSame(object,output.get(0));
-    assertEquals(object,output.get(0));
+    assertNotSame(object, output.get(0));
+    assertEquals(object, output.get(0));
   }
 
 
   @Test
   public void testCreateArrayBuilder1() {
-    HashMap<String,Object> object = new HashMap<>();
-    object.put("A",1);
+    HashMap<String, Object> object = new HashMap<>();
+    object.put("A", 1);
     ArrayList<Object> array = new ArrayList<>();
     array.add(object);
     JsonArrayBuilder builder = factory.createArrayBuilder(array);
     assertNotNull(builder);
     JsonArray output = builder.build();
     assertEquals(1, output.size());
-    assertNotSame(object,output.get(0));
-    assertEquals(object,((JObject) output.get(0)).unwrap());
-  }
-
-
-  @Test
-  public void createObjectBuilder() {
+    assertNotSame(object, output.get(0));
+    assertEquals(object, ((JObject) output.get(0)).unwrap());
   }
 
 
@@ -67,11 +77,5 @@ public class JBuilderFactoryTest {
 
   @Test
   public void testCreateObjectBuilder1() {
-  }
-
-
-  @Test
-  public void getConfigInUse() {
-    assertTrue(factory.getConfigInUse().isEmpty());
   }
 }

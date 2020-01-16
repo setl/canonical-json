@@ -14,7 +14,6 @@ import java.util.Map.Entry;
 import java.util.stream.Stream;
 import javax.json.JsonValue;
 import javax.json.stream.JsonParser.Event;
-import javax.json.stream.JsonParsingException;
 import org.junit.Test;
 
 /**
@@ -81,13 +80,14 @@ public class JParserTest {
     assertEquals(-1234567890000L, parser.getLong());
   }
 
+
   @Test
   public void testObject() {
     JParser parser = create("{\"a\":1,\"b\":2}");
     parser.next();
     JObject object = parser.getObject();
-    assertEquals(2,object.size());
-    assertEquals(2,object.getInt("b"));
+    assertEquals(2, object.size());
+    assertEquals(2, object.getInt("b"));
   }
 
 
@@ -95,28 +95,15 @@ public class JParserTest {
   public void testObjectStream() {
     JParser parser = create("{\"a\":1,\"b\":true}");
     parser.next();
-    Stream<Entry<String,JsonValue>> stream = parser.getObjectStream();
+    Stream<Entry<String, JsonValue>> stream = parser.getObjectStream();
     Object[] a = stream.toArray();
-    assertEquals(2,a.length);
-    assertEquals("a",((Entry<?,?>) a[0]).getKey());
-    assertEquals("b",((Entry<?,?>) a[1]).getKey());
-    assertEquals(new PNumber(Integer.valueOf(1)),((Entry<?,?>) a[0]).getValue());
-    assertEquals(PTrue.TRUE,((Entry<?,?>) a[1]).getValue());
+    assertEquals(2, a.length);
+    assertEquals("a", ((Entry<?, ?>) a[0]).getKey());
+    assertEquals("b", ((Entry<?, ?>) a[1]).getKey());
+    assertEquals(new PNumber(Integer.valueOf(1)), ((Entry<?, ?>) a[0]).getValue());
+    assertEquals(PTrue.TRUE, ((Entry<?, ?>) a[1]).getValue());
   }
 
-  @Test
-  public void testValueStream() {
-    JParser parser = create("{}1 2 false[true]");
-    parser.setRequireSingleRoot(false);
-    Stream<JsonValue> stream = parser.getValueStream();
-    Iterator<JsonValue> iter = stream.iterator();
-    StringBuilder buf = new StringBuilder();
-    while(iter.hasNext()) {
-      JsonValue jv = iter.next();
-      buf.append(" ").append(jv.getValueType());
-    }
-    assertEquals(" OBJECT NUMBER NUMBER FALSE ARRAY",buf.toString());
-  }
 
   @Test
   public void testSkipArray() {
@@ -127,9 +114,9 @@ public class JParserTest {
     Iterator<JsonValue> iterator = stream.iterator();
     iterator.next();
     iterator.next();
-    assertEquals(Event.VALUE_TRUE,parser.getLastEvent());
+    assertEquals(Event.VALUE_TRUE, parser.getLastEvent());
     parser.skipArray();
-    assertEquals(Event.END_ARRAY,parser.getLastEvent());
+    assertEquals(Event.END_ARRAY, parser.getLastEvent());
     assertFalse(iterator.hasNext());
   }
 
@@ -140,12 +127,27 @@ public class JParserTest {
     parser.setRequireSingleRoot(false);
     parser.next();
     parser.next();
-    Stream<Entry<String,JsonValue>> stream = parser.getObjectStream();
-    Iterator<Entry<String,JsonValue>> iterator = stream.iterator();
+    Stream<Entry<String, JsonValue>> stream = parser.getObjectStream();
+    Iterator<Entry<String, JsonValue>> iterator = stream.iterator();
     iterator.next();
-    assertEquals(Event.VALUE_TRUE,parser.getLastEvent());
+    assertEquals(Event.VALUE_TRUE, parser.getLastEvent());
     parser.skipObject();
-    assertEquals(Event.END_OBJECT,parser.getLastEvent());
+    assertEquals(Event.END_OBJECT, parser.getLastEvent());
     assertFalse(iterator.hasNext());
+  }
+
+
+  @Test
+  public void testValueStream() {
+    JParser parser = create("{}1 2 false[true]");
+    parser.setRequireSingleRoot(false);
+    Stream<JsonValue> stream = parser.getValueStream();
+    Iterator<JsonValue> iter = stream.iterator();
+    StringBuilder buf = new StringBuilder();
+    while (iter.hasNext()) {
+      JsonValue jv = iter.next();
+      buf.append(" ").append(jv.getValueType());
+    }
+    assertEquals(" OBJECT NUMBER NUMBER FALSE ARRAY", buf.toString());
   }
 }

@@ -1,6 +1,7 @@
 package io.setl.json.primitive;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -12,6 +13,12 @@ public class PBaseTest {
   // shameless coverage tests
   @Test
   public void testEquals() {
-    assertTrue()
+    PString string = new PString("Wibble");
+    PString same = new PString("Wibble");
+    PString other = new PString("Wobble");
+    assertTrue(string.equals(string));
+    assertFalse(string.equals(null));
+    assertFalse(string.equals(other));
+    assertTrue(string.equals(same));
   }
 }

@@ -71,8 +71,10 @@ public class JStructureParser extends BaseIterator<Event> implements JsonParser 
         break;
       case START_OBJECT:
         delegate = new ObjectWalker(delegate, delegate.getObject());
+        break;
       default:
         // do nothing
+        break;
     }
 
     return event;

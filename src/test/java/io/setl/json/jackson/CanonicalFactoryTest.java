@@ -85,7 +85,8 @@ public class CanonicalFactoryTest {
         "{\"count\":24,\"data\":[5.156311201658089E-1,8.997613044339822E-1,8.898458711493542E-1],"
             + "\"sibling\":{\"count\":39,\"data\":[2.6323510263178707E-1,6.379952106951381E-1,9.824964487440964E-1],"
             + "\"sibling\":null,\"text\":\"14z05unwoqriq\"},\"text\":\"-fxc8p6ycqbui\"}",
-        json);
+        json
+    );
   }
 
 

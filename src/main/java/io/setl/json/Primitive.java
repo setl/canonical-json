@@ -40,6 +40,13 @@ import javax.json.JsonValue;
 public interface Primitive extends JsonValue {
 
 
+  /**
+   * Create a Primitive from a JsonValue.
+   *
+   * @param value the value
+   *
+   * @return the Primitive
+   */
   static Primitive create(JsonValue value) {
     if (value == null) {
       return PNull.NULL;
@@ -96,12 +103,6 @@ public interface Primitive extends JsonValue {
     if (value instanceof Number) {
       return new PNumber((Number) value);
     }
-    if (value instanceof JArray) {
-      return (JArray) value;
-    }
-    if (value instanceof JObject) {
-      return (JObject) value;
-    }
     if (value instanceof Collection<?>) {
       return JArray.fixCollection((Collection<?>) value);
     }
@@ -111,6 +112,13 @@ public interface Primitive extends JsonValue {
     throw new IllegalArgumentException("Cannot include item of class " + value.getClass() + " in JSON");
   }
 
+  /**
+   * Convert any number to a BigDecimal.
+   *
+   * @param n the number
+   *
+   * @return the BigDecimal
+   */
   static BigDecimal toBigDecimal(Number n) {
     if (n == null) {
       return null;
@@ -132,6 +140,13 @@ public interface Primitive extends JsonValue {
     return new BigDecimal(n.toString());
   }
 
+  /**
+   * Convert any number to a BigInteger, possibly losing precision in the conversion.
+   *
+   * @param n the number
+   *
+   * @return the BigInteger
+   */
   static BigInteger toBigInteger(Number n) {
     if (n == null) {
       return null;

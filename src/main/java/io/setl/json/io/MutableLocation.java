@@ -54,6 +54,11 @@ public class MutableLocation extends Location {
   }
 
 
+  /**
+   * Update this location from reading the given character from the stream.
+   *
+   * @param ch the character.
+   */
   public void update(int ch) {
     if (ch >= ' ') {
       streamOffset++;

@@ -86,8 +86,6 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
    */
   private boolean[] isObject = new boolean[16];
 
-  private boolean isRunning = true;
-
   /**
    * The last event returned from <code>next</code>.
    */
@@ -265,7 +263,6 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
     switch (r) {
       case -1:
         nextEvent = null;
-        isRunning = false;
         return;
 
       case '\"':
@@ -693,7 +690,7 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
       currentIterator.nextExists = false;
       currentIterator.hasNextCalled = true;
     }
-    int endDepth = depth-1;
+    int endDepth = depth - 1;
     while (true) {
       if (!hasNext()) {
         throw new JsonParsingException("Array was not terminated", input.getLocation());
@@ -716,7 +713,7 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
       currentIterator.nextExists = false;
       currentIterator.hasNextCalled = true;
     }
-    int endDepth = depth-1;
+    int endDepth = depth - 1;
     while (true) {
       if (!hasNext()) {
         throw new JsonParsingException("Object was not terminated", input.getLocation());

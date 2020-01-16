@@ -101,18 +101,6 @@ public class JObjectTest {
 
 
   @Test
-  public void testOptArrayString() {
-    JArray a1 = new JArray();
-    a1.add(1.0);
-    json.put("array", a1);
-    assertNull(json.optArray("null"));
-    assertNull(json.optArray("n/a"));
-    assertNull(json.optArray("string"));
-    assertEquals(a1, json.optArray("array"));
-  }
-
-
-  @Test
   public void testGetArrayStringFunctionOfStringJsonArray() {
     JArray a1 = new JArray();
     a1.add(1);
@@ -161,17 +149,6 @@ public class JObjectTest {
 
 
   @Test
-  public void testOptBigDecimalString() {
-    BigDecimal bd = new BigDecimal(Math.PI);
-    json.put("bd", bd);
-    assertNull(json.optBigDecimal("null"));
-    assertNull(json.optBigDecimal("n/a"));
-    assertNull(json.optBigDecimal("string"));
-    assertEquals(bd, json.optBigDecimal("bd"));
-  }
-
-
-  @Test
   public void testGetBigDecimalStringBigDecimal() {
     BigDecimal bd = new BigDecimal(Math.PI);
     BigDecimal bd2 = new BigDecimal(Math.E);
@@ -210,17 +187,6 @@ public class JObjectTest {
     } catch (MissingItemException e) {
       // correct
     }
-  }
-
-
-  @Test
-  public void testOptBigIntegerString() {
-    BigInteger bi = new BigInteger("1234567890");
-    json.put("bi", bi);
-    assertNull(json.optBigInteger("null"));
-    assertNull(json.optBigInteger("n/a"));
-    assertNull(json.optBigInteger("string"));
-    assertEquals(bi, json.optBigInteger("bi"));
   }
 
 
@@ -268,16 +234,6 @@ public class JObjectTest {
 
 
   @Test
-  public void testOptBooleanString() {
-    json.put("a", true);
-    assertNull(json.optBoolean("null"));
-    assertNull(json.optBoolean("n/a"));
-    assertNull(json.optBoolean("string"));
-    assertEquals(Boolean.TRUE, json.optBoolean("a"));
-  }
-
-
-  @Test
   public void testGetBooleanStringBoolean() {
     json.put("a", true);
     assertFalse(json.getBoolean("null", false));
@@ -313,17 +269,6 @@ public class JObjectTest {
     } catch (MissingItemException e) {
       // correct
     }
-  }
-
-
-  @Test
-  public void testOptDoubleString() {
-    Double d = Math.PI;
-    json.put("a", d);
-    assertNull(json.optDouble("null"));
-    assertNull(json.optDouble("n/a"));
-    assertNull(json.optDouble("string"));
-    assertEquals(d, json.optDouble("a"));
   }
 
 
@@ -367,16 +312,6 @@ public class JObjectTest {
 
 
   @Test
-  public void testOptIntString() {
-    json.put("a", 3);
-    assertNull(json.optInt("null"));
-    assertNull(json.optInt("n/a"));
-    assertNull(json.optInt("string"));
-    assertEquals(Integer.valueOf(3), json.optInt("a"));
-  }
-
-
-  @Test
   public void testGetIntStringInt() {
     json.put("a", 3);
     assertEquals(-1, json.getInt("null", -1));
@@ -416,16 +351,6 @@ public class JObjectTest {
 
 
   @Test
-  public void testOptLong() {
-    json.put("a", 3);
-    assertNull(json.optLong("null"));
-    assertNull(json.optLong("n/a"));
-    assertNull(json.optLong("string"));
-    assertEquals(Long.valueOf(3), json.optLong("a"));
-  }
-
-
-  @Test
   public void testGetLongStringLong() {
     json.put("a", 3);
     assertEquals(-1, json.getLong("null", -1));
@@ -460,18 +385,6 @@ public class JObjectTest {
     } catch (MissingItemException e) {
       // correct
     }
-  }
-
-
-  @Test
-  public void testOptObject() {
-    JObject o1 = new JObject();
-    o1.put("a", 3);
-    json.put("object", o1);
-    assertNull(json.optObject("null"));
-    assertNull(json.optObject("n/a"));
-    assertNull(json.optObject("string"));
-    assertEquals(o1, json.optObject("object"));
   }
 
 
@@ -521,17 +434,6 @@ public class JObjectTest {
     } catch (MissingItemException e) {
       // correct
     }
-  }
-
-
-  @Test
-  public void testOptString() {
-    String s1 = "text";
-    json.put("string", s1);
-    assertNull(json.optString("null"));
-    assertNull(json.optString("n/a"));
-    assertNull(json.optString("array"));
-    assertEquals(s1, json.optString("string"));
   }
 
 
@@ -587,6 +489,104 @@ public class JObjectTest {
         "{\"\uD83D\uDE2A\":0,\"\uD83D\uDE2A\uD83D\uDE2A\":1,\"\uD83D\uDE2A\uD83D\uDE2A\uD83D\uDE2A\":2,\"\uD83D\uDE2A\uD83D\uDE2A\uD83D\uDE2A\uD83D\uDE2A\":3}",
         json.toString()
     );
+  }
+
+
+  @Test
+  public void testOptArrayString() {
+    JArray a1 = new JArray();
+    a1.add(1.0);
+    json.put("array", a1);
+    assertNull(json.optArray("null"));
+    assertNull(json.optArray("n/a"));
+    assertNull(json.optArray("string"));
+    assertEquals(a1, json.optArray("array"));
+  }
+
+
+  @Test
+  public void testOptBigDecimalString() {
+    BigDecimal bd = new BigDecimal(Math.PI);
+    json.put("bd", bd);
+    assertNull(json.optBigDecimal("null"));
+    assertNull(json.optBigDecimal("n/a"));
+    assertNull(json.optBigDecimal("string"));
+    assertEquals(bd, json.optBigDecimal("bd"));
+  }
+
+
+  @Test
+  public void testOptBigIntegerString() {
+    BigInteger bi = new BigInteger("1234567890");
+    json.put("bi", bi);
+    assertNull(json.optBigInteger("null"));
+    assertNull(json.optBigInteger("n/a"));
+    assertNull(json.optBigInteger("string"));
+    assertEquals(bi, json.optBigInteger("bi"));
+  }
+
+
+  @Test
+  public void testOptBooleanString() {
+    json.put("a", true);
+    assertNull(json.optBoolean("null"));
+    assertNull(json.optBoolean("n/a"));
+    assertNull(json.optBoolean("string"));
+    assertEquals(Boolean.TRUE, json.optBoolean("a"));
+  }
+
+
+  @Test
+  public void testOptDoubleString() {
+    Double d = Math.PI;
+    json.put("a", d);
+    assertNull(json.optDouble("null"));
+    assertNull(json.optDouble("n/a"));
+    assertNull(json.optDouble("string"));
+    assertEquals(d, json.optDouble("a"));
+  }
+
+
+  @Test
+  public void testOptIntString() {
+    json.put("a", 3);
+    assertNull(json.optInt("null"));
+    assertNull(json.optInt("n/a"));
+    assertNull(json.optInt("string"));
+    assertEquals(Integer.valueOf(3), json.optInt("a"));
+  }
+
+
+  @Test
+  public void testOptLong() {
+    json.put("a", 3);
+    assertNull(json.optLong("null"));
+    assertNull(json.optLong("n/a"));
+    assertNull(json.optLong("string"));
+    assertEquals(Long.valueOf(3), json.optLong("a"));
+  }
+
+
+  @Test
+  public void testOptObject() {
+    JObject o1 = new JObject();
+    o1.put("a", 3);
+    json.put("object", o1);
+    assertNull(json.optObject("null"));
+    assertNull(json.optObject("n/a"));
+    assertNull(json.optObject("string"));
+    assertEquals(o1, json.optObject("object"));
+  }
+
+
+  @Test
+  public void testOptString() {
+    String s1 = "text";
+    json.put("string", s1);
+    assertNull(json.optString("null"));
+    assertNull(json.optString("n/a"));
+    assertNull(json.optString("array"));
+    assertEquals(s1, json.optString("string"));
   }
 
 

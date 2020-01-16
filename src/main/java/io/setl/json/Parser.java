@@ -65,13 +65,13 @@ public class Parser {
    * @throws IOException if literal is not matched
    */
   private static void matchLiteral(char[] literal, Input input) throws IOException {
-    for (int i = 0; i < literal.length; i++) {
+    for (char c : literal) {
       int r = input.read();
       if (r == -1) {
         throw new EOFException();
       }
-      if (r != literal[i]) {
-        throw badCharacter(r, literal[i]);
+      if (r != c) {
+        throw badCharacter(r, c);
       }
     }
   }
@@ -182,11 +182,10 @@ public class Parser {
    */
   private static Primitive parseArray(Input input, int depth) throws IOException {
     JArray arr = new JArray();
-    Primitive prim = arr;
     int r = skipWhite(input);
     if (r == ']') {
       // empty array
-      return prim;
+      return arr;
     }
 
     while (true) {
@@ -196,7 +195,7 @@ public class Parser {
       // skip on to closer or comma
       r = skipWhite(input);
       if (r == ']') {
-        return prim;
+        return arr;
       }
       if (r != ',') {
         throw new InvalidJsonException("Array continuation was not ',' but 0x" + Integer.toHexString(r), input.getLocation());
@@ -406,14 +405,13 @@ public class Parser {
    */
   private static Primitive parseObject(Input input, int depth) throws IOException {
     JObject obj = new JObject();
-    Primitive prim = obj;
     while (true) {
       int r = skipWhite(input);
       // name must start with a quote
       if (r != '\"') {
         if (r == '}' && obj.isEmpty()) {
           // Empty object is OK
-          return prim;
+          return obj;
         }
         throw new InvalidJsonException("Object pair's name did not start with '\"' but with 0x" + Integer.toHexString(r), input.getLocation());
       }
@@ -430,7 +428,7 @@ public class Parser {
       obj.put(name.getValueSafe(String.class), value);
       r = skipWhite(input);
       if (r == '}') {
-        return prim;
+        return obj;
       }
       if (r != ',') {
         throw new InvalidJsonException("Object continuation was not ',' but 0x" + Integer.toHexString(r), input.getLocation());

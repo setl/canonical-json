@@ -25,6 +25,11 @@ public class JParserFactory implements JsonParserFactory {
   private boolean singleRoot = true;
 
 
+  /**
+   * New instance.
+   *
+   * @param config Configuration - may be null or specify if a single root is required (which defaults to true).
+   */
   public JParserFactory(Map<String, ?> config) {
     if (config != null && config.containsKey(REQUIRE_SINGLE_ROOT)) {
       singleRoot = Boolean.valueOf(String.valueOf(config.get(REQUIRE_SINGLE_ROOT)));

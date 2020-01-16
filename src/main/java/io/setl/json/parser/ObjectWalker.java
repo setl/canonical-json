@@ -22,7 +22,7 @@ class ObjectWalker extends WalkingParser {
 
 
   ObjectWalker(WalkingParser delegate, JsonObject object) {
-    super(delegate, object.size(),Event.END_OBJECT);
+    super(delegate, object.size(), Event.END_OBJECT);
     this.object = object;
     keys = object.keySet().toArray(new String[0]);
   }

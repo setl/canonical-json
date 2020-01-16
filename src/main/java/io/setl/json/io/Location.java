@@ -29,7 +29,7 @@ import javax.json.stream.JsonLocation;
  */
 public class Location implements JsonLocation {
 
-  public static final Location UNSET = new Location(-1,-1,-1);
+  public static final Location UNSET = new Location(-1, -1, -1);
 
   protected long columnNumber = 0L;
 
@@ -43,6 +43,13 @@ public class Location implements JsonLocation {
   }
 
 
+  /**
+   * Create a location with the specified location. Note that -1 should be used for any unknown value.
+   *
+   * @param columnNumber the column number
+   * @param lineNumber   the line number
+   * @param streamOffset the stream offset
+   */
   public Location(long columnNumber, long lineNumber, long streamOffset) {
     this.columnNumber = columnNumber;
     this.lineNumber = lineNumber;
@@ -50,6 +57,11 @@ public class Location implements JsonLocation {
   }
 
 
+  /**
+   * New instance. Create an immutable location from a mutable one.
+   *
+   * @param other the mutable location
+   */
   public Location(MutableLocation other) {
     columnNumber = other.getColumnNumber();
     lineNumber = other.getLineNumber();

@@ -319,7 +319,6 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
    *
    * @return the Boolean
    */
-  @Nonnull
   public boolean getBoolean(String key) {
     return getSafe(Boolean.class, JType.BOOLEAN, key).booleanValue();
   }
@@ -950,6 +949,11 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
   }
 
 
+  /**
+   * Unwrap this object into a map.
+   *
+   * @return the equivalent map.
+   */
   public Map<String, Object> unwrap() {
     HashMap<String, Object> map = new HashMap<>();
     forEach((k, v) -> {

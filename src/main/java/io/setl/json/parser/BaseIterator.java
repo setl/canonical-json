@@ -31,14 +31,14 @@ abstract class BaseIterator<T> implements Iterator<T> {
    *
    * @return true if a next value exists.
    */
-  abstract protected boolean checkNext();
+  protected abstract boolean checkNext();
 
   /**
    * Fetch the next value. This will only be called after checkNext() has been called.
    *
    * @return the next value
    */
-  abstract protected T fetchNext();
+  protected abstract T fetchNext();
 
 
   @Override

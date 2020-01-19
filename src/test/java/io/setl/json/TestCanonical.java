@@ -75,17 +75,6 @@ public class TestCanonical {
   }
 
 
-  @Test
-  public void testParser() throws IOException {
-    testParse(r -> {
-      try {
-        return Parser.parse(r);
-      } catch (IOException e) {
-        throw new JsonParsingException("I/O failure", e, null);
-      }
-    });
-  }
-
 
   @Test
   public void testStream() throws IOException {

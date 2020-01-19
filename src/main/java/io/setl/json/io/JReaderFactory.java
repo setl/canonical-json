@@ -17,19 +17,19 @@ import javax.json.JsonReaderFactory;
 public class JReaderFactory implements JsonReaderFactory {
 
   @Override
-  public JsonReader createReader(Reader reader) {
+  public JReader createReader(Reader reader) {
     return new JReader(reader);
   }
 
 
   @Override
-  public JsonReader createReader(InputStream in) {
+  public JReader createReader(InputStream in) {
     return createReader(in, UTF_8);
   }
 
 
   @Override
-  public JsonReader createReader(InputStream in, Charset charset) {
+  public JReader createReader(InputStream in, Charset charset) {
     return new JReader(new InputStreamReader(in, charset));
   }
 

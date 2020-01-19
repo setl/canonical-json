@@ -37,18 +37,14 @@ public class JStructureParser extends BaseIterator<Event> implements JsonParser 
     if (firstEvent != null) {
       return true;
     }
-    while (delegate != null) {
-      if (delegate.hasNext()) {
-        return true;
-      }
-      delegate = delegate.getParent();
-    }
-    return false;
+    return (delegate != null) && delegate.hasNext();
   }
 
 
   @Override
   public void close() {
+    hasNextCalled = true;
+    nextExists = false;
     delegate = null;
   }
 
@@ -143,7 +139,10 @@ public class JStructureParser extends BaseIterator<Event> implements JsonParser 
 
   @Override
   public Stream<JsonValue> getValueStream() {
-    return delegate.getValueStream();
+    if (firstEvent != null) {
+      return Stream.<JsonValue>builder().add(delegate.primaryObject()).build();
+    }
+    throw new IllegalStateException("Not in root context");
   }
 
 

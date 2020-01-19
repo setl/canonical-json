@@ -6,6 +6,7 @@ import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 
@@ -65,6 +66,20 @@ class ObjectWalker extends WalkingParser {
 
 
   @Override
+  public JsonObject getObject() {
+    // TODO : Implement me! simongreatrix 19/01/2020
+    return null;
+  }
+
+
+  @Override
+  public JsonArray getArray() {
+    // TODO : Implement me! simongreatrix 19/01/2020
+    return null;
+  }
+
+
+  @Override
   public Stream<Entry<String, JsonValue>> getObjectStream() {
     if (index > 0 || isKey) {
       throw new IllegalStateException("Not at start of object, but at " + (index < size ? ("key \"" + keys[index] + "\"") : "end of object"));
@@ -105,6 +120,12 @@ class ObjectWalker extends WalkingParser {
     }
     JsonValue jv = object.get(keys[index]);
     return (jv != null) ? jv : PNull.NULL;
+  }
+
+
+  @Override
+  JsonValue primaryObject() {
+    return object;
   }
 
 

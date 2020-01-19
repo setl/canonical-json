@@ -16,12 +16,14 @@ import java.math.BigInteger;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.json.JsonArray;
@@ -322,7 +324,6 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
   public boolean getBoolean(String key) {
     return getSafe(Boolean.class, JType.BOOLEAN, key).booleanValue();
   }
-
 
   /**
    * Get a double from the object.

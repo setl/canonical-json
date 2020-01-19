@@ -48,11 +48,6 @@ public class Input {
   }
 
 
-  public boolean isSeenEOF() {
-    return seenEOF;
-  }
-
-
   /**
    * Read the next character.
    *

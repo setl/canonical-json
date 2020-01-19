@@ -4,6 +4,7 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 import javax.json.JsonArray;
+import javax.json.JsonObject;
 import javax.json.JsonValue;
 
 /**
@@ -71,6 +72,13 @@ class ArrayWalker extends WalkingParser {
 
 
   @Override
+  public JsonObject getObject() {
+    // TODO : Implement me! simongreatrix 19/01/2020
+    return null;
+  }
+
+
+  @Override
   public JsonValue getValue() {
     if (index < 0) {
       throw new IllegalStateException("Next has not been called");
@@ -79,6 +87,19 @@ class ArrayWalker extends WalkingParser {
       throw new NoSuchElementException();
     }
     return array.get(index);
+  }
+
+
+  @Override
+  public JsonArray getArray() {
+    // TODO : Implement me! simongreatrix 19/01/2020
+    return null;
+  }
+
+
+  @Override
+  JsonValue primaryObject() {
+    return array;
   }
 
 

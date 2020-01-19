@@ -2,12 +2,14 @@ package io.setl.json;
 
 import static org.junit.Assert.fail;
 
+import io.setl.json.io.JReaderFactory;
 import io.setl.json.parser.JParser;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import javax.json.JsonArray;
 import javax.json.JsonValue;
 import javax.json.stream.JsonParsingException;
 import org.junit.Test;
@@ -22,12 +24,13 @@ public class TestParsing {
   private static String PATH = "test_parsing/";
 
 
-  private Primitive loadResource(String resource) throws IOException {
+  private JsonValue loadResource(String resource) throws IOException {
+    JReaderFactory readerFactory = new JReaderFactory();
     try (
         InputStream input = TestParsing.class.getClassLoader().getResourceAsStream(PATH + resource);
         Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8)
     ) {
-      return Parser.parse(reader);
+      return readerFactory.createReader(reader).readValue();
     }
   }
 
@@ -50,15 +53,14 @@ public class TestParsing {
 
   @Test
   public void testParse() throws IOException {
-    Primitive p = loadResource("all_files.json");
-    JArray array = p.getValueSafe(JArray.class);
+    JsonArray array = (JsonArray) loadResource("all_files.json");
     for (JsonValue jv : array) {
       Primitive p2 = (Primitive) jv;
       String f = p2.getValueSafe(String.class);
-      IOException thrown = null;
+      JsonParsingException thrown = null;
       try {
         loadResource(f);
-      } catch (IOException ioe) {
+      } catch (JsonParsingException ioe) {
         thrown = ioe;
       } catch (Error err) {
         throw new AssertionError("CRASH processing " + f, err);
@@ -100,8 +102,7 @@ public class TestParsing {
 
   @Test
   public void testStream() throws IOException {
-    Primitive p = loadResource("all_files.json");
-    JArray array = p.getValueSafe(JArray.class);
+    JsonArray array = (JsonArray) loadResource("all_files.json");
     for (JsonValue jv : array) {
       Primitive p2 = (Primitive) jv;
       String f = p2.getValueSafe(String.class);

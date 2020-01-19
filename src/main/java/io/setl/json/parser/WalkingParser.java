@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import java.util.stream.Stream;
 import javax.json.JsonArray;
 import javax.json.JsonNumber;
-import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
@@ -39,7 +38,8 @@ abstract class WalkingParser extends BaseIterator<Event> implements JsonParser {
   @Override
   protected boolean checkNext() {
     if (doingContent) {
-      return doingContent = checkNextImpl();
+      doingContent = checkNextImpl();
+      return true;
     }
     return finalEvent != null;
   }
@@ -98,13 +98,6 @@ abstract class WalkingParser extends BaseIterator<Event> implements JsonParser {
   protected abstract Event fetchNextImpl();
 
 
-  @Override
-  public JsonArray getArray() {
-    JsonValue value = getValue();
-    checkType(value, ValueType.ARRAY);
-    return (JsonArray) value;
-  }
-
 
   @Override
   public BigDecimal getBigDecimal() {
@@ -137,14 +130,6 @@ abstract class WalkingParser extends BaseIterator<Event> implements JsonParser {
   }
 
 
-  @Override
-  public JsonObject getObject() {
-    JsonValue value = getValue();
-    checkType(value, ValueType.OBJECT);
-    return (JsonObject) value;
-  }
-
-
   WalkingParser getParent() {
     return parent;
   }
@@ -153,6 +138,10 @@ abstract class WalkingParser extends BaseIterator<Event> implements JsonParser {
   @Override
   public String getString() {
     JsonValue value = getValue();
+    if (value.getValueType() == ValueType.NUMBER) {
+      // We have a primitive, and its toString will return the canonical form of the number
+      return value.toString();
+    }
     checkType(value, ValueType.STRING);
     return ((JsonString) value).getString();
   }
@@ -168,5 +157,8 @@ abstract class WalkingParser extends BaseIterator<Event> implements JsonParser {
   public boolean isIntegralNumber() {
     return getNumber().isIntegral();
   }
+
+
+  abstract JsonValue primaryObject();
 
 }

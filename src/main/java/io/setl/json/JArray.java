@@ -692,13 +692,19 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
 
   @Override
   public <T extends JsonValue> List<T> getValuesAs(Class<T> clazz) {
-    return null; // TODO
+    return getValuesAs(clazz::cast);
   }
 
 
   @Override
   public <T, K extends JsonValue> List<T> getValuesAs(Function<K, T> func) {
-    return null;  // TODO
+    ArrayList<T> array = new ArrayList<>(size());
+    forEach(jv -> {
+      @SuppressWarnings("unchecked")
+      K kv = (K) jv;
+      array.add(func.apply(kv));
+    });
+    return array;
   }
 
 

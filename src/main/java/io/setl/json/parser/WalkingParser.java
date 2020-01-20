@@ -3,10 +3,7 @@ package io.setl.json.parser;
 import io.setl.json.io.Location;
 import java.math.BigDecimal;
 import java.util.stream.Stream;
-import javax.json.JsonArray;
-import javax.json.JsonNumber;
-import javax.json.JsonString;
-import javax.json.JsonValue;
+import javax.json.*;
 import javax.json.JsonValue.ValueType;
 import javax.json.stream.JsonLocation;
 import javax.json.stream.JsonParser;
@@ -98,6 +95,13 @@ abstract class WalkingParser extends BaseIterator<Event> implements JsonParser {
   protected abstract Event fetchNextImpl();
 
 
+  @Override
+  public JsonArray getArray() {
+    JsonValue value = getValue();
+    checkType(value, ValueType.ARRAY);
+    return (JsonArray) value;
+  }
+
 
   @Override
   public BigDecimal getBigDecimal() {
@@ -127,6 +131,14 @@ abstract class WalkingParser extends BaseIterator<Event> implements JsonParser {
     JsonValue value = getValue();
     checkType(value, ValueType.NUMBER);
     return (JsonNumber) value;
+  }
+
+
+  @Override
+  public JsonObject getObject() {
+    JsonValue value = getValue();
+    checkType(value, ValueType.OBJECT);
+    return (JsonObject) value;
   }
 
 

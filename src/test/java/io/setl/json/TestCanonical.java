@@ -21,7 +21,10 @@ import org.junit.Test;
 public class TestCanonical {
 
   private byte[] loadBytes(String resource) throws IOException {
-    try (InputStream input = TestParsing.class.getClassLoader().getResourceAsStream(resource); ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+    try (
+            InputStream input = TestParsing.class.getClassLoader().getResourceAsStream(resource);
+         ByteArrayOutputStream output = new ByteArrayOutputStream()
+    ) {
       byte[] transfer = new byte[8192];
       int r;
       while ((r = input.read(transfer)) != -1) {
@@ -67,9 +70,14 @@ public class TestCanonical {
 
       // HACK! Every expected.json file has a terminal NL character as that is how they are in the original repository. The NL character is not a correct part
       // of the output.
-      output.write(10);
-
       byte[] expected = loadBytes(f + "expected.json");
+      for(int i=2;i>=1;i--) {
+        byte e = expected[expected.length-i];
+        if( e==10 || e==13 ) {
+          output.write(e);
+        }
+      }
+
       Assert.assertArrayEquals(expected, output.toByteArray());
     }
   }

@@ -71,12 +71,6 @@ class ArrayWalker extends WalkingParser {
   }
 
 
-  @Override
-  public JsonObject getObject() {
-    // TODO : Implement me! simongreatrix 19/01/2020
-    return null;
-  }
-
 
   @Override
   public JsonValue getValue() {
@@ -87,13 +81,6 @@ class ArrayWalker extends WalkingParser {
       throw new NoSuchElementException();
     }
     return array.get(index);
-  }
-
-
-  @Override
-  public JsonArray getArray() {
-    // TODO : Implement me! simongreatrix 19/01/2020
-    return null;
   }
 
 

@@ -66,20 +66,6 @@ class ObjectWalker extends WalkingParser {
 
 
   @Override
-  public JsonObject getObject() {
-    // TODO : Implement me! simongreatrix 19/01/2020
-    return null;
-  }
-
-
-  @Override
-  public JsonArray getArray() {
-    // TODO : Implement me! simongreatrix 19/01/2020
-    return null;
-  }
-
-
-  @Override
   public Stream<Entry<String, JsonValue>> getObjectStream() {
     if (index > 0 || isKey) {
       throw new IllegalStateException("Not at start of object, but at " + (index < size ? ("key \"" + keys[index] + "\"") : "end of object"));

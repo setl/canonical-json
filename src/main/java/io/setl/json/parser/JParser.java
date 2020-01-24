@@ -12,8 +12,6 @@ import io.setl.json.primitive.PString;
 import io.setl.json.primitive.PTrue;
 import java.io.Reader;
 import java.math.BigDecimal;
-import java.util.AbstractMap.SimpleImmutableEntry;
-import java.util.ConcurrentModificationException;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 import javax.json.JsonValue;
@@ -72,7 +70,6 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
    */
   private final Input input;
 
-  private BaseIterator<?> currentIterator = null;
 
   /**
    * Depth of nesting containers from document root.
@@ -97,9 +94,19 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
   private Event nextEvent = null;
 
   /**
+   * Have we seen our first root value?.
+   */
+  private boolean seenFirstRoot = false;
+
+  /**
    * Expect a single root value?.
    */
   private boolean singleRoot = true;
+
+  /**
+   * Object identifier for iterators. Every Array and Object has its own identifier.
+   */
+  private StructureTag structureTag = new StructureTag(null);
 
   /**
    * The last value loaded.
@@ -136,20 +143,6 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
   private void checkNumber() {
     if (value.getType() != JType.NUMBER) {
       throw new IllegalStateException("Current value is a " + value.getValueType() + " not a number.");
-    }
-  }
-
-
-  private void checkSingleRoot() {
-    if (depth >= 0 || !singleRoot) {
-      // Not in root, or don't care
-      return;
-    }
-
-    // can only have whitespace and then EOF
-    int r = skipWhite();
-    if (r != -1) {
-      throw new JsonParsingException(String.format("Saw %s after root value.", safe(r)), input.getLocation());
     }
   }
 
@@ -259,6 +252,9 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
 
   private void doNextInRoot() {
     int r = skipWhite();
+    if (singleRoot && seenFirstRoot && r != -1) {
+      throw new JsonParsingException(String.format("Saw %s after root value.", safe(r)), input.getLocation());
+    }
 
     switch (r) {
       case -1:
@@ -267,7 +263,7 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
 
       case '\"':
         parseString();
-        checkSingleRoot();
+        seenFirstRoot = true;
         nextEvent = Event.VALUE_STRING;
         return;
 
@@ -285,18 +281,18 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
       case 't': // falls through
       case 'f':
         parseBoolean(r);
-        checkSingleRoot();
+        seenFirstRoot = true;
         return;
 
       case 'n':
         parseNull();
-        checkSingleRoot();
+        seenFirstRoot = true;
         return;
 
       default:
         if (r == '-' || ('0' <= r && r <= '9')) {
           parseNumber(r);
-          checkSingleRoot();
+          seenFirstRoot = true;
           return;
         }
         throw new JsonParsingException(String.format("Invalid input: %s", safe(r)), input.getLocation());
@@ -390,9 +386,12 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
 
 
   private void endStructure(boolean endObject) {
+    structureTag = structureTag.parent;
     depth--;
     nextEvent = endObject ? Event.END_OBJECT : Event.END_ARRAY;
-    checkSingleRoot();
+    if (depth == -1) {
+      seenFirstRoot = true;
+    }
     expectingKey = depth >= 0 && isObject[depth];
   }
 
@@ -408,7 +407,6 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
   protected Event fetchNext() {
     lastEvent = nextEvent;
     nextEvent = null;
-    currentIterator = null;
     return lastEvent;
   }
 
@@ -422,34 +420,7 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
   @Override
   public Stream<JsonValue> getArrayStream() {
     checkState(Event.START_ARRAY);
-    BaseIterator<JsonValue> iter = new BaseIterator<>() {
-
-      @Override
-      protected boolean checkNext() {
-        if (JParser.this.currentIterator != this) {
-          throw new ConcurrentModificationException();
-        }
-        if (!JParser.this.hasNext()) {
-          throw new JsonParsingException("Array was not terminated.", input.getLocation());
-        }
-        JParser.this.iteratorFetchNext();
-        if (JParser.this.lastEvent == Event.END_ARRAY) {
-          JParser.this.currentIterator = null;
-          return false;
-        }
-        return true;
-      }
-
-
-      @Override
-      protected JsonValue fetchNext() {
-        if (JParser.this.currentIterator != this) {
-          throw new ConcurrentModificationException();
-        }
-        return JParser.this.getValue();
-      }
-    };
-    currentIterator = iter;
+    BaseIterator<JsonValue> iter = new ArrayIterator(this::getTag, this);
     return iter.asStream();
   }
 
@@ -500,41 +471,7 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
   @Override
   public Stream<Entry<String, JsonValue>> getObjectStream() {
     checkState(Event.START_OBJECT);
-    BaseIterator<Entry<String, JsonValue>> iter = new BaseIterator<>() {
-
-
-      @Override
-      protected boolean checkNext() {
-        if (JParser.this.currentIterator != this) {
-          throw new ConcurrentModificationException();
-        }
-        ensureNextInObject();
-        JParser.this.iteratorFetchNext();
-        if (JParser.this.lastEvent == Event.END_OBJECT) {
-          JParser.this.currentIterator = null;
-          return false;
-        }
-        if (JParser.this.lastEvent != Event.KEY_NAME) {
-          throw new JsonParsingException("Saw event " + JParser.this.lastEvent + " when only KEY_NAME was valid.", input.getLocation());
-        }
-        return true;
-      }
-
-
-      @Override
-      protected Entry<String, JsonValue> fetchNext() {
-        if (JParser.this.currentIterator != this) {
-          throw new ConcurrentModificationException();
-        }
-        String key = JParser.this.getString();
-        if (!JParser.this.hasNext()) {
-          throw new JsonParsingException("Object was not terminated. Saw key but no value.", input.getLocation());
-        }
-        JParser.this.iteratorFetchNext();
-        return new SimpleImmutableEntry<>(key, JParser.this.getValue());
-      }
-    };
-    currentIterator = iter;
+    BaseIterator<Entry<String, JsonValue>> iter = new ObjectIterator(this::getTag, this);
     return iter.asStream();
   }
 
@@ -545,6 +482,11 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
       throw new IllegalStateException("Current value is a " + value.getValueType() + " not a string");
     }
     return ((PString) value).getString();
+  }
+
+
+  protected StructureTag getTag() {
+    return structureTag;
   }
 
 
@@ -559,30 +501,7 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
     if (depth != -1) {
       throw new IllegalStateException("Parser is within a JSON structure");
     }
-    BaseIterator<JsonValue> iterator = new BaseIterator<>() {
-      @Override
-      protected boolean checkNext() {
-        if (JParser.this.currentIterator != this) {
-          throw new ConcurrentModificationException();
-        }
-        if (JParser.this.hasNext()) {
-          return true;
-        }
-        JParser.this.currentIterator = null;
-        return false;
-      }
-
-
-      @Override
-      protected JsonValue fetchNext() {
-        if (JParser.this.currentIterator != this) {
-          throw new ConcurrentModificationException();
-        }
-        JParser.this.iteratorFetchNext();
-        return JParser.this.getValue();
-      }
-    };
-    currentIterator = iterator;
+    BaseIterator<JsonValue> iterator = new ValueIterator(this::getTag, this);
     return iterator.asStream();
   }
 
@@ -686,10 +605,6 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
       // not in an array, so do nothing
       return;
     }
-    if (currentIterator != null) {
-      currentIterator.nextExists = false;
-      currentIterator.hasNextCalled = true;
-    }
     int endDepth = depth - 1;
     while (true) {
       if (!hasNext()) {
@@ -708,10 +623,6 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
     if (depth == -1 || !isObject[depth]) {
       // not in an object, so do nothing
       return;
-    }
-    if (currentIterator != null) {
-      currentIterator.nextExists = false;
-      currentIterator.hasNextCalled = true;
     }
     int endDepth = depth - 1;
     while (true) {
@@ -743,6 +654,7 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
 
 
   private void startStructure(boolean startObject) {
+    structureTag = new StructureTag(structureTag);
     depth++;
     int size = isObject.length;
     if (size == depth) {

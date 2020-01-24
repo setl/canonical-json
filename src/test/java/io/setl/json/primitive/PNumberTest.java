@@ -3,6 +3,7 @@ package io.setl.json.primitive;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import io.setl.json.JType;
 import java.io.IOException;
@@ -89,6 +90,26 @@ public class PNumberTest {
   public void intValueExact() {
     PNumber pn = new PNumber(567);
     assertEquals(567, pn.intValueExact());
+
+    pn = new PNumber(Double.valueOf(890.0d));
+    assertEquals(890, pn.intValueExact());
+
+    pn = new PNumber(Double.valueOf(567.890));
+    try {
+      pn.intValueExact();
+      fail();
+    } catch (ArithmeticException e) {
+      // correct
+    }
+
+    pn = new PNumber(Double.valueOf((double) Integer.MAX_VALUE + 100.0));
+    try {
+      pn.intValueExact();
+      fail();
+    } catch (ArithmeticException e) {
+      // correct
+    }
+
   }
 
 
@@ -143,6 +164,17 @@ public class PNumberTest {
   public void longValueExact() {
     PNumber pn = new PNumber(567);
     assertEquals(567L, pn.longValueExact());
+
+    pn = new PNumber(Double.valueOf(890.0d));
+    assertEquals(890, pn.longValueExact());
+
+    pn = new PNumber(Double.valueOf(567.890));
+    try {
+      pn.longValueExact();
+      fail();
+    } catch (ArithmeticException e) {
+      // correct
+    }
   }
 
 
@@ -163,7 +195,14 @@ public class PNumberTest {
   @Test(expected = ArithmeticException.class)
   public void longValueExact3() {
     PNumber pn = new PNumber(1.3e+100);
-    pn.intValueExact();
+    pn.longValueExact();
+  }
+
+
+  @Test(expected = ArithmeticException.class)
+  public void longValueExact3b() {
+    PNumber pn = new PNumber(Double.valueOf(1.3e+100));
+    pn.longValueExact();
   }
 
 

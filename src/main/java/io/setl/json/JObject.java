@@ -16,14 +16,12 @@ import java.math.BigInteger;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
-import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.json.JsonArray;
@@ -325,6 +323,7 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
     return getSafe(Boolean.class, JType.BOOLEAN, key).booleanValue();
   }
 
+
   /**
    * Get a double from the object.
    *
@@ -334,7 +333,7 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
    * @return the double, or the default
    */
   public double getDouble(String key, double dflt) {
-    Number n = getQuiet(Number.class, key);
+    Double n = optDouble(key);
     return (n != null) ? n.doubleValue() : dflt;
   }
 
@@ -348,7 +347,7 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
    * @return the double, or the default
    */
   public double getDouble(String key, @Nonnull ToDoubleFunction<String> dflt) {
-    Number n = getQuiet(Number.class, key);
+    Double n = optDouble(key);
     return (n != null) ? n.doubleValue() : dflt.applyAsDouble(key);
   }
 
@@ -359,7 +358,14 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
    * @return the double
    */
   public double getDouble(String key) {
-    Number n = getSafe(Number.class, JType.NUMBER, key);
+    Primitive p = getPrimitive(key);
+    if (p == null) {
+      throw new MissingItemException(key, JType.NUMBER);
+    }
+    Double n = optDouble(key);
+    if (n == null) {
+      throw new IncorrectTypeException(key, JType.NUMBER, p.getType());
+    }
     return n.doubleValue();
   }
 
@@ -692,8 +698,11 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
    */
   @Nullable
   public Double optDouble(String key) {
-    Number n = getQuiet(Number.class, key);
-    return (n != null) ? Double.valueOf(n.doubleValue()) : null;
+    Primitive p = getPrimitive(key);
+    if (p == null) {
+      return null;
+    }
+    return PNumber.toDouble(p);
   }
 
 
@@ -806,7 +815,7 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
    */
   public void put(String key, Number value) {
     if (value != null) {
-      put(key, new PNumber(value));
+      put(key, PNumber.create(value));
     } else {
       put(key, PNull.NULL);
     }

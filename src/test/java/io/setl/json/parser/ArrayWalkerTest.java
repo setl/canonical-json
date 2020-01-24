@@ -1,6 +1,9 @@
 package io.setl.json.parser;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import io.setl.json.builder.JArrayBuilder;
 import io.setl.json.builder.JObjectBuilder;
@@ -15,39 +18,24 @@ import org.junit.Test;
  */
 public class ArrayWalkerTest {
 
-  ArrayWalker walker = new ArrayWalker(null,new JArrayBuilder()
+  ArrayWalker walker = new ArrayWalker(null, new JArrayBuilder()
       .add(new JArrayBuilder().add(1).add("b"))
       .add(BigDecimal.TEN)
       .add(56)
       .add(10_000_000_000L)
       .add(5.68)
-      .add(new JObjectBuilder().add("a",1).addNull("b"))
+      .add(new JObjectBuilder().add("a", 1).addNull("b"))
       .add("wibble")
       .build());
 
-  @Test
-  public void close() {
-    walker.close();
-    assertFalse(walker.hasNext());
-  }
-
-  @Test
-  public void next() {
-    StringBuilder buf = new StringBuilder();
-    while( walker.hasNext() ) {
-      buf.append(" ").append(walker.next());
-    }
-    // NB: The initial START_ARRAY is correctly not returned by the walker
-    assertEquals(" START_ARRAY VALUE_NUMBER VALUE_NUMBER VALUE_NUMBER VALUE_NUMBER START_OBJECT VALUE_STRING END_ARRAY", buf.toString());
-  }
 
   @Test
   public void getArray() {
     walker.next();
     JsonArray a = walker.getArray();
-    assertEquals(2,a.size());
-    assertEquals(1,a.getInt(0));
-    assertEquals("b",a.getString(1));
+    assertEquals(2, a.size());
+    assertEquals(1, a.getInt(0));
+    assertEquals("b", a.getString(1));
   }
 
 
@@ -55,9 +43,9 @@ public class ArrayWalkerTest {
   public void getBigDecimal() {
     walker.next();
     walker.next();
-    assertEquals(BigDecimal.TEN,walker.getBigDecimal());
+    assertEquals(BigDecimal.TEN, walker.getBigDecimal());
     walker.next();
-    assertEquals(BigDecimal.valueOf(56),walker.getBigDecimal());
+    assertEquals(BigDecimal.valueOf(56), walker.getBigDecimal());
   }
 
 
@@ -65,11 +53,11 @@ public class ArrayWalkerTest {
   public void getInt() {
     walker.next();
     walker.next();
-    assertEquals(10,walker.getInt());
+    assertEquals(10, walker.getInt());
     walker.next();
-    assertEquals(56,walker.getInt());
+    assertEquals(56, walker.getInt());
     walker.next();
-    assertEquals((int) (10_000_000_000L),walker.getInt());
+    assertEquals((int) (10_000_000_000L), walker.getInt());
   }
 
 
@@ -78,9 +66,9 @@ public class ArrayWalkerTest {
     walker.next();
     walker.next();
     JsonLocation l = walker.getLocation();
-    assertEquals(-1,l.getColumnNumber());
-    assertEquals(-1,l.getLineNumber());
-    assertEquals(-1,l.getStreamOffset());
+    assertEquals(-1, l.getColumnNumber());
+    assertEquals(-1, l.getLineNumber());
+    assertEquals(-1, l.getStreamOffset());
   }
 
 
@@ -88,11 +76,11 @@ public class ArrayWalkerTest {
   public void getLong() {
     walker.next();
     walker.next();
-    assertEquals(10L,walker.getLong());
+    assertEquals(10L, walker.getLong());
     walker.next();
-    assertEquals(56L,walker.getLong());
+    assertEquals(56L, walker.getLong());
     walker.next();
-    assertEquals(10_000_000_000L,walker.getLong());
+    assertEquals(10_000_000_000L, walker.getLong());
   }
 
 
@@ -106,7 +94,7 @@ public class ArrayWalkerTest {
     walker.next();
     JsonObject object = walker.getObject();
     assertNotNull(object);
-    assertEquals(1,object.getInt("a"));
+    assertEquals(1, object.getInt("a"));
   }
 
 
@@ -114,19 +102,14 @@ public class ArrayWalkerTest {
   public void getString() {
     walker.next();
     walker.next();
-    assertEquals("10",walker.getString());
+    assertEquals("10", walker.getString());
     walker.next();
     walker.next();
     walker.next();
-    assertEquals("5.68E0",walker.getString());
+    assertEquals("5.68E0", walker.getString());
     walker.next();
     walker.next();
-    assertEquals("wibble",walker.getString());
-  }
-
-
-  @Test
-  public void getValueStream() {
+    assertEquals("wibble", walker.getString());
   }
 
 
@@ -141,6 +124,7 @@ public class ArrayWalkerTest {
     assertFalse(walker.isIntegralNumber());
   }
 
+
   @Test(expected = IllegalStateException.class)
   public void isIntegralNumber2() {
     walker.next();
@@ -149,26 +133,12 @@ public class ArrayWalkerTest {
 
 
   @Test
-  public void getValue() {
-  }
-
-
-  @Test
-  public void getArrayStream() {
-  }
-
-
-  @Test
-  public void getObjectStream() {
-  }
-
-
-  @Test
-  public void skipArray() {
-  }
-
-
-  @Test
-  public void skipObject() {
+  public void next() {
+    StringBuilder buf = new StringBuilder();
+    while (walker.hasNext()) {
+      buf.append(" ").append(walker.next());
+    }
+    // NB: The initial START_ARRAY is correctly not returned by the walker
+    assertEquals(" START_ARRAY VALUE_NUMBER VALUE_NUMBER VALUE_NUMBER VALUE_NUMBER START_OBJECT VALUE_STRING END_ARRAY", buf.toString());
   }
 }

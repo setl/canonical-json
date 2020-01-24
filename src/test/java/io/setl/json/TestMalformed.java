@@ -23,6 +23,7 @@ public class TestMalformed {
 
   private static String PATH = "malformed/";
 
+  public static boolean isDebug = false;
 
   private JsonValue loadResource(String resource) throws IOException {
     try (
@@ -51,10 +52,14 @@ public class TestMalformed {
 
       // Required to parse unsuccessfully
       if (thrown != null) {
-        System.out.println("PASS: " + f + " : " + thrown.getMessage());
+        if( isDebug ) {
+          System.out.println("PASS: " + f + " : " + thrown.getMessage());
+        }
       } else {
-        System.out.println("FAIL: " + f);
-        System.out.println("Required to reject invalid input, but parsed OK");
+        if( isDebug ) {
+          System.out.println("FAIL: " + f);
+          System.out.println("Required to reject invalid input, but parsed OK");
+        }
         fail(f);
       }
     }

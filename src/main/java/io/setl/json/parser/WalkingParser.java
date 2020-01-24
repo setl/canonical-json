@@ -2,17 +2,19 @@ package io.setl.json.parser;
 
 import io.setl.json.io.Location;
 import java.math.BigDecimal;
-import java.util.stream.Stream;
-import javax.json.*;
+import javax.json.JsonArray;
+import javax.json.JsonNumber;
+import javax.json.JsonObject;
+import javax.json.JsonString;
+import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 import javax.json.stream.JsonLocation;
-import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
 
 /**
  * @author Simon Greatrix on 15/01/2020.
  */
-abstract class WalkingParser extends BaseIterator<Event> implements JsonParser {
+abstract class WalkingParser extends BaseIterator<Event> {
 
   protected final int size;
 
@@ -52,13 +54,6 @@ abstract class WalkingParser extends BaseIterator<Event> implements JsonParser {
   }
 
 
-  @Override
-  public void close() {
-    hasNextCalled = true;
-    nextExists = false;
-  }
-
-
   protected Event eventForType(JsonValue value) {
     switch (value.getValueType()) {
       case OBJECT:
@@ -95,7 +90,6 @@ abstract class WalkingParser extends BaseIterator<Event> implements JsonParser {
   protected abstract Event fetchNextImpl();
 
 
-  @Override
   public JsonArray getArray() {
     JsonValue value = getValue();
     checkType(value, ValueType.ARRAY);
@@ -103,25 +97,21 @@ abstract class WalkingParser extends BaseIterator<Event> implements JsonParser {
   }
 
 
-  @Override
   public BigDecimal getBigDecimal() {
     return getNumber().bigDecimalValue();
   }
 
 
-  @Override
   public int getInt() {
     return getNumber().intValue();
   }
 
 
-  @Override
   public JsonLocation getLocation() {
     return Location.UNSET;
   }
 
 
-  @Override
   public long getLong() {
     return getNumber().longValue();
   }
@@ -134,7 +124,6 @@ abstract class WalkingParser extends BaseIterator<Event> implements JsonParser {
   }
 
 
-  @Override
   public JsonObject getObject() {
     JsonValue value = getValue();
     checkType(value, ValueType.OBJECT);
@@ -147,7 +136,6 @@ abstract class WalkingParser extends BaseIterator<Event> implements JsonParser {
   }
 
 
-  @Override
   public String getString() {
     JsonValue value = getValue();
     if (value.getValueType() == ValueType.NUMBER) {
@@ -159,13 +147,9 @@ abstract class WalkingParser extends BaseIterator<Event> implements JsonParser {
   }
 
 
-  @Override
-  public Stream<JsonValue> getValueStream() {
-    throw new IllegalStateException("Within a JSON structure");
-  }
+  protected abstract JsonValue getValue();
 
 
-  @Override
   public boolean isIntegralNumber() {
     return getNumber().isIntegral();
   }

@@ -158,7 +158,7 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
 
 
   public void add(int index, Number number) {
-    add(index, number != null ? new PNumber(number) : Primitive.NULL);
+    add(index, number != null ? PNumber.create(number) : Primitive.NULL);
   }
 
 
@@ -184,7 +184,7 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
 
 
   public boolean add(Number number) {
-    return add(number != null ? new PNumber(number) : Primitive.NULL);
+    return add(number != null ? PNumber.create(number) : Primitive.NULL);
   }
 
 
@@ -409,7 +409,7 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
    * @return the double, or the default
    */
   public double getDouble(int index, double dflt) {
-    Number n = getQuiet(Number.class, index);
+    Double n = optDouble(index);
     return (n != null) ? n.doubleValue() : dflt;
   }
 
@@ -423,7 +423,7 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
    * @return the double, or the default
    */
   public double getDouble(int index, IntToDoubleFunction dflt) {
-    Number n = getQuiet(Number.class, index);
+    Double n = optDouble(index);
     return (n != null) ? n.doubleValue() : dflt.applyAsDouble(index);
   }
 
@@ -434,8 +434,15 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
    * @return the double
    */
   public double getDouble(int index) {
-    Number n = getSafe(Number.class, JType.NUMBER, index);
-    return n.doubleValue();
+    if (index < 0 || size() <= index) {
+      throw new MissingItemException(index, JType.NUMBER);
+    }
+    Primitive primitive = getPrimitive(index);
+    Double d = PNumber.toDouble(primitive);
+    if (d != null) {
+      return d;
+    }
+    throw new IncorrectTypeException(index, JType.NUMBER, primitive.getType());
   }
 
 
@@ -772,8 +779,11 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
    */
   @Nullable
   public Double optDouble(int index) {
-    Number n = getQuiet(Number.class, index);
-    return (n != null) ? n.doubleValue() : null;
+    if (index < 0 || size() <= index) {
+      return null;
+    }
+    Primitive p = getPrimitive(index);
+    return PNumber.toDouble(p);
   }
 
 
@@ -904,7 +914,7 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
 
   @Nonnull
   public Primitive set(int index, Number number) {
-    Primitive p = (number != null) ? new PNumber(number) : PNull.NULL;
+    Primitive p = (number != null) ? PNumber.create(number) : PNull.NULL;
     return (Primitive) super.set(index, p);
   }
 

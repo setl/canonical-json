@@ -11,7 +11,7 @@ import javax.json.stream.JsonParsingException;
 /**
  * @author Simon Greatrix on 13/01/2020.
  */
-class NumberParser {
+public class NumberParser {
 
   private enum Step {
     /** Processing the starting character. */
@@ -157,9 +157,19 @@ class NumberParser {
 
   final Input input;
 
+  private Number result;
+
 
   NumberParser(Input input) {
     this.input = input;
+  }
+
+
+  public Number getResult() {
+    if (result == null) {
+      throw new IllegalStateException("Not parsed");
+    }
+    return result;
   }
 
 
@@ -191,10 +201,8 @@ class NumberParser {
    * Parse a number from the input.
    *
    * @param r the initial character of the number
-   *
-   * @return the number
    */
-  public Number parse(int r) {
+  public NumberParser parse(int r) {
     StringBuilder buf = new StringBuilder();
     buf.append((char) r);
 
@@ -222,17 +230,21 @@ class NumberParser {
 
     bigDecimal = bigDecimal.stripTrailingZeros();
     if (bigDecimal.scale() > 0) {
-      return bigDecimal;
+      result = bigDecimal;
+      return this;
     }
 
     BigInteger bigInteger = bigDecimal.toBigIntegerExact();
     int bitLength = bigInteger.bitLength();
     if (bitLength < 32) {
-      return bigInteger.intValueExact();
+      result = bigInteger.intValueExact();
+      return this;
     }
     if (bitLength < 64) {
-      return bigInteger.longValueExact();
+      result = bigInteger.longValueExact();
+      return this;
     }
-    return bigInteger;
+    result = bigInteger;
+    return this;
   }
 }

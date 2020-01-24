@@ -77,29 +77,4 @@ public class ObjectWalkerTest {
   @Test
   public void testGetArray() {
   }
-
-
-  @Test
-  public void getArrayStream() {
-  }
-
-
-  @Test
-  public void getObjectStream() {
-  }
-
-
-  @Test
-  public void testGetValueStream() {
-  }
-
-
-  @Test
-  public void skipArray() {
-  }
-
-
-  @Test
-  public void skipObject() {
-  }
 }

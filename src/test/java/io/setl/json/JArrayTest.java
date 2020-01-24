@@ -411,6 +411,12 @@ public class JArrayTest {
     } catch (MissingItemException e) {
       // correct
     }
+
+    ja = new JArray(Arrays.asList(Double.NaN,Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY,Float.NaN,Float.NEGATIVE_INFINITY,Float.POSITIVE_INFINITY));
+    assertEquals("[\"NaN\",\"-Infinity\",\"Infinity\",\"NaN\",\"-Infinity\",\"Infinity\"]",ja.toString());
+    assertTrue(Double.isNaN(ja.optDouble(0)));
+    assertTrue(Double.isInfinite(ja.getDouble(1)));
+    assertTrue(Double.isInfinite(ja.getDouble(2,5.0)));
   }
 
 

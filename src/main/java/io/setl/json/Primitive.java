@@ -60,7 +60,7 @@ public interface Primitive extends JsonValue {
       case FALSE:
         return PFalse.FALSE;
       case NUMBER:
-        return new PNumber(((JsonNumber) value).numberValue());
+        return PNumber.create(((JsonNumber) value).numberValue());
       case NULL:
         return PNull.NULL;
       case OBJECT:
@@ -101,7 +101,7 @@ public interface Primitive extends JsonValue {
       return new PString((String) value);
     }
     if (value instanceof Number) {
-      return new PNumber((Number) value);
+      return PNumber.create((Number) value);
     }
     if (value instanceof Collection<?>) {
       return JArray.fixCollection((Collection<?>) value);

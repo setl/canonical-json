@@ -9,6 +9,7 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
+import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParsingException;
 
 /**
@@ -20,6 +21,8 @@ public class JReader implements JsonReader {
 
   private boolean isUsed = false;
 
+  private JsonParser jParser;
+
 
   /**
    * New instance.
@@ -28,12 +31,17 @@ public class JReader implements JsonReader {
    */
   JReader(Reader reader) {
     this.reader = reader;
+    jParser = new JParser(reader);
   }
 
 
   @Override
   public void close() {
     isUsed = true;
+    if (jParser.hasNext()) {
+      throw new JsonParsingException("Additional data found after first value", jParser.getLocation());
+    }
+    jParser.close();
     try {
       reader.close();
     } catch (IOException e) {
@@ -78,7 +86,6 @@ public class JReader implements JsonReader {
       throw new IllegalStateException("This JsonReader has already been used");
     }
     isUsed = true;
-    JParser jParser = new JParser(reader);
     if (!jParser.hasNext()) {
       throw new JsonParsingException("No data found in document", Location.UNSET);
     }

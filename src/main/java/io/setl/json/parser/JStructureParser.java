@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
+import javax.json.JsonValue.ValueType;
 import javax.json.stream.JsonLocation;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
@@ -18,6 +19,12 @@ public class JStructureParser extends BaseIterator<Event> implements JsonParser 
   private WalkingParser delegate;
 
   private Event firstEvent;
+
+  /** The last event returned by next(). */
+  private Event lastEvent = null;
+
+  /** Tag for the current structure. */
+  private StructureTag structureTag = new StructureTag(null);
 
 
   public JStructureParser(JsonObject obj) {
@@ -41,6 +48,13 @@ public class JStructureParser extends BaseIterator<Event> implements JsonParser 
   }
 
 
+  private void checkState(Event required) {
+    if (required != lastEvent) {
+      throw new IllegalStateException("State must be " + required + ", not: " + lastEvent);
+    }
+  }
+
+
   @Override
   public void close() {
     hasNextCalled = true;
@@ -53,6 +67,7 @@ public class JStructureParser extends BaseIterator<Event> implements JsonParser 
   protected Event fetchNext() {
     if (firstEvent != null) {
       Event event = firstEvent;
+      lastEvent = event;
       firstEvent = null;
       return event;
     }
@@ -60,32 +75,38 @@ public class JStructureParser extends BaseIterator<Event> implements JsonParser 
     switch (event) {
       case END_ARRAY: // falls through
       case END_OBJECT:
+        structureTag = structureTag.parent;
         delegate = delegate.getParent();
         break;
       case START_ARRAY:
         delegate = new ArrayWalker(delegate, delegate.getArray());
+        structureTag = new StructureTag(structureTag);
         break;
       case START_OBJECT:
         delegate = new ObjectWalker(delegate, delegate.getObject());
+        structureTag = new StructureTag(structureTag);
         break;
       default:
         // do nothing
         break;
     }
-
+    lastEvent = event;
     return event;
   }
 
 
   @Override
   public JsonArray getArray() {
+    checkState(Event.START_ARRAY);
+    delegate = delegate.getParent();
     return delegate.getArray();
   }
 
 
   @Override
   public Stream<JsonValue> getArrayStream() {
-    return delegate.getArrayStream();
+    checkState(Event.START_ARRAY);
+    return new ArrayIterator(this::getTag, this).asStream();
   }
 
 
@@ -115,19 +136,27 @@ public class JStructureParser extends BaseIterator<Event> implements JsonParser 
 
   @Override
   public JsonObject getObject() {
+    checkState(Event.START_OBJECT);
+    delegate = delegate.getParent();
     return delegate.getObject();
   }
 
 
   @Override
   public Stream<Entry<String, JsonValue>> getObjectStream() {
-    return delegate.getObjectStream();
+    checkState(Event.START_OBJECT);
+    return new ObjectIterator(this::getTag, this).asStream();
   }
 
 
   @Override
   public String getString() {
     return delegate.getString();
+  }
+
+
+  protected StructureTag getTag() {
+    return structureTag;
   }
 
 
@@ -154,13 +183,19 @@ public class JStructureParser extends BaseIterator<Event> implements JsonParser 
 
   @Override
   public void skipArray() {
-    delegate.skipArray();
+    if (delegate.primaryObject().getValueType() == ValueType.ARRAY) {
+      delegate = delegate.getParent();
+      structureTag = structureTag.parent;
+    }
   }
 
 
   @Override
   public void skipObject() {
-    delegate.skipObject();
+    if (delegate.primaryObject().getValueType() == ValueType.OBJECT) {
+      delegate = delegate.getParent();
+      structureTag = structureTag.parent;
+    }
   }
 
 }

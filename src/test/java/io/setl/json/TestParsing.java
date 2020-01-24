@@ -1,16 +1,21 @@
 package io.setl.json;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import io.setl.json.io.JReaderFactory;
+import io.setl.json.io.Location;
 import io.setl.json.parser.JParser;
+import io.setl.json.parser.JParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import javax.json.JsonArray;
+import javax.json.JsonReader;
 import javax.json.JsonValue;
+import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParsingException;
 import org.junit.Test;
 
@@ -21,7 +26,15 @@ import org.junit.Test;
  */
 public class TestParsing {
 
+  public static boolean isDebug = false;
+
   private static String PATH = "test_parsing/";
+
+
+  interface Exec {
+
+    void doIt(String r) throws IOException;
+  }
 
 
   private JsonValue loadResource(String resource) throws IOException {
@@ -30,7 +43,10 @@ public class TestParsing {
         InputStream input = TestParsing.class.getClassLoader().getResourceAsStream(PATH + resource);
         Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8)
     ) {
-      return readerFactory.createReader(reader).readValue();
+      JsonReader jsonReader = readerFactory.createReader(reader);
+      JsonValue jsonValue = jsonReader.readValue();
+      jsonReader.close();
+      return jsonValue;
     }
   }
 
@@ -51,15 +67,32 @@ public class TestParsing {
   }
 
 
-  @Test
-  public void testParse() throws IOException {
+  private JsonValue parseResource(String resource) throws IOException {
+    JParserFactory factory = new JParserFactory(null);
+    try (
+        InputStream input = TestParsing.class.getClassLoader().getResourceAsStream(PATH + resource);
+        Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8)
+    ) {
+      JsonParser parser = factory.createParser(reader);
+      if (!parser.hasNext()) {
+        throw new JsonParsingException("No data found in document", Location.UNSET);
+      }
+      parser.next();
+      JsonValue jsonValue = parser.getValue();
+      assertFalse(parser.hasNext());
+      return jsonValue;
+    }
+  }
+
+
+  private void test(Exec exec) throws IOException {
     JsonArray array = (JsonArray) loadResource("all_files.json");
     for (JsonValue jv : array) {
       Primitive p2 = (Primitive) jv;
       String f = p2.getValueSafe(String.class);
       JsonParsingException thrown = null;
       try {
-        loadResource(f);
+        exec.doIt(f);
       } catch (JsonParsingException ioe) {
         thrown = ioe;
       } catch (Error err) {
@@ -71,10 +104,15 @@ public class TestParsing {
       if (f.startsWith("y_")) {
         // Required to parse successfully
         if (thrown == null) {
-          System.out.println("PASS: " + f);
+          if (isDebug) {
+            System.out.println("PASS: " + f);
+          }
         } else {
-          System.out.println("FAIL: " + f);
-          System.out.println("Required to parse successfully, but failed with message: " + thrown.getMessage());
+          if (isDebug) {
+            System.out.println("FAIL: " + f);
+            System.out.println("Required to parse successfully, but failed with message: " + thrown.getMessage() + " at " + thrown.getLocation());
+            thrown.printStackTrace(System.out);
+          }
           fail(f);
         }
       }
@@ -82,18 +120,26 @@ public class TestParsing {
       if (f.startsWith("n_")) {
         // Required to parse successfully
         if (thrown != null) {
-          System.out.println("PASS: " + f + " : " + thrown.getMessage());
+          if (isDebug) {
+            System.out.println("PASS: " + f + " : " + thrown.getMessage() + " at " + thrown.getLocation());
+          }
         } else {
-          System.out.println("FAIL: " + f);
-          System.out.println("Required to reject invalid input, but parsed OK");
+          if (isDebug) {
+            System.out.println("FAIL: " + f);
+            System.out.println("Required to reject invalid input, but parsed OK");
+          }
           fail(f);
         }
       }
       if (f.startsWith("i_")) {
         if (thrown == null) {
-          System.out.println("INFO: " + f + " parsed OK");
+          if (isDebug) {
+            System.out.println("INFO: " + f + " parsed OK");
+          }
         } else {
-          System.out.println("INFO: " + f + " failed with message: " + thrown.getMessage());
+          if (isDebug) {
+            System.out.println("INFO: " + f + " failed with message: " + thrown.getMessage());
+          }
         }
       }
     }
@@ -101,52 +147,20 @@ public class TestParsing {
 
 
   @Test
+  public void testParse() throws IOException {
+    test(f -> parseResource(f));
+  }
+
+
+  @Test
+  public void testReader() throws IOException {
+    test(f -> loadResource(f));
+  }
+
+
+  @Test
   public void testStream() throws IOException {
-    JsonArray array = (JsonArray) loadResource("all_files.json");
-    for (JsonValue jv : array) {
-      Primitive p2 = (Primitive) jv;
-      String f = p2.getValueSafe(String.class);
-      JsonParsingException thrown = null;
-      try {
-        loadStream(f);
-      } catch (JsonParsingException ioe) {
-        thrown = ioe;
-      } catch (Error err) {
-        throw new AssertionError("CRASH processing " + f, err);
-      } catch (RuntimeException re) {
-        throw new AssertionError("ABEND processing " + f, re);
-      }
-
-      if (f.startsWith("y_")) {
-        // Required to parse successfully
-        if (thrown == null) {
-          System.out.println("PASS: " + f);
-        } else {
-          System.out.println("FAIL: " + f);
-          System.out.println("Required to parse successfully, but failed with message: " + thrown.getMessage() + " at " + thrown.getLocation());
-          thrown.printStackTrace(System.out);
-          fail(f);
-        }
-      }
-
-      if (f.startsWith("n_")) {
-        // Required to parse successfully
-        if (thrown != null) {
-          System.out.println("PASS: " + f + " : " + thrown.getMessage() + " at " + thrown.getLocation());
-        } else {
-          System.out.println("FAIL: " + f);
-          System.out.println("Required to reject invalid input, but parsed OK");
-          fail(f);
-        }
-      }
-      if (f.startsWith("i_")) {
-        if (thrown == null) {
-          System.out.println("INFO: " + f + " parsed OK");
-        } else {
-          System.out.println("INFO: " + f + " failed with message: " + thrown.getMessage());
-        }
-      }
-    }
+    test(f -> loadStream(f));
   }
 
 }

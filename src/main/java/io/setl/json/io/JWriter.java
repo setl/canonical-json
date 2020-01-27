@@ -1,8 +1,8 @@
 package io.setl.json.io;
 
 import io.setl.json.Primitive;
-import io.setl.json.jackson.CanonicalGenerator;
 import java.io.IOException;
+import java.io.Writer;
 import javax.json.JsonArray;
 import javax.json.JsonException;
 import javax.json.JsonObject;
@@ -15,18 +15,18 @@ import javax.json.JsonWriter;
  */
 public class JWriter implements JsonWriter {
 
-  private final CanonicalGenerator generator;
+  private final Writer writer;
 
 
-  JWriter(CanonicalGenerator generator) {
-    this.generator = generator;
+  JWriter(Writer writer) {
+    this.writer = writer;
   }
 
 
   @Override
   public void close() {
     try {
-      generator.close();
+      writer.close();
     } catch (IOException e) {
       throw new JsonException("I/O Failure", e);
     }
@@ -37,7 +37,7 @@ public class JWriter implements JsonWriter {
   public void write(JsonValue value) {
     Primitive p = Primitive.create(value);
     try {
-      generator.writeRawCanonicalValue(p);
+      p.writeTo(writer);
     } catch (IOException e) {
       throw new JsonException("I/O Failure", e);
     }

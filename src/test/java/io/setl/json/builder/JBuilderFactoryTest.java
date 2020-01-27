@@ -7,10 +7,15 @@ import static org.junit.Assert.assertTrue;
 
 import io.setl.json.JArray;
 import io.setl.json.JObject;
+import io.setl.json.Primitive;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import org.junit.Test;
 
 /**
@@ -31,6 +36,9 @@ public class JBuilderFactoryTest {
 
   @Test
   public void createObjectBuilder() {
+    JsonObjectBuilder builder = factory.createObjectBuilder();
+    assertNotNull(builder);
+    assertTrue(builder.build().isEmpty());
   }
 
 
@@ -72,10 +80,22 @@ public class JBuilderFactoryTest {
 
   @Test
   public void testCreateObjectBuilder() {
+    JsonObject jsonObject = new JObject();
+    jsonObject.put("A", Primitive.create("B"));
+    JsonObjectBuilder builder = factory.createObjectBuilder(jsonObject);
+    assertNotNull(builder);
+    builder.add("B","C");
+    JsonObject jo = builder.build();
+    assertEquals(2,jo.size());
+    jo.remove("B");
+    assertEquals(jsonObject,jo);
   }
 
 
   @Test
   public void testCreateObjectBuilder1() {
+    JsonObjectBuilder builder = factory.createObjectBuilder(Map.of("A",1,"B",true,"C", Collections.emptyList()));
+    JsonObject object = builder.build();
+    assertEquals("{\"A\":1,\"B\":true,\"C\":[]}",object.toString());
   }
 }

@@ -5,8 +5,10 @@ import io.setl.json.io.JReaderFactory;
 import io.setl.json.io.JWriterFactory;
 import io.setl.json.parser.JParser;
 import io.setl.json.parser.JParserFactory;
-import io.setl.json.primitive.PNumber;
+import io.setl.json.pointer.JPointerFactory;
 import io.setl.json.primitive.PString;
+import io.setl.json.primitive.numbers.PInt;
+import io.setl.json.primitive.numbers.PNumber;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
@@ -147,7 +149,7 @@ public class JProvider extends JsonProvider {
 
   @Override
   public JsonPatchBuilder createPatchBuilder() {
-    return null; // TODO
+    return createPatchBuilder(null);
   }
 
 
@@ -159,7 +161,7 @@ public class JProvider extends JsonProvider {
 
   @Override
   public JsonPointer createPointer(String jsonPointer) {
-    return null; // TODO
+    return JPointerFactory.create(jsonPointer);
   }
 
 
@@ -189,31 +191,31 @@ public class JProvider extends JsonProvider {
 
   @Override
   public JsonNumber createValue(int value) {
-    return new PNumber(value);
+    return new PInt(value);
   }
 
 
   @Override
   public JsonNumber createValue(long value) {
-    return new PNumber(value);
+    return PNumber.create(value);
   }
 
 
   @Override
   public JsonNumber createValue(double value) {
-    return new PNumber(value);
+    return PNumber.create(value);
   }
 
 
   @Override
   public JsonNumber createValue(BigDecimal value) {
-    return new PNumber(value);
+    return PNumber.create(value);
   }
 
 
   @Override
   public JsonNumber createValue(BigInteger value) {
-    return new PNumber(value);
+    return PNumber.create(value);
   }
 
 

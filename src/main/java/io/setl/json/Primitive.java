@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import io.setl.json.primitive.PFalse;
 import io.setl.json.primitive.PNull;
-import io.setl.json.primitive.PNumber;
+import io.setl.json.primitive.numbers.PNumber;
 import io.setl.json.primitive.PString;
 import io.setl.json.primitive.PTrue;
 import java.io.IOException;
@@ -101,7 +101,7 @@ public interface Primitive extends JsonValue {
       return new PString((String) value);
     }
     if (value instanceof Number) {
-      return PNumber.create((Number) value);
+      return PNumber.cast((Number) value);
     }
     if (value instanceof Collection<?>) {
       return JArray.fixCollection((Collection<?>) value);

@@ -7,8 +7,9 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
 import io.setl.json.primitive.PNull;
-import io.setl.json.primitive.PNumber;
+import io.setl.json.primitive.numbers.PNumber;
 import io.setl.json.primitive.PString;
+import io.setl.json.primitive.numbers.PInt;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -74,7 +75,7 @@ public class PrimitiveTest {
     assertNotEquals(null, primitive);
     assertEquals(primitive, new PString("123"));
     assertNotEquals(primitive, new PString("456"));
-    assertNotEquals(primitive, new PNumber(123));
+    assertNotEquals(primitive, new PInt(123));
     assertNotEquals(primitive, PNull.NULL);
     assertEquals(Primitive.NULL, PNull.NULL);
     assertNotEquals(Primitive.NULL, new PString("123"));
@@ -123,6 +124,6 @@ public class PrimitiveTest {
   public void testToString() {
     assertEquals("\"abc\"", new PString("abc").toString());
     assertEquals("true", Primitive.TRUE.toString());
-    assertEquals("5.0E-1", new PNumber(0.5).toString());
+    assertEquals("5.0E-1", PNumber.create(0.5).toString());
   }
 }

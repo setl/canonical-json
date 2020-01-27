@@ -5,8 +5,8 @@ import static org.junit.Assert.assertFalse;
 
 import io.setl.json.JArray;
 import io.setl.json.JObject;
-import io.setl.json.primitive.PNumber;
 import io.setl.json.primitive.PTrue;
+import io.setl.json.primitive.numbers.PInt;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -100,7 +100,7 @@ public class JParserTest {
     assertEquals(2, a.length);
     assertEquals("a", ((Entry<?, ?>) a[0]).getKey());
     assertEquals("b", ((Entry<?, ?>) a[1]).getKey());
-    assertEquals(new PNumber(Integer.valueOf(1)), ((Entry<?, ?>) a[0]).getValue());
+    assertEquals(new PInt(1), ((Entry<?, ?>) a[0]).getValue());
     assertEquals(PTrue.TRUE, ((Entry<?, ?>) a[1]).getValue());
   }
 

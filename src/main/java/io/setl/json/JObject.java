@@ -6,7 +6,7 @@ import io.setl.json.exception.MissingItemException;
 import io.setl.json.jackson.JsonObjectSerializer;
 import io.setl.json.primitive.PFalse;
 import io.setl.json.primitive.PNull;
-import io.setl.json.primitive.PNumber;
+import io.setl.json.primitive.numbers.PNumber;
 import io.setl.json.primitive.PString;
 import io.setl.json.primitive.PTrue;
 import java.io.IOException;
@@ -945,7 +945,7 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
     StringBuilder buf = new StringBuilder();
     buf.append('{');
     for (Map.Entry<String, JsonValue> e : entrySet()) {
-      buf.append(Canonical.format(e.getKey()));
+      PString.format(buf,e.getKey());
       buf.append(':');
       buf.append(e.getValue());
       buf.append(',');
@@ -995,7 +995,7 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
         isNotFirst = true;
       }
 
-      Canonical.format(writer, e.getKey());
+      PString.format(writer, e.getKey());
       writer.write(':');
       ((Primitive) e.getValue()).writeTo(writer);
     }

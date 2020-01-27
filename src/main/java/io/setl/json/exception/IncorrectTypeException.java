@@ -2,6 +2,7 @@ package io.setl.json.exception;
 
 import io.setl.json.Canonical;
 import io.setl.json.JType;
+import io.setl.json.primitive.PString;
 
 /**
  * An exception thrown when a type-checking accessor finds data of the wrong type. The javax.json API requires that this extends from ClassCastException.
@@ -45,7 +46,7 @@ public class IncorrectTypeException extends ClassCastException {
    * @param actual   the actual data type
    */
   public IncorrectTypeException(String key, JType required, JType actual) {
-    super("Item at " + Canonical.format(key) + " has type " + actual + ". Required " + required);
+    super("Item at " + PString.format(key) + " has type " + actual + ". Required " + required);
     this.index = -1;
     this.key = key;
     this.required = required;

@@ -78,7 +78,7 @@ public class TestCanonical {
         }
       }
 
-      Assert.assertArrayEquals(expected, output.toByteArray());
+      Assert.assertArrayEquals(f,expected, output.toByteArray());
     }
   }
 

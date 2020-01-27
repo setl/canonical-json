@@ -20,13 +20,13 @@ public class JWriterFactory implements JsonWriterFactory {
 
   @Override
   public JsonWriter createWriter(Writer writer) {
-    return new JWriter(new CanonicalGenerator(writer, false));
+    return new JWriter(writer);
   }
 
 
   @Override
   public JsonWriter createWriter(OutputStream out) {
-    return new JWriter(new CanonicalGenerator(new OutputStreamWriter(out, UTF_8), false));
+    return new JWriter(new OutputStreamWriter(out, UTF_8));
   }
 
 

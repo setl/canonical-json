@@ -7,7 +7,8 @@ import io.setl.json.Primitive;
 import io.setl.json.io.Input;
 import io.setl.json.primitive.PFalse;
 import io.setl.json.primitive.PNull;
-import io.setl.json.primitive.PNumber;
+import io.setl.json.primitive.numbers.NumberParser;
+import io.setl.json.primitive.numbers.PNumber;
 import io.setl.json.primitive.PString;
 import io.setl.json.primitive.PTrue;
 import java.io.Reader;
@@ -49,12 +50,12 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
    *
    * @return true if whitespace
    */
-  static boolean isWhite(int r) {
+  public static boolean isWhite(int r) {
     return (r == ' ' || r == '\n' || r == '\r' || r == '\t');
   }
 
 
-  static String safe(int r) {
+  public static String safe(int r) {
     if (r == -1) {
       return "EOF";
     }
@@ -579,7 +580,7 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
    */
   private void parseNumber(int r) {
     NumberParser numberParser = new NumberParser(input);
-    value = new PNumber(numberParser.parse(r));
+    value = numberParser.parse(r);
     nextEvent = Event.VALUE_NUMBER;
   }
 

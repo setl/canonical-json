@@ -1,7 +1,7 @@
 package io.setl.json.exception;
 
-import io.setl.json.Canonical;
 import io.setl.json.JType;
+import io.setl.json.primitive.PString;
 
 /**
  * Exception thrown when at attempt to retrieve a required datum from a JObject or JArray fails because the datum is missing. The javax.json API requires that
@@ -39,7 +39,7 @@ public class MissingItemException extends NullPointerException {
    * @param expected the type that was expected
    */
   public MissingItemException(String key, JType expected) {
-    super("Item at " + Canonical.format(key) + " was missing and should have had type " + expected);
+    super("Item at " + PString.format(key) + " was missing and should have had type " + expected);
     this.index = -1;
     this.key = key;
     this.expected = expected;

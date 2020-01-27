@@ -37,10 +37,10 @@ public class JReader implements JsonReader {
 
   @Override
   public void close() {
-    isUsed = true;
-    if (jParser.hasNext()) {
+    if (isUsed && jParser.hasNext()) {
       throw new JsonParsingException("Additional data found after first value", jParser.getLocation());
     }
+    isUsed = true;
     jParser.close();
     try {
       reader.close();

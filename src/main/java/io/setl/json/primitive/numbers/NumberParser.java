@@ -1,4 +1,4 @@
-package io.setl.json.parser;
+package io.setl.json.primitive.numbers;
 
 import static io.setl.json.parser.JParser.isWhite;
 import static io.setl.json.parser.JParser.safe;
@@ -16,7 +16,7 @@ public class NumberParser {
   private enum Step {
     /** Processing the starting character. */
     START(false) {
-      Step apply(int r) {
+      Step apply(int r, NumberParser p) {
         if (r == '-') {
           return LEADING_MINUS;
         }
@@ -28,7 +28,7 @@ public class NumberParser {
     },
     /** Seen leading minus sign, must be followed by digit. */
     LEADING_MINUS(false) {
-      Step apply(int r) {
+      Step apply(int r, NumberParser p) {
         if (r == '0') {
           return LEADING_ZERO;
         }
@@ -40,13 +40,13 @@ public class NumberParser {
     },
     /** Parsing step failed. */
     ERROR(true) {
-      Step apply(int r) {
+      Step apply(int r, NumberParser p) {
         throw new IllegalStateException("Step invoked after error");
       }
     },
     /** Seen leading zero, must be followed by '.', 'e', or 'E'. */
     LEADING_ZERO(true) {
-      Step apply(int r) {
+      Step apply(int r, NumberParser p) {
         if (r == '.') {
           // start fractional part
           return START_FRACTION;
@@ -59,7 +59,7 @@ public class NumberParser {
     },
     /** Seen leading 1 to 9, can be followed by any digit, '.', 'e', or 'E'. */
     INTEGER_PART(true) {
-      Step apply(int r) {
+      Step apply(int r, NumberParser p) {
         if (isDigit(r)) {
           return INTEGER_PART;
         }
@@ -74,7 +74,8 @@ public class NumberParser {
     },
     /** Seen a '.', so read fractional part. */
     START_FRACTION(false) {
-      Step apply(int r) {
+      Step apply(int r, NumberParser p) {
+        p.needBigDecimal = true;
         if (isDigit(r)) {
           return FRACTION_PART;
         }
@@ -83,7 +84,7 @@ public class NumberParser {
     },
     /** Seen a '.' and a digit, now reading fractional part. */
     FRACTION_PART(true) {
-      Step apply(int r) {
+      Step apply(int r, NumberParser p) {
         if (isDigit(r)) {
           return FRACTION_PART;
         }
@@ -95,7 +96,8 @@ public class NumberParser {
     },
     /** seen 'e' or 'E', read exponent part. Can be '+', '-' or '0' to '9' */
     START_EXPONENT(false) {
-      Step apply(int r) {
+      Step apply(int r, NumberParser p) {
+        p.needBigDecimal = true;
         if (r == '+' || r == '-') {
           return SIGNED_EXPONENT;
         }
@@ -107,12 +109,12 @@ public class NumberParser {
     },
     /** Seen "E+" or "E-". A digit is required. */
     SIGNED_EXPONENT(false) {
-      Step apply(int r) {
+      Step apply(int r, NumberParser p) {
         return isDigit(r) ? EXPONENT_PART : ERROR;
       }
     },
     EXPONENT_PART(true) {
-      Step apply(int r) {
+      Step apply(int r, NumberParser p) {
         return isDigit(r) ? EXPONENT_PART : ERROR;
       }
     };
@@ -132,7 +134,7 @@ public class NumberParser {
      *
      * @return the next step
      */
-    abstract Step apply(int r);
+    abstract Step apply(int r, NumberParser parser);
 
 
     /** Can parsing legally stop in this state?. */
@@ -157,19 +159,57 @@ public class NumberParser {
 
   final Input input;
 
-  private Number result;
+  boolean needBigDecimal;
 
 
-  NumberParser(Input input) {
+  public NumberParser(Input input) {
     this.input = input;
   }
 
 
-  public Number getResult() {
-    if (result == null) {
-      throw new IllegalStateException("Not parsed");
+  private PNumber convert(String txt) {
+    int length = txt.length();
+    // Integer.MAX_VALUE takes 10 characters
+    if (length < 10) {
+      return new PInt(Integer.parseInt(txt));
     }
-    return result;
+    // Integer.MIN_VALUE takes 11 characters
+    if (length < 12) {
+      // 10 or 11 characters could be a long or an int
+      long l = Long.parseLong(txt);
+      if (Integer.MIN_VALUE <= l && l <= Integer.MAX_VALUE) {
+        return new PInt((int) l);
+      }
+      return new PLong(l);
+    }
+    // Long.MAX_VALUE takes 19 characters
+    if (length < 19) {
+      return new PLong(Long.parseLong(txt));
+    }
+    // Long.MIN_VALUE takes 20 characters
+    if (length < 21) {
+      BigInteger bi = new BigInteger(txt);
+      if (bi.bitLength() <= 63) {
+        return new PLong(bi.longValueExact());
+      }
+      return new PBigInteger(bi);
+    }
+
+    // Could be a big integer, unless it has too many trailing zeros.
+    int s = 0;
+    for (int i = txt.length() - 1; i >= 0; i--) {
+      if (txt.charAt(i) == '0') {
+        s--;
+      } else {
+        break;
+      }
+    }
+    if (s < PBigInteger.MIN_SCALE) {
+      return new PBigDecimal(new BigDecimal(txt), true);
+    }
+
+    // It is a BigInteger after all
+    return new PBigInteger(new BigInteger(txt));
   }
 
 
@@ -202,49 +242,35 @@ public class NumberParser {
    *
    * @param r the initial character of the number
    */
-  public NumberParser parse(int r) {
+  public PNumber parse(int r) {
     StringBuilder buf = new StringBuilder();
     buf.append((char) r);
 
     // read rest of number
-    Step step = Step.START.apply(r);
-
+    Step step = Step.START.apply(r, this);
     while (true) {
       r = input.read();
       if (isEnd(r, step)) {
         break;
       }
       buf.append((char) r);
-      step = step.apply(r);
+      step = step.apply(r, this);
       if (step == Step.ERROR) {
         throw badNumber(buf, r, input);
       }
     }
 
-    BigDecimal bigDecimal;
-    try {
-      bigDecimal = new BigDecimal(buf.toString());
-    } catch (NumberFormatException nfe) {
-      throw new JsonParsingException("Number in JSON is too extreme to process: \"" + buf.toString() + "\"", input.getLocation());
+    if (needBigDecimal) {
+      BigDecimal bigDecimal;
+      try {
+        bigDecimal = new BigDecimal(buf.toString());
+      } catch (NumberFormatException nfe) {
+        throw new JsonParsingException("Number in JSON is too extreme to process: \"" + buf.toString() + "\"", input.getLocation());
+      }
+      return PNumber.create(bigDecimal);
     }
 
-    bigDecimal = bigDecimal.stripTrailingZeros();
-    if (bigDecimal.scale() > 0) {
-      result = bigDecimal;
-      return this;
-    }
-
-    BigInteger bigInteger = bigDecimal.toBigIntegerExact();
-    int bitLength = bigInteger.bitLength();
-    if (bitLength < 32) {
-      result = bigInteger.intValueExact();
-      return this;
-    }
-    if (bitLength < 64) {
-      result = bigInteger.longValueExact();
-      return this;
-    }
-    result = bigInteger;
-    return this;
+    String txt = buf.toString();
+    return convert(txt);
   }
 }

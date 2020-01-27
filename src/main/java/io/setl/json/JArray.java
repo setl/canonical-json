@@ -6,7 +6,7 @@ import io.setl.json.exception.MissingItemException;
 import io.setl.json.jackson.JsonArraySerializer;
 import io.setl.json.primitive.PFalse;
 import io.setl.json.primitive.PNull;
-import io.setl.json.primitive.PNumber;
+import io.setl.json.primitive.numbers.PNumber;
 import io.setl.json.primitive.PString;
 import io.setl.json.primitive.PTrue;
 import java.io.IOException;
@@ -184,7 +184,7 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
 
 
   public boolean add(Number number) {
-    return add(number != null ? PNumber.create(number) : Primitive.NULL);
+    return add(number != null ? PNumber.cast(number) : Primitive.NULL);
   }
 
 

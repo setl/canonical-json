@@ -63,6 +63,8 @@ public class MutableLocationTest {
     assertEquals(300, l.getStreamOffset());
     assertEquals(200, l.getLineNumber());
     assertEquals(100, l.getColumnNumber());
+
+    assertEquals("Location(columnNumber=100, lineNumber=200, streamOffset=300)", l.toString());
   }
 
 }

@@ -1,14 +1,13 @@
 package io.setl.json.io;
 
 import io.setl.json.parser.JParser;
-import java.io.IOException;
 import java.io.Reader;
 import javax.json.JsonArray;
-import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
+import javax.json.JsonValue.ValueType;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParsingException;
 
@@ -16,8 +15,6 @@ import javax.json.stream.JsonParsingException;
  * @author Simon Greatrix on 10/01/2020.
  */
 public class JReader implements JsonReader {
-
-  private final Reader reader;
 
   private boolean isUsed = false;
 
@@ -30,23 +27,25 @@ public class JReader implements JsonReader {
    * @param reader the text source
    */
   JReader(Reader reader) {
-    this.reader = reader;
     jParser = new JParser(reader);
+  }
+
+
+  private JsonParsingException badType(String expected, ValueType actual) {
+    return new JsonParsingException("Datum was a " + actual + ", not a " + expected, Location.UNSET);
   }
 
 
   @Override
   public void close() {
     if (isUsed && jParser.hasNext()) {
+      // Currently JParser.hasNext fails if there is more than one root, so this line is unnecessary
       throw new JsonParsingException("Additional data found after first value", jParser.getLocation());
     }
     isUsed = true;
+
+    // closing the parser also closes the reader
     jParser.close();
-    try {
-      reader.close();
-    } catch (IOException e) {
-      throw new JsonException("I/O failure", e);
-    }
   }
 
 
@@ -56,7 +55,7 @@ public class JReader implements JsonReader {
     if (value instanceof JsonStructure) {
       return (JsonStructure) value;
     }
-    throw new JsonParsingException("Datum was a " + value.getValueType() + ", not a structure", Location.UNSET);
+    throw badType("STRUCTURE", value.getValueType());
   }
 
 
@@ -66,7 +65,7 @@ public class JReader implements JsonReader {
     if (value instanceof JsonArray) {
       return (JsonArray) value;
     }
-    throw new JsonParsingException("Datum was a " + value.getValueType() + ", not an array", Location.UNSET);
+    throw badType("ARRAY", value.getValueType());
   }
 
 
@@ -76,7 +75,7 @@ public class JReader implements JsonReader {
     if (value instanceof JsonObject) {
       return (JsonObject) value;
     }
-    throw new JsonParsingException("Datum was a " + value.getValueType() + ", not an object", Location.UNSET);
+    throw badType("OBJECT", value.getValueType());
   }
 
 

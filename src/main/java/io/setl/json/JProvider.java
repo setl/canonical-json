@@ -1,6 +1,7 @@
 package io.setl.json;
 
 import io.setl.json.builder.JBuilderFactory;
+import io.setl.json.io.JGeneratorFactory;
 import io.setl.json.io.JReaderFactory;
 import io.setl.json.io.JWriterFactory;
 import io.setl.json.parser.JParser;
@@ -89,7 +90,7 @@ public class JProvider extends JsonProvider {
 
   @Override
   public JsonGeneratorFactory createGeneratorFactory(Map<String, ?> config) {
-    return null; // TODO
+    return new JGeneratorFactory(config);
   }
 
 

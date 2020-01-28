@@ -5,7 +5,7 @@ package io.setl.json.parser;
  */
 class StructureTag {
 
-  StructureTag parent;
+  final StructureTag parent;
 
 
   StructureTag(StructureTag parent) {

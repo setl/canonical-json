@@ -8,7 +8,6 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Map;
-import javax.json.JsonReader;
 import javax.json.JsonReaderFactory;
 
 /**

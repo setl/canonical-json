@@ -66,10 +66,18 @@ public class Utf8Appendable implements Appendable {
    * Close the output.
    */
   public void close() throws IOException {
+    finish();
+    output.close();
+  }
+
+
+  /**
+   * Close this writer, but DO NOT close the contained output stream.
+   */
+  public void finish() throws IOException {
     if (highSurrogate != 0) {
       throw new IOException("Isolated high surrogate");
     }
-    output.close();
   }
 
 

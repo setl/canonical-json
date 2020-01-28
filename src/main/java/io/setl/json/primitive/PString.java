@@ -2,13 +2,14 @@ package io.setl.json.primitive;
 
 import io.setl.json.JType;
 import java.io.IOException;
-import java.io.Writer;
 import javax.json.JsonString;
 
 /**
  * @author Simon Greatrix on 08/01/2020.
  */
 public class PString extends PBase implements JsonString {
+
+  private static final byte[] ESCAPES;
 
   /** Canonical form uses upper-case hexadecimal. */
   private static final char[] HEX = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
@@ -22,91 +23,6 @@ public class PString extends PBase implements JsonString {
    */
   private static void appendUnicode(Appendable buf, char ch) throws IOException {
     buf.append("\\u").append(HEX[(ch >>> 12) & 15]).append(HEX[(ch >>> 8) & 15]).append(HEX[(ch >>> 4) & 15]).append(HEX[ch & 15]);
-  }
-
-
-  /**
-   * Format text in its canonical JSON representation and append to the buffer.
-   *
-   * @param buf   the output buffer
-   * @param input the text to format
-   */
-  public static void format(Appendable buf, String input) throws IOException {
-    // opening quote
-    buf.append('"');
-
-    // track high surrogates for when they are followed by low surrogates
-    char highSurrogate = '\0';
-
-    // Loop through every character
-    int l = input.length();
-    for (int i = 0; i < l; i++) {
-      char ch = input.charAt(i);
-      if (Character.isHighSurrogate(ch)) {
-        if (highSurrogate != '\0') {
-          // previous character was an isolated high surrogate
-          appendUnicode(buf, highSurrogate);
-        }
-        // got a high surrogate that might combine with the next character
-        highSurrogate = ch;
-      } else if (Character.isLowSurrogate(ch)) {
-        if (highSurrogate != '\0') {
-          // a high surrogate and a low surrogate so we have a valid pair.
-          buf.append(highSurrogate).append(ch);
-          highSurrogate = '\0';
-        } else {
-          // isolated low surrogate
-          appendUnicode(buf, ch);
-        }
-      } else {
-        // new character is not a surrogate
-        if (highSurrogate != '\0') {
-          // previous character was an isolated high surrogate
-          appendUnicode(buf, highSurrogate);
-          highSurrogate = '\0';
-        }
-        // Handle C0 escape codes
-        if (ch < 32) {
-          switch (ch) {
-            case 8:
-              buf.append("\\b");
-              break;
-            case 9:
-              buf.append("\\t");
-              break;
-            case 10:
-              buf.append("\\n");
-              break;
-            case 12:
-              buf.append("\\f");
-              break;
-            case 13:
-              buf.append("\\r");
-              break;
-            default:
-              buf.append("\\u00").append(HEX[ch >>> 4]).append(HEX[ch & 0xf]);
-              break;
-          }
-        } else if (ch == '\\') {
-          // Reverse solidus must be escaped
-          buf.append("\\\\");
-        } else if (ch == '\"') {
-          // Double quote must be escaped
-          buf.append("\\\"");
-        } else {
-          // regular character
-          buf.append(ch);
-        }
-      }
-    }
-
-    // Could have a trailing high surrogate
-    if (highSurrogate != '\0') {
-      appendUnicode(buf, highSurrogate);
-    }
-
-    // closing quote
-    buf.append('"');
   }
 
 
@@ -140,6 +56,131 @@ public class PString extends PBase implements JsonString {
   }
 
 
+  /**
+   * Format text in its canonical JSON representation and append to the buffer. The rules for the canonical representation are:
+   * <ol>
+   *   <li>avoiding escape sequences for characters except those otherwise inexpressible in JSON (U+0022 QUOTATION MARK, U+005C REVERSE SOLIDUS, and ASCII
+   *   control characters U+0000 through U+001F) or UTF-8 (U+D800 through U+DFFF), and</li>
+   *   <li>avoiding escape sequences for combining characters, variation selectors, and other code points that affect preceding characters, and</li>
+   *   <li>using two-character escape sequences where possible for characters that require escaping:
+   *     <ul>
+   *       <li><code>&#92;b</code> U+0008 BACKSPACE</li>
+   *       <li><code>&#92;t</code> U+0009 CHARACTER TABULATION (“tab”)</li>
+   *       <li><code>&#92;n</code> U+000A LINE FEED (“newline”)</li>
+   *       <li><code>&#92;f</code> U+000C FORM FEED</li>
+   *       <li><code>&#92;r</code> U+000D CARRIAGE RETURN</li>
+   *       <li><code>&#92;"</code> U+0022 QUOTATION MARK</li>
+   *       <li><code>&#92;&#92;</code> U+005C REVERSE SOLIDUS (“backslash”), and</li>
+   *     </ul>
+   *   </li>
+   *   <li>using six-character <code>&#92;u00xx</code> uppercase hexadecimal escape sequences for control characters that require escaping but lack a
+   *   two-character sequence, and</li>
+   *   <li>using six-character <code>&#92;uDxxx</code> uppercase hexadecimal escape sequences for lone surrogates</li>
+   * </ol>
+   *
+   * @param buf   the output buffer
+   * @param input the text to format
+   */
+  public static void format(Appendable buf, String input) throws IOException {
+    // opening quote
+    buf.append('"');
+
+    int i = 0;
+    int l = input.length();
+    while (i < l) {
+      char ch = input.charAt(i);
+
+      if (ch < 128) {
+        // Handle the ASCII characters, and C0 block
+        i = formatAscii(buf, input, i);
+      } else if (ch < Character.MIN_HIGH_SURROGATE || Character.MAX_LOW_SURROGATE < ch) {
+        // Normal character
+        buf.append(ch);
+        i++;
+      } else {
+        // it's a surrogate
+        i = formatSurrogate(buf, input, i);
+      }
+    }
+
+    // closing quote
+    buf.append('"');
+  }
+
+
+  private static int formatAscii(Appendable buf, String input, int i) throws IOException {
+    final int l = input.length();
+    while (i < l) {
+      char ch = input.charAt(i);
+      if (ch >= 128) {
+        return i;
+      }
+
+      switch (ESCAPES[ch]) {
+        case 0:
+          // normal character
+          buf.append(ch);
+          break;
+        case 1:
+          // unicode escape
+          buf.append("\\u00").append(HEX[ch >>> 4]).append(HEX[ch & 0xf]);
+          break;
+        default:
+          // special escape
+          buf.append('\\').append((char) ESCAPES[ch]);
+          break;
+      }
+
+      i++;
+    }
+    return i;
+  }
+
+
+  private static int formatSurrogate(Appendable buf, String input, int i) throws IOException {
+    final int l = input.length();
+    char ch0 = input.charAt(i);
+    i++;
+    if (Character.isLowSurrogate(ch0) || i == l) {
+      // Trailing surrogate without a leading surrogate, must escape
+      appendUnicode(buf, ch0);
+      return i;
+    }
+
+    // we have a high surrogate with a following character - is it a low surrogate?
+    char ch1 = input.charAt(i);
+    if (Character.isLowSurrogate(ch1)) {
+      // high and then low surrogate, so all good!
+      buf.append(ch0).append(ch1);
+      return i + 1;
+    }
+
+    // high surrogate not followed by low surrogate
+    appendUnicode(buf, ch0);
+    return i;
+  }
+
+
+  static {
+    byte[] escaped = new byte[128];
+
+    // 0 to 31 must be escaped
+    for (int i = 0; i < 32; i++) {
+      escaped[i] = 1;
+    }
+
+    // These have special escapes
+    escaped[8] = 'b';
+    escaped[9] = 't';
+    escaped[10] = 'n';
+    escaped[12] = 'f';
+    escaped[13] = 'r';
+    escaped['\\'] = '\\';
+    escaped['"'] = '"';
+
+    ESCAPES = escaped;
+  }
+
   private final String value;
 
 
@@ -150,7 +191,7 @@ public class PString extends PBase implements JsonString {
 
   @Override
   public CharSequence getChars() {
-    return value;
+    return getString();
   }
 
 
@@ -168,7 +209,7 @@ public class PString extends PBase implements JsonString {
 
   @Override
   public Object getValue() {
-    return value;
+    return getString();
   }
 
 
@@ -185,7 +226,7 @@ public class PString extends PBase implements JsonString {
 
 
   @Override
-  public void writeTo(Writer writer) throws IOException {
+  public void writeTo(Appendable writer) throws IOException {
     format(writer, value);
   }
 }

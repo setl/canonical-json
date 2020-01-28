@@ -6,7 +6,6 @@ import io.setl.json.exception.NonFiniteNumberException;
 import io.setl.json.primitive.PBase;
 import io.setl.json.primitive.PString;
 import java.io.IOException;
-import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Map;
@@ -57,6 +56,10 @@ public abstract class PNumber extends PBase implements JsonNumber {
   );
 
 
+  /**
+   * Convert a number into a JsonValue. IEEE floating point numbers may specify "Not A Number", "Positive Infinity", or "Negative Infinity". These three special
+   * cases cannot be represented as numbers in JSON and so are rendered as Strings.
+   */
   public static Primitive cast(Number value) {
     try {
       return create(value);
@@ -76,6 +79,13 @@ public abstract class PNumber extends PBase implements JsonNumber {
   }
 
 
+  /**
+   * Create a JsonNumber from a Number value performing appropriate type simplifications.
+   *
+   * @param value the value
+   *
+   * @return the JsonNumber for that value
+   */
   public static PNumber create(Number value) {
     Class<? extends Number> cl = value.getClass();
     UnaryOperator<Number> operator = SIMPLIFIERS.get(cl);
@@ -93,6 +103,13 @@ public abstract class PNumber extends PBase implements JsonNumber {
   }
 
 
+  /**
+   * Simplify a long into either a long or an int.
+   *
+   * @param l the long to simplify
+   *
+   * @return the new representation
+   */
   public static Number simplify(long l) {
     if (Integer.MIN_VALUE <= l && l <= Integer.MAX_VALUE) {
       return (int) l;
@@ -196,6 +213,8 @@ public abstract class PNumber extends PBase implements JsonNumber {
         case "-inf":
         case "-infinity":
           return Double.NEGATIVE_INFINITY;
+        default:
+          break;
       }
     }
     return null;
@@ -258,7 +277,7 @@ public abstract class PNumber extends PBase implements JsonNumber {
 
 
   @Override
-  public void writeTo(Writer writer) throws IOException {
-    writer.write(toString());
+  public void writeTo(Appendable writer) throws IOException {
+    writer.append(toString());
   }
 }

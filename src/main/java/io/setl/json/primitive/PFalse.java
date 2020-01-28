@@ -2,7 +2,6 @@ package io.setl.json.primitive;
 
 import io.setl.json.JType;
 import java.io.IOException;
-import java.io.Writer;
 
 /**
  * @author Simon Greatrix on 08/01/2020.
@@ -42,7 +41,7 @@ public class PFalse extends PBase {
 
 
   @Override
-  public void writeTo(Writer writer) throws IOException {
-    writer.write("false");
+  public void writeTo(Appendable writer) throws IOException {
+    writer.append("false");
   }
 }

@@ -2,7 +2,6 @@ package io.setl.json.io;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import io.setl.json.jackson.CanonicalGenerator;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;

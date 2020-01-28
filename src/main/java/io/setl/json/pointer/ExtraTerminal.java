@@ -16,6 +16,7 @@ class ExtraTerminal extends ObjectTerminal {
   }
 
 
+  @Override
   public void add(JsonArray target, JsonValue value) {
     target.add(value);
   }
@@ -26,21 +27,25 @@ class ExtraTerminal extends ObjectTerminal {
   }
 
 
+  @Override
   public boolean containsValue(JsonArray target) {
     return false;
   }
 
 
+  @Override
   public JsonValue getValue(JsonArray target) {
     throw bad(target.size());
   }
 
 
+  @Override
   public void remove(JsonArray target) {
     throw bad(target.size());
   }
 
 
+  @Override
   public void replace(JsonArray target, JsonValue value) {
     throw bad(target.size());
   }

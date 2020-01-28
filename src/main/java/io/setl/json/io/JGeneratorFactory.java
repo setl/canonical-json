@@ -22,9 +22,16 @@ public class JGeneratorFactory implements JsonGeneratorFactory {
   private boolean trustKeyOrder = false;
 
 
+  /**
+   * Create a new factory. The configuration may specify a boolean value for TRUST_KEY_ORDER. If true, the generator will write immediately to the output
+   * without buffering, but the client MUST provide Object keys in the correct order.
+   *
+   * @param config the configuration
+   */
   public JGeneratorFactory(Map<String, ?> config) {
     if (config != null && config.containsKey(TRUST_KEY_ORDER)) {
-      trustKeyOrder = Boolean.valueOf(String.valueOf(config.get(TRUST_KEY_ORDER)));
+      String val = String.valueOf(config.get(TRUST_KEY_ORDER));
+      trustKeyOrder = Boolean.valueOf(val);
     }
   }
 
@@ -55,7 +62,6 @@ public class JGeneratorFactory implements JsonGeneratorFactory {
 
   @Override
   public Map<String, ?> getConfigInUse() {
-    // TODO : Implement me! simongreatrix 27/01/2020
-    return null;
+    return Map.of(TRUST_KEY_ORDER, trustKeyOrder);
   }
 }

@@ -4,13 +4,14 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import io.setl.json.io.Utf8Appendable;
 import io.setl.json.primitive.PFalse;
 import io.setl.json.primitive.PNull;
-import io.setl.json.primitive.numbers.PNumber;
 import io.setl.json.primitive.PString;
 import io.setl.json.primitive.PTrue;
+import io.setl.json.primitive.numbers.PNumber;
 import java.io.IOException;
-import java.io.Writer;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
@@ -206,11 +207,22 @@ public interface Primitive extends JsonValue {
   <T> T getValueSafe(Class<T> reqType);
 
   /**
+   * Write this to the specified stream in UTF-8.
+   *
+   * @param out the stream
+   */
+  default void writeTo(OutputStream out) throws IOException {
+    Utf8Appendable utf8Appendable = new Utf8Appendable(out);
+    writeTo(utf8Appendable);
+    utf8Appendable.finish();
+  }
+
+  /**
    * Write this to the specified writer.
    *
    * @param writer the writer
    *
    * @throws IOException if writing fails
    */
-  void writeTo(Writer writer) throws IOException;
+  void writeTo(Appendable writer) throws IOException;
 }

@@ -20,6 +20,7 @@ class ArrayTerminal extends ObjectTerminal {
   }
 
 
+  @Override
   public void add(JsonArray target, JsonValue value) {
     try {
       target.add(index, value);
@@ -34,11 +35,13 @@ class ArrayTerminal extends ObjectTerminal {
   }
 
 
+  @Override
   public boolean containsValue(JsonArray target) {
     return index < target.size();
   }
 
 
+  @Override
   public JsonValue getValue(JsonArray target) {
     try {
       return target.get(index);
@@ -48,6 +51,7 @@ class ArrayTerminal extends ObjectTerminal {
   }
 
 
+  @Override
   public void remove(JsonArray target) {
     try {
       target.remove(index);
@@ -57,6 +61,7 @@ class ArrayTerminal extends ObjectTerminal {
   }
 
 
+  @Override
   public void replace(JsonArray target, JsonValue value) {
     try {
       target.set(index, value);

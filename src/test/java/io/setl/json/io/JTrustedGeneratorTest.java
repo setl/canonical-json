@@ -18,7 +18,7 @@ import org.mockito.Mockito;
 /**
  * @author Simon Greatrix on 27/01/2020.
  */
-public class JSafeGeneratorTest {
+public class JTrustedGeneratorTest {
 
   JGenerator generator;
 
@@ -28,7 +28,7 @@ public class JSafeGeneratorTest {
   @Test
   public void close() throws IOException {
     Writer writer = Mockito.mock(Writer.class);
-    generator = new JSafeGenerator(writer);
+    generator = new JTrustedGenerator(writer);
     generator.close();
     Mockito.verify(writer).close();
   }
@@ -53,10 +53,18 @@ public class JSafeGeneratorTest {
   }
 
 
+  @Test(expected = JsonGenerationException.class)
+  public void keysOutOfOrder() {
+    generator.writeStartObject()
+        .writeNull("b")
+        .writeNull("a");
+  }
+
+
   @Before
   public void reset() {
     writer = new StringWriter();
-    generator = new JSafeGenerator(writer);
+    generator = new JTrustedGenerator(writer);
   }
 
 
@@ -65,22 +73,23 @@ public class JSafeGeneratorTest {
     // The JavaDoc example
     generator
         .writeStartObject()
-        .write("firstName", "John")
-        .write("lastName", "Smith").write("age", 25)
         .writeStartObject("address")
-        .write("streetAddress", "21 2nd Street")
         .write("city", "New York")
-        .write("state", "NY")
         .write("postalCode", "10021")
+        .write("state", "NY")
+        .write("streetAddress", "21 2nd Street")
         .writeEnd()
+        .write("age", 25)
+        .write("firstName", "John")
+        .write("lastName", "Smith")
         .writeStartArray("phoneNumber")
         .writeStartObject()
-        .write("type", "home")
         .write("number", "212 555-1234")
+        .write("type", "home")
         .writeEnd()
         .writeStartObject()
-        .write("type", "fax")
         .write("number", "646 555-4567")
+        .write("type", "fax")
         .writeEnd()
         .writeEnd()
         .writeEnd();
@@ -126,19 +135,6 @@ public class JSafeGeneratorTest {
         .writeEnd()
         .close();
     assertEquals("[1,{},3]", writer.toString());
-  }
-
-
-  @Test
-  public void testWriteArray4() {
-    generator.writeStartArray()
-        .write(1)
-        .writeStartArray()
-        .writeEnd()
-        .write(3)
-        .writeEnd()
-        .close();
-    assertEquals("[1,[],3]", writer.toString());
   }
 
 
@@ -296,7 +292,7 @@ public class JSafeGeneratorTest {
   public void writeIOFailure() throws IOException {
     Writer writer = Mockito.mock(Writer.class);
     Mockito.doThrow(new IOException()).when(writer).append(anyChar());
-    generator = new JSafeGenerator(writer);
+    generator = new JTrustedGenerator(writer);
     generator.write("fail");
   }
 
@@ -305,7 +301,7 @@ public class JSafeGeneratorTest {
   public void writeIOFailure2() throws IOException {
     Writer writer = Mockito.mock(Writer.class);
     Mockito.doThrow(new IOException()).when(writer).close();
-    generator = new JSafeGenerator(writer);
+    generator = new JTrustedGenerator(writer);
     generator.close();
   }
 
@@ -314,7 +310,7 @@ public class JSafeGeneratorTest {
   public void writeIOFailure3() throws IOException {
     Writer writer = Mockito.mock(Writer.class);
     Mockito.doThrow(new IOException()).when(writer).flush();
-    generator = new JSafeGenerator(writer);
+    generator = new JTrustedGenerator(writer);
     generator.flush();
   }
 
@@ -622,5 +618,4 @@ public class JSafeGeneratorTest {
     generator.writeStartObject();
     generator.write(true);
   }
-
 }

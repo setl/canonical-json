@@ -9,6 +9,9 @@ public class NonFiniteNumberException extends ArithmeticException {
 
 
 
+  /**
+   * Possible types of non-finite number.
+   */
   public enum Type {
     NAN,
     NEGATIVE_INFINITY,
@@ -20,6 +23,11 @@ public class NonFiniteNumberException extends ArithmeticException {
   private final Type type;
 
 
+  /**
+   * New exception for the non-finite value.
+   *
+   * @param d the value
+   */
   public NonFiniteNumberException(double d) {
     super(Double.toString(d));
     if (Double.isNaN(d)) {
@@ -30,6 +38,11 @@ public class NonFiniteNumberException extends ArithmeticException {
   }
 
 
+  /**
+   * New exception for the non-finite value.
+   *
+   * @param f the value
+   */
   public NonFiniteNumberException(float f) {
     super(Float.toString(f));
     if (Float.isNaN(f)) {

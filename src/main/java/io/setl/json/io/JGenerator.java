@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import javax.json.JsonException;
 import javax.json.JsonValue;
 import javax.json.stream.JsonGenerationException;
 import javax.json.stream.JsonGenerator;
@@ -18,6 +17,14 @@ import javax.json.stream.JsonGenerator;
 public abstract class JGenerator implements JsonGenerator {
 
   protected interface Context {
+
+    default void endChild() {
+      // do nothing
+    }
+
+    default void startChild() {
+      // do nothing - only needed by root
+    }
 
     Context writeEnd();
 
@@ -33,6 +40,20 @@ public abstract class JGenerator implements JsonGenerator {
   protected class RootContext implements Context {
 
     boolean hasWritten = false;
+
+
+    @Override
+    public void endChild() {
+      hasWritten = true;
+    }
+
+
+    @Override
+    public void startChild() {
+      if (hasWritten) {
+        throw new JsonGenerationException("Cannot write multiple values in root context");
+      }
+    }
 
 
     public Context writeEnd() {
@@ -92,9 +113,9 @@ public abstract class JGenerator implements JsonGenerator {
   }
 
 
-  abstract protected Context newArrayContext();
+  protected abstract Context newArrayContext();
 
-  abstract protected Context newObjectContext();
+  protected abstract Context newObjectContext();
 
 
   @Override
@@ -197,6 +218,7 @@ public abstract class JGenerator implements JsonGenerator {
   @Override
   public JsonGenerator writeEnd() {
     context = context.writeEnd();
+    context.endChild();
     return this;
   }
 
@@ -222,6 +244,7 @@ public abstract class JGenerator implements JsonGenerator {
 
   @Override
   public JsonGenerator writeStartArray() {
+    context.startChild();
     context = newArrayContext();
     context.writeStart();
     return this;
@@ -236,6 +259,7 @@ public abstract class JGenerator implements JsonGenerator {
 
   @Override
   public JsonGenerator writeStartObject() {
+    context.startChild();
     context = newObjectContext();
     context.writeStart();
     return this;

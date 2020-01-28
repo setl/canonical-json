@@ -18,7 +18,7 @@ public class JReader implements JsonReader {
 
   private boolean isUsed = false;
 
-  private JsonParser jParser;
+  private final JsonParser jParser;
 
 
   /**

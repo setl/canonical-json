@@ -26,7 +26,7 @@ class ArrayPath extends ObjectPath {
 
   @Override
   public boolean containsValue(JsonArray target) {
-    if(target.size()<=index ) {
+    if (target.size() <= index) {
       return false;
     }
     return doContains(get(target));

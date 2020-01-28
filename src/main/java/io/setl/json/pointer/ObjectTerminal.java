@@ -27,7 +27,7 @@ class ObjectTerminal implements PathElement {
 
   @Override
   public void add(JsonArray target, JsonValue value) {
-    throw new PointerMismatchException("JSON object required", path, ValueType.OBJECT, ValueType.ARRAY);
+    throw needObject();
   }
 
 
@@ -39,7 +39,7 @@ class ObjectTerminal implements PathElement {
 
   @Override
   public boolean containsValue(JsonArray target) {
-    throw new PointerMismatchException("JSON object required", path, ValueType.OBJECT, ValueType.ARRAY);
+    throw needObject();
   }
 
 
@@ -51,7 +51,7 @@ class ObjectTerminal implements PathElement {
 
   @Override
   public JsonValue getValue(JsonArray target) {
-    throw new PointerMismatchException("JSON object required", path, ValueType.OBJECT, ValueType.ARRAY);
+    throw needObject();
   }
 
 
@@ -65,9 +65,14 @@ class ObjectTerminal implements PathElement {
   }
 
 
+  private PointerMismatchException needObject() {
+    return new PointerMismatchException("JSON object required", path, ValueType.OBJECT, ValueType.ARRAY);
+  }
+
+
   @Override
   public void remove(JsonArray target) {
-    throw new PointerMismatchException("JSON object required", path, ValueType.OBJECT, ValueType.ARRAY);
+    throw needObject();
   }
 
 
@@ -82,7 +87,7 @@ class ObjectTerminal implements PathElement {
 
   @Override
   public void replace(JsonArray target, JsonValue value) {
-    throw new PointerMismatchException("JSON object required", path, ValueType.OBJECT, ValueType.ARRAY);
+    throw needObject();
   }
 
 

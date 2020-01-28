@@ -24,7 +24,10 @@ class EmptyPointer implements JsonPointer {
     if (value.getValueType() != target.getValueType()) {
       throw new PointerMismatchException("Root structure type mismatch", "", target.getValueType(), value.getValueType());
     }
-    return (T) value;
+    // This could fail if two javax.json implementations were in use in the same JVM.
+    @SuppressWarnings("unchecked")
+    T output = (T) value;
+    return output;
   }
 
 

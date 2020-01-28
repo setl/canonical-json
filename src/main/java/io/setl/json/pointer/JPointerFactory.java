@@ -7,6 +7,13 @@ import javax.json.JsonPointer;
  */
 public class JPointerFactory {
 
+  /**
+   * Create a pointer from the provided path.
+   *
+   * @param path the path
+   *
+   * @return the pointer
+   */
   public static JsonPointer create(String path) {
     if (path.equals("")) {
       return EmptyPointer.INSTANCE;

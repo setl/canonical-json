@@ -70,7 +70,7 @@ public class JWriterTest {
   @Test(expected = JsonException.class)
   public void failedWrite() throws IOException {
     Writer writer = Mockito.mock(Writer.class);
-    Mockito.doThrow(new IOException()).when(writer).write(any(String.class));
+    Mockito.doThrow(new IOException()).when(writer).append(any(String.class));
     JWriter jWriter = new JWriter(writer);
     jWriter.write(PFalse.FALSE);
   }

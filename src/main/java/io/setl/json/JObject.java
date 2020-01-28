@@ -10,7 +10,6 @@ import io.setl.json.primitive.numbers.PNumber;
 import io.setl.json.primitive.PString;
 import io.setl.json.primitive.PTrue;
 import java.io.IOException;
-import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Comparator;
@@ -985,20 +984,20 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
 
 
   @Override
-  public void writeTo(Writer writer) throws IOException {
-    writer.write('{');
+  public void writeTo(Appendable writer) throws IOException {
+    writer.append('{');
     boolean isNotFirst = false;
     for (Map.Entry<String, JsonValue> e : entrySet()) {
       if (isNotFirst) {
-        writer.write(',');
+        writer.append(',');
       } else {
         isNotFirst = true;
       }
 
       PString.format(writer, e.getKey());
-      writer.write(':');
+      writer.append(':');
       ((Primitive) e.getValue()).writeTo(writer);
     }
-    writer.write('}');
+    writer.append('}');
   }
 }

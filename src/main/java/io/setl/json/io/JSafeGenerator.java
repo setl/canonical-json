@@ -13,7 +13,7 @@ import javax.json.stream.JsonGenerationException;
  */
 class JSafeGenerator extends JGenerator {
 
-  protected class ArrayContext implements Context {
+  protected static class ArrayContext implements Context {
 
     private final JArrayBuilder builder = new JArrayBuilder();
 
@@ -52,7 +52,7 @@ class JSafeGenerator extends JGenerator {
 
 
 
-  protected class ObjectContext implements Context {
+  protected static class ObjectContext implements Context {
 
     private final JObjectBuilder builder = new JObjectBuilder();
 

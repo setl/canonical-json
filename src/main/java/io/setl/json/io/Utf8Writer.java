@@ -24,6 +24,14 @@ public class Utf8Writer extends Writer implements Appendable {
   }
 
 
+  /**
+   * Close this writer, but DO NOT close the contained output stream.
+   */
+  public void finish() throws IOException {
+    appendable.finish();
+  }
+
+
   @Override
   public void flush() throws IOException {
     appendable.flush();

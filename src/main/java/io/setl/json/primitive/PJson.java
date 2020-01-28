@@ -2,7 +2,6 @@ package io.setl.json.primitive;
 
 import io.setl.json.JType;
 import java.io.IOException;
-import java.io.Writer;
 
 /**
  * A special primitive used to represent a fragment of a canonical JSON document that has already been converted to its textual form.
@@ -44,7 +43,7 @@ public class PJson extends PBase {
 
 
   @Override
-  public void writeTo(Writer writer) throws IOException {
-    writer.write(json);
+  public void writeTo(Appendable writer) throws IOException {
+    writer.append(json);
   }
 }

@@ -7,10 +7,10 @@ import io.setl.json.Primitive;
 import io.setl.json.io.Input;
 import io.setl.json.primitive.PFalse;
 import io.setl.json.primitive.PNull;
-import io.setl.json.primitive.numbers.NumberParser;
-import io.setl.json.primitive.numbers.PNumber;
 import io.setl.json.primitive.PString;
 import io.setl.json.primitive.PTrue;
+import io.setl.json.primitive.numbers.NumberParser;
+import io.setl.json.primitive.numbers.PNumber;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.util.Map.Entry;
@@ -55,6 +55,13 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
   }
 
 
+  /**
+   * Get a safe representation of the input for logging.
+   *
+   * @param r the character, or -1 for EOF
+   *
+   * @return a representation
+   */
   public static String safe(int r) {
     if (r == -1) {
       return "EOF";

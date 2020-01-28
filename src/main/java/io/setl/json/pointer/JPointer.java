@@ -12,7 +12,7 @@ import javax.json.JsonValue.ValueType;
  */
 public class JPointer implements JsonPointer {
 
-  protected PathElement root;
+  protected final PathElement root;
 
 
   JPointer(PathElement root) {

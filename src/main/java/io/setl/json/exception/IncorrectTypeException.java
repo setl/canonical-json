@@ -1,6 +1,5 @@
 package io.setl.json.exception;
 
-import io.setl.json.Canonical;
 import io.setl.json.JType;
 import io.setl.json.primitive.PString;
 

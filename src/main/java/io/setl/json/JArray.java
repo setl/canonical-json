@@ -10,7 +10,6 @@ import io.setl.json.primitive.numbers.PNumber;
 import io.setl.json.primitive.PString;
 import io.setl.json.primitive.PTrue;
 import java.io.IOException;
-import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -138,27 +137,27 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
 
 
   public boolean add(Boolean value) {
-    return add(value != null ? (value ? Primitive.TRUE : Primitive.FALSE) : Primitive.NULL);
+    return add(value != null ? (value ? PTrue.TRUE : PFalse.FALSE) : PNull.NULL);
   }
 
 
   public void add(int index, Boolean value) {
-    add(index, value != null ? (value ? Primitive.TRUE : Primitive.FALSE) : Primitive.NULL);
+    add(index, value != null ? (value ? PTrue.TRUE : PFalse.FALSE) : PNull.NULL);
   }
 
 
   public void add(int index, JArray array) {
-    add(index, array != null ? array : Primitive.NULL);
+    add(index, array != null ? array : PNull.NULL);
   }
 
 
   public void add(int index, JObject object) {
-    add(index, object != null ? object : Primitive.NULL);
+    add(index, object != null ? object : PNull.NULL);
   }
 
 
   public void add(int index, Number number) {
-    add(index, number != null ? PNumber.create(number) : Primitive.NULL);
+    add(index, number != null ? PNumber.create(number) : PNull.NULL);
   }
 
 
@@ -169,22 +168,22 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
 
 
   public void add(int index, String string) {
-    add(index, string != null ? new PString(string) : Primitive.NULL);
+    add(index, string != null ? new PString(string) : PNull.NULL);
   }
 
 
   public boolean add(JArray array) {
-    return add(array != null ? array : Primitive.NULL);
+    return add(array != null ? array : PNull.NULL);
   }
 
 
   public boolean add(JObject object) {
-    return add(object != null ? object : Primitive.NULL);
+    return add(object != null ? object : PNull.NULL);
   }
 
 
   public boolean add(Number number) {
-    return add(number != null ? PNumber.cast(number) : Primitive.NULL);
+    return add(number != null ? PNumber.cast(number) : PNull.NULL);
   }
 
 
@@ -200,7 +199,7 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
 
 
   public boolean add(String string) {
-    return add(string != null ? new PString(string) : Primitive.NULL);
+    return add(string != null ? new PString(string) : PNull.NULL);
   }
 
 
@@ -217,12 +216,12 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
 
 
   public boolean addNull() {
-    return add(Primitive.NULL);
+    return add(PNull.NULL);
   }
 
 
   public void addNull(int index) {
-    add(index, Primitive.NULL);
+    add(index, PNull.NULL);
   }
 
 
@@ -980,15 +979,15 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
 
 
   @Override
-  public void writeTo(Writer writer) throws IOException {
-    writer.write('[');
+  public void writeTo(Appendable writer) throws IOException {
+    writer.append('[');
     int length = size();
     for (int i = 0; i < length; i++) {
       if (i > 0) {
-        writer.write(',');
+        writer.append(',');
       }
       getPrimitive(i).writeTo(writer);
     }
-    writer.write(']');
+    writer.append(']');
   }
 }

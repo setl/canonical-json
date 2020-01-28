@@ -5,7 +5,6 @@ import io.setl.json.exception.JsonIOException;
 import java.io.IOException;
 import java.io.Writer;
 import javax.json.JsonArray;
-import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;

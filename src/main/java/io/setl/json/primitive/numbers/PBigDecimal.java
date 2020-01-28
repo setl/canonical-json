@@ -2,10 +2,8 @@ package io.setl.json.primitive.numbers;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Arrays;
 
 /**
  * @author Simon Greatrix on 24/01/2020.
@@ -13,12 +11,7 @@ import java.util.Arrays;
 public class PBigDecimal extends PNumber {
 
   /** Some zeros for batching the output of zeros in very big integers. */
-  private static final char[] SOME_ZEROS;
-
-  static {
-    SOME_ZEROS = new char[32];
-    Arrays.fill(SOME_ZEROS, '0');
-  }
+  private static final String SOME_ZEROS = "00000000000000000000000000000000";
 
   private final BigDecimal value;
 
@@ -134,24 +127,24 @@ public class PBigDecimal extends PNumber {
 
 
   @Override
-  public void writeTo(Writer writer) throws IOException {
+  public void writeTo(Appendable writer) throws IOException {
     // Handle zero
     if (value.signum() == 0) {
-      writer.write("0");
+      writer.append("0");
       return;
     }
 
     // Strip trailing zeros and see if we have an integer
     if (value.scale() <= 0) {
       // This is an integer. We do not convert it
-      writer.write(value.unscaledValue().toString());
+      writer.append(value.unscaledValue().toString());
       int s = -value.scale();
-      int b = SOME_ZEROS.length;
+      int b = SOME_ZEROS.length();
       while (s > b) {
-        writer.write(SOME_ZEROS);
+        writer.append(SOME_ZEROS);
         s -= b;
       }
-      writer.write(SOME_ZEROS, 0, s);
+      writer.append(SOME_ZEROS, 0, s);
       return;
     }
 
@@ -183,11 +176,11 @@ public class PBigDecimal extends PNumber {
     // use the scale and precision to calculate the correct exponent
     int scale = myValue.scale();
     int precision = myValue.precision();
-    writer.write(sign);
-    writer.write(unscaledInt);
-    writer.write('.');
-    writer.write(unscaledFraction);
-    writer.write('E');
-    writer.write(Integer.toString(precision - scale - 1));
+    writer.append(sign);
+    writer.append(unscaledInt);
+    writer.append('.');
+    writer.append(unscaledFraction);
+    writer.append('E');
+    writer.append(Integer.toString(precision - scale - 1));
   }
 }

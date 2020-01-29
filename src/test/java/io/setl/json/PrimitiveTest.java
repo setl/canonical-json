@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
+import javax.json.JsonValue.ValueType;
 import org.junit.Test;
 
 public class PrimitiveTest {
@@ -21,7 +22,7 @@ public class PrimitiveTest {
   @Test
   public void test() {
     Primitive primitive = Primitive.create("123");
-    assertEquals(JType.STRING, primitive.getType());
+    assertEquals(ValueType.STRING, primitive.getValueType());
     assertEquals("123", primitive.getValue());
     assertEquals(123, primitive.getValue(Number.class, 123));
     assertEquals("123", primitive.getValue(String.class, "abc"));
@@ -38,16 +39,16 @@ public class PrimitiveTest {
 
   @Test
   public void testCreate() {
-    testCreate(JType.NULL, null, null);
-    testCreate(JType.NULL, null, Primitive.NULL);
-    testCreate(JType.BOOLEAN, true, true);
-    testCreate(JType.BOOLEAN, false, false);
-    testCreate(JType.STRING, "abc", "abc");
-    testCreate(JType.NUMBER, 123, 123);
-    testCreate(JType.ARRAY, new JArray(), new JArray());
-    testCreate(JType.OBJECT, new JObject(), new JObject());
-    testCreate(JType.ARRAY, new JArray(), new ArrayList<>());
-    testCreate(JType.OBJECT, new JObject(), new HashMap<>());
+    testCreate(ValueType.NULL, null, null);
+    testCreate(ValueType.NULL, null, Primitive.NULL);
+    testCreate(ValueType.TRUE, true, true);
+    testCreate(ValueType.FALSE, false, false);
+    testCreate(ValueType.STRING, "abc", "abc");
+    testCreate(ValueType.NUMBER, 123, 123);
+    testCreate(ValueType.ARRAY, new JArray(), new JArray());
+    testCreate(ValueType.OBJECT, new JObject(), new JObject());
+    testCreate(ValueType.ARRAY, new JArray(), new ArrayList<>());
+    testCreate(ValueType.OBJECT, new JObject(), new HashMap<>());
 
     try {
       Primitive.create(this.getClass());
@@ -58,9 +59,9 @@ public class PrimitiveTest {
   }
 
 
-  private void testCreate(JType type, Object check, Object value) {
+  private void testCreate(ValueType type, Object check, Object value) {
     Primitive primitive = Primitive.create(value);
-    assertEquals(type, primitive.getType());
+    assertEquals(type, primitive.getValueType());
     assertEquals(check, primitive.getValue());
   }
 

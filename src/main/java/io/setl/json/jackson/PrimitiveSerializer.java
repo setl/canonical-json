@@ -29,7 +29,7 @@ public class PrimitiveSerializer<T extends Primitive> extends JsonSerializer<T> 
   public void serializeWithType(Primitive object, JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
     gen.setCurrentValue(object);
     JsonToken token;
-    switch (object.getType()) {
+    switch (object.getValueType()) {
       case ARRAY:
         token = JsonToken.START_ARRAY;
         break;

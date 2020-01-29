@@ -1,7 +1,10 @@
 package io.setl.json.exception;
 
-import io.setl.json.JType;
 import io.setl.json.primitive.PString;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
+import javax.json.JsonValue.ValueType;
 
 /**
  * An exception thrown when a type-checking accessor finds data of the wrong type. The javax.json API requires that this extends from ClassCastException.
@@ -12,13 +15,13 @@ public class IncorrectTypeException extends ClassCastException {
 
   private static final long serialVersionUID = 1L;
 
-  private final JType actual;
+  private final ValueType actual;
 
   private final int index;
 
   private final String key;
 
-  private final JType required;
+  private final Set<ValueType> required;
 
 
   /**
@@ -28,11 +31,11 @@ public class IncorrectTypeException extends ClassCastException {
    * @param required the required data type
    * @param actual   the actual data type
    */
-  public IncorrectTypeException(int index, JType required, JType actual) {
+  public IncorrectTypeException(int index, Set<ValueType> required, ValueType actual) {
     super("Item at " + index + " has type " + actual + ". Required " + required);
     this.index = index;
     this.key = null;
-    this.required = required;
+    this.required = Collections.unmodifiableSet(EnumSet.copyOf(required));
     this.actual = actual;
   }
 
@@ -44,11 +47,43 @@ public class IncorrectTypeException extends ClassCastException {
    * @param required the required data type
    * @param actual   the actual data type
    */
-  public IncorrectTypeException(String key, JType required, JType actual) {
+  public IncorrectTypeException(String key, Set<ValueType> required, ValueType actual) {
     super("Item at " + PString.format(key) + " has type " + actual + ". Required " + required);
     this.index = -1;
     this.key = key;
-    this.required = required;
+    this.required = Collections.unmodifiableSet(EnumSet.copyOf(required));
+    this.actual = actual;
+  }
+
+
+  /**
+   * New instance.
+   *
+   * @param index    the array index that was accessed
+   * @param required the required data type
+   * @param actual   the actual data type
+   */
+  public IncorrectTypeException(int index, ValueType required, ValueType actual) {
+    super("Item at " + index + " has type " + actual + ". Required " + required);
+    this.index = index;
+    this.key = null;
+    this.required = Collections.unmodifiableSet(EnumSet.of(required));
+    this.actual = actual;
+  }
+
+
+  /**
+   * New instance.
+   *
+   * @param key      the object key that was accessed
+   * @param required the required data type
+   * @param actual   the actual data type
+   */
+  public IncorrectTypeException(String key, ValueType required, ValueType actual) {
+    super("Item at " + PString.format(key) + " has type " + actual + ". Required " + required);
+    this.index = -1;
+    this.key = key;
+    this.required = Collections.unmodifiableSet(EnumSet.of(required));
     this.actual = actual;
   }
 
@@ -58,7 +93,7 @@ public class IncorrectTypeException extends ClassCastException {
    *
    * @return the actual type
    */
-  public JType getActual() {
+  public ValueType getActual() {
     return actual;
   }
 
@@ -88,7 +123,7 @@ public class IncorrectTypeException extends ClassCastException {
    *
    * @return the required type
    */
-  public JType getRequired() {
+  public Set<ValueType> getRequired() {
     return required;
   }
 

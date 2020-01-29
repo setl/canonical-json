@@ -15,7 +15,10 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -40,6 +43,10 @@ import javax.json.JsonValue;
 )
 public interface Primitive extends JsonValue {
 
+  /**
+   * Test for whether a value is a boolean. The ValueType enumeration distinguishes between true and false, but there are times we want either.
+   */
+  Set<ValueType> IS_BOOLEAN = Collections.unmodifiableSet(EnumSet.of(ValueType.TRUE, ValueType.FALSE));
 
   /**
    * Create a Primitive from a JsonValue. If at all possible, the original object is returned.
@@ -90,6 +97,7 @@ public interface Primitive extends JsonValue {
       return ((Primitive) value).copy();
     }
     if (value instanceof JsonValue) {
+      // JsonValue but not a Primitive, so use "cast" to create a new Primitive
       return cast((JsonValue) value);
     }
     if (value instanceof Boolean) {
@@ -111,6 +119,42 @@ public interface Primitive extends JsonValue {
       return JObject.fixMap((Map<?, ?>) value);
     }
     throw new IllegalArgumentException("Cannot include item of class " + value.getClass() + " in JSON");
+  }
+
+  static Object getValue(JsonValue jv) {
+    if (jv instanceof Primitive) {
+      return ((Primitive) jv).getValue();
+    }
+    switch (jv.getValueType()) {
+      case ARRAY:
+        return jv;
+      case FALSE:
+        return Boolean.FALSE;
+      case OBJECT:
+        return jv;
+      case NUMBER:
+        return ((JsonNumber) jv).numberValue();
+      case NULL:
+        return null;
+      case STRING:
+        return ((JsonString) jv).getString();
+      case TRUE:
+        return Boolean.TRUE;
+      default:
+        throw new IllegalArgumentException("Unknown value type: " + jv.getValueType());
+    }
+  }
+
+  static <T> T getValue(Class<T> reqType, JsonValue jv, T dflt) {
+    Object value = getValue(jv);
+    if (reqType.isInstance(value)) {
+      return reqType.cast(value);
+    }
+    return dflt;
+  }
+
+  static <T> T getValue(Class<T> reqType, JsonValue jv) {
+    return reqType.cast(getValue(jv));
   }
 
   /**
@@ -170,13 +214,6 @@ public interface Primitive extends JsonValue {
    * @return a copy of this
    */
   Primitive copy();
-
-  /**
-   * Get the type of this primitive.
-   *
-   * @return the type
-   */
-  JType getType();
 
   /**
    * Get the value encapsulated by this primitive.

@@ -1,6 +1,5 @@
 package io.setl.json.primitive;
 
-import io.setl.json.JType;
 import java.io.IOException;
 import javax.json.JsonString;
 
@@ -198,12 +197,6 @@ public class PString extends PBase implements JsonString {
   @Override
   public String getString() {
     return value;
-  }
-
-
-  @Override
-  public JType getType() {
-    return JType.STRING;
   }
 
 

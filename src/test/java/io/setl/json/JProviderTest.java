@@ -1,7 +1,6 @@
 package io.setl.json;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import io.setl.json.builder.JArrayBuilder;
 import io.setl.json.builder.JBuilderFactory;
@@ -12,8 +11,11 @@ import io.setl.json.io.JReader;
 import io.setl.json.io.JReaderFactory;
 import io.setl.json.io.JWriter;
 import io.setl.json.io.JWriterFactory;
+import io.setl.json.merge.JMerge;
 import io.setl.json.parser.JParser;
 import io.setl.json.parser.JParserFactory;
+import io.setl.json.patch.JPatch;
+import io.setl.json.patch.JPatchBuilder;
 import io.setl.json.pointer.JPointer;
 import io.setl.json.primitive.PString;
 import io.setl.json.primitive.numbers.PBigDecimal;
@@ -64,7 +66,7 @@ public class JProviderTest {
 
   @Test
   public void createDiff() {
-    fail();
+    assertTrue(Json.createDiff(JsonValue.EMPTY_JSON_OBJECT, JsonValue.EMPTY_JSON_OBJECT) instanceof JPatch);
   }
 
 
@@ -88,13 +90,13 @@ public class JProviderTest {
 
   @Test
   public void createMergeDiff() {
-    fail();
+    assertTrue(Json.createMergeDiff(JsonValue.EMPTY_JSON_OBJECT, JsonValue.EMPTY_JSON_OBJECT) instanceof JMerge);
   }
 
 
   @Test
   public void createMergePatch() {
-    fail();
+    assertTrue(Json.createMergePatch(JsonValue.EMPTY_JSON_OBJECT) instanceof JMerge);
   }
 
 
@@ -136,19 +138,19 @@ public class JProviderTest {
 
   @Test
   public void createPatch() {
-    fail();
+    assertTrue(Json.createPatch(JsonValue.EMPTY_JSON_ARRAY) instanceof JPatch);
   }
 
 
   @Test
   public void createPatchBuilder() {
-    fail();
+    assertTrue(Json.createPatchBuilder() instanceof JPatchBuilder);
   }
 
 
   @Test
   public void createPatchBuilderJsonArray() {
-    fail();
+    assertTrue(Json.createPatchBuilder(JsonValue.EMPTY_JSON_ARRAY) instanceof JPatchBuilder);
   }
 
 
@@ -165,14 +167,14 @@ public class JProviderTest {
 
 
   @Test
-  public void createReaderReader() {
-    assertTrue(Json.createReader(Reader.nullReader()) instanceof JReader);
+  public void createReaderInputStream() {
+    assertTrue(Json.createReader(InputStream.nullInputStream()) instanceof JReader);
   }
 
 
   @Test
-  public void createReaderInputStream() {
-    assertTrue(Json.createReader(InputStream.nullInputStream()) instanceof JReader);
+  public void createReaderReader() {
+    assertTrue(Json.createReader(Reader.nullReader()) instanceof JReader);
   }
 
 

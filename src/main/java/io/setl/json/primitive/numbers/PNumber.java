@@ -1,6 +1,5 @@
 package io.setl.json.primitive.numbers;
 
-import io.setl.json.JType;
 import io.setl.json.Primitive;
 import io.setl.json.exception.NonFiniteNumberException;
 import io.setl.json.primitive.PBase;
@@ -14,6 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import javax.json.JsonNumber;
+import javax.json.JsonValue;
 
 /**
  * @author Simon Greatrix on 08/01/2020.
@@ -195,10 +195,9 @@ public abstract class PNumber extends PBase implements JsonNumber {
    *
    * @return the Double, or null if it wasn't a double
    */
-  public static Double toDouble(Primitive primitive) {
-    if (primitive instanceof PNumber) {
-      PNumber pNumber = (PNumber) primitive;
-      return pNumber.doubleValue();
+  public static Double toDouble(JsonValue primitive) {
+    if (primitive.getValueType() == ValueType.NUMBER) {
+      return ((JsonNumber) primitive).doubleValue();
     }
     if (primitive instanceof PString) {
       PString pString = (PString) primitive;
@@ -256,12 +255,6 @@ public abstract class PNumber extends PBase implements JsonNumber {
   protected abstract boolean equalsValue(BigDecimal other);
 
   protected abstract int getNumberType();
-
-
-  @Override
-  public JType getType() {
-    return JType.NUMBER;
-  }
 
 
   @Override

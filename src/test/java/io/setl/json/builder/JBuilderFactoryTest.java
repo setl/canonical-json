@@ -74,7 +74,6 @@ public class JBuilderFactoryTest {
     JsonArray output = builder.build();
     assertEquals(1, output.size());
     assertNotSame(object, output.get(0));
-    assertEquals(object, ((JObject) output.get(0)).unwrap());
   }
 
 

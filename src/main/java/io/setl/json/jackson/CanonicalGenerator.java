@@ -28,6 +28,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.LinkedList;
 import javax.json.JsonValue;
+import javax.json.JsonValue.ValueType;
 
 /**
  * Generator for canonical JSON. Note that as the canonical form requires a specific ordering of object properties, no output is created until the root object
@@ -37,7 +38,7 @@ import javax.json.JsonValue;
  */
 public class CanonicalGenerator extends JsonGenerator {
 
-  public static final Version VERSION = VersionUtil.parseVersion("1.0", "io.setl", "canonical-json");
+  public static final Version LIBRARY_VERSION = VersionUtil.parseVersion("1.0", "io.setl", "canonical-json");
 
   private static final int DISALLOWED_FEATURES = Feature.WRITE_NUMBERS_AS_STRINGS.getMask()
       + Feature.WRITE_BIGDECIMAL_AS_PLAIN.getMask()
@@ -177,7 +178,14 @@ public class CanonicalGenerator extends JsonGenerator {
     this.isResourceManaged = ioContext.isResourceManaged();
     this.objectCodec = objectCodec;
     this.writer = writer;
-    setFeatureMask(features);
+
+    for (Feature f : Feature.values()) {
+      int mask = f.getMask();
+      if ((features & mask) != 0) {
+        enable(f);
+      }
+    }
+
     DupDetector dups = Feature.STRICT_DUPLICATE_DETECTION.enabledIn(features)
         ? DupDetector.rootDetector(this) : null;
     writeContext = JsonWriteContext.createRootContext(dups);
@@ -302,6 +310,13 @@ public class CanonicalGenerator extends JsonGenerator {
   }
 
 
+  /**
+   * {@inheritDoc}
+   * .
+   *
+   * @deprecated Deprecated in parent class
+   */
+  @Deprecated(since = "always")
   @Override
   public JsonGenerator setFeatureMask(int values) {
     if ((values & DISALLOWED_FEATURES) != 0) {
@@ -340,7 +355,7 @@ public class CanonicalGenerator extends JsonGenerator {
 
   @Override
   public Version version() {
-    return VERSION;
+    return LIBRARY_VERSION;
   }
 
 
@@ -529,7 +544,9 @@ public class CanonicalGenerator extends JsonGenerator {
 
 
   private void writePrimitive(Primitive primitive) throws IOException {
-    verifyValueWrite(primitive.getType().name());
+    ValueType valueType = primitive.getValueType();
+    String typeMessage = valueType == null ? "RAW" : valueType.name();
+    verifyValueWrite(typeMessage);
     if (stack.isEmpty()) {
       primitive.writeTo(writer);
       return;

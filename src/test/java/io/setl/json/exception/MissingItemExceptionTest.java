@@ -6,8 +6,8 @@ import static org.junit.Assert.fail;
 
 import io.setl.json.JArray;
 import io.setl.json.JObject;
-import io.setl.json.JType;
-import org.junit.Assert;
+import java.util.EnumSet;
+import javax.json.JsonValue.ValueType;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -45,7 +45,7 @@ public class MissingItemExceptionTest {
 
     assertEquals(-5, e.getIndex());
     assertNull(e.getKey());
-    Assert.assertEquals(JType.STRING, e.getExpected());
+    assertEquals(EnumSet.of(ValueType.STRING), e.getExpected());
   }
 
 
@@ -61,7 +61,7 @@ public class MissingItemExceptionTest {
 
     assertEquals(-1, e.getIndex());
     assertEquals("missing", e.getKey());
-    assertEquals(JType.STRING, e.getExpected());
+    assertEquals(EnumSet.of(ValueType.STRING), e.getExpected());
   }
 
 }

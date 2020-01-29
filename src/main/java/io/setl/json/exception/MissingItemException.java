@@ -1,7 +1,10 @@
 package io.setl.json.exception;
 
-import io.setl.json.JType;
 import io.setl.json.primitive.PString;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
+import javax.json.JsonValue.ValueType;
 
 /**
  * Exception thrown when at attempt to retrieve a required datum from a JObject or JArray fails because the datum is missing. The javax.json API requires that
@@ -11,7 +14,7 @@ public class MissingItemException extends NullPointerException {
 
   private static final long serialVersionUID = 1L;
 
-  private final JType expected;
+  private final Set<ValueType> expected;
 
   private final int index;
 
@@ -24,11 +27,11 @@ public class MissingItemException extends NullPointerException {
    * @param index    the index that was missing
    * @param expected the expected type
    */
-  public MissingItemException(int index, JType expected) {
+  public MissingItemException(int index, ValueType expected) {
     super("Item at " + index + " was missing and should have had type " + expected);
     this.index = index;
     this.key = null;
-    this.expected = expected;
+    this.expected = Collections.unmodifiableSet(EnumSet.of(expected));
   }
 
 
@@ -38,11 +41,39 @@ public class MissingItemException extends NullPointerException {
    * @param key      the key that was missing.
    * @param expected the type that was expected
    */
-  public MissingItemException(String key, JType expected) {
+  public MissingItemException(String key, ValueType expected) {
     super("Item at " + PString.format(key) + " was missing and should have had type " + expected);
     this.index = -1;
     this.key = key;
-    this.expected = expected;
+    this.expected = Collections.unmodifiableSet(EnumSet.of(expected));
+  }
+
+
+  /**
+   * New instance.
+   *
+   * @param index    the index that was missing
+   * @param expected the expected type
+   */
+  public MissingItemException(int index, Set<ValueType> expected) {
+    super("Item at " + index + " was missing and should have had type " + expected);
+    this.index = index;
+    this.key = null;
+    this.expected = Collections.unmodifiableSet(EnumSet.copyOf(expected));
+  }
+
+
+  /**
+   * New instance.
+   *
+   * @param key      the key that was missing.
+   * @param expected the type that was expected
+   */
+  public MissingItemException(String key, Set<ValueType> expected) {
+    super("Item at " + PString.format(key) + " was missing and should have had type " + expected);
+    this.index = -1;
+    this.key = key;
+    this.expected = Collections.unmodifiableSet(EnumSet.copyOf(expected));
   }
 
 
@@ -51,7 +82,7 @@ public class MissingItemException extends NullPointerException {
    *
    * @return the expected type
    */
-  public JType getExpected() {
+  public Set<ValueType> getExpected() {
     return expected;
   }
 

@@ -2,7 +2,6 @@ package io.setl.json.parser;
 
 import io.setl.json.JArray;
 import io.setl.json.JObject;
-import io.setl.json.JType;
 import io.setl.json.Primitive;
 import io.setl.json.io.Input;
 import io.setl.json.primitive.PFalse;
@@ -16,6 +15,7 @@ import java.math.BigDecimal;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 import javax.json.JsonValue;
+import javax.json.JsonValue.ValueType;
 import javax.json.stream.JsonLocation;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParsingException;
@@ -149,7 +149,7 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
 
 
   private void checkNumber() {
-    if (value.getType() != JType.NUMBER) {
+    if (value.getValueType() != ValueType.NUMBER) {
       throw new IllegalStateException("Current value is a " + value.getValueType() + " not a number.");
     }
   }
@@ -486,7 +486,7 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
 
   @Override
   public String getString() {
-    if (value.getType() != JType.STRING) {
+    if (value.getValueType() != ValueType.STRING) {
       throw new IllegalStateException("Current value is a " + value.getValueType() + " not a string");
     }
     return ((PString) value).getString();

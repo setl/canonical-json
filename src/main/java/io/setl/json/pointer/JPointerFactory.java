@@ -50,7 +50,7 @@ public class JPointerFactory {
       path = path.substring(0, pos);
     }
 
-    return new JPointer(element);
+    return new JPointer(path,element);
   }
 
 

@@ -12,10 +12,13 @@ import javax.json.JsonValue.ValueType;
  */
 public class JPointer implements JsonPointer {
 
+  protected final String path;
+
   protected final PathElement root;
 
 
-  JPointer(PathElement root) {
+  JPointer(String path, PathElement root) {
+    this.path = path;
     this.root = root;
   }
 
@@ -37,6 +40,11 @@ public class JPointer implements JsonPointer {
       return root.containsValue((JsonObject) target);
     }
     return root.containsValue((JsonArray) target);
+  }
+
+
+  public String getPath() {
+    return path;
   }
 
 

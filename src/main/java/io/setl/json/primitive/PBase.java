@@ -31,7 +31,7 @@ public abstract class PBase implements Primitive {
       return false;
     }
     PBase other = (PBase) obj;
-    if (getType() != other.getType()) {
+    if (getValueType() != other.getValueType()) {
       return false;
     }
     return Objects.equals(getValue(), other.getValue());

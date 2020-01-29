@@ -4,8 +4,13 @@ import io.setl.json.builder.JBuilderFactory;
 import io.setl.json.io.JGeneratorFactory;
 import io.setl.json.io.JReaderFactory;
 import io.setl.json.io.JWriterFactory;
+import io.setl.json.merge.JMerge;
+import io.setl.json.merge.MergeDiff;
 import io.setl.json.parser.JParser;
 import io.setl.json.parser.JParserFactory;
+import io.setl.json.patch.JPatch;
+import io.setl.json.patch.JPatchBuilder;
+import io.setl.json.patch.PatchDiff;
 import io.setl.json.pointer.JPointerFactory;
 import io.setl.json.primitive.PString;
 import io.setl.json.primitive.numbers.PInt;
@@ -72,7 +77,7 @@ public class JProvider extends JsonProvider {
 
   @Override
   public JsonPatch createDiff(JsonStructure source, JsonStructure target) {
-    return null; // TODO
+    return PatchDiff.create(source, target);
   }
 
 
@@ -96,13 +101,13 @@ public class JProvider extends JsonProvider {
 
   @Override
   public JsonMergePatch createMergeDiff(JsonValue source, JsonValue target) {
-    return null; // TODO
+    return MergeDiff.create(source, target);
   }
 
 
   @Override
   public JsonMergePatch createMergePatch(JsonValue patch) {
-    return null; // TODO
+    return new JMerge(patch);
   }
 
 
@@ -144,7 +149,7 @@ public class JProvider extends JsonProvider {
 
   @Override
   public JsonPatch createPatch(JsonArray array) {
-    return null; // TODO
+    return new JPatch(array);
   }
 
 
@@ -156,7 +161,7 @@ public class JProvider extends JsonProvider {
 
   @Override
   public JsonPatchBuilder createPatchBuilder(JsonArray array) {
-    return null; // TODO
+    return new JPatchBuilder();
   }
 
 

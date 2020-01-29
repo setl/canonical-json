@@ -1,7 +1,7 @@
 package io.setl.json.primitive;
 
-import io.setl.json.JType;
 import java.io.IOException;
+import javax.json.JsonValue;
 
 /**
  * @author Simon Greatrix on 08/01/2020.
@@ -17,8 +17,8 @@ public class PFalse extends PBase {
 
 
   @Override
-  public JType getType() {
-    return JType.BOOLEAN;
+  public boolean equals(Object obj) {
+    return JsonValue.FALSE.equals(obj);
   }
 
 
@@ -31,6 +31,12 @@ public class PFalse extends PBase {
   @Override
   public ValueType getValueType() {
     return ValueType.FALSE;
+  }
+
+
+  @Override
+  public int hashCode() {
+    return JsonValue.FALSE.hashCode();
   }
 
 

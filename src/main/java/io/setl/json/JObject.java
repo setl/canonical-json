@@ -6,9 +6,9 @@ import io.setl.json.exception.MissingItemException;
 import io.setl.json.jackson.JsonObjectSerializer;
 import io.setl.json.primitive.PFalse;
 import io.setl.json.primitive.PNull;
-import io.setl.json.primitive.numbers.PNumber;
 import io.setl.json.primitive.PString;
 import io.setl.json.primitive.PTrue;
+import io.setl.json.primitive.numbers.PNumber;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -79,7 +79,7 @@ import javax.json.JsonValue;
  */
 
 @JsonSerialize(using = JsonObjectSerializer.class)
-public class JObject extends TreeMap<String, JsonValue> implements JContainer, JsonObject, Primitive {
+public class JObject extends TreeMap<String, JsonValue> implements JsonObject, Primitive {
 
   /**
    * Sort object keys into Unicode code point order.
@@ -188,7 +188,7 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
    */
   @Nonnull
   public JArray getArray(String key) {
-    return getSafe(JArray.class, JType.ARRAY, key);
+    return getSafe(JArray.class, ValueType.ARRAY, key);
   }
 
 
@@ -234,7 +234,7 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
    */
   @Nonnull
   public BigDecimal getBigDecimal(String key) {
-    Number n = getSafe(Number.class, JType.NUMBER, key);
+    Number n = getSafe(Number.class, ValueType.NUMBER, key);
     return Primitive.toBigDecimal(n);
   }
 
@@ -281,7 +281,7 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
    */
   @Nonnull
   public BigInteger getBigInteger(String key) {
-    Number n = getSafe(Number.class, JType.NUMBER, key);
+    Number n = getSafe(Number.class, ValueType.NUMBER, key);
     return Primitive.toBigInteger(n);
   }
 
@@ -319,7 +319,15 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
    * @return the Boolean
    */
   public boolean getBoolean(String key) {
-    return getSafe(Boolean.class, JType.BOOLEAN, key).booleanValue();
+    Primitive primitive = getPrimitive(key);
+    if (primitive == null) {
+      throw new MissingItemException(key, Primitive.IS_BOOLEAN);
+    }
+    Object value = primitive.getValue();
+    if (value instanceof Boolean) {
+      return (Boolean) value;
+    }
+    throw new IncorrectTypeException(key, Primitive.IS_BOOLEAN, primitive.getValueType());
   }
 
 
@@ -359,11 +367,11 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
   public double getDouble(String key) {
     Primitive p = getPrimitive(key);
     if (p == null) {
-      throw new MissingItemException(key, JType.NUMBER);
+      throw new MissingItemException(key, ValueType.NUMBER);
     }
     Double n = optDouble(key);
     if (n == null) {
-      throw new IncorrectTypeException(key, JType.NUMBER, p.getType());
+      throw new IncorrectTypeException(key, ValueType.NUMBER, p.getValueType());
     }
     return n.doubleValue();
   }
@@ -404,7 +412,7 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
    */
   @Override
   public int getInt(String key) {
-    return getSafe(Number.class, JType.NUMBER, key).intValue();
+    return getSafe(Number.class, ValueType.NUMBER, key).intValue();
   }
 
 
@@ -468,7 +476,7 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
    * @return the long
    */
   public long getLong(String key) {
-    Number n = getSafe(Number.class, JType.NUMBER, key);
+    Number n = getSafe(Number.class, ValueType.NUMBER, key);
     return n.longValue();
   }
 
@@ -506,7 +514,7 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
    */
   @Nonnull
   public JObject getObject(String key) {
-    return getSafe(JObject.class, JType.OBJECT, key);
+    return getSafe(JObject.class, ValueType.OBJECT, key);
   }
 
 
@@ -538,7 +546,7 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
   }
 
 
-  private <T> T getSafe(Class<T> clazz, JType type, String key) {
+  private <T> T getSafe(Class<T> clazz, ValueType type, String key) {
     Primitive primitive = getPrimitive(key);
     if (primitive == null) {
       throw new MissingItemException(key, type);
@@ -547,7 +555,7 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
     if (clazz.isInstance(value)) {
       return clazz.cast(value);
     }
-    throw new IncorrectTypeException(key, type, primitive.getType());
+    throw new IncorrectTypeException(key, type, primitive.getValueType());
   }
 
 
@@ -584,13 +592,7 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
    */
   @Nonnull
   public String getString(String key) {
-    return getSafe(String.class, JType.STRING, key);
-  }
-
-
-  @Override
-  public JType getType() {
-    return JType.OBJECT;
+    return getSafe(String.class, ValueType.STRING, key);
   }
 
 
@@ -628,13 +630,7 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
 
   @Override
   public boolean isNull(String name) {
-    return getPrimitive(name).getType() == JType.NULL;
-  }
-
-
-  public boolean isType(String key, JType type) {
-    Primitive primitive = getPrimitive(key);
-    return (primitive != null) && primitive.getType() == type;
+    return getPrimitive(name).getValueType() == ValueType.NULL;
   }
 
 
@@ -767,12 +763,11 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
    * @param key   the key
    * @param value the value
    */
-  public void put(String key, Boolean value) {
+  public JsonValue put(String key, Boolean value) {
     if (value != null) {
-      put(key, value ? PTrue.TRUE : PFalse.FALSE);
-    } else {
-      put(key, PNull.NULL);
+      return put(key, value ? PTrue.TRUE : PFalse.FALSE);
     }
+    return put(key, PNull.NULL);
   }
 
 
@@ -846,7 +841,7 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
   @Nullable
   public JArray removeArray(String key) {
     Primitive primitive = getPrimitive(key);
-    if (primitive == null || primitive.getType() != JType.ARRAY) {
+    if (primitive == null || primitive.getValueType() != ValueType.ARRAY) {
       return null;
     }
     remove(key);
@@ -864,7 +859,7 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
   @Nullable
   public Boolean removeBoolean(String key) {
     Primitive primitive = getPrimitive(key);
-    if (primitive == null || primitive.getType() != JType.BOOLEAN) {
+    if (primitive == null || !Primitive.IS_BOOLEAN.contains(primitive.getValueType())) {
       return null;
     }
     remove(key);
@@ -879,7 +874,7 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
    */
   public void removeNull(String key) {
     Primitive primitive = getPrimitive(key);
-    if (primitive != null && primitive.getType() == JType.NULL) {
+    if (primitive != null && primitive.getValueType() == ValueType.NULL) {
       remove(key);
     }
   }
@@ -895,7 +890,7 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
   @Nullable
   public Number removeNumber(String key) {
     Primitive primitive = getPrimitive(key);
-    if (primitive == null || primitive.getType() != JType.NUMBER) {
+    if (primitive == null || primitive.getValueType() != ValueType.NUMBER) {
       return null;
     }
     remove(key);
@@ -913,7 +908,7 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
   @Nullable
   public JObject removeObject(String key) {
     Primitive primitive = getPrimitive(key);
-    if (primitive == null || primitive.getType() != JType.OBJECT) {
+    if (primitive == null || primitive.getValueType() != ValueType.OBJECT) {
       return null;
     }
     remove(key);
@@ -931,7 +926,7 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
   @Nullable
   public String removeString(String key) {
     Primitive primitive = getPrimitive(key);
-    if (primitive == null || primitive.getType() != JType.STRING) {
+    if (primitive == null || primitive.getValueType() != ValueType.STRING) {
       return null;
     }
     remove(key);
@@ -944,7 +939,7 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
     StringBuilder buf = new StringBuilder();
     buf.append('{');
     for (Map.Entry<String, JsonValue> e : entrySet()) {
-      PString.format(buf,e.getKey());
+      PString.format(buf, e.getKey());
       buf.append(':');
       buf.append(e.getValue());
       buf.append(',');
@@ -955,31 +950,6 @@ public class JObject extends TreeMap<String, JsonValue> implements JContainer, J
     }
     buf.append('}');
     return buf.toString();
-  }
-
-
-  /**
-   * Unwrap this object into a map.
-   *
-   * @return the equivalent map.
-   */
-  public Map<String, Object> unwrap() {
-    HashMap<String, Object> map = new HashMap<>();
-    forEach((k, v) -> {
-      Object o;
-      switch (v.getValueType()) {
-        case OBJECT:
-          o = ((JObject) v).unwrap();
-          break;
-        case ARRAY:
-          o = ((JArray) v).unwrap();
-          break;
-        default:
-          o = ((Primitive) v).getValue();
-      }
-      map.put(k, o);
-    });
-    return map;
   }
 
 

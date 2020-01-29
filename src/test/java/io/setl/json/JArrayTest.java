@@ -14,9 +14,12 @@ import io.setl.json.exception.MissingItemException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import javax.json.JsonArray;
+import javax.json.JsonValue;
 import org.junit.Test;
 
 public class JArrayTest {
@@ -222,7 +225,9 @@ public class JArrayTest {
     ja.add(true);
     ja.addNull();
     ja.add(123);
-    assertEquals(ja, fixPrimitiveCollection(Arrays.asList(Primitive.TRUE, null, Primitive.create(123))));
+
+    Collection<? extends JsonValue> fixed = fixPrimitiveCollection(Arrays.asList(Primitive.TRUE, null, Primitive.create(123)));
+    assertEquals(ja, fixed);
   }
 
 

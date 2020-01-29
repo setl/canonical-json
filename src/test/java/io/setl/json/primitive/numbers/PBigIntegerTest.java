@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import io.setl.json.JType;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import javax.json.JsonValue.ValueType;
@@ -31,27 +30,28 @@ public class PBigIntegerTest {
 
   @Test
   public void bigIntegerValue() {
-    assertEquals(v,bi1.bigIntegerValue());
+    assertEquals(v, bi1.bigIntegerValue());
   }
 
 
   @Test
   public void bigIntegerValueExact() {
-    assertEquals(v,bi1.bigIntegerValueExact());
+    assertEquals(v, bi1.bigIntegerValueExact());
   }
 
 
   @Test
   public void copy() {
-    assertSame(bi1,bi1.copy());
+    assertSame(bi1, bi1.copy());
   }
 
 
   @Test
   public void doubleValue() {
     double d = Double.valueOf("123456789012345678901234567890");
-    assertEquals(d,bi1.doubleValue(),Math.ulp(d));
+    assertEquals(d, bi1.doubleValue(), Math.ulp(d));
   }
+
 
   @Test
   public void equalsValueBigDecimal() {
@@ -72,8 +72,8 @@ public class PBigIntegerTest {
 
 
   @Test
-  public void getType() {
-    assertEquals(JType.NUMBER, bi1.getType());
+  public void getNumberType() {
+    assertEquals(PNumber.TYPE_BIG_INT, bi1.getNumberType());
   }
 
 
@@ -106,10 +106,6 @@ public class PBigIntegerTest {
     assertTrue(bi1.isIntegral());
   }
 
-  @Test
-  public void getNumberType() {
-    assertEquals(PNumber.TYPE_BIG_INT, bi1.getNumberType());
-  }
 
   @Test
   public void longValue() {
@@ -128,6 +124,7 @@ public class PBigIntegerTest {
     Number n = bi1.numberValue();
     assertEquals(0, v.compareTo((BigInteger) n));
   }
+
 
   @Test
   public void testToString() {

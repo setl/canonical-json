@@ -6,8 +6,8 @@ import static org.junit.Assert.fail;
 
 import io.setl.json.JArray;
 import io.setl.json.JObject;
-import io.setl.json.JType;
-import org.junit.Assert;
+import java.util.EnumSet;
+import javax.json.JsonValue.ValueType;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -45,8 +45,8 @@ public class IncorrectTypeExceptionTest {
 
     assertEquals(0, e.getIndex());
     assertNull(e.getKey());
-    Assert.assertEquals(JType.ARRAY, e.getActual());
-    assertEquals(JType.STRING, e.getRequired());
+    assertEquals(ValueType.ARRAY, e.getActual());
+    assertEquals(EnumSet.of(ValueType.STRING), e.getRequired());
   }
 
 
@@ -62,8 +62,8 @@ public class IncorrectTypeExceptionTest {
 
     assertEquals(-1, e.getIndex());
     assertEquals("array", e.getKey());
-    assertEquals(JType.ARRAY, e.getActual());
-    assertEquals(JType.STRING, e.getRequired());
+    assertEquals(ValueType.ARRAY, e.getActual());
+    assertEquals(EnumSet.of(ValueType.STRING), e.getRequired());
   }
 
 }

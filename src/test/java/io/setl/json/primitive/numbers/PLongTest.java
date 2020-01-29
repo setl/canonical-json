@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import io.setl.json.JType;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import javax.json.JsonValue.ValueType;
@@ -77,12 +76,6 @@ public class PLongTest {
   @Test
   public void getNumberType() {
     assertEquals(PNumber.TYPE_LONG, pl.getNumberType());
-  }
-
-
-  @Test
-  public void getType() {
-    assertEquals(JType.NUMBER, pl.getType());
   }
 
 

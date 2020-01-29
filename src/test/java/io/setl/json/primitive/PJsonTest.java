@@ -3,7 +3,6 @@ package io.setl.json.primitive;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import io.setl.json.JType;
 import java.io.IOException;
 import java.io.StringWriter;
 import org.junit.Test;
@@ -14,12 +13,6 @@ import org.junit.Test;
 public class PJsonTest {
 
   PJson pJson = new PJson("wibble");
-
-
-  @Test
-  public void getType() {
-    assertEquals(JType.JSON, pJson.getType());
-  }
 
 
   @Test

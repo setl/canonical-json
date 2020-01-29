@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.HashMap;
+import javax.json.JsonValue.ValueType;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -463,10 +464,10 @@ public class JObjectTest {
 
   @Test
   public void testIsType() {
-    assertTrue(json.isType("string", JType.STRING));
-    assertFalse(json.isType("big number", JType.STRING));
-    assertTrue(json.isType("big number", JType.NUMBER));
-    assertFalse(json.isType("n/a", JType.NUMBER));
+    assertTrue(json.isType("string", ValueType.STRING));
+    assertFalse(json.isType("big number", ValueType.STRING));
+    assertTrue(json.isType("big number", ValueType.NUMBER));
+    assertFalse(json.isType("n/a", ValueType.NUMBER));
   }
 
 

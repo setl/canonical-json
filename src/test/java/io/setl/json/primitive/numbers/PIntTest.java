@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import io.setl.json.JType;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import javax.json.JsonValue.ValueType;
@@ -81,12 +80,6 @@ public class PIntTest {
 
 
   @Test
-  public void getType() {
-    assertEquals(JType.NUMBER, pi.getType());
-  }
-
-
-  @Test
   public void getValue() {
     assertEquals(Integer.valueOf(v), pi.getValue());
   }
@@ -106,7 +99,7 @@ public class PIntTest {
 
   @Test
   public void intValueExact() {
-    assertEquals(v,pi.intValueExact());
+    assertEquals(v, pi.intValueExact());
   }
 
 

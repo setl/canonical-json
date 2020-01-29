@@ -6,15 +6,14 @@ import io.setl.json.exception.MissingItemException;
 import io.setl.json.jackson.JsonArraySerializer;
 import io.setl.json.primitive.PFalse;
 import io.setl.json.primitive.PNull;
-import io.setl.json.primitive.numbers.PNumber;
 import io.setl.json.primitive.PString;
 import io.setl.json.primitive.PTrue;
+import io.setl.json.primitive.numbers.PNumber;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -78,18 +77,18 @@ import javax.json.JsonValue;
  * for a narrowing primitive conversion, rather than throwing a <code>IncorrectTypeException</code>.
  */
 @JsonSerialize(using = JsonArraySerializer.class)
-public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArray, Primitive {
+public class JArray extends ArrayList<JsonValue> implements JsonArray, Primitive {
 
   /** serial version UID. */
   private static final long serialVersionUID = 2L;
 
 
   /**
-   * Convert a collection into a JArray.
+   * Convert a collection into a JsonArray.
    *
    * @param c the collection
    *
-   * @return the JArray
+   * @return the JsonArray
    */
   static JArray fixCollection(Collection<?> c) {
     if (c instanceof JArray) {
@@ -111,16 +110,15 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
    *
    * @return a collection with the nulls replaced with JSON nulls.
    */
-  static Collection<Primitive> fixPrimitiveCollection(Collection<? extends JsonValue> c) {
-    if (c instanceof JArray) {
+  static Collection<? extends JsonValue> fixPrimitiveCollection(Collection<? extends JsonValue> c) {
+    if (c instanceof JsonArray) {
       // already fixed
-      @SuppressWarnings("unchecked")
-      List<Primitive> fixed = (List<Primitive>) c;
-      return fixed;
+      return c;
     }
-    ArrayList<Primitive> list = new ArrayList<>(c.size());
+
+    ArrayList<JsonValue> list = new ArrayList<>(c.size());
     for (JsonValue jv : c) {
-      list.add(Primitive.cast(jv));
+      list.add(jv != null ? jv : PNull.NULL);
     }
     return list;
   }
@@ -146,16 +144,6 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
   }
 
 
-  public void add(int index, JArray array) {
-    add(index, array != null ? array : PNull.NULL);
-  }
-
-
-  public void add(int index, JObject object) {
-    add(index, object != null ? object : PNull.NULL);
-  }
-
-
   public void add(int index, Number number) {
     add(index, number != null ? PNumber.create(number) : PNull.NULL);
   }
@@ -172,16 +160,6 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
   }
 
 
-  public boolean add(JArray array) {
-    return add(array != null ? array : PNull.NULL);
-  }
-
-
-  public boolean add(JObject object) {
-    return add(object != null ? object : PNull.NULL);
-  }
-
-
   public boolean add(Number number) {
     return add(number != null ? PNumber.cast(number) : PNull.NULL);
   }
@@ -189,11 +167,6 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
 
   @Override
   public boolean add(JsonValue e) {
-    return super.add(Primitive.cast(e));
-  }
-
-
-  public boolean add(Primitive e) {
     return super.add(Primitive.cast(e));
   }
 
@@ -228,7 +201,7 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
   @Override
   public JArray copy() {
     JArray other = new JArray(this);
-    other.replaceAll(jv -> ((Primitive) jv).copy());
+    other.replaceAll(jv -> Primitive.create(jv));
     return other;
   }
 
@@ -241,8 +214,8 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
    *
    * @return the array, or the default
    */
-  public JArray getArray(int index, IntFunction<JArray> dflt) {
-    return getQuiet(JArray.class, index, dflt);
+  public JsonArray getArray(int index, IntFunction<JsonArray> dflt) {
+    return getQuiet(JsonArray.class, index, dflt);
   }
 
 
@@ -254,8 +227,8 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
    *
    * @return the array, or the default
    */
-  public JArray getArray(int index, JArray dflt) {
-    return getQuiet(JArray.class, index, dflt);
+  public JsonArray getArray(int index, JsonArray dflt) {
+    return getQuiet(JsonArray.class, index, dflt);
   }
 
 
@@ -265,8 +238,8 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
    * @return the array
    */
   @Nonnull
-  public JArray getArray(int index) {
-    return getSafe(JArray.class, JType.ARRAY, index);
+  public JsonArray getArray(int index) {
+    return getSafe(JsonArray.class, ValueType.ARRAY, index);
   }
 
 
@@ -311,7 +284,7 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
    */
   @Nonnull
   public BigDecimal getBigDecimal(int index) {
-    Number n = getSafe(Number.class, JType.NUMBER, index);
+    Number n = getSafe(Number.class, ValueType.NUMBER, index);
     return Primitive.toBigDecimal(n);
   }
 
@@ -357,7 +330,7 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
    */
   @Nonnull
   public BigInteger getBigInteger(int index) {
-    Number n = getSafe(Number.class, JType.NUMBER, index);
+    Number n = getSafe(Number.class, ValueType.NUMBER, index);
     return Primitive.toBigInteger(n);
   }
 
@@ -395,7 +368,15 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
    * @return the Boolean
    */
   public boolean getBoolean(int index) {
-    return getSafe(Boolean.class, JType.BOOLEAN, index);
+    if (index < 0 || size() <= index) {
+      throw new MissingItemException(index, Primitive.IS_BOOLEAN);
+    }
+    JsonValue primitive = get(index);
+    Object value = Primitive.getValue(primitive);
+    if (value instanceof Boolean) {
+      return (Boolean) value;
+    }
+    throw new IncorrectTypeException(index, Primitive.IS_BOOLEAN, primitive.getValueType());
   }
 
 
@@ -434,14 +415,14 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
    */
   public double getDouble(int index) {
     if (index < 0 || size() <= index) {
-      throw new MissingItemException(index, JType.NUMBER);
+      throw new MissingItemException(index, ValueType.NUMBER);
     }
-    Primitive primitive = getPrimitive(index);
+    JsonValue primitive = get(index);
     Double d = PNumber.toDouble(primitive);
     if (d != null) {
       return d;
     }
-    throw new IncorrectTypeException(index, JType.NUMBER, primitive.getType());
+    throw new IncorrectTypeException(index, ValueType.NUMBER, primitive.getValueType());
   }
 
 
@@ -480,7 +461,7 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
    */
   @Override
   public int getInt(int index) {
-    return getSafe(Number.class, JType.NUMBER, index).intValue();
+    return getSafe(Number.class, ValueType.NUMBER, index).intValue();
   }
 
 
@@ -542,7 +523,7 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
    * @return the long
    */
   public long getLong(int index) {
-    Number n = getSafe(Number.class, JType.NUMBER, index);
+    Number n = getSafe(Number.class, ValueType.NUMBER, index);
     return n.longValue();
   }
 
@@ -555,8 +536,8 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
    *
    * @return the object, or the default
    */
-  public JObject getObject(int index, IntFunction<JObject> dflt) {
-    return getQuiet(JObject.class, index, dflt);
+  public JsonObject getObject(int index, IntFunction<JsonObject> dflt) {
+    return getQuiet(JsonObject.class, index, dflt);
   }
 
 
@@ -568,8 +549,8 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
    *
    * @return the object, or the default
    */
-  public JObject getObject(int index, JObject dflt) {
-    return getQuiet(JObject.class, index, dflt);
+  public JsonObject getObject(int index, JsonObject dflt) {
+    return getQuiet(JsonObject.class, index, dflt);
   }
 
 
@@ -579,14 +560,8 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
    * @return the object
    */
   @Nonnull
-  public JObject getObject(int index) {
-    return getSafe(JObject.class, JType.OBJECT, index);
-  }
-
-
-  @Nonnull
-  public Primitive getPrimitive(int i) {
-    return (Primitive) get(i);
+  public JsonObject getObject(int index) {
+    return getSafe(JsonObject.class, ValueType.OBJECT, index);
   }
 
 
@@ -599,7 +574,7 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
     if (index < 0 || size() <= index) {
       return function.apply(index);
     }
-    Object value = getPrimitive(index).getValue();
+    Object value = Primitive.getValue(get(index));
     if (clazz.isInstance(value)) {
       return clazz.cast(value);
     }
@@ -612,16 +587,16 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
   }
 
 
-  private <T> T getSafe(Class<T> clazz, JType type, int index) {
+  private <T> T getSafe(Class<T> clazz, ValueType type, int index) {
     if (index < 0 || size() <= index) {
       throw new MissingItemException(index, type);
     }
-    Primitive primitive = getPrimitive(index);
-    Object value = primitive.getValue();
+    JsonValue primitive = get(index);
+    Object value = Primitive.getValue(primitive);
     if (clazz.isInstance(value)) {
       return clazz.cast(value);
     }
-    throw new IncorrectTypeException(index, type, primitive.getType());
+    throw new IncorrectTypeException(index, type, primitive.getValueType());
   }
 
 
@@ -659,13 +634,7 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
   @Nonnull
   @Override
   public String getString(int index) {
-    return getSafe(String.class, JType.STRING, index);
-  }
-
-
-  @Override
-  public JType getType() {
-    return JType.ARRAY;
+    return getSafe(String.class, ValueType.STRING, index);
   }
 
 
@@ -731,8 +700,8 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
    * @return the array, or null
    */
   @Nullable
-  public JArray optArray(int index) {
-    return getQuiet(JArray.class, index);
+  public JsonArray optArray(int index) {
+    return getQuiet(JsonArray.class, index);
   }
 
 
@@ -781,7 +750,7 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
     if (index < 0 || size() <= index) {
       return null;
     }
-    Primitive p = getPrimitive(index);
+    JsonValue p = get(index);
     return PNumber.toDouble(p);
   }
 
@@ -816,24 +785,8 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
    * @return the object, or null
    */
   @Nullable
-  public JObject optObject(int index) {
-    return getQuiet(JObject.class, index);
-  }
-
-
-  /**
-   * Get the primitive at the given array index. Will be null if the index is out of range.
-   *
-   * @param i the array index
-   *
-   * @return the primitive or null.
-   */
-  @Nullable
-  public Primitive optPrimitive(int i) {
-    if (i < 0 || size() <= i) {
-      return null;
-    }
-    return (Primitive) get(i);
+  public JsonObject optObject(int index) {
+    return getQuiet(JsonObject.class, index);
   }
 
 
@@ -849,31 +802,18 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
 
 
   /**
-   * Iterate across the primitives in this array.
+   * Get the primitive at the given array index. Will be null if the index is out of range.
    *
-   * @return an iterable over the primitives.
+   * @param i the array index
+   *
+   * @return the primitive or null.
    */
-  public Iterable<Primitive> primitives() {
-    final Iterator<JsonValue> values = iterator();
-    final Iterator<Primitive> iterator = new Iterator<>() {
-      @Override
-      public boolean hasNext() {
-        return values.hasNext();
-      }
-
-
-      @Override
-      public Primitive next() {
-        return (Primitive) values.next();
-      }
-
-
-      @Override
-      public void remove() {
-        values.remove();
-      }
-    };
-    return () -> iterator;
+  @Nullable
+  public JsonValue optValue(int i) {
+    if (i < 0 || size() <= i) {
+      return null;
+    }
+    return get(i);
   }
 
 
@@ -891,48 +831,29 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
 
 
   @Nonnull
-  public Primitive set(int index, JArray array) {
-    Primitive p = (array != null) ? array : PNull.NULL;
-    return (Primitive) super.set(index, p);
+  public JsonValue set(int index, Boolean value) {
+    JsonValue p = (value != null) ? (value ? PTrue.TRUE : PFalse.FALSE) : PNull.NULL;
+    return super.set(index, p);
   }
 
 
   @Nonnull
-  public Primitive set(int index, JObject object) {
-    Primitive p = (object != null) ? object : PNull.NULL;
-    return (Primitive) super.set(index, p);
+  public JsonValue set(int index, Number number) {
+    JsonValue p = (number != null) ? PNumber.create(number) : PNull.NULL;
+    return super.set(index, p);
   }
 
 
   @Nonnull
-  public Primitive set(int index, Boolean value) {
-    Primitive p = (value != null) ? (value ? PTrue.TRUE : PFalse.FALSE) : PNull.NULL;
-    return (Primitive) super.set(index, p);
+  public JsonValue set(int index, String string) {
+    JsonValue p = (string != null) ? new PString(string) : PNull.NULL;
+    return super.set(index, p);
   }
 
 
   @Nonnull
-  public Primitive set(int index, Number number) {
-    Primitive p = (number != null) ? PNumber.create(number) : PNull.NULL;
-    return (Primitive) super.set(index, p);
-  }
-
-
-  @Nonnull
-  public Primitive set(int index, String string) {
-    Primitive p = (string != null) ? new PString(string) : PNull.NULL;
-    return (Primitive) super.set(index, p);
-  }
-
-
-  @Nonnull
-  public Primitive setNull(int index) {
-    return (Primitive) super.set(index, PNull.NULL);
-  }
-
-
-  public Primitive setPrimitive(int index, JsonValue element) {
-    return (Primitive) super.set(index, Primitive.cast(element));
+  public JsonValue setNull(int index) {
+    return super.set(index, PNull.NULL);
   }
 
 
@@ -953,31 +874,6 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
   }
 
 
-  /**
-   * Unwrap this array into a List.
-   *
-   * @return the list of values.
-   */
-  public List<Object> unwrap() {
-    ArrayList<Object> list = new ArrayList<>(size());
-    forEach(v -> {
-      Object o;
-      switch (v.getValueType()) {
-        case OBJECT:
-          o = ((JObject) v).unwrap();
-          break;
-        case ARRAY:
-          o = ((JArray) v).unwrap();
-          break;
-        default:
-          o = ((Primitive) v).getValue();
-      }
-      list.add(o);
-    });
-    return list;
-  }
-
-
   @Override
   public void writeTo(Appendable writer) throws IOException {
     writer.append('[');
@@ -986,7 +882,7 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
       if (i > 0) {
         writer.append(',');
       }
-      getPrimitive(i).writeTo(writer);
+      Primitive.cast(get(i)).writeTo(writer);
     }
     writer.append(']');
   }

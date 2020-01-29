@@ -1,6 +1,5 @@
 package io.setl.json.primitive;
 
-import io.setl.json.JType;
 import java.io.IOException;
 
 /**
@@ -15,12 +14,6 @@ public class PJson extends PBase {
 
   public PJson(String json) {
     this.json = json;
-  }
-
-
-  @Override
-  public JType getType() {
-    return JType.JSON;
   }
 
 

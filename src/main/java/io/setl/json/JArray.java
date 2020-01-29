@@ -120,7 +120,7 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
     }
     ArrayList<Primitive> list = new ArrayList<>(c.size());
     for (JsonValue jv : c) {
-      list.add(Primitive.create(jv));
+      list.add(Primitive.cast(jv));
     }
     return list;
   }
@@ -163,7 +163,7 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
 
   @Override
   public void add(int index, JsonValue element) {
-    super.add(index, Primitive.create(element));
+    super.add(index, Primitive.cast(element));
   }
 
 
@@ -189,12 +189,12 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
 
   @Override
   public boolean add(JsonValue e) {
-    return super.add(Primitive.create(e));
+    return super.add(Primitive.cast(e));
   }
 
 
   public boolean add(Primitive e) {
-    return super.add(Primitive.create(e));
+    return super.add(Primitive.cast(e));
   }
 
 
@@ -879,14 +879,14 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
 
   @Override
   public void replaceAll(UnaryOperator<JsonValue> operator) {
-    super.replaceAll(p -> Primitive.create(operator.apply(p)));
+    super.replaceAll(p -> Primitive.cast(operator.apply(p)));
   }
 
 
   @Override
   @Nonnull
   public JsonValue set(int index, JsonValue element) {
-    return super.set(index, Primitive.create(element));
+    return super.set(index, Primitive.cast(element));
   }
 
 
@@ -932,7 +932,7 @@ public class JArray extends ArrayList<JsonValue> implements JContainer, JsonArra
 
 
   public Primitive setPrimitive(int index, JsonValue element) {
-    return (Primitive) super.set(index, Primitive.create(element));
+    return (Primitive) super.set(index, Primitive.cast(element));
   }
 
 

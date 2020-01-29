@@ -516,7 +516,7 @@ public class CanonicalGenerator extends JsonGenerator {
       return;
     }
     if (value instanceof JsonValue) {
-      writePrimitive(Primitive.create((JsonValue) value));
+      writePrimitive(Primitive.cast((JsonValue) value));
       return;
     }
 

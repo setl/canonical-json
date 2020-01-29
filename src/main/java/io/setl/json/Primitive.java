@@ -42,13 +42,13 @@ public interface Primitive extends JsonValue {
 
 
   /**
-   * Create a Primitive from a JsonValue.
+   * Create a Primitive from a JsonValue. If at all possible, the original object is returned.
    *
    * @param value the value
    *
    * @return the Primitive
    */
-  static Primitive create(JsonValue value) {
+  static Primitive cast(JsonValue value) {
     if (value == null) {
       return PNull.NULL;
     }
@@ -87,10 +87,10 @@ public interface Primitive extends JsonValue {
       return PNull.NULL;
     }
     if (value instanceof Primitive) {
-      return (Primitive) value;
+      return ((Primitive) value).copy();
     }
     if (value instanceof JsonValue) {
-      return create((JsonValue) value);
+      return cast((JsonValue) value);
     }
     if (value instanceof Boolean) {
       return ((Boolean) value) ? PTrue.TRUE : PFalse.FALSE;

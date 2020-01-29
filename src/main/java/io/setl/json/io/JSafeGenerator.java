@@ -27,7 +27,7 @@ class JSafeGenerator extends JGenerator {
 
     @Override
     public Context writeEnd() {
-      parent.writeValue(Primitive.create(builder.build()));
+      parent.writeValue(Primitive.cast(builder.build()));
       return parent;
     }
 
@@ -68,7 +68,7 @@ class JSafeGenerator extends JGenerator {
 
     @Override
     public Context writeEnd() {
-      parent.writeValue(Primitive.create(builder.build()));
+      parent.writeValue(Primitive.cast(builder.build()));
       return parent;
     }
 

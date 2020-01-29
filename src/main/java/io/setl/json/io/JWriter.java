@@ -47,7 +47,7 @@ public class JWriter implements JsonWriter {
   @Override
   public void write(JsonValue value) {
     checkUsed();
-    Primitive p = Primitive.create(value);
+    Primitive p = Primitive.cast(value);
     try {
       p.writeTo(writer);
     } catch (IOException e) {

@@ -25,7 +25,7 @@ public class JBuilderFactory implements JsonBuilderFactory {
   @Override
   public JsonArrayBuilder createArrayBuilder(JsonArray array) {
     JsonArrayBuilder builder = new JArrayBuilder();
-    array.forEach(o -> builder.add(Primitive.create(o).copy()));
+    array.forEach(o -> builder.add(Primitive.cast(o).copy()));
     return builder;
   }
 
@@ -47,7 +47,7 @@ public class JBuilderFactory implements JsonBuilderFactory {
   @Override
   public JsonObjectBuilder createObjectBuilder(JsonObject object) {
     JsonObjectBuilder builder = new JObjectBuilder();
-    object.forEach((k, v) -> builder.add(k, Primitive.create(v).copy()));
+    object.forEach((k, v) -> builder.add(k, Primitive.cast(v).copy()));
     return builder;
   }
 

@@ -120,7 +120,7 @@ public abstract class JGenerator implements JsonGenerator {
 
   @Override
   public JsonGenerator write(JsonValue value) {
-    context.writeValue(Primitive.create(value));
+    context.writeValue(Primitive.cast(value));
     return this;
   }
 

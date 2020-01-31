@@ -67,7 +67,7 @@ public class PLong extends PNumber {
 
 
   @Override
-  protected int getNumberType() {
+  public int getNumberType() {
     return TYPE_LONG;
   }
 

@@ -67,6 +67,7 @@ dependencies {
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.mockito', name: 'mockito-core', version: '3.2.4'
+    testCompile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-smile', version: '2.10.2'
 
 
     spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.10.0'

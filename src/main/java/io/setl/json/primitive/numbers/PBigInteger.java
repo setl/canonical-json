@@ -77,7 +77,7 @@ public class PBigInteger extends PNumber {
 
 
   @Override
-  protected int getNumberType() {
+  public int getNumberType() {
     return TYPE_BIG_INT;
   }
 

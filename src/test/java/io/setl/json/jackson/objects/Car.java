@@ -10,6 +10,14 @@ public class Car extends Vehicle {
   private double topSpeed;
 
 
+  /**
+   * New instance.
+   *
+   * @param make            the make
+   * @param model           the model
+   * @param seatingCapacity the seating capacity
+   * @param topSpeed        the car's top speed
+   */
   public Car(String make, String model, int seatingCapacity, double topSpeed) {
     super(make, model);
     this.seatingCapacity = seatingCapacity;

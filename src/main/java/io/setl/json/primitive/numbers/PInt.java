@@ -67,7 +67,7 @@ public class PInt extends PNumber {
 
 
   @Override
-  protected int getNumberType() {
+  public int getNumberType() {
     return TYPE_INT;
   }
 

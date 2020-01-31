@@ -20,13 +20,13 @@ import javax.json.JsonValue;
  */
 public abstract class PNumber extends PBase implements JsonNumber {
 
-  protected static final int TYPE_BIG_INT = 2;
+  public static final int TYPE_BIG_INT = 2;
 
-  protected static final int TYPE_DECIMAL = 3;
+  public static final int TYPE_DECIMAL = 3;
 
-  protected static final int TYPE_INT = 0;
+  public static final int TYPE_INT = 0;
 
-  protected static final int TYPE_LONG = 1;
+  public static final int TYPE_LONG = 1;
 
   private static final Map<Class<? extends Number>, Function<Number, PNumber>> CREATORS = Map.of(
       BigDecimal.class, n -> new PBigDecimal((BigDecimal) n, false),
@@ -80,6 +80,23 @@ public abstract class PNumber extends PBase implements JsonNumber {
 
 
   /**
+   * Cast a JsonNumber to a PNumber.
+   *
+   * @param jsonNumber the JsonNumber
+   *
+   * @return the equivalent (or same) PNumber.
+   */
+  public static PNumber cast(JsonNumber jsonNumber) {
+    if (jsonNumber instanceof PNumber) {
+      return (PNumber) jsonNumber;
+    }
+
+    Number number = jsonNumber.numberValue();
+    return create(number);
+  }
+
+
+  /**
    * Create a JsonNumber from a Number value performing appropriate type simplifications.
    *
    * @param value the value
@@ -100,6 +117,21 @@ public abstract class PNumber extends PBase implements JsonNumber {
       return function.apply(simple);
     }
     throw new IllegalArgumentException("Unknown number class: " + value.getClass());
+  }
+
+
+  /**
+   * Create a PNumber for a long. The actual type will either be a PInt or a PLong depending on the scale of the long.
+   *
+   * @param l the long
+   *
+   * @return the PNumber
+   */
+  public static PNumber create(long l) {
+    if (Integer.MIN_VALUE <= l && l <= Integer.MAX_VALUE) {
+      return new PInt((int) l);
+    }
+    return new PLong(l);
   }
 
 
@@ -254,7 +286,7 @@ public abstract class PNumber extends PBase implements JsonNumber {
 
   protected abstract boolean equalsValue(BigDecimal other);
 
-  protected abstract int getNumberType();
+  public abstract int getNumberType();
 
 
   @Override

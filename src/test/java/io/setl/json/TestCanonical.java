@@ -14,7 +14,6 @@ import java.util.function.Function;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
 import javax.json.stream.JsonParsingException;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -54,7 +53,7 @@ public class TestCanonical {
     JArray array = p.getValueSafe(JArray.class);
     ByteArrayOutputStream output = new ByteArrayOutputStream();
     for (JsonValue p2 : array) {
-      String f = Primitive.getValue(String.class,p2);
+      String f = Primitive.getValue(String.class, p2);
 
       Primitive primitive;
       try {
@@ -82,7 +81,7 @@ public class TestCanonical {
         }
       }
 
-      if(!Arrays.equals(expected,output.toByteArray())) {
+      if (!Arrays.equals(expected, output.toByteArray())) {
         System.out.println(f);
         System.out.println(new String(expected, UTF_8));
         System.out.println(new String(output.toByteArray(), UTF_8));

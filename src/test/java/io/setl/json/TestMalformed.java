@@ -21,9 +21,10 @@ import org.junit.Test;
  */
 public class TestMalformed {
 
+  public static boolean isDebug = false;
+
   private static String PATH = "malformed/";
 
-  public static boolean isDebug = false;
 
   private JsonValue loadResource(String resource) throws IOException {
     try (
@@ -52,11 +53,11 @@ public class TestMalformed {
 
       // Required to parse unsuccessfully
       if (thrown != null) {
-        if( isDebug ) {
+        if (isDebug) {
           System.out.println("PASS: " + f + " : " + thrown.getMessage());
         }
       } else {
-        if( isDebug ) {
+        if (isDebug) {
           System.out.println("FAIL: " + f);
           System.out.println("Required to reject invalid input, but parsed OK");
         }

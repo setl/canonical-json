@@ -121,6 +121,14 @@ public interface Primitive extends JsonValue {
     throw new IllegalArgumentException("Cannot include item of class " + value.getClass() + " in JSON");
   }
 
+
+  /**
+   * Extract the contained value from a JsonValue.
+   *
+   * @param jv the JSON value
+   *
+   * @return the contained value
+   */
   static Object getValue(JsonValue jv) {
     if (jv instanceof Primitive) {
       return ((Primitive) jv).getValue();
@@ -145,6 +153,17 @@ public interface Primitive extends JsonValue {
     }
   }
 
+
+  /**
+   * Get the value enclosed in a JSON value.
+   *
+   * @param reqType the required type
+   * @param jv      the JSON value
+   * @param dflt    the default value to return if the value is missing or not the correct type
+   * @param <T>     the required type
+   *
+   * @return the value if possible, otherwise the default
+   */
   static <T> T getValue(Class<T> reqType, JsonValue jv, T dflt) {
     Object value = getValue(jv);
     if (reqType.isInstance(value)) {

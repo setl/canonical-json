@@ -149,7 +149,7 @@ public class JObject extends TreeMap<String, JsonValue> implements JsonObject, P
   @Override
   public JObject copy() {
     JObject other = new JObject(this);
-    other.replaceAll((k, jv) -> ((Primitive) jv).copy());
+    other.replaceAll((k, jv) -> Primitive.create(jv));
     return other;
   }
 

@@ -1,5 +1,8 @@
 package io.setl.json.merge;
 
+import io.setl.json.JObject;
+import java.util.HashSet;
+import java.util.Iterator;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
@@ -22,10 +25,54 @@ public class MergeDiff {
       return new JMerge(output);
     }
 
+    JsonObject merge = new JObject();
     JsonObject inObject = (JsonObject) input;
     JsonObject outObject = (JsonObject) output;
 
-    // TODO implement me!
-    return null;
+    doDiff(merge, inObject, outObject);
+
+    return new JMerge(merge);
+  }
+
+
+  private static void doDiff(JsonObject merge, JsonObject inObject, JsonObject outObject) {
+    HashSet<String> inKeys = new HashSet<>(inObject.keySet());
+    HashSet<String> outKeys = new HashSet<>(outObject.keySet());
+
+    // do removes
+    for (String s : inKeys) {
+      if (!outKeys.contains(s)) {
+        merge.put(s, JsonValue.NULL);
+      }
+    }
+
+    // do adds, and trim outKeys so it is just the common keys.
+    Iterator<String> iterator = outKeys.iterator();
+    while (iterator.hasNext()) {
+      String s = iterator.next();
+      if (!inKeys.contains(s)) {
+        merge.put(s, outObject.get(s));
+        iterator.remove();
+      }
+    }
+
+    // do replaces
+    for (String s : outKeys) {
+      JsonValue inValue = inObject.get(s);
+      JsonValue outValue = outObject.get(s);
+
+      if (inValue.getValueType() == ValueType.OBJECT && outValue.getValueType() == ValueType.OBJECT) {
+        JObject childMerge = new JObject();
+        doDiff(childMerge, (JsonObject) inValue, (JsonObject) outValue);
+        if (!childMerge.isEmpty()) {
+          merge.put(s, childMerge);
+        }
+        continue;
+      }
+
+      if ((inValue.getValueType() != outValue.getValueType()) || !inValue.equals(outValue)) {
+        merge.put(s, outValue);
+      }
+    }
   }
 }

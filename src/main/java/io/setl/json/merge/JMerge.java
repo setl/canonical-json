@@ -32,7 +32,7 @@ public class JMerge implements JsonMergePatch {
       } else {
         String key = entry.getKey();
         JsonValue current = output.get(key);
-        output.put(key, mergePatch(entry.getValue(), current));
+        output.put(key, mergePatch(current,entry.getValue()));
       }
     }
     return output;

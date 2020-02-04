@@ -4,6 +4,8 @@ import static io.setl.json.JArray.fixCollection;
 import static io.setl.json.JArray.fixPrimitiveCollection;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -11,18 +13,118 @@ import static org.junit.Assert.fail;
 
 import io.setl.json.exception.IncorrectTypeException;
 import io.setl.json.exception.MissingItemException;
+import io.setl.json.primitive.PTrue;
+import io.setl.json.primitive.numbers.PInt;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
-import javax.json.JsonArray;
+import java.util.Spliterator;
+import javax.json.JsonString;
 import javax.json.JsonValue;
+import javax.json.JsonValue.ValueType;
 import org.junit.Test;
 
 public class JArrayTest {
+
+  @Test
+  public void indexOf() {
+    JArray ja = new JArray(Arrays.asList(1, 2, 3, null, 2, 3, null));
+    assertEquals(1, ja.indexOf(2));
+    assertEquals(2, ja.indexOf(new PInt(3)));
+    assertEquals(3, ja.indexOf(null));
+  }
+
+
+  @Test
+  public void isNull() {
+    JArray ja = new JArray(Arrays.asList(1, 2, 3, null));
+    assertFalse(ja.isNull(2));
+    assertTrue(ja.isNull(3));
+  }
+
+
+  @Test
+  public void lastIndexOf() {
+    JArray ja = new JArray(Arrays.asList(1, 2, 3, null, 2, 3, null));
+    assertEquals(4, ja.lastIndexOf(2));
+    assertEquals(5, ja.lastIndexOf(new PInt(3)));
+    assertEquals(6, ja.lastIndexOf(null));
+  }
+
+
+  @Test
+  public void optValue() {
+    JArray ja = new JArray(Arrays.asList(1, 2, 3, null));
+    assertNull(ja.optValue(-3));
+    assertNotNull(ja.optValue(3));
+  }
+
+
+  @Test
+  public void optimiseStorage() {
+    JArray ja1 = new JArray(Arrays.asList(1, 1, 2));
+    JArray ja2 = new JArray(Arrays.asList(1, 2, 3, ja1, JsonValue.EMPTY_JSON_OBJECT));
+    ja2.optimiseStorage();
+    assertSame(ja1.get(0), ja1.get(1));
+    assertSame(ja1.get(0), ja2.get(0));
+    assertSame(ja1.get(2), ja2.get(1));
+    assertEquals("[1,2,3,[1,1,2],{}]", ja2.toString());
+  }
+
+
+  @Test
+  public void parallelStream() {
+    JArray ja = new JArray(Arrays.asList(1, 2, 3, null));
+    assertNotNull(ja.parallelStream());
+    assertEquals(4, ja.parallelStream().count());
+  }
+
+
+  @Test
+  public void remove() {
+    JArray ja = new JArray(Arrays.asList(1, "2", 3, null));
+    assertTrue(ja.remove("2"));
+    assertFalse(ja.remove("2"));
+  }
+
+
+  @Test
+  public void removeAll() {
+    JArray ja = new JArray(Arrays.asList(1, 2, 3, 4, 5, 6));
+    assertTrue(ja.removeAll(Arrays.asList(1, 2, 3)));
+    assertFalse(ja.removeAll(Arrays.asList(1, 2, 3)));
+  }
+
+
+  @Test
+  public void sort() {
+    JArray ja = new JArray(Arrays.asList(3, 1, 4, 1, 5, 2, null, 9, 6));
+    ja.sort(Comparator.comparing(JsonValue::toString));
+    assertEquals("[1,1,2,3,4,5,6,9,null]", ja.toString());
+  }
+
+
+  @Test
+  public void stream() {
+    JArray ja = new JArray(Arrays.asList(3, 1, 4, 1, 5, 2, null, 9, 6));
+    assertEquals(ja.size(), ja.stream().count());
+  }
+
+
+  @Test
+  public void subList() {
+    JArray ja = new JArray(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9));
+    List<JsonValue> ja2 = ja.subList(4, 7);
+    ja2.set(1, Primitive.create("5"));
+    assertEquals("[0,1,2,3,4,\"5\",6,7,8,9]", ja.toString());
+  }
+
 
   @Test
   public void testAddAllCollectionOfQextendsPrimitive() {
@@ -208,6 +310,37 @@ public class JArrayTest {
 
 
   @Test
+  public void testAsJsonArray() {
+    JArray ja = new JArray();
+    assertSame(ja, ja.asJsonArray());
+  }
+
+
+  @Test(expected = ClassCastException.class)
+  public void testAsJsonObject() {
+    JArray ja = new JArray();
+    ja.asJsonObject();
+  }
+
+
+  @Test
+  public void testContains() {
+    JArray ja = new JArray(Arrays.asList(0, 1, 2));
+    assertTrue(ja.contains(0));
+    assertTrue(ja.contains(new PInt(1)));
+    assertFalse(ja.contains("x"));
+  }
+
+
+  @Test
+  public void testContainsAll() {
+    JArray ja = new JArray(Arrays.asList(0, null, true, 1, 2));
+    assertTrue(ja.containsAll(Arrays.asList(JsonValue.NULL, true, 2)));
+    assertFalse(ja.containsAll(Arrays.asList(JsonValue.NULL, true, 2, 3, 4, 5)));
+  }
+
+
+  @Test
   public void testFixCollection() {
     JArray ja = new JArray();
     assertSame(ja, fixCollection(ja));
@@ -215,12 +348,12 @@ public class JArrayTest {
     ja.add(123);
     ja.addNull();
     ja.add(true);
-    assertEquals(ja, fixCollection(Arrays.asList("abc", 123, null, true)));
+    assertEquals(ja, fixCollection(Arrays.asList("abc", new PInt(123), null, JsonValue.TRUE)));
   }
 
 
   @Test
-  public void testFixPrimitveCollection() {
+  public void testFixPrimitiveCollection() {
     JArray ja = new JArray();
     ja.add(true);
     ja.addNull();
@@ -417,11 +550,11 @@ public class JArrayTest {
       // correct
     }
 
-    ja = new JArray(Arrays.asList(Double.NaN,Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY,Float.NaN,Float.NEGATIVE_INFINITY,Float.POSITIVE_INFINITY));
-    assertEquals("[\"NaN\",\"-Infinity\",\"Infinity\",\"NaN\",\"-Infinity\",\"Infinity\"]",ja.toString());
+    ja = new JArray(Arrays.asList(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Float.NaN, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY));
+    assertEquals("[\"NaN\",\"-Infinity\",\"Infinity\",\"NaN\",\"-Infinity\",\"Infinity\"]", ja.toString());
     assertTrue(Double.isNaN(ja.optDouble(0)));
     assertTrue(Double.isInfinite(ja.getDouble(1)));
-    assertTrue(Double.isInfinite(ja.getDouble(2,5.0)));
+    assertTrue(Double.isInfinite(ja.getDouble(2, 5.0)));
   }
 
 
@@ -457,6 +590,34 @@ public class JArrayTest {
     } catch (MissingItemException e) {
       // correct
     }
+  }
+
+
+  @Test
+  public void testGetJsonArray() {
+    JArray ja = new JArray(Arrays.asList(JsonValue.EMPTY_JSON_ARRAY, JsonValue.EMPTY_JSON_OBJECT, 123, "abc"));
+    assertNotNull(ja.getJsonArray(0));
+  }
+
+
+  @Test
+  public void testGetJsonNumber() {
+    JArray ja = new JArray(Arrays.asList(JsonValue.EMPTY_JSON_ARRAY, JsonValue.EMPTY_JSON_OBJECT, 123, "abc"));
+    assertNotNull(ja.getJsonNumber(2));
+  }
+
+
+  @Test
+  public void testGetJsonObject() {
+    JArray ja = new JArray(Arrays.asList(JsonValue.EMPTY_JSON_ARRAY, JsonValue.EMPTY_JSON_OBJECT, 123, "abc"));
+    assertNotNull(ja.getJsonObject(1));
+  }
+
+
+  @Test
+  public void testGetJsonString() {
+    JArray ja = new JArray(Arrays.asList(JsonValue.EMPTY_JSON_ARRAY, JsonValue.EMPTY_JSON_OBJECT, 123, "abc"));
+    assertNotNull(ja.getJsonString(3));
   }
 
 
@@ -571,6 +732,30 @@ public class JArrayTest {
 
 
   @Test
+  public void testGetValue2() {
+    JArray ja = new JArray(Arrays.asList(0, 1, 2));
+    assertNotNull(ja.getValue(List.class, null));
+    assertNull(ja.getValue(Map.class, null));
+  }
+
+
+  @Test(expected = ClassCastException.class)
+  public void testGetValueAs() {
+    JArray ja = new JArray(Arrays.asList(0, 1, 2));
+    ja.getValuesAs(JsonString.class);
+  }
+
+
+  @Test
+  public void testHashCode() {
+    JArray ja = new JArray(Arrays.asList(1, 2, 3));
+    int h = ja.hashCode();
+    ja.add(4);
+    assertNotEquals(h, ja.hashCode());
+  }
+
+
+  @Test
   public void testJsonArray() {
     JArray ja = new JArray();
     assertTrue(ja.isEmpty());
@@ -587,10 +772,50 @@ public class JArrayTest {
 
 
   @Test
+  public void testListIterator() {
+    JArray ja = new JArray(Arrays.asList(1, 2, 3));
+    ListIterator<JsonValue> iter = ja.listIterator();
+    assertTrue(iter.hasNext());
+    assertFalse(iter.hasPrevious());
+    assertEquals(0, iter.nextIndex());
+    assertEquals(-1, iter.previousIndex());
+    assertEquals(new PInt(1), iter.next());
+    iter.remove();
+    assertEquals(2, ja.size());
+    iter.next();
+    iter.set(JsonValue.TRUE);
+
+    Primitive p = ja.getPrimitive(0);
+    assertTrue(p instanceof PTrue);
+
+    iter.add(JsonValue.EMPTY_JSON_ARRAY);
+    iter.previous();
+    assertEquals("[true,[],3]", ja.toString());
+  }
+
+
+  @Test
+  public void testRemoveIf() {
+    JArray ja = new JArray(Arrays.asList(1, "2", 3));
+    ja.removeIf(jv -> jv.getValueType() == ValueType.NUMBER);
+    assertEquals(1, ja.size());
+  }
+
+
+  @Test
   public void testReplaceAllUnaryOperatorOfPrimitive() {
     JArray ja = new JArray(Arrays.asList(1, 2, 3));
     ja.replaceAll(p -> Primitive.create(p.toString()));
     assertEquals("1", ja.optString(0));
+  }
+
+
+  @Test
+  public void testRetainAll() {
+    JArray ja = new JArray(Arrays.asList(1, "2", 3, 4, 5));
+    ja.retainAll(Arrays.asList(1, 2, 3, 4, 5));
+    assertEquals(4, ja.size());
+    assertFalse(ja.contains("2"));
   }
 
 
@@ -667,6 +892,21 @@ public class JArrayTest {
 
 
   @Test
+  public void testSpliterator() {
+    JArray ja = new JArray(Arrays.asList(1, 2, 3, true));
+    Spliterator<JsonValue> spliterator = ja.spliterator();
+    assertEquals(4, spliterator.estimateSize());
+    assertEquals(4, spliterator.getExactSizeIfKnown());
+    assertTrue(spliterator.hasCharacteristics(Spliterator.ORDERED));
+    assertTrue(spliterator.tryAdvance(a -> {
+    }));
+    assertNotNull(spliterator.trySplit());
+    assertNotNull(spliterator.trySplit());
+    assertNull(spliterator.trySplit());
+  }
+
+
+  @Test
   public void testToString() {
     JArray ja = new JArray(Arrays.asList(1, 2, 3));
     assertEquals("[1,2,3]", ja.toString());
@@ -674,4 +914,12 @@ public class JArrayTest {
     assertEquals("[]", ja.toString());
   }
 
+
+  @Test
+  public void toArray() {
+    JArray ja = new JArray(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9));
+    assertEquals(10, ja.toArray().length);
+    assertEquals(10, ja.toArray(new JsonValue[5]).length);
+    assertEquals(10, ja.toArray(JsonValue[]::new).length);
+  }
 }

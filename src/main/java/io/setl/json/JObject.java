@@ -1,6 +1,7 @@
 package io.setl.json;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.setl.json.JArray.MySpliterator;
 import io.setl.json.exception.IncorrectTypeException;
 import io.setl.json.exception.MissingItemException;
 import io.setl.json.jackson.JsonObjectSerializer;
@@ -12,15 +13,28 @@ import io.setl.json.primitive.numbers.PNumber;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.NavigableMap;
+import java.util.NavigableSet;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.Spliterator;
 import java.util.TreeMap;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.json.JsonArray;
@@ -79,7 +93,7 @@ import javax.json.JsonValue;
  */
 
 @JsonSerialize(using = JsonObjectSerializer.class)
-public class JObject extends TreeMap<String, JsonValue> implements JsonObject, Primitive {
+public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Primitive {
 
   /**
    * Sort object keys into Unicode code point order.
@@ -103,6 +117,400 @@ public class JObject extends TreeMap<String, JsonValue> implements JsonObject, P
 
   /** serial version UID. */
   private static final long serialVersionUID = 1L;
+
+
+
+  /**
+   * Set which converts JsonValue to Primitives.
+   */
+  static class MyEntries implements Set<Entry<String, JsonValue>> {
+
+    private final Set<Entry<String, Primitive>> mySet;
+
+
+    MyEntries(Set<Entry<String, Primitive>> mySet) {
+      this.mySet = mySet;
+    }
+
+
+    @Override
+    public boolean add(Entry<String, JsonValue> entry) {
+      return mySet.add(new SimpleImmutableEntry<>(entry.getKey(), Primitive.cast(entry.getValue())));
+    }
+
+
+    @Override
+    public boolean addAll(Collection<? extends Entry<String, JsonValue>> c) {
+      boolean b = false;
+      for (Entry<String, JsonValue> e : c) {
+        if (add(e)) {
+          b = true;
+        }
+      }
+      return b;
+    }
+
+
+    @Override
+    public void clear() {
+      mySet.clear();
+    }
+
+
+    @Override
+    public boolean contains(Object o) {
+      return mySet.contains(o);
+    }
+
+
+    @Override
+    public boolean containsAll(Collection<?> c) {
+      return mySet.containsAll(c);
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+      return mySet.equals(o);
+    }
+
+
+    @Override
+    public int hashCode() {
+      return mySet.hashCode();
+    }
+
+
+    @Override
+    public boolean isEmpty() {
+      return mySet.isEmpty();
+    }
+
+
+    @Override
+    public Iterator<Entry<String, JsonValue>> iterator() {
+      final Iterator<Entry<String, Primitive>> myIterator = mySet.iterator();
+      return new Iterator<>() {
+
+        @Override
+        public boolean hasNext() {
+          return myIterator.hasNext();
+        }
+
+
+        @Override
+        public Entry<String, JsonValue> next() {
+          return new MyEntry(myIterator.next());
+        }
+
+
+        @Override
+        public void remove() {
+          myIterator.remove();
+        }
+      };
+    }
+
+
+    @Override
+    public Stream<Entry<String, JsonValue>> parallelStream() {
+      return mySet.parallelStream().map(MyEntry::new);
+    }
+
+
+    @Override
+    public boolean remove(Object o) {
+      return mySet.remove(o);
+    }
+
+
+    @Override
+    public boolean removeAll(Collection<?> c) {
+      return mySet.removeAll(c);
+    }
+
+
+    @Override
+    public boolean removeIf(Predicate<? super Entry<String, JsonValue>> filter) {
+      return mySet.removeIf(e -> filter.test(new MyEntry(e)));
+    }
+
+
+    @Override
+    public boolean retainAll(Collection<?> c) {
+      return mySet.retainAll(c);
+    }
+
+
+    @Override
+    public int size() {
+      return mySet.size();
+    }
+
+
+    @Override
+    public Spliterator<Entry<String, JsonValue>> spliterator() {
+      return new MyEntrySpliterator(mySet.spliterator());
+    }
+
+
+    @Override
+    public Stream<Entry<String, JsonValue>> stream() {
+      return mySet.stream().map(MyEntry::new);
+    }
+
+
+    @Override
+    public Object[] toArray() {
+      return mySet.toArray();
+    }
+
+
+    @Override
+    public <T> T[] toArray(T[] a) {
+      return mySet.toArray(a);
+    }
+
+
+    @Override
+    public <T> T[] toArray(IntFunction<T[]> generator) {
+      return mySet.toArray(generator);
+    }
+
+
+    @Override
+    public String toString() {
+      return mySet.toString();
+    }
+  }
+
+
+
+  static class MyEntry implements Entry<String, JsonValue> {
+
+    private final Entry<String, Primitive> me;
+
+
+    public MyEntry(Entry<String, Primitive> me) {
+      this.me = me;
+    }
+
+
+    @Override
+    public String getKey() {
+      return me.getKey();
+    }
+
+
+    @Override
+    public JsonValue getValue() {
+      return me.getValue();
+    }
+
+
+    @Override
+    public JsonValue setValue(JsonValue value) {
+      return me.setValue(Primitive.cast(value));
+    }
+  }
+
+
+
+  /**
+   * Spliterator over JsonValues instead of Primitives. I'm not sure why Java requires a wrapper as every Primitive is a JsonValue, but it is happier with one.
+   */
+  static class MyEntrySpliterator implements Spliterator<Entry<String, JsonValue>> {
+
+
+    private final Spliterator<Entry<String, Primitive>> me;
+
+
+    MyEntrySpliterator(Spliterator<Entry<String, Primitive>> me) {
+      this.me = me;
+    }
+
+
+    @Override
+    public int characteristics() {
+      return me.characteristics();
+    }
+
+
+    @Override
+    public long estimateSize() {
+      return me.estimateSize();
+    }
+
+
+    @Override
+    public long getExactSizeIfKnown() {
+      return me.getExactSizeIfKnown();
+    }
+
+
+    @Override
+    public boolean tryAdvance(Consumer<? super Entry<String, JsonValue>> action) {
+      return me.tryAdvance(e -> action.accept(new MyEntry(e)));
+    }
+
+
+    @Override
+    public Spliterator<Entry<String, JsonValue>> trySplit() {
+      Spliterator<Entry<String, Primitive>> newSplit = me.trySplit();
+      if (newSplit != null) {
+        return new MyEntrySpliterator(newSplit);
+      }
+      return null;
+    }
+  }
+
+
+
+  private static class MyValues implements Collection<JsonValue> {
+
+    private final Collection<Primitive> me;
+
+
+    MyValues(Collection<Primitive> me) {
+      this.me = me;
+    }
+
+
+    public boolean add(JsonValue primitive) {
+      throw new UnsupportedOperationException("Add is not supported on a map's values");
+    }
+
+
+    public boolean addAll(Collection<? extends JsonValue> c) {
+      throw new UnsupportedOperationException("Add is not supported on a map's values");
+    }
+
+
+    @Override
+    public void clear() {
+      me.clear();
+    }
+
+
+    @Override
+    public boolean contains(Object o) {
+      return me.contains(o);
+    }
+
+
+    @Override
+    public boolean containsAll(Collection<?> c) {
+      return me.containsAll(c);
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+      return me.equals(o);
+    }
+
+
+    @Override
+    public int hashCode() {
+      return me.hashCode();
+    }
+
+
+    @Override
+    public boolean isEmpty() {
+      return me.isEmpty();
+    }
+
+
+    @Override
+    public Iterator<JsonValue> iterator() {
+      final Iterator<Primitive> myIterator = me.iterator();
+      return new Iterator<>() {
+        @Override
+        public boolean hasNext() {
+          return myIterator.hasNext();
+        }
+
+
+        @Override
+        public JsonValue next() {
+          return myIterator.next();
+        }
+
+
+        @Override
+        public void remove() {
+          myIterator.remove();
+        }
+      };
+    }
+
+
+    @Override
+    public Stream<JsonValue> parallelStream() {
+      return me.parallelStream().map(JsonValue.class::cast);
+    }
+
+
+    @Override
+    public boolean remove(Object o) {
+      return me.remove(o);
+    }
+
+
+    @Override
+    public boolean removeAll(Collection<?> c) {
+      return me.removeAll(c);
+    }
+
+
+    @Override
+    public boolean removeIf(Predicate<? super JsonValue> filter) {
+      return me.removeIf(filter);
+    }
+
+
+    @Override
+    public boolean retainAll(Collection<?> c) {
+      return me.retainAll(c);
+    }
+
+
+    @Override
+    public int size() {
+      return me.size();
+    }
+
+
+    @Override
+    public Spliterator<JsonValue> spliterator() {
+      return new MySpliterator(me.spliterator());
+    }
+
+
+    @Override
+    public Stream<JsonValue> stream() {
+      return me.stream().map(JsonValue.class::cast);
+    }
+
+
+    @Override
+    public Object[] toArray() {
+      return me.toArray();
+    }
+
+
+    @Override
+    public <T> T[] toArray(T[] a) {
+      return me.toArray(a);
+    }
+
+
+    @Override
+    public <T> T[] toArray(IntFunction<T[]> generator) {
+      return me.toArray(generator);
+    }
+  }
 
 
   /**
@@ -135,22 +543,162 @@ public class JObject extends TreeMap<String, JsonValue> implements JsonObject, P
   }
 
 
+  private final NavigableMap<String, Primitive> myMap;
+
+
   public JObject() {
-    super(CODE_POINT_ORDER);
+    myMap = new TreeMap<>(CODE_POINT_ORDER);
   }
 
 
   public JObject(Map<String, ?> map) {
-    super(CODE_POINT_ORDER);
-    putAll(fixMap(map));
+    myMap = new TreeMap<>(CODE_POINT_ORDER);
+    for (Entry<String, ?> e : map.entrySet()) {
+      myMap.put(e.getKey(), Primitive.create(e.getValue()));
+    }
+  }
+
+
+  private JObject(NavigableMap<String, Primitive> map, boolean makeCopy) {
+    if (makeCopy) {
+      myMap = new TreeMap<>(CODE_POINT_ORDER);
+      for (Entry<String, Primitive> e : map.entrySet()) {
+        myMap.put(e.getKey(), e.getValue().copy());
+      }
+    } else {
+      myMap = map;
+    }
+  }
+
+
+  @Override
+  public JObject asJsonObject() {
+    return this;
+  }
+
+
+  @Override
+  public Entry<String, JsonValue> ceilingEntry(String key) {
+    return new MyEntry(myMap.ceilingEntry(key));
+  }
+
+
+  @Override
+  public String ceilingKey(String key) {
+    return myMap.ceilingKey(key);
+  }
+
+
+  @Override
+  public void clear() {
+    myMap.clear();
+  }
+
+
+  @Override
+  public Comparator<? super String> comparator() {
+    return myMap.comparator();
+  }
+
+
+  @Override
+  public Primitive compute(String key, BiFunction<? super String, ? super JsonValue, ? extends JsonValue> remappingFunction) {
+    final BiFunction<String, Primitive, Primitive> myFunction = (k, v) -> Primitive.cast(remappingFunction.apply(k, v));
+    return myMap.compute(key, myFunction);
+  }
+
+
+  @Override
+  public Primitive computeIfAbsent(String key, Function<? super String, ? extends JsonValue> mappingFunction) {
+    final Function<String, Primitive> myFunction = k -> Primitive.cast(mappingFunction.apply(k));
+    return myMap.computeIfAbsent(key, myFunction);
+  }
+
+
+  @Override
+  public Primitive computeIfPresent(String key, BiFunction<? super String, ? super JsonValue, ? extends JsonValue> remappingFunction) {
+    final BiFunction<String, Primitive, Primitive> myFunction = (k, v) -> Primitive.cast(remappingFunction.apply(k, v));
+    return myMap.computeIfPresent(key, myFunction);
+  }
+
+
+  @Override
+  public boolean containsKey(Object key) {
+    return myMap.containsKey(key);
+  }
+
+
+  @Override
+  public boolean containsValue(Object value) {
+    return myMap.containsValue(value);
   }
 
 
   @Override
   public JObject copy() {
-    JObject other = new JObject(this);
-    other.replaceAll((k, jv) -> Primitive.create(jv));
-    return other;
+    return new JObject(myMap, true);
+  }
+
+
+  @Override
+  public NavigableSet<String> descendingKeySet() {
+    return myMap.descendingKeySet();
+  }
+
+
+  @Override
+  public NavigableMap<String, JsonValue> descendingMap() {
+    return new JObject(myMap.descendingMap(), false);
+  }
+
+
+  @Override
+  public Set<Entry<String, JsonValue>> entrySet() {
+    return new MyEntries(myMap.entrySet());
+  }
+
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == this) {
+      return true;
+    }
+    return myMap.equals(o);
+  }
+
+
+  @Override
+  public Entry<String, JsonValue> firstEntry() {
+    return new MyEntry(myMap.firstEntry());
+  }
+
+
+  @Override
+  public String firstKey() {
+    return myMap.firstKey();
+  }
+
+
+  @Override
+  public Entry<String, JsonValue> floorEntry(String key) {
+    return new MyEntry(myMap.floorEntry(key));
+  }
+
+
+  @Override
+  public String floorKey(String key) {
+    return myMap.floorKey(key);
+  }
+
+
+  public void forEach(BiConsumer<? super String, ? super JsonValue> action) {
+    myMap.forEach(action);
+  }
+
+
+  @Override
+  public Primitive get(Object key) {
+    return myMap.get(key);
   }
 
 
@@ -518,8 +1066,14 @@ public class JObject extends TreeMap<String, JsonValue> implements JsonObject, P
   }
 
 
+  @Override
+  public JsonValue getOrDefault(Object key, JsonValue defaultValue) {
+    return myMap.getOrDefault(key, Primitive.cast(defaultValue));
+  }
+
+
   public Primitive getPrimitive(String name) {
-    return (Primitive) get(name);
+    return get(name);
   }
 
 
@@ -623,8 +1177,44 @@ public class JObject extends TreeMap<String, JsonValue> implements JsonObject, P
   }
 
 
+  @Override
+  public int hashCode() {
+    return myMap.hashCode();
+  }
+
+
+  @Override
+  public NavigableMap<String, JsonValue> headMap(String toKey, boolean inclusive) {
+    return new JObject(myMap.headMap(toKey, inclusive), false);
+  }
+
+
+  @Override
+  public SortedMap<String, JsonValue> headMap(String toKey) {
+    return new JObject(myMap.headMap(toKey, false), false);
+  }
+
+
+  @Override
+  public Entry<String, JsonValue> higherEntry(String key) {
+    return new MyEntry(myMap.higherEntry(key));
+  }
+
+
+  @Override
+  public String higherKey(String key) {
+    return myMap.higherKey(key);
+  }
+
+
   public boolean isArray() {
     return false;
+  }
+
+
+  @Override
+  public boolean isEmpty() {
+    return myMap.isEmpty();
   }
 
 
@@ -637,6 +1227,49 @@ public class JObject extends TreeMap<String, JsonValue> implements JsonObject, P
   public boolean isType(String key, ValueType type) {
     Primitive primitive = getPrimitive(key);
     return (primitive != null) && primitive.getValueType() == type;
+  }
+
+
+  @Override
+  public Set<String> keySet() {
+    return myMap.keySet();
+  }
+
+
+  @Override
+  public Entry<String, JsonValue> lastEntry() {
+    return new MyEntry(myMap.lastEntry());
+  }
+
+
+  @Override
+  public String lastKey() {
+    return myMap.lastKey();
+  }
+
+
+  @Override
+  public Entry<String, JsonValue> lowerEntry(String key) {
+    return new MyEntry(myMap.lowerEntry(key));
+  }
+
+
+  @Override
+  public String lowerKey(String key) {
+    return myMap.lowerKey(key);
+  }
+
+
+  @Override
+  public JsonValue merge(String key, JsonValue value, BiFunction<? super JsonValue, ? super JsonValue, ? extends JsonValue> remappingFunction) {
+    final BiFunction<Primitive, Primitive, Primitive> myFunction = (v1, v2) -> Primitive.cast(remappingFunction.apply(v1, v2));
+    return myMap.merge(key, Primitive.cast(value), myFunction);
+  }
+
+
+  @Override
+  public NavigableSet<String> navigableKeySet() {
+    return myMap.navigableKeySet();
   }
 
 
@@ -748,6 +1381,64 @@ public class JObject extends TreeMap<String, JsonValue> implements JsonObject, P
 
 
   /**
+   * Ensure that all Strings and Numbers have a single representation in memory.
+   */
+  public void optimiseStorage() {
+    optimiseStorage(new HashMap<>());
+  }
+
+
+  /**
+   * Ensure that all Strings and Numbers have a single representation in memory.
+   *
+   * @param values the unique values
+   */
+  void optimiseStorage(HashMap<Primitive, Primitive> values) {
+    for (Entry<String, Primitive> e : myMap.entrySet()) {
+      Primitive current = e.getValue();
+      switch (current.getValueType()) {
+        case ARRAY:
+          // recurse into array
+          ((JArray) current).optimiseStorage(values);
+          break;
+        case OBJECT:
+          // recurse into object
+          ((JObject) current).optimiseStorage(values);
+        default:
+          Primitive single = values.computeIfAbsent(current, c -> c);
+          if (single != current) {
+            e.setValue(single);
+          }
+          break;
+      }
+    }
+  }
+
+
+  @Override
+  public Entry<String, JsonValue> pollFirstEntry() {
+    return new MyEntry(myMap.pollFirstEntry());
+  }
+
+
+  @Override
+  public Entry<String, JsonValue> pollLastEntry() {
+    return new MyEntry(myMap.pollLastEntry());
+  }
+
+
+  @Override
+  public JsonValue put(String key, JsonValue value) {
+    return myMap.put(key, Primitive.cast(value));
+  }
+
+
+  public Primitive put(String key, Primitive value) {
+    return myMap.put(key, value);
+  }
+
+
+  /**
    * Put a null value into this.
    *
    * @param key the key
@@ -828,6 +1519,35 @@ public class JObject extends TreeMap<String, JsonValue> implements JsonObject, P
     } else {
       put(key, PNull.NULL);
     }
+  }
+
+
+  public void putAll(Map<? extends String, ? extends JsonValue> m) {
+    if (m instanceof JObject) {
+      myMap.putAll(((JObject) m).myMap);
+    } else {
+      for (Entry<? extends String, ? extends JsonValue> e : m.entrySet()) {
+        put(e.getKey(), e.getValue());
+      }
+    }
+  }
+
+
+  @Override
+  public JsonValue putIfAbsent(String key, JsonValue value) {
+    return myMap.putIfAbsent(key, Primitive.cast(value));
+  }
+
+
+  @Override
+  public Primitive remove(Object key) {
+    return myMap.remove(key);
+  }
+
+
+  @Override
+  public boolean remove(Object key, Object value) {
+    return myMap.remove(key, value);
   }
 
 
@@ -935,6 +1655,64 @@ public class JObject extends TreeMap<String, JsonValue> implements JsonObject, P
 
 
   @Override
+  public boolean replace(String key, JsonValue oldValue, JsonValue newValue) {
+    return myMap.replace(key, Primitive.cast(oldValue), Primitive.cast(newValue));
+  }
+
+
+  @Override
+  public JsonValue replace(String key, JsonValue value) {
+    return myMap.replace(key, Primitive.cast(value));
+  }
+
+
+  public boolean replace(String key, Primitive oldValue, Primitive newValue) {
+    return myMap.replace(key, oldValue, newValue);
+  }
+
+
+  public Primitive replace(String key, Primitive value) {
+    return myMap.replace(key, value);
+  }
+
+
+  public void replaceAll(BiFunction<? super String, ? super JsonValue, ? extends JsonValue> function) {
+    final BiFunction<String, Primitive, Primitive> myFunction = (k, v) -> Primitive.cast(function.apply(k, v));
+    myMap.replaceAll(myFunction);
+  }
+
+
+  @Override
+  public int size() {
+    return myMap.size();
+  }
+
+
+  @Override
+  public NavigableMap<String, JsonValue> subMap(String fromKey, boolean fromInclusive, String toKey, boolean toInclusive) {
+    return new JObject(myMap.subMap(fromKey, fromInclusive, toKey, toInclusive), false);
+  }
+
+
+  @Override
+  public SortedMap<String, JsonValue> subMap(String fromKey, String toKey) {
+    return new JObject(myMap.subMap(fromKey, true, toKey, false), false);
+  }
+
+
+  @Override
+  public NavigableMap<String, JsonValue> tailMap(String fromKey, boolean inclusive) {
+    return new JObject(myMap.tailMap(fromKey, inclusive), false);
+  }
+
+
+  @Override
+  public SortedMap<String, JsonValue> tailMap(String fromKey) {
+    return new JObject(myMap.tailMap(fromKey, true), false);
+  }
+
+
+  @Override
   public String toString() {
     StringBuilder buf = new StringBuilder();
     buf.append('{');
@@ -950,6 +1728,12 @@ public class JObject extends TreeMap<String, JsonValue> implements JsonObject, P
     }
     buf.append('}');
     return buf.toString();
+  }
+
+
+  @Override
+  public Collection<JsonValue> values() {
+    return new MyValues(myMap.values());
   }
 
 
@@ -970,6 +1754,4 @@ public class JObject extends TreeMap<String, JsonValue> implements JsonObject, P
     }
     writer.append('}');
   }
-
-
 }

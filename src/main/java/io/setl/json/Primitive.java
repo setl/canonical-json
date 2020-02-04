@@ -83,6 +83,26 @@ public interface Primitive extends JsonValue {
   }
 
   /**
+   * Create a Primitive from a JsonValue. If at all possible, the original object is returned.
+   *
+   * @param value the value
+   *
+   * @return the Primitive
+   */
+  static Primitive cast(Object value) {
+    if (value == null) {
+      return PNull.NULL;
+    }
+    if (value instanceof Primitive) {
+      return (Primitive) value;
+    }
+    if (value instanceof JsonValue) {
+      return cast((JsonValue) value);
+    }
+    return create(value);
+  }
+
+  /**
    * Do a best effort conversion of any object to a Primitive.
    *
    * @param value the value
@@ -225,6 +245,16 @@ public interface Primitive extends JsonValue {
       return BigInteger.valueOf(n.longValue());
     }
     return new BigDecimal(n.toString()).toBigInteger();
+  }
+
+  @Override
+  default JArray asJsonArray() {
+    return JArray.class.cast(this);
+  }
+
+  @Override
+  default JObject asJsonObject() {
+    return JObject.class.cast(this);
   }
 
   /**

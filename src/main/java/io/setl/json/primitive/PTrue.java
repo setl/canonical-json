@@ -1,5 +1,6 @@
 package io.setl.json.primitive;
 
+import io.setl.json.Primitive;
 import java.io.IOException;
 import javax.json.JsonValue;
 
@@ -9,6 +10,14 @@ import javax.json.JsonValue;
 public class PTrue extends PBase {
 
   public static final PTrue TRUE = new PTrue();
+
+
+  public static Primitive valueOf(Boolean value) {
+    if (value == null) {
+      return PNull.NULL;
+    }
+    return value ? TRUE : PFalse.FALSE;
+  }
 
 
   private PTrue() {

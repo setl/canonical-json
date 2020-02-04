@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.setl.json.exception.IncorrectTypeException;
 import io.setl.json.exception.MissingItemException;
 import io.setl.json.jackson.JsonArraySerializer;
-import io.setl.json.primitive.PFalse;
 import io.setl.json.primitive.PNull;
 import io.setl.json.primitive.PString;
 import io.setl.json.primitive.PTrue;
@@ -14,21 +13,29 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.IntPredicate;
 import java.util.function.IntToDoubleFunction;
 import java.util.function.IntToLongFunction;
 import java.util.function.IntUnaryOperator;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.json.JsonArray;
+import javax.json.JsonNumber;
 import javax.json.JsonObject;
+import javax.json.JsonString;
 import javax.json.JsonValue;
 
 /**
@@ -80,10 +87,125 @@ import javax.json.JsonValue;
  * for a narrowing primitive conversion, rather than throwing a <code>IncorrectTypeException</code>.
  */
 @JsonSerialize(using = JsonArraySerializer.class)
-public class JArray extends ArrayList<JsonValue> implements JsonArray, Primitive {
+public class JArray implements JsonArray, Primitive {
 
   /** serial version UID. */
   private static final long serialVersionUID = 2L;
+
+
+
+  static class MyIterator implements ListIterator<JsonValue> {
+
+    private final ListIterator<Primitive> me;
+
+
+    MyIterator(ListIterator<Primitive> me) {
+      this.me = me;
+    }
+
+
+    @Override
+    public void add(JsonValue jsonValue) {
+      me.add(Primitive.cast(jsonValue));
+    }
+
+
+    @Override
+    public boolean hasNext() {
+      return me.hasNext();
+    }
+
+
+    @Override
+    public boolean hasPrevious() {
+      return me.hasPrevious();
+    }
+
+
+    @Override
+    public JsonValue next() {
+      return me.next();
+    }
+
+
+    @Override
+    public int nextIndex() {
+      return me.nextIndex();
+    }
+
+
+    @Override
+    public JsonValue previous() {
+      return me.previous();
+    }
+
+
+    @Override
+    public int previousIndex() {
+      return me.previousIndex();
+    }
+
+
+    @Override
+    public void remove() {
+      me.remove();
+    }
+
+
+    @Override
+    public void set(JsonValue jsonValue) {
+      me.set(Primitive.cast(jsonValue));
+    }
+  }
+
+
+
+  /**
+   * Spliterator over JsonValues instead of Primitives. I'm not sure why Java requires a wrapper as every Primitive is a JsonValue, but it is happier with one.
+   */
+  static class MySpliterator implements Spliterator<JsonValue> {
+
+    private final Spliterator<Primitive> me;
+
+
+    MySpliterator(Spliterator<Primitive> me) {
+      this.me = me;
+    }
+
+
+    @Override
+    public int characteristics() {
+      return me.characteristics();
+    }
+
+
+    @Override
+    public long estimateSize() {
+      return me.estimateSize();
+    }
+
+
+    @Override
+    public long getExactSizeIfKnown() {
+      return me.getExactSizeIfKnown();
+    }
+
+
+    @Override
+    public boolean tryAdvance(Consumer<? super JsonValue> action) {
+      return me.tryAdvance(action);
+    }
+
+
+    @Override
+    public Spliterator<JsonValue> trySplit() {
+      Spliterator<Primitive> newSplit = me.trySplit();
+      if (newSplit != null) {
+        return new MySpliterator(newSplit);
+      }
+      return null;
+    }
+  }
 
 
   /**
@@ -100,7 +222,15 @@ public class JArray extends ArrayList<JsonValue> implements JsonArray, Primitive
     JArray out = new JArray();
     out.ensureCapacity(c.size());
     for (Object o : c) {
-      out.add(Primitive.create(o));
+      Primitive p;
+      if (o instanceof Primitive) {
+        p = (Primitive) o;
+      } else if (o instanceof JsonValue) {
+        p = Primitive.cast((JsonValue) o);
+      } else {
+        p = Primitive.create(o);
+      }
+      out.add(p);
     }
     return out;
   }
@@ -113,37 +243,45 @@ public class JArray extends ArrayList<JsonValue> implements JsonArray, Primitive
    *
    * @return a collection with the nulls replaced with JSON nulls.
    */
-  static Collection<? extends JsonValue> fixPrimitiveCollection(Collection<? extends JsonValue> c) {
-    if (c instanceof JsonArray) {
+  static Collection<Primitive> fixPrimitiveCollection(Collection<? extends JsonValue> c) {
+    if (c instanceof JArray) {
       // already fixed
-      return c;
+      return ((JArray) c).myList;
     }
 
-    ArrayList<JsonValue> list = new ArrayList<>(c.size());
+    ArrayList<Primitive> list = new ArrayList<>(c.size());
     for (JsonValue jv : c) {
-      list.add(jv != null ? jv : PNull.NULL);
+      list.add(Primitive.cast(jv));
     }
     return list;
   }
 
 
+  private final List<Primitive> myList;
+
+
   public JArray() {
-    // as super-class
+    myList = new ArrayList<>();
   }
 
 
   public JArray(Collection<?> c) {
-    super(fixCollection(c));
+    myList = new ArrayList<>(fixCollection(c).myList);
+  }
+
+
+  private JArray(JArray jsonValues, int fromIndex, int toIndex) {
+    myList = jsonValues.myList.subList(fromIndex, toIndex);
   }
 
 
   public boolean add(Boolean value) {
-    return add(value != null ? (value ? PTrue.TRUE : PFalse.FALSE) : PNull.NULL);
+    return add(PTrue.valueOf(value));
   }
 
 
   public void add(int index, Boolean value) {
-    add(index, value != null ? (value ? PTrue.TRUE : PFalse.FALSE) : PNull.NULL);
+    add(index, PTrue.valueOf(value));
   }
 
 
@@ -154,7 +292,7 @@ public class JArray extends ArrayList<JsonValue> implements JsonArray, Primitive
 
   @Override
   public void add(int index, JsonValue element) {
-    super.add(index, Primitive.cast(element));
+    myList.add(index, Primitive.cast(element));
   }
 
 
@@ -170,7 +308,7 @@ public class JArray extends ArrayList<JsonValue> implements JsonArray, Primitive
 
   @Override
   public boolean add(JsonValue e) {
-    return super.add(Primitive.cast(e));
+    return myList.add(Primitive.cast(e));
   }
 
 
@@ -180,14 +318,14 @@ public class JArray extends ArrayList<JsonValue> implements JsonArray, Primitive
 
 
   @Override
-  public boolean addAll(Collection<? extends JsonValue> c) {
-    return super.addAll(fixPrimitiveCollection(c));
+  public boolean addAll(@Nonnull Collection<? extends JsonValue> c) {
+    return myList.addAll(fixPrimitiveCollection(c));
   }
 
 
   @Override
-  public boolean addAll(int index, Collection<? extends JsonValue> c) {
-    return super.addAll(index, fixPrimitiveCollection(c));
+  public boolean addAll(int index, @Nonnull Collection<? extends JsonValue> c) {
+    return myList.addAll(index, fixPrimitiveCollection(c));
   }
 
 
@@ -202,10 +340,73 @@ public class JArray extends ArrayList<JsonValue> implements JsonArray, Primitive
 
 
   @Override
+  public JArray asJsonArray() {
+    return this;
+  }
+
+
+  @Override
+  public void clear() {
+    myList.clear();
+  }
+
+
+  @Override
+  public boolean contains(Object o) {
+    return myList.contains(Primitive.cast(o));
+  }
+
+
+  @Override
+  public boolean containsAll(@Nonnull Collection<?> c) {
+    for (Object o : c) {
+      if (!myList.contains(Primitive.cast(o))) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+
+  @Override
   public JArray copy() {
     JArray other = new JArray(this);
-    other.replaceAll(jv -> Primitive.create(jv));
+    other.replaceAll(Primitive::create);
     return other;
+  }
+
+
+  /**
+   * Ensure the underlying list has enough capacity to store the requested number of entries, if possible.
+   *
+   * @param size the requested number of entries to accommodate.
+   */
+  public void ensureCapacity(int size) {
+    // Cannot ensure capacity of sub-lists.
+    if (myList instanceof ArrayList) {
+      ((ArrayList<?>) myList).ensureCapacity(size);
+    }
+  }
+
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    return myList.equals(o);
+  }
+
+
+  @Override
+  public void forEach(Consumer<? super JsonValue> action) {
+    myList.forEach(action);
+  }
+
+
+  @Override
+  public JsonValue get(int index) {
+    return myList.get(index);
   }
 
 
@@ -393,7 +594,7 @@ public class JArray extends ArrayList<JsonValue> implements JsonArray, Primitive
    */
   public double getDouble(int index, double dflt) {
     Double n = optDouble(index);
-    return (n != null) ? n.doubleValue() : dflt;
+    return (n != null) ? n : dflt;
   }
 
 
@@ -407,7 +608,7 @@ public class JArray extends ArrayList<JsonValue> implements JsonArray, Primitive
    */
   public double getDouble(int index, IntToDoubleFunction dflt) {
     Double n = optDouble(index);
-    return (n != null) ? n.doubleValue() : dflt.applyAsDouble(index);
+    return (n != null) ? n : dflt.applyAsDouble(index);
   }
 
 
@@ -475,8 +676,8 @@ public class JArray extends ArrayList<JsonValue> implements JsonArray, Primitive
 
 
   @Override
-  public PNumber getJsonNumber(int index) {
-    return (PNumber) get(index);
+  public JsonNumber getJsonNumber(int index) {
+    return (JsonNumber) myList.get(index);
   }
 
 
@@ -487,8 +688,8 @@ public class JArray extends ArrayList<JsonValue> implements JsonArray, Primitive
 
 
   @Override
-  public PString getJsonString(int index) {
-    return (PString) get(index);
+  public JsonString getJsonString(int index) {
+    return (JsonString) myList.get(index);
   }
 
 
@@ -568,6 +769,11 @@ public class JArray extends ArrayList<JsonValue> implements JsonArray, Primitive
   }
 
 
+  public Primitive getPrimitive(int i) {
+    return myList.get(i);
+  }
+
+
   private <T> T getQuiet(Class<T> clazz, int index) {
     return getQuiet(clazz, index, (IntFunction<T>) i -> null);
   }
@@ -577,7 +783,7 @@ public class JArray extends ArrayList<JsonValue> implements JsonArray, Primitive
     if (index < 0 || size() <= index) {
       return function.apply(index);
     }
-    Object value = Primitive.getValue(get(index));
+    Object value = myList.get(index).getValue();
     if (clazz.isInstance(value)) {
       return clazz.cast(value);
     }
@@ -594,8 +800,8 @@ public class JArray extends ArrayList<JsonValue> implements JsonArray, Primitive
     if (index < 0 || size() <= index) {
       throw new MissingItemException(index, type);
     }
-    JsonValue primitive = get(index);
-    Object value = Primitive.getValue(primitive);
+    Primitive primitive = myList.get(index);
+    Object value = primitive.getValue();
     if (clazz.isInstance(value)) {
       return clazz.cast(value);
     }
@@ -686,14 +892,54 @@ public class JArray extends ArrayList<JsonValue> implements JsonArray, Primitive
   }
 
 
-  public boolean isArray() {
-    return true;
+  @Override
+  public int hashCode() {
+    return myList.hashCode();
+  }
+
+
+  @Override
+  public int indexOf(Object o) {
+    return myList.indexOf(Primitive.cast(o));
+  }
+
+
+  @Override
+  public boolean isEmpty() {
+    return myList.isEmpty();
   }
 
 
   @Override
   public boolean isNull(int index) {
     return get(index).getValueType().equals(ValueType.NULL);
+  }
+
+
+  @Override
+  @Nonnull
+  public Iterator<JsonValue> iterator() {
+    return listIterator(0);
+  }
+
+
+  @Override
+  public int lastIndexOf(Object o) {
+    return myList.lastIndexOf(Primitive.cast(o));
+  }
+
+
+  @Override
+  @Nonnull
+  public ListIterator<JsonValue> listIterator() {
+    return listIterator(0);
+  }
+
+
+  @Override
+  @Nonnull
+  public ListIterator<JsonValue> listIterator(int index) {
+    return new MyIterator(myList.listIterator(index));
   }
 
 
@@ -830,59 +1076,164 @@ public class JArray extends ArrayList<JsonValue> implements JsonArray, Primitive
 
   /**
    * Ensure that all Strings and Numbers have a single representation in memory.
+   *
    * @param values the unique values
    */
-  void optimiseStorage(HashMap<JsonValue, JsonValue> values) {
-    ListIterator<JsonValue> iterator = this.listIterator();
+  void optimiseStorage(HashMap<Primitive, Primitive> values) {
+    ListIterator<Primitive> iterator = myList.listIterator();
     while (iterator.hasNext()) {
-      JsonValue current = iterator.next();
-// TODO decide if useful
-      if( current.getValueType()==ValueType.OBJECT ) {
-
+      Primitive current = iterator.next();
+      switch (current.getValueType()) {
+        case ARRAY:
+          // recurse into array
+          ((JArray) current).optimiseStorage(values);
+          break;
+        case OBJECT:
+          ((JObject) current).optimiseStorage(values);
+        default:
+          Primitive single = values.computeIfAbsent(current, c -> c);
+          if (single != current) {
+            iterator.set(single);
+          }
+          break;
       }
-      JsonValue use = values.computeIfAbsent(current, v->v);
-      iterator.set(use);
     }
   }
 
 
   @Override
+  public Stream<JsonValue> parallelStream() {
+    return myList.parallelStream().map(JsonValue.class::cast);
+  }
+
+
+  @Override
+  public JsonValue remove(int index) {
+    return myList.remove(index);
+  }
+
+
+  @Override
+  public boolean remove(Object o) {
+    return myList.remove(Primitive.cast(o));
+  }
+
+
+  @Override
+  public boolean removeAll(@Nonnull Collection<?> c) {
+    boolean b = false;
+    for (Object o : c) {
+      if (myList.remove(Primitive.cast(o))) {
+        b = true;
+      }
+    }
+    return b;
+  }
+
+
+  @Override
+  public boolean removeIf(Predicate<? super JsonValue> filter) {
+    return myList.removeIf(filter);
+  }
+
+
+  @Override
   public void replaceAll(UnaryOperator<JsonValue> operator) {
-    super.replaceAll(p -> Primitive.cast(operator.apply(p)));
+    myList.replaceAll(p -> Primitive.cast(operator.apply(p)));
+  }
+
+
+  @Override
+  public boolean retainAll(@Nonnull Collection<?> c) {
+    HashSet<Primitive> set = new HashSet<>();
+    for (Object o : c) {
+      set.add(Primitive.cast(o));
+    }
+    return myList.retainAll(set);
   }
 
 
   @Override
   @Nonnull
   public JsonValue set(int index, JsonValue element) {
-    return super.set(index, Primitive.cast(element));
+    return myList.set(index, Primitive.cast(element));
   }
 
 
   @Nonnull
   public JsonValue set(int index, Boolean value) {
-    JsonValue p = (value != null) ? (value ? PTrue.TRUE : PFalse.FALSE) : PNull.NULL;
-    return super.set(index, p);
+    return myList.set(index, PTrue.valueOf(value));
   }
 
 
   @Nonnull
   public JsonValue set(int index, Number number) {
-    JsonValue p = (number != null) ? PNumber.create(number) : PNull.NULL;
-    return super.set(index, p);
+    Primitive p = (number != null) ? PNumber.create(number) : PNull.NULL;
+    return myList.set(index, p);
   }
 
 
   @Nonnull
   public JsonValue set(int index, String string) {
-    JsonValue p = (string != null) ? new PString(string) : PNull.NULL;
-    return super.set(index, p);
+    Primitive p = (string != null) ? new PString(string) : PNull.NULL;
+    return myList.set(index, p);
   }
 
 
   @Nonnull
   public JsonValue setNull(int index) {
-    return super.set(index, PNull.NULL);
+    return myList.set(index, PNull.NULL);
+  }
+
+
+  @Override
+  public int size() {
+    return myList.size();
+  }
+
+
+  @Override
+  public void sort(Comparator<? super JsonValue> c) {
+    myList.sort(c);
+  }
+
+
+  @Override
+  public Spliterator<JsonValue> spliterator() {
+    return new MySpliterator(myList.spliterator());
+  }
+
+
+  @Override
+  public Stream<JsonValue> stream() {
+    return myList.stream().map(JsonValue.class::cast);
+  }
+
+
+  @Override
+  @Nonnull
+  public List<JsonValue> subList(int fromIndex, int toIndex) {
+    return new JArray(this, fromIndex, toIndex);
+  }
+
+
+  @Override
+  @Nonnull
+  public Object[] toArray() {
+    return myList.toArray();
+  }
+
+
+  @Override
+  @Nonnull
+  public <T> T[] toArray(@Nonnull T[] a) {
+    return myList.toArray(a);
+  }
+
+
+  @Override
+  public <T> T[] toArray(IntFunction<T[]> generator) {
+    return myList.toArray(generator);
   }
 
 

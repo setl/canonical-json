@@ -58,6 +58,6 @@ public class MergeDiffTest {
     JMerge merge = MergeDiff.create(in, out);
     JsonValue result = merge.apply(in);
     assertEquals(out, result);
-    assertEquals("{\"a\":1,\"b\":{\"!\":\"!\"},\"c\":{\"x\":true,\"y\":false}}", merge.toJsonValue());
+    assertEquals("{\"a\":1,\"b\":{\"!\":\"!\"},\"c\":{\"x\":true,\"y\":false}}", merge.toJsonValue().toString());
   }
 }

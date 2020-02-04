@@ -14,7 +14,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.IntPredicate;
@@ -814,6 +817,32 @@ public class JArray extends ArrayList<JsonValue> implements JsonArray, Primitive
       return null;
     }
     return get(i);
+  }
+
+
+  /**
+   * Ensure that all Strings and Numbers have a single representation in memory.
+   */
+  public void optimiseStorage() {
+    optimiseStorage(new HashMap<>());
+  }
+
+
+  /**
+   * Ensure that all Strings and Numbers have a single representation in memory.
+   * @param values the unique values
+   */
+  void optimiseStorage(HashMap<JsonValue, JsonValue> values) {
+    ListIterator<JsonValue> iterator = this.listIterator();
+    while (iterator.hasNext()) {
+      JsonValue current = iterator.next();
+// TODO decide if useful
+      if( current.getValueType()==ValueType.OBJECT ) {
+
+      }
+      JsonValue use = values.computeIfAbsent(current, v->v);
+      iterator.set(use);
+    }
   }
 
 

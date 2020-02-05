@@ -15,6 +15,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Set;
+import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,6 +43,11 @@ public class JObjectTest {
     json.put("boolean", true);
   }
 
+  @Test
+  public void entrySet() {
+    Set<Entry<String, JsonValue>> entrySet = json.entrySet();
+    // TODO
+  }
 
   @Test
   public void testFixMap() {

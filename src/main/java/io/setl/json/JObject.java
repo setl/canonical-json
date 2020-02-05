@@ -13,6 +13,7 @@ import io.setl.json.primitive.numbers.PNumber;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Collection;
 import java.util.Comparator;
@@ -159,13 +160,32 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
     @Override
     public boolean contains(Object o) {
-      return mySet.contains(o);
+      if (!(o instanceof Entry<?, ?>)) {
+        return false;
+      }
+      Entry<?,?> e = (Entry<?,?>) o;
+      if( !(e.getKey() instanceof String)) {
+        return false;
+      }
+      Object v = e.getValue();
+      if( v instanceof Primitive ) {
+        return mySet.contains(e);
+      }
+      if( !(v instanceof JsonValue)) {
+        return false;
+      }
+      return mySet.contains(new SimpleEntry<>(e.getKey(),Primitive.cast((JsonValue) e.getValue())));
     }
 
 
     @Override
     public boolean containsAll(Collection<?> c) {
-      return mySet.containsAll(c);
+      for (Object o : c) {
+        if (!contains(o)) {
+          return false;
+        }
+      }
+      return true;
     }
 
 
@@ -305,6 +325,21 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
     @Override
     public JsonValue getValue() {
       return me.getValue();
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      return me.equals(o);
+    }
+
+
+    @Override
+    public int hashCode() {
+      return me.hashCode();
     }
 
 

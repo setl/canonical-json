@@ -4,6 +4,8 @@ import static io.setl.json.parser.JParser.isWhite;
 import static io.setl.json.parser.JParser.safe;
 
 import io.setl.json.io.Input;
+import io.setl.json.primitive.cache.CacheCreator;
+import io.setl.json.primitive.cache.ICache;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import javax.json.stream.JsonParsingException;
@@ -152,22 +154,7 @@ public class NumberParser {
   }
 
 
-  private static boolean isDigit(int r) {
-    return '0' <= r && r <= '9';
-  }
-
-
-  final Input input;
-
-  boolean needBigDecimal;
-
-
-  public NumberParser(Input input) {
-    this.input = input;
-  }
-
-
-  private PNumber convert(String txt) {
+  static protected PNumber doCreate(String txt) {
     int length = txt.length();
     // Integer.MAX_VALUE takes 10 characters
     if (length < 10) {
@@ -210,6 +197,26 @@ public class NumberParser {
 
     // It is a BigInteger after all
     return new PBigInteger(new BigInteger(txt));
+  }
+
+
+  protected static PNumber doCreateBigDecimal(String txt) {
+    return PNumber.create(new BigDecimal(txt));
+  }
+
+
+  private static boolean isDigit(int r) {
+    return '0' <= r && r <= '9';
+  }
+
+
+  final Input input;
+
+  boolean needBigDecimal;
+
+
+  public NumberParser(Input input) {
+    this.input = input;
   }
 
 
@@ -260,17 +267,20 @@ public class NumberParser {
       }
     }
 
-    if (needBigDecimal) {
-      BigDecimal bigDecimal;
-      try {
-        bigDecimal = new BigDecimal(buf.toString());
-      } catch (NumberFormatException nfe) {
-        throw new JsonParsingException("Number in JSON is too extreme to process: \"" + buf.toString() + "\"", input.getLocation());
-      }
-      return PNumber.create(bigDecimal);
-    }
-
     String txt = buf.toString();
-    return convert(txt);
+
+    ICache<String, PNumber> cache = CacheCreator.numberCache();
+    PNumber pNumber;
+    try {
+      if (needBigDecimal) {
+        pNumber = cache.get(txt, NumberParser::doCreateBigDecimal);
+      } else {
+        pNumber = cache.get(txt, NumberParser::doCreate);
+      }
+    } catch (NumberFormatException | ArithmeticException e) {
+      pNumber = new PBadNumber(new JsonParsingException("Invalid number", e, input.getLocation()));
+    }
+    pNumber.check();
+    return pNumber;
   }
 }

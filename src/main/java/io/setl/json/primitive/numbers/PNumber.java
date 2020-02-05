@@ -4,6 +4,8 @@ import io.setl.json.Primitive;
 import io.setl.json.exception.NonFiniteNumberException;
 import io.setl.json.primitive.PBase;
 import io.setl.json.primitive.PString;
+import io.setl.json.primitive.cache.CacheCreator;
+import io.setl.json.primitive.cache.ICache;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -61,6 +63,39 @@ public abstract class PNumber extends PBase implements JsonNumber {
    * cases cannot be represented as numbers in JSON and so are rendered as Strings.
    */
   public static Primitive cast(Number value) {
+    ICache<Number, Primitive> cache = CacheCreator.valueCache();
+    return cache.get(value, PNumber::castNoCache);
+  }
+
+
+  /**
+   * Cast a JsonNumber to a PNumber.
+   *
+   * @param jsonNumber the JsonNumber
+   *
+   * @return the equivalent (or same) PNumber.
+   */
+  public static PNumber cast(JsonNumber jsonNumber) {
+    if (jsonNumber instanceof PNumber) {
+      return (PNumber) jsonNumber;
+    }
+
+    Number number = jsonNumber.numberValue();
+    Primitive p = cast(number);
+    if( p.getValueType() != ValueType.NUMBER ) {
+
+    }
+  }
+
+
+  /**
+   * Implementation of the "cast" method if caching fails.
+   *
+   * @param value the value
+   *
+   * @return the Primitive
+   */
+  protected static Primitive castNoCache(Number value) {
     try {
       return create(value);
     } catch (NonFiniteNumberException nfe) {
@@ -79,22 +114,6 @@ public abstract class PNumber extends PBase implements JsonNumber {
   }
 
 
-  /**
-   * Cast a JsonNumber to a PNumber.
-   *
-   * @param jsonNumber the JsonNumber
-   *
-   * @return the equivalent (or same) PNumber.
-   */
-  public static PNumber cast(JsonNumber jsonNumber) {
-    if (jsonNumber instanceof PNumber) {
-      return (PNumber) jsonNumber;
-    }
-
-    Number number = jsonNumber.numberValue();
-    return create(number);
-  }
-
 
   /**
    * Create a JsonNumber from a Number value performing appropriate type simplifications.
@@ -103,7 +122,7 @@ public abstract class PNumber extends PBase implements JsonNumber {
    *
    * @return the JsonNumber for that value
    */
-  public static PNumber create(Number value) {
+  private static PNumber create(Number value) {
     Class<? extends Number> cl = value.getClass();
     UnaryOperator<Number> operator = SIMPLIFIERS.get(cl);
     if (operator == null) {
@@ -261,6 +280,11 @@ public abstract class PNumber extends PBase implements JsonNumber {
       }
     }
     return null;
+  }
+
+
+  protected void check() {
+    // do nothing
   }
 
 

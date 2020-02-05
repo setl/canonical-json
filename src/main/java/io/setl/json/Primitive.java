@@ -74,7 +74,7 @@ public interface Primitive extends JsonValue {
       case OBJECT:
         return JObject.fixMap(value.asJsonObject());
       case STRING:
-        return new PString(((JsonString) value).getString());
+        return PString.create(((JsonString) value).getString());
       case TRUE:
         return PTrue.TRUE;
       default:
@@ -127,7 +127,7 @@ public interface Primitive extends JsonValue {
       return ((AtomicBoolean) value).get() ? PTrue.TRUE : PFalse.FALSE;
     }
     if (value instanceof String) {
-      return new PString((String) value);
+      return PString.create((String) value);
     }
     if (value instanceof Number) {
       return PNumber.cast((Number) value);

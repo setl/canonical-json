@@ -598,7 +598,7 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
   private void parseString() {
     StringParser parser = new StringParser(input);
     String val = parser.parse();
-    value = new PString(val);
+    value = PString.create(val);
   }
 
 

@@ -31,15 +31,15 @@ public abstract class PNumber extends PBase implements JsonNumber {
   private static final Map<Class<? extends Number>, Function<Number, PNumber>> CREATORS = Map.of(
       BigDecimal.class, n -> new PBigDecimal((BigDecimal) n, false),
       BigInteger.class, n -> new PBigInteger((BigInteger) n),
-      Integer.class, n -> new PInt(n.intValue()),
+      Integer.class, n -> PNumber.create(n.intValue()),
       Long.class, n -> new PLong(n.longValue())
   );
 
-  private static final PString REP_INFINITY = new PString("Infinity");
+  private static final PString REP_INFINITY = PString.create("Infinity");
 
-  private static final PString REP_NAN = new PString("NaN");
+  private static final PString REP_NAN = PString.create("NaN");
 
-  private static final PString REP_NEG_INFINITY = new PString("-Infinity");
+  private static final PString REP_NEG_INFINITY = PString.create("-Infinity");
 
   private static final Map<Class<? extends Number>, UnaryOperator<Number>> SIMPLIFIERS = Map.of(
       AtomicInteger.class, n -> Integer.valueOf(n.intValue()),
@@ -117,6 +117,18 @@ public abstract class PNumber extends PBase implements JsonNumber {
       return function.apply(simple);
     }
     throw new IllegalArgumentException("Unknown number class: " + value.getClass());
+  }
+
+
+  /**
+   * Create a PNumber for an int. The actual type will either be a PInt.
+   *
+   * @param i the int
+   *
+   * @return the PNumber
+   */
+  public static PNumber create(int i) {
+    return new PInt(i);
   }
 
 

@@ -57,7 +57,7 @@ class ObjectWalker extends WalkingParser {
       throw new NoSuchElementException();
     }
     if (isKey) {
-      return new PString(keys[index]);
+      return PString.create(keys[index]);
     }
     JsonValue jv = object.get(keys[index]);
     return (jv != null) ? jv : PNull.NULL;

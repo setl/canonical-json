@@ -171,14 +171,14 @@ public class NumberParser {
     int length = txt.length();
     // Integer.MAX_VALUE takes 10 characters
     if (length < 10) {
-      return new PInt(Integer.parseInt(txt));
+      return PNumber.create(Integer.parseInt(txt));
     }
     // Integer.MIN_VALUE takes 11 characters
     if (length < 12) {
       // 10 or 11 characters could be a long or an int
       long l = Long.parseLong(txt);
       if (Integer.MIN_VALUE <= l && l <= Integer.MAX_VALUE) {
-        return new PInt((int) l);
+        return PNumber.create((int) l);
       }
       return new PLong(l);
     }

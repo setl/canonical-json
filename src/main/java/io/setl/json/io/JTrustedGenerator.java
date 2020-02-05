@@ -115,8 +115,7 @@ class JTrustedGenerator extends JGenerator {
       } else {
         writtenFirst = true;
       }
-      PString pString = new PString(key);
-      writePrimitive(pString);
+      writeKeyValue(key);
       writeChar(':');
     }
 
@@ -170,6 +169,16 @@ class JTrustedGenerator extends JGenerator {
       writer.write(ch);
     } catch (IOException e) {
       throw new JsonIOException(e);
+    }
+  }
+
+
+  void writeKeyValue(String key) {
+    try {
+      PString.format(writer, key);
+    } catch (IOException e) {
+      throw new JsonIOException(e);
+
     }
   }
 

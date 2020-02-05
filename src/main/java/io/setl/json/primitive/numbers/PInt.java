@@ -11,7 +11,7 @@ public class PInt extends PNumber {
   private final int value;
 
 
-  public PInt(int value) {
+  PInt(int value) {
     this.value = value;
   }
 

@@ -13,9 +13,9 @@ public class PBaseTest {
   // shameless coverage tests
   @Test
   public void testEquals() {
-    PString string = new PString("Wibble");
-    PString same = new PString("Wibble");
-    PString other = new PString("Wobble");
+    PString string = PString.create("Wibble");
+    PString same = PString.create("Wibble");
+    PString other = PString.create("Wobble");
     assertTrue(string.equals(string));
     assertFalse(string.equals(null));
     assertFalse(string.equals(other));

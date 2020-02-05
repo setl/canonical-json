@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.AbstractMap.SimpleEntry;
-import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -136,19 +135,13 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
     @Override
     public boolean add(Entry<String, JsonValue> entry) {
-      return mySet.add(new SimpleImmutableEntry<>(entry.getKey(), Primitive.cast(entry.getValue())));
+      throw new UnsupportedOperationException();
     }
 
 
     @Override
     public boolean addAll(Collection<? extends Entry<String, JsonValue>> c) {
-      boolean b = false;
-      for (Entry<String, JsonValue> e : c) {
-        if (add(e)) {
-          b = true;
-        }
-      }
-      return b;
+      throw new UnsupportedOperationException();
     }
 
 
@@ -163,18 +156,18 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
       if (!(o instanceof Entry<?, ?>)) {
         return false;
       }
-      Entry<?,?> e = (Entry<?,?>) o;
-      if( !(e.getKey() instanceof String)) {
+      Entry<?, ?> e = (Entry<?, ?>) o;
+      if (!(e.getKey() instanceof String)) {
         return false;
       }
       Object v = e.getValue();
-      if( v instanceof Primitive ) {
+      if (v instanceof Primitive) {
         return mySet.contains(e);
       }
-      if( !(v instanceof JsonValue)) {
+      if (v != null && !(v instanceof JsonValue)) {
         return false;
       }
-      return mySet.contains(new SimpleEntry<>(e.getKey(),Primitive.cast((JsonValue) e.getValue())));
+      return mySet.contains(new SimpleEntry<>(e.getKey(), Primitive.cast((JsonValue) e.getValue())));
     }
 
 
@@ -317,6 +310,15 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
 
     @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      return me.equals(o);
+    }
+
+
+    @Override
     public String getKey() {
       return me.getKey();
     }
@@ -325,15 +327,6 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
     @Override
     public JsonValue getValue() {
       return me.getValue();
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      return me.equals(o);
     }
 
 
@@ -352,7 +345,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
 
   /**
-   * Spliterator over JsonValues instead of Primitives. I'm not sure why Java requires a wrapper as every Primitive is a JsonValue, but it is happier with one.
+   * Spliterator over JsonValues instead of Primitives. If someone called setValue on the output, we have to convert to a Primitive.
    */
   static class MyEntrySpliterator implements Spliterator<Entry<String, JsonValue>> {
 
@@ -436,18 +429,6 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
     @Override
     public boolean containsAll(Collection<?> c) {
       return me.containsAll(c);
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-      return me.equals(o);
-    }
-
-
-    @Override
-    public int hashCode() {
-      return me.hashCode();
     }
 
 
@@ -1242,11 +1223,6 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
   }
 
 
-  public boolean isArray() {
-    return false;
-  }
-
-
   @Override
   public boolean isEmpty() {
     return myMap.isEmpty();
@@ -1255,12 +1231,19 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
   @Override
   public boolean isNull(String name) {
-    return getPrimitive(name).getValueType() == ValueType.NULL;
+    Primitive p = getPrimitive(name);
+    if (p == null) {
+      throw new MissingItemException(name, ValueType.NULL);
+    }
+    return p.getValueType() == ValueType.NULL;
   }
 
 
   public boolean isType(String key, ValueType type) {
     Primitive primitive = getPrimitive(key);
+    if (primitive == null) {
+      throw new MissingItemException(key, type);
+    }
     return (primitive != null) && primitive.getValueType() == type;
   }
 
@@ -1439,6 +1422,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
         case OBJECT:
           // recurse into object
           ((JObject) current).optimiseStorage(values);
+          break;
         default:
           Primitive single = values.computeIfAbsent(current, c -> c);
           if (single != current) {
@@ -1550,7 +1534,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
    */
   public void put(String key, String value) {
     if (value != null) {
-      put(key, new PString(value));
+      put(key, PString.create(value));
     } else {
       put(key, PNull.NULL);
     }
@@ -1701,16 +1685,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
   }
 
 
-  public boolean replace(String key, Primitive oldValue, Primitive newValue) {
-    return myMap.replace(key, oldValue, newValue);
-  }
-
-
-  public Primitive replace(String key, Primitive value) {
-    return myMap.replace(key, value);
-  }
-
-
+  @Override
   public void replaceAll(BiFunction<? super String, ? super JsonValue, ? extends JsonValue> function) {
     final BiFunction<String, Primitive, Primitive> myFunction = (k, v) -> Primitive.cast(function.apply(k, v));
     myMap.replaceAll(myFunction);

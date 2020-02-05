@@ -103,11 +103,11 @@ public class JacksonParser implements JsonReader {
       case VALUE_NULL:
         return PNull.NULL;
       case VALUE_STRING:
-        return new PString(jsonParser.getText());
+        return PString.create(jsonParser.getText());
       case VALUE_NUMBER_INT:
         switch (jsonParser.getNumberType()) {
           case INT:
-            return new PInt(jsonParser.getIntValue());
+            return PNumber.create(jsonParser.getIntValue());
           case LONG:
             return PNumber.create(jsonParser.getLongValue());
           case BIG_INTEGER:

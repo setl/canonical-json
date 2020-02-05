@@ -15,6 +15,7 @@ import io.setl.json.exception.IncorrectTypeException;
 import io.setl.json.exception.MissingItemException;
 import io.setl.json.primitive.PTrue;
 import io.setl.json.primitive.numbers.PInt;
+import io.setl.json.primitive.numbers.PNumber;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -36,7 +37,7 @@ public class JArrayTest {
   public void indexOf() {
     JArray ja = new JArray(Arrays.asList(1, 2, 3, null, 2, 3, null));
     assertEquals(1, ja.indexOf(2));
-    assertEquals(2, ja.indexOf(new PInt(3)));
+    assertEquals(2, ja.indexOf(PNumber.create(3)));
     assertEquals(3, ja.indexOf(null));
   }
 
@@ -53,7 +54,7 @@ public class JArrayTest {
   public void lastIndexOf() {
     JArray ja = new JArray(Arrays.asList(1, 2, 3, null, 2, 3, null));
     assertEquals(4, ja.lastIndexOf(2));
-    assertEquals(5, ja.lastIndexOf(new PInt(3)));
+    assertEquals(5, ja.lastIndexOf(PNumber.create(3)));
     assertEquals(6, ja.lastIndexOf(null));
   }
 
@@ -327,7 +328,7 @@ public class JArrayTest {
   public void testContains() {
     JArray ja = new JArray(Arrays.asList(0, 1, 2));
     assertTrue(ja.contains(0));
-    assertTrue(ja.contains(new PInt(1)));
+    assertTrue(ja.contains(PNumber.create(1)));
     assertFalse(ja.contains("x"));
   }
 
@@ -348,7 +349,7 @@ public class JArrayTest {
     ja.add(123);
     ja.addNull();
     ja.add(true);
-    assertEquals(ja, fixCollection(Arrays.asList("abc", new PInt(123), null, JsonValue.TRUE)));
+    assertEquals(ja, fixCollection(Arrays.asList("abc", PNumber.create(123), null, JsonValue.TRUE)));
   }
 
 
@@ -779,7 +780,7 @@ public class JArrayTest {
     assertFalse(iter.hasPrevious());
     assertEquals(0, iter.nextIndex());
     assertEquals(-1, iter.previousIndex());
-    assertEquals(new PInt(1), iter.next());
+    assertEquals(PNumber.create(1), iter.next());
     iter.remove();
     assertEquals(2, ja.size());
     iter.next();

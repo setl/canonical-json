@@ -297,7 +297,7 @@ public class JArray implements JsonArray, Primitive {
 
 
   public void add(int index, String string) {
-    add(index, string != null ? new PString(string) : PNull.NULL);
+    add(index, string != null ? PString.create(string) : PNull.NULL);
   }
 
 
@@ -313,7 +313,7 @@ public class JArray implements JsonArray, Primitive {
 
 
   public boolean add(String string) {
-    return add(string != null ? new PString(string) : PNull.NULL);
+    return add(string != null ? PString.create(string) : PNull.NULL);
   }
 
 
@@ -1175,7 +1175,7 @@ public class JArray implements JsonArray, Primitive {
 
   @Nonnull
   public JsonValue set(int index, String string) {
-    Primitive p = (string != null) ? new PString(string) : PNull.NULL;
+    Primitive p = (string != null) ? PString.create(string) : PNull.NULL;
     return myList.set(index, p);
   }
 

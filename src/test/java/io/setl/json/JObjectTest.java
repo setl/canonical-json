@@ -2,6 +2,7 @@ package io.setl.json;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
@@ -11,12 +12,22 @@ import static org.junit.Assert.fail;
 
 import io.setl.json.exception.IncorrectTypeException;
 import io.setl.json.exception.MissingItemException;
+import io.setl.json.primitive.PString;
+import io.setl.json.primitive.numbers.PNumber;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NavigableMap;
+import java.util.NavigableSet;
 import java.util.Set;
+import java.util.Spliterator;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 import org.junit.Before;
@@ -26,6 +37,404 @@ import org.junit.Test;
 public class JObjectTest {
 
   private JObject json = new JObject();
+
+
+  @Test
+  public void asJsonObject() {
+    assertSame(json, json.asJsonObject());
+  }
+
+
+  @Test
+  public void ceilingEntry() {
+    Entry<String, JsonValue> e = json.ceilingEntry("n");
+    assertEquals("null", e.getKey());
+  }
+
+
+  @Test
+  public void ceilingKey() {
+    assertEquals("null", json.ceilingKey("n"));
+  }
+
+
+  @Test
+  public void comparator() {
+    assertEquals(JObject.CODE_POINT_ORDER, json.comparator());
+  }
+
+
+  @Test
+  public void compute() {
+    json.compute("null", (k, v) -> JsonValue.TRUE);
+    assertEquals(JsonValue.TRUE, json.get("null"));
+  }
+
+
+  @Test
+  public void computeIfAbsent() {
+    json.computeIfAbsent("null", k -> JsonValue.TRUE);
+    assertEquals(JsonValue.NULL, json.get("null"));
+  }
+
+
+  @Test
+  public void computeIfPresent() {
+    json.computeIfPresent("null", (k, v) -> JsonValue.TRUE);
+    assertEquals(JsonValue.TRUE, json.get("null"));
+  }
+
+
+  @Test
+  public void descendingKeySet() {
+    NavigableSet<String> set = json.descendingKeySet();
+    assertEquals("\07", set.last());
+  }
+
+
+  @Test
+  public void descendingMap() {
+    NavigableMap<String, JsonValue> map = json.descendingMap();
+    assertEquals("\07", map.lastKey());
+  }
+
+
+  @Test
+  public void entryEquals() {
+    Entry<String, JsonValue> entry = json.firstEntry();
+    assertTrue(entry.equals(new SimpleEntry<>("\07", PString.create("bell"))));
+  }
+
+
+  @Test(expected = UnsupportedOperationException.class)
+  public void entrySetAdd() {
+    Set<Entry<String, JsonValue>> entrySet = json.entrySet();
+    entrySet.add(new SimpleEntry<>("a", JsonValue.EMPTY_JSON_ARRAY));
+  }
+
+
+  @Test(expected = UnsupportedOperationException.class)
+  public void entrySetAddAll() {
+    Set<Entry<String, JsonValue>> entrySet = json.entrySet();
+    entrySet.addAll(Arrays.asList(
+        new SimpleEntry<>("a", JsonValue.EMPTY_JSON_ARRAY),
+        new SimpleEntry<>("\0", Primitive.create(3))
+    ));
+  }
+
+
+  @Test
+  public void entrySetClear() {
+    Set<Entry<String, JsonValue>> entrySet = json.entrySet();
+    assertFalse(entrySet.isEmpty());
+    entrySet.clear();
+    assertTrue(entrySet.isEmpty());
+    assertTrue(json.isEmpty());
+  }
+
+
+  @Test
+  public void entrySetContains() {
+    Set<Entry<String, JsonValue>> entrySet = json.entrySet();
+    assertFalse(entrySet.contains("x"));
+    assertFalse(entrySet.contains(new SimpleEntry<>(1, 1)));
+    assertFalse(entrySet.contains(new SimpleEntry<>("x", 1)));
+    assertTrue(entrySet.contains(new SimpleEntry<>("null", null)));
+    assertTrue(entrySet.contains(new SimpleEntry<>("object", JsonValue.EMPTY_JSON_OBJECT)));
+    assertTrue(entrySet.contains(new SimpleEntry<>("string", Primitive.cast("string"))));
+  }
+
+
+  @Test
+  public void entrySetContainsAll() {
+    Set<Entry<String, JsonValue>> entrySet = json.entrySet();
+    assertFalse(entrySet.containsAll(Arrays.asList("x")));
+    assertTrue(entrySet.containsAll(Arrays.asList(
+        new SimpleEntry<>("null", null),
+        new SimpleEntry<>("string", Primitive.cast("string"))
+    )));
+  }
+
+
+  @Test
+  public void entrySetEquals() {
+    Set<Entry<String, JsonValue>> entrySet = json.entrySet();
+    HashSet<Entry<String, JsonValue>> copy = new HashSet<>(entrySet);
+    assertTrue(entrySet.equals(copy));
+  }
+
+
+  @Test
+  public void entrySetHashCode() {
+    Set<Entry<String, JsonValue>> entrySet = json.entrySet();
+    int h = entrySet.hashCode();
+    entrySet.removeIf(e -> "\07".equals(e.getKey()));
+    assertNotEquals(h, entrySet.hashCode());
+  }
+
+
+  @Test
+  public void entrySetIterator() {
+    Set<Entry<String, JsonValue>> entrySet = json.entrySet();
+    Iterator<Entry<String, JsonValue>> iterator = entrySet.iterator();
+    assertTrue(iterator.hasNext());
+    Entry<String, JsonValue> e = iterator.next();
+    assertEquals(Primitive.cast("bell"), e.getValue());
+    assertEquals("\07", e.getKey());
+    iterator.remove();
+    assertFalse(json.containsKey("\07"));
+  }
+
+
+  @Test
+  public void entrySetOthers() {
+    Set<Entry<String, JsonValue>> entrySet = json.entrySet();
+
+    // The current implementation of these is trivial. There is really nothing for us to test.
+    assertNotNull(entrySet.stream());
+    assertNotNull(entrySet.toArray());
+    assertNotNull(entrySet.toArray(new Entry[0]));
+    assertNotNull(entrySet.toArray(Entry[]::new));
+    assertNotNull(entrySet.toString());
+  }
+
+
+  @Test
+  public void entrySetParallelStream() {
+    Set<Entry<String, JsonValue>> entrySet = json.entrySet();
+    assertEquals(11, entrySet.parallelStream().count());
+  }
+
+
+  @Test
+  public void entrySetRemove() {
+    Set<Entry<String, JsonValue>> entrySet = json.entrySet();
+    entrySet.remove(new SimpleEntry<>("string", Primitive.cast("string")));
+    assertEquals(10, entrySet.size());
+  }
+
+
+  @Test
+  public void entrySetRemoveAll() {
+    Set<Entry<String, JsonValue>> entrySet = json.entrySet();
+    entrySet.removeAll(Set.of(
+        new SimpleEntry<>("string", Primitive.cast("string")),
+        new SimpleEntry<>("boolean", Primitive.cast("false"))
+    ));
+    assertEquals(10, entrySet.size());
+  }
+
+
+  @Test
+  public void entrySetRetainAll() {
+    Set<Entry<String, JsonValue>> entrySet = json.entrySet();
+    entrySet.retainAll(Set.of(
+        new SimpleEntry<>("string", Primitive.cast("string")),
+        new SimpleEntry<>("boolean", Primitive.cast("false"))
+    ));
+    assertEquals(1, entrySet.size());
+  }
+
+
+  @Test
+  public void entrySetSpliterator() {
+    Set<Entry<String, JsonValue>> entrySet = json.entrySet();
+    Spliterator<Entry<String, JsonValue>> spliterator = entrySet.spliterator();
+    assertTrue(spliterator.hasCharacteristics(Spliterator.ORDERED));
+    assertEquals(11, spliterator.estimateSize());
+    assertEquals(11, spliterator.getExactSizeIfKnown());
+    assertTrue(spliterator.tryAdvance(e -> e.setValue(JsonValue.FALSE)));
+    assertTrue(json.containsValue(JsonValue.FALSE));
+    assertNotNull(spliterator.trySplit());
+  }
+
+
+  @Test
+  public void entrySetValue() {
+    Set<Entry<String, JsonValue>> entrySet = json.entrySet();
+    Entry<String, JsonValue> entry = entrySet.iterator().next();
+    entry.setValue(PNumber.create(5));
+    assertEquals("5", json.get("\07").toString());
+  }
+
+
+  @Test
+  public void firstKey() {
+    assertEquals("\07", json.firstKey());
+  }
+
+
+  @Test
+  public void floorEntry() {
+    assertEquals("null", json.floorEntry("nullllll").getKey());
+  }
+
+
+  @Test
+  public void floorKey() {
+    assertEquals("null", json.floorKey("nullllll"));
+  }
+
+
+  @Test
+  public void getJsonArray() {
+    assertNotNull(json.getJsonArray("array"));
+  }
+
+
+  @Test
+  public void getJsonNumber() {
+    assertNotNull(json.getJsonNumber("small number"));
+  }
+
+
+  @Test
+  public void getJsonObject() {
+    assertNotNull(json.getJsonObject("object"));
+  }
+
+
+  @Test
+  public void getJsonString() {
+    assertNotNull(json.getJsonString("string"));
+  }
+
+
+  @Test
+  public void getOrDefault() {
+    JsonValue v = json.getOrDefault("boolean", JsonValue.EMPTY_JSON_ARRAY);
+    assertEquals(ValueType.TRUE, v.getValueType());
+  }
+
+
+  @Test
+  public void getValue1() {
+    assertEquals("hello", json.getValue(String.class, "hello"));
+    assertSame(json, json.getValue(Map.class, null));
+  }
+
+
+  @Test
+  public void getValueSafe() {
+    assertSame(json, json.getValueSafe(Primitive.class));
+  }
+
+
+  @Test
+  public void headMap() {
+    assertEquals(1, json.headMap("\07", true).size());
+    assertEquals(0, json.headMap("\07").size());
+  }
+
+
+  @Test
+  public void higherEntry() {
+    String k = json.higherKey("l");
+    Entry<String, JsonValue> e = json.higherEntry("l");
+    assertEquals(k, e.getKey());
+  }
+
+
+  @Test
+  public void isNull() {
+    assertTrue(json.isNull("null"));
+    assertFalse(json.isNull("string"));
+  }
+
+
+  @Test(expected = MissingItemException.class)
+  public void isNull2() {
+    json.isNull("zzz");
+  }
+
+
+  @Test
+  public void lastEntry() {
+    String k = json.lastKey();
+    Entry<String, JsonValue> e = json.lastEntry();
+
+  }
+
+
+  @Test
+  public void lowerEntry() {
+    String k = json.lowerKey("l");
+    Entry<String, JsonValue> e = json.lowerEntry("l");
+    assertEquals(k, e.getKey());
+  }
+
+
+  @Test
+  public void merge() {
+    json.merge("foo", JsonValue.TRUE, (k, v) -> PNumber.create(String.valueOf(v).length()));
+    assertTrue(json.getBoolean("foo"));
+    json.merge("foo", JsonValue.TRUE, (k, v) -> PNumber.create(String.valueOf(v).length()));
+    assertEquals(4, json.getInt("foo"));
+  }
+
+
+  @Test
+  public void navigableKeySet() {
+    assertNotNull(json.navigableKeySet());
+  }
+
+
+  @Test
+  public void optimiseStorage() {
+    // how to test this?
+    json.optimiseStorage();
+  }
+
+
+  @Test
+  public void poll() {
+    json.pollFirstEntry();
+    json.pollLastEntry();
+    assertEquals(9, json.size());
+  }
+
+
+  @Test
+  public void putAll() {
+    json.putAll(Map.of("foo", JsonValue.FALSE));
+    assertEquals(12, json.size());
+  }
+
+
+  @Test
+  public void putIfAbsent() {
+    json.putIfAbsent("a", PString.create("a"));
+    assertTrue(json.containsKey("a"));
+    json.putIfAbsent("a", PString.create("b"));
+    assertFalse(json.containsValue("b"));
+  }
+
+
+  @Test
+  public void remove2() {
+    assertFalse(json.remove("null", JsonValue.TRUE));
+  }
+
+
+  @Test
+  public void replace1() {
+    assertEquals(JsonValue.TRUE, json.replace("boolean", JsonValue.FALSE));
+    assertEquals(JsonValue.FALSE, json.replace("boolean", JsonValue.FALSE));
+  }
+
+
+  @Test
+  public void replace2() {
+    assertTrue(json.replace("boolean", JsonValue.TRUE, JsonValue.FALSE));
+    assertFalse(json.replace("boolean", JsonValue.TRUE, JsonValue.FALSE));
+  }
+
+
+  @Test
+  public void replaceAll() {
+    json.replaceAll((k, v) -> PNumber.create(v.toString().length()));
+    assertEquals(4, json.getInt("null"));
+  }
 
 
   @Before
@@ -43,11 +452,20 @@ public class JObjectTest {
     json.put("boolean", true);
   }
 
+
   @Test
-  public void entrySet() {
-    Set<Entry<String, JsonValue>> entrySet = json.entrySet();
-    // TODO
+  public void subMap() {
+    assertEquals(7, json.subMap("a", "z").size());
+    assertEquals(7, json.subMap("a", false, "z", false).size());
   }
+
+
+  @Test
+  public void tailMap() {
+    assertEquals(6, json.tailMap("null", false).size());
+    assertEquals(7, json.tailMap("null").size());
+  }
+
 
   @Test
   public void testFixMap() {
@@ -475,7 +893,12 @@ public class JObjectTest {
     assertTrue(json.isType("string", ValueType.STRING));
     assertFalse(json.isType("big number", ValueType.STRING));
     assertTrue(json.isType("big number", ValueType.NUMBER));
-    assertFalse(json.isType("n/a", ValueType.NUMBER));
+  }
+
+
+  @Test(expected = MissingItemException.class)
+  public void testIsType2() {
+    json.isType("n/a", ValueType.NUMBER);
   }
 
 
@@ -759,5 +1182,113 @@ public class JObjectTest {
     json.removeString(k2);
     assertFalse(json.containsKey(k1));
     assertTrue(json.containsKey(k2));
+  }
+
+
+  @Test
+  public void toArray() {
+    assertEquals(11, json.values().toArray().length);
+    assertEquals(11, json.values().toArray(new JsonValue[0]).length);
+    assertEquals(11, json.values().toArray(JsonValue[]::new).length);
+  }
+
+
+  @Test(expected = UnsupportedOperationException.class)
+  public void valuesAdd() {
+    json.values().add(JsonValue.NULL);
+  }
+
+
+  @Test(expected = UnsupportedOperationException.class)
+  public void valuesAddAll() {
+    json.values().addAll(Set.of(JsonValue.NULL, JsonValue.TRUE));
+  }
+
+
+  @Test
+  public void valuesClear() {
+    Collection<JsonValue> v = json.values();
+    assertFalse(v.isEmpty());
+    v.clear();
+    assertTrue(json.isEmpty());
+    assertTrue(v.isEmpty());
+  }
+
+
+  @Test
+  public void valuesContains() {
+    assertTrue(json.values().contains(JsonValue.TRUE));
+    assertFalse(json.values().contains(PNumber.create(555)));
+  }
+
+
+  @Test
+  public void valuesContainsAll() {
+    assertTrue(json.values().containsAll(Set.of(JsonValue.TRUE, JsonValue.NULL)));
+  }
+
+
+  @Test
+  public void valuesEquals() {
+    assertFalse(json.values().equals(new JArray()));
+  }
+
+
+  @Test
+  public void valuesIterator() {
+    Collection<JsonValue> v = json.values();
+    Iterator<JsonValue> iterator = v.iterator();
+    assertTrue(iterator.hasNext());
+    assertEquals(PString.create("bell"), iterator.next());
+    iterator.remove();
+    assertFalse(json.containsValue(PString.create("bell")));
+  }
+
+
+  @Test
+  public void valuesParallelStream() {
+    assertEquals(11, json.values().parallelStream().count());
+  }
+
+
+  @Test
+  public void valuesRemove() {
+    assertTrue(json.values().remove(JsonValue.TRUE));
+    assertFalse(json.containsValue(JsonValue.TRUE));
+  }
+
+
+  @Test
+  public void valuesRemoveAll() {
+    assertTrue(json.values().removeAll(Set.of(JsonValue.TRUE, JsonValue.FALSE)));
+    assertFalse(json.containsValue(JsonValue.TRUE));
+  }
+
+
+  @Test
+  public void valuesRemoveIf() {
+    assertTrue(json.values().removeIf(v -> v.getValueType() != ValueType.NUMBER));
+    assertFalse(json.containsKey("null"));
+    assertTrue(json.containsKey("small number"));
+  }
+
+
+  @Test
+  public void valuesRetainAll() {
+    assertTrue(json.values().retainAll(Set.of(JsonValue.TRUE, JsonValue.EMPTY_JSON_OBJECT)));
+    assertEquals(2, json.size());
+  }
+
+
+  @Test
+  public void valuesSpliterator() {
+    // Spliterator implementation is tested in JArray
+    assertNotNull(json.values().spliterator());
+  }
+
+
+  @Test
+  public void valuesStream() {
+    assertEquals(11, json.values().stream().count());
   }
 }

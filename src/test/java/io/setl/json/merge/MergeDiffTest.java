@@ -6,6 +6,7 @@ import io.setl.json.JObject;
 import io.setl.json.builder.JObjectBuilder;
 import io.setl.json.primitive.PString;
 import io.setl.json.primitive.numbers.PInt;
+import io.setl.json.primitive.numbers.PNumber;
 import java.util.Map;
 import javax.json.JsonValue;
 import org.junit.Test;
@@ -17,8 +18,8 @@ public class MergeDiffTest {
 
   @Test
   public void test1() {
-    JsonValue in = new PInt(1);
-    JsonValue out = new PString("wibble");
+    JsonValue in = PNumber.create(1);
+    JsonValue out = PString.create("wibble");
     JMerge merge = MergeDiff.create(in, out);
     JsonValue result = merge.apply(in);
     assertEquals(out, result);

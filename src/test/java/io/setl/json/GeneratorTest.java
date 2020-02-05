@@ -71,50 +71,50 @@ public class GeneratorTest {
   @Test
   @SuppressWarnings({"checkstyle:IllegalTokenText", "checkstyle:AvoidEscapedUnicodeCharacters"})
   public void testString() {
-    assertEquals("\"\"", new PString("").toString());
-    assertEquals("\"abc\"", new PString("abc").toString());
-    assertEquals("\"\\u0007 \\b \\t \\n \\u000B \\f \\r \\u000E \\\\\\\"\"", new PString("\u0007 \u0008 \t \n \u000b \u000c \r \u000e \\\"").toString());
+    assertEquals("\"\"", PString.create("").toString());
+    assertEquals("\"abc\"", PString.create("abc").toString());
+    assertEquals("\"\\u0007 \\b \\t \\n \\u000B \\f \\r \\u000E \\\\\\\"\"", PString.create("\u0007 \u0008 \t \n \u000b \u000c \r \u000e \\\"").toString());
 
     char[] chars = new char[]{'.', '.', '.', '.'};
 
     // isolated high surrogate
     chars[1] = (char) 0xd801;
-    assertEquals("\".\\uD801..\"", new PString(new String(chars)).toString());
+    assertEquals("\".\\uD801..\"", PString.create(new String(chars)).toString());
 
     // isolated low surrogate
     chars[1] = (char) 0xdc01;
-    assertEquals("\".\\uDC01..\"", new PString(new String(chars)).toString());
+    assertEquals("\".\\uDC01..\"", PString.create(new String(chars)).toString());
 
     // reversed surrogate pair
     chars[1] = (char) 0xdc01;
     chars[2] = (char) 0xd801;
-    assertEquals("\".\\uDC01\\uD801.\"", new PString(new String(chars)).toString());
+    assertEquals("\".\\uDC01\\uD801.\"", PString.create(new String(chars)).toString());
 
     // actual surrogate pair
     chars[1] = (char) 0xd801;
     chars[2] = (char) 0xdc01;
-    assertEquals("\".\uD801\uDC01.\"", new PString(new String(chars)).toString());
+    assertEquals("\".\uD801\uDC01.\"", PString.create(new String(chars)).toString());
 
     // all surrogates
     chars[0] = (char) 0xdc01;
     chars[1] = (char) 0xdc02;
     chars[2] = (char) 0xd801;
     chars[3] = (char) 0xd802;
-    assertEquals("\"\\uDC01\\uDC02\\uD801\\uD802\"", new PString(new String(chars)).toString());
+    assertEquals("\"\\uDC01\\uDC02\\uD801\\uD802\"", PString.create(new String(chars)).toString());
 
     // surrogates at start and end
     chars[0] = (char) 0xdc01;
     chars[1] = '.';
     chars[2] = '.';
     chars[3] = (char) 0xdc05;
-    assertEquals("\"\\uDC01..\\uDC05\"", new PString(new String(chars)).toString());
+    assertEquals("\"\\uDC01..\\uDC05\"", PString.create(new String(chars)).toString());
 
     // surrogates at start and end
     chars[0] = (char) 0xd801;
     chars[1] = '.';
     chars[2] = '.';
     chars[3] = (char) 0xd805;
-    assertEquals("\"\\uD801..\\uD805\"", new PString(new String(chars)).toString());
+    assertEquals("\"\\uD801..\\uD805\"", PString.create(new String(chars)).toString());
 
   }
 }

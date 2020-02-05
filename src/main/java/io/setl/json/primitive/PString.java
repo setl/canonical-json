@@ -1,6 +1,8 @@
 package io.setl.json.primitive;
 
 import java.io.IOException;
+import java.util.Objects;
+import javax.annotation.Nonnull;
 import javax.json.JsonString;
 
 /**
@@ -26,20 +28,14 @@ public class PString extends PBase implements JsonString {
 
 
   /**
-   * Append a properly escaped canonical string to the provided buffer.
+   * Get an instance that encapsulates the specified value.
    *
-   * @param buf   the buffer
    * @param value the value
    *
-   * @return the passed in buffer
+   * @return the instance
    */
-  public static StringBuilder format(StringBuilder buf, String value) {
-    try {
-      format((Appendable) buf, value);
-    } catch (IOException e) {
-      throw new InternalError("IO Exception without I/O", e);
-    }
-    return buf;
+  public static PString create(@Nonnull String value) {
+    return new PString(value);
   }
 
 
@@ -104,6 +100,24 @@ public class PString extends PBase implements JsonString {
 
     // closing quote
     buf.append('"');
+  }
+
+
+  /**
+   * Append a properly escaped canonical string to the provided buffer.
+   *
+   * @param buf   the buffer
+   * @param value the value
+   *
+   * @return the passed in buffer
+   */
+  public static StringBuilder format(StringBuilder buf, String value) {
+    try {
+      format((Appendable) buf, value);
+    } catch (IOException e) {
+      throw new InternalError("IO Exception without I/O", e);
+    }
+    return buf;
   }
 
 
@@ -183,8 +197,22 @@ public class PString extends PBase implements JsonString {
   private final String value;
 
 
-  public PString(String value) {
+  private PString(String value) {
     this.value = value;
+  }
+
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof JsonString)) {
+      return false;
+    }
+
+    JsonString jsonString = (JsonString) o;
+    return Objects.equals(getString(), jsonString.getString());
   }
 
 

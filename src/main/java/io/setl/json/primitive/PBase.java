@@ -22,22 +22,6 @@ public abstract class PBase implements Primitive {
   }
 
 
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (!(obj instanceof PBase)) {
-      return false;
-    }
-    PBase other = (PBase) obj;
-    if (getValueType() != other.getValueType()) {
-      return false;
-    }
-    return Objects.equals(getValue(), other.getValue());
-  }
-
-
   /**
    * Get the value encapsulated by this primitive.
    *

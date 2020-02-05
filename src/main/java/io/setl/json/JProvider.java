@@ -13,7 +13,6 @@ import io.setl.json.patch.JPatchBuilder;
 import io.setl.json.patch.PatchDiff;
 import io.setl.json.pointer.JPointerFactory;
 import io.setl.json.primitive.PString;
-import io.setl.json.primitive.numbers.PInt;
 import io.setl.json.primitive.numbers.PNumber;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -191,13 +190,13 @@ public class JProvider extends JsonProvider {
 
   @Override
   public JsonString createValue(String value) {
-    return new PString(value);
+    return PString.create(value);
   }
 
 
   @Override
   public JsonNumber createValue(int value) {
-    return new PInt(value);
+    return PNumber.create(value);
   }
 
 

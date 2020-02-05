@@ -74,12 +74,12 @@ public class PrimitiveTest {
     Primitive.NULL.hashCode();
     assertEquals(primitive, primitive);
     assertNotEquals(null, primitive);
-    assertEquals(primitive, new PString("123"));
-    assertNotEquals(primitive, new PString("456"));
-    assertNotEquals(primitive, new PInt(123));
+    assertEquals(primitive, PString.create("123"));
+    assertNotEquals(primitive, PString.create("456"));
+    assertNotEquals(primitive, PNumber.create(123));
     assertNotEquals(primitive, PNull.NULL);
     assertEquals(Primitive.NULL, PNull.NULL);
-    assertNotEquals(Primitive.NULL, new PString("123"));
+    assertNotEquals(Primitive.NULL, PString.create("123"));
     assertNotEquals("null", Primitive.NULL);
   }
 
@@ -123,7 +123,7 @@ public class PrimitiveTest {
 
   @Test
   public void testToString() {
-    assertEquals("\"abc\"", new PString("abc").toString());
+    assertEquals("\"abc\"", PString.create("abc").toString());
     assertEquals("true", Primitive.TRUE.toString());
     assertEquals("5.0E-1", PNumber.create(0.5).toString());
   }

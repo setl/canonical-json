@@ -1,19 +1,5 @@
 package io.setl.json;
 
-import io.setl.json.builder.JBuilderFactory;
-import io.setl.json.io.JGeneratorFactory;
-import io.setl.json.io.JReaderFactory;
-import io.setl.json.io.JWriterFactory;
-import io.setl.json.merge.JMerge;
-import io.setl.json.merge.MergeDiff;
-import io.setl.json.parser.JParser;
-import io.setl.json.parser.JParserFactory;
-import io.setl.json.patch.JPatch;
-import io.setl.json.patch.JPatchBuilder;
-import io.setl.json.patch.PatchDiff;
-import io.setl.json.pointer.JPointerFactory;
-import io.setl.json.primitive.PString;
-import io.setl.json.primitive.numbers.PNumber;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
@@ -44,6 +30,21 @@ import javax.json.stream.JsonGenerator;
 import javax.json.stream.JsonGeneratorFactory;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParserFactory;
+
+import io.setl.json.builder.JBuilderFactory;
+import io.setl.json.io.JGeneratorFactory;
+import io.setl.json.io.JReaderFactory;
+import io.setl.json.io.JWriterFactory;
+import io.setl.json.merge.JMerge;
+import io.setl.json.merge.MergeDiff;
+import io.setl.json.parser.JParser;
+import io.setl.json.parser.JParserFactory;
+import io.setl.json.patch.JPatch;
+import io.setl.json.patch.JPatchBuilder;
+import io.setl.json.patch.PatchFactory;
+import io.setl.json.pointer.JPointerFactory;
+import io.setl.json.primitive.PString;
+import io.setl.json.primitive.numbers.PNumber;
 
 /**
  * @author Simon Greatrix on 15/01/2020.
@@ -76,7 +77,7 @@ public class JProvider extends JsonProvider {
 
   @Override
   public JsonPatch createDiff(JsonStructure source, JsonStructure target) {
-    return PatchDiff.create(source, target);
+    return new PatchFactory(null).create(source, target);
   }
 
 
@@ -208,19 +209,19 @@ public class JProvider extends JsonProvider {
 
   @Override
   public JsonNumber createValue(double value) {
-    return PNumber.create(value);
+    return PNumber.cast(value);
   }
 
 
   @Override
   public JsonNumber createValue(BigDecimal value) {
-    return PNumber.create(value);
+    return PNumber.cast(value);
   }
 
 
   @Override
   public JsonNumber createValue(BigInteger value) {
-    return PNumber.create(value);
+    return PNumber.cast(value);
   }
 
 
@@ -240,4 +241,5 @@ public class JProvider extends JsonProvider {
   public JsonWriterFactory createWriterFactory(Map<String, ?> config) {
     return new JWriterFactory();
   }
+
 }

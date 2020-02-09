@@ -1,12 +1,19 @@
 package io.setl.json.exception;
 
+import io.setl.json.primitive.PString;
+
 /**
  * @author Simon Greatrix on 24/01/2020.
  */
 public class NonFiniteNumberException extends ArithmeticException {
 
-  private static final long serialVersionUID = 1L;
+  private static final PString REP_INFINITY = PString.create("Infinity");
 
+  private static final PString REP_NAN = PString.create("NaN");
+
+  private static final PString REP_NEG_INFINITY = PString.create("-Infinity");
+
+  private static final long serialVersionUID = 1L;
 
 
   /**
@@ -18,9 +25,8 @@ public class NonFiniteNumberException extends ArithmeticException {
     POSITIVE_INFINITY
   }
 
-
-
   private final Type type;
+
 
 
   /**
@@ -49,6 +55,21 @@ public class NonFiniteNumberException extends ArithmeticException {
       type = Type.NAN;
     } else {
       type = f < 0 ? Type.NEGATIVE_INFINITY : Type.POSITIVE_INFINITY;
+    }
+  }
+
+
+  public PString getRepresentation() {
+    switch (getType()) {
+      case NAN:
+        return REP_NAN;
+      case NEGATIVE_INFINITY:
+        return REP_NEG_INFINITY;
+      case POSITIVE_INFINITY:
+        return REP_INFINITY;
+      default:
+        // Can't happen
+        throw new IllegalStateException("Unknown Non-finite type " + getType());
     }
   }
 

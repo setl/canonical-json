@@ -125,6 +125,6 @@ public class PrimitiveTest {
   public void testToString() {
     assertEquals("\"abc\"", PString.create("abc").toString());
     assertEquals("true", Primitive.TRUE.toString());
-    assertEquals("5.0E-1", PNumber.create(0.5).toString());
+    assertEquals("5.0E-1", PNumber.cast(0.5).toString());
   }
 }

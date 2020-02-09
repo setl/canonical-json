@@ -1,13 +1,5 @@
 package io.setl.json;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import io.setl.json.exception.IncorrectTypeException;
-import io.setl.json.exception.MissingItemException;
-import io.setl.json.jackson.JsonArraySerializer;
-import io.setl.json.primitive.PNull;
-import io.setl.json.primitive.PString;
-import io.setl.json.primitive.PTrue;
-import io.setl.json.primitive.numbers.PNumber;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -37,6 +29,16 @@ import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.json.JsonValue;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import io.setl.json.exception.IncorrectTypeException;
+import io.setl.json.exception.MissingItemException;
+import io.setl.json.jackson.JsonArraySerializer;
+import io.setl.json.primitive.PNull;
+import io.setl.json.primitive.PString;
+import io.setl.json.primitive.PTrue;
+import io.setl.json.primitive.numbers.PNumber;
 
 /**
  * Representation of an array in JSON.
@@ -156,6 +158,7 @@ public class JArray implements JsonArray, Primitive {
     public void set(JsonValue jsonValue) {
       me.set(Primitive.cast(jsonValue));
     }
+
   }
 
 
@@ -205,6 +208,7 @@ public class JArray implements JsonArray, Primitive {
       }
       return null;
     }
+
   }
 
 
@@ -215,7 +219,7 @@ public class JArray implements JsonArray, Primitive {
    *
    * @return the JsonArray
    */
-  static JArray fixCollection(Collection<?> c) {
+  public static JArray asJArray(Collection<?> c) {
     if (c instanceof JArray) {
       return (JArray) c;
     }
@@ -266,7 +270,7 @@ public class JArray implements JsonArray, Primitive {
 
 
   public JArray(Collection<?> c) {
-    myList = new ArrayList<>(fixCollection(c).myList);
+    myList = new ArrayList<>(asJArray(c).myList);
   }
 
 
@@ -286,7 +290,7 @@ public class JArray implements JsonArray, Primitive {
 
 
   public void add(int index, Number number) {
-    add(index, number != null ? PNumber.create(number) : PNull.NULL);
+    add(index, number != null ? PNumber.cast(number) : PNull.NULL);
   }
 
 
@@ -1168,7 +1172,7 @@ public class JArray implements JsonArray, Primitive {
 
   @Nonnull
   public JsonValue set(int index, Number number) {
-    Primitive p = (number != null) ? PNumber.create(number) : PNull.NULL;
+    Primitive p = (number != null) ? PNumber.cast(number) : PNull.NULL;
     return myList.set(index, p);
   }
 
@@ -1266,4 +1270,5 @@ public class JArray implements JsonArray, Primitive {
     }
     writer.append(']');
   }
+
 }

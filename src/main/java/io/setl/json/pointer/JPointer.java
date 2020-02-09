@@ -43,11 +43,6 @@ public class JPointer implements JsonPointer {
   }
 
 
-  public String getPath() {
-    return path;
-  }
-
-
   @Override
   public JsonValue getValue(JsonStructure target) {
     if (target.getValueType() == ValueType.OBJECT) {

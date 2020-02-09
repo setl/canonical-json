@@ -1,10 +1,24 @@
 package io.setl.json.patch;
 
-import io.setl.json.Primitive;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import javax.json.JsonArray;
 import javax.json.JsonPatch;
 import javax.json.JsonStructure;
-import javax.json.JsonValue;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import io.setl.json.JArray;
+import io.setl.json.JObject;
+import io.setl.json.Primitive;
+import io.setl.json.patch.ops.Add;
+import io.setl.json.patch.ops.Copy;
+import io.setl.json.patch.ops.Move;
+import io.setl.json.patch.ops.Remove;
+import io.setl.json.patch.ops.Replace;
+import io.setl.json.patch.ops.Test;
 
 /**
  * Implementation of JSON Patch as defined in RFC-6902.
@@ -13,28 +27,70 @@ import javax.json.JsonValue;
  */
 public class JPatch implements JsonPatch {
 
-  JsonArray array;
+  private final List<PatchOperation> operations;
 
-  public JPatch(JsonArray patch) {
-    // TODO : Implement me! simongreatrix 28/01/2020
 
+  @JsonCreator
+  public JPatch(@JsonProperty("operations") List<PatchOperation> operationList) {
+    operations = new ArrayList<>(operationList);
   }
 
-  public JPatch() {
-    // TODO : Implement me! simongreatrix 28/01/2020
 
+  public JPatch(JsonArray array) {
+    int s = array.size();
+    operations = new ArrayList<>(s);
+    for (int i = 0; i < s; i++) {
+      JObject jsonObject = JObject.asJObject(array.getJsonObject(i));
+      String op = jsonObject.getString("op");
+      switch (op) {
+        case "add":
+          operations.add(new Add(jsonObject));
+          break;
+        case "copy":
+          operations.add(new Copy(jsonObject));
+          break;
+        case "move":
+          operations.add(new Move(jsonObject));
+          break;
+        case "remove":
+          operations.add(new Remove(jsonObject));
+          break;
+        case "replace":
+          operations.add(new Replace(jsonObject));
+          break;
+        case "test":
+          operations.add(new Test(jsonObject));
+          break;
+        default:
+          throw new IllegalArgumentException("Unknown operation: \"" + op + "\"");
+      }
+    }
   }
+
 
   @Override
   public <T extends JsonStructure> T apply(T target) {
-    // TODO : Implement me! simongreatrix 28/01/2020
-    return null;
+    @SuppressWarnings("unchecked")
+    T output = (T) Primitive.cast(target).copy();
+    for (PatchOperation op : operations) {
+      output = op.apply(output);
+    }
+    return output;
+  }
+
+
+  public List<PatchOperation> getOperations() {
+    return Collections.unmodifiableList(operations);
   }
 
 
   @Override
   public JsonArray toJsonArray() {
-    // TODO : Implement me! simongreatrix 28/01/2020
-    return null;
+    JsonArray jsonArray = new JArray();
+    for (PatchOperation op : operations) {
+      jsonArray.add(op.toJsonObject());
+    }
+    return jsonArray;
   }
+
 }

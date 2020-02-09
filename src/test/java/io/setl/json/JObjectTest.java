@@ -478,9 +478,9 @@ public class JObjectTest {
     hm.put("f", "text");
     hm.put("g", Primitive.TRUE);
 
-    JObject fixed = JObject.fixMap(hm);
+    JObject fixed = JObject.asJObject(hm);
     assertEquals("{\"a\":[1,2,3],\"b\":true,\"c\":null,\"d\":5,\"e\":{},\"f\":\"text\",\"g\":true}", fixed.toString());
-    JObject fixed2 = JObject.fixMap(fixed);
+    JObject fixed2 = JObject.asJObject(fixed);
     assertSame(fixed, fixed2);
 
     HashMap<String, Object> hm2 = new HashMap<>();
@@ -492,7 +492,7 @@ public class JObjectTest {
     hm.clear();
     hm.put(1, 2);
     try {
-      JObject.fixMap(hm);
+      JObject.asJObject(hm);
       fail();
     } catch (IllegalArgumentException e) {
       // correct
@@ -501,7 +501,7 @@ public class JObjectTest {
     hm.clear();
     hm.put(null, null);
     try {
-      JObject.fixMap(hm);
+      JObject.asJObject(hm);
       fail();
     } catch (IllegalArgumentException e) {
       // correct

@@ -1,21 +1,12 @@
 package io.setl.json;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import io.setl.json.JArray.MySpliterator;
-import io.setl.json.exception.IncorrectTypeException;
-import io.setl.json.exception.MissingItemException;
-import io.setl.json.jackson.JsonObjectSerializer;
-import io.setl.json.primitive.PFalse;
-import io.setl.json.primitive.PNull;
-import io.setl.json.primitive.PString;
-import io.setl.json.primitive.PTrue;
-import io.setl.json.primitive.numbers.PNumber;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -27,6 +18,7 @@ import java.util.Spliterator;
 import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -34,6 +26,7 @@ import java.util.function.Predicate;
 import java.util.function.ToDoubleFunction;
 import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
+import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,6 +35,18 @@ import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.json.JsonValue;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import io.setl.json.JArray.MySpliterator;
+import io.setl.json.exception.IncorrectTypeException;
+import io.setl.json.exception.MissingItemException;
+import io.setl.json.jackson.JsonObjectSerializer;
+import io.setl.json.primitive.PFalse;
+import io.setl.json.primitive.PNull;
+import io.setl.json.primitive.PString;
+import io.setl.json.primitive.PTrue;
+import io.setl.json.primitive.numbers.PNumber;
 
 /**
  * Representation of an object in JSON.
@@ -295,6 +300,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
     public String toString() {
       return mySet.toString();
     }
+
   }
 
 
@@ -340,6 +346,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
     public JsonValue setValue(JsonValue value) {
       return me.setValue(Primitive.cast(value));
     }
+
   }
 
 
@@ -390,6 +397,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
       }
       return null;
     }
+
   }
 
 
@@ -526,6 +534,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
     public <T> T[] toArray(IntFunction<T[]> generator) {
       return me.toArray(generator);
     }
+
   }
 
 
@@ -536,7 +545,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
    *
    * @return the equivalent JObject
    */
-  static JObject fixMap(Map<?, ?> map) {
+  public static JObject asJObject(Map<?, ?> map) {
     if (map instanceof JObject) {
       return (JObject) map;
     }
@@ -707,6 +716,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
   }
 
 
+  @Override
   public void forEach(BiConsumer<? super String, ? super JsonValue> action) {
     myMap.forEach(action);
   }
@@ -1007,6 +1017,56 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
 
   /**
+   * Get a JsonValue from this object. The value must exist.
+   *
+   * @param key the value's key
+   *
+   * @return the value
+   */
+  public JsonValue getJsonValue(String key) {
+    Primitive primitive = getPrimitive(key);
+    if (primitive == null) {
+      throw new MissingItemException(key, EnumSet.allOf(ValueType.class));
+    }
+    return primitive;
+  }
+
+
+  /**
+   * Get a JsonValue from this object. If the value does not exist, the default value is returned.
+   *
+   * @param key  the value's key
+   * @param dflt the default value
+   *
+   * @return the value
+   */
+  public JsonValue getJsonValue(String key, JsonValue dflt) {
+    Primitive primitive = getPrimitive(key);
+    if (primitive == null) {
+      return dflt;
+    }
+    return primitive;
+  }
+
+
+  /**
+   * Get a JsonValue from this object. If the value does not exist, the function is invoked to create a value.
+   *
+   * @param key  the value's key
+   * @param dflt supplier of a default value
+   *
+   * @return the value
+   */
+  public JsonValue getJsonValue(String key, @Nonnull Function<String, JsonValue> dflt) {
+    Primitive primitive = getPrimitive(key);
+    if (primitive == null) {
+      return dflt.apply(key);
+    }
+    return primitive;
+  }
+
+
+  /**
    * Get a long from the object.
    *
    * @param key  the key
@@ -1137,7 +1197,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
    *
    * @return the String, or the default
    */
-  public String getString(String key, @Nonnull Function<String, String> dflt) {
+  public String getString(String key, @Nonnull UnaryOperator<String> dflt) {
     return getQuiet(String.class, key, dflt);
   }
 
@@ -1244,7 +1304,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
     if (primitive == null) {
       throw new MissingItemException(key, type);
     }
-    return (primitive != null) && primitive.getValueType() == type;
+    return primitive.getValueType() == type;
   }
 
 
@@ -1280,7 +1340,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
   @Override
   public JsonValue merge(String key, JsonValue value, BiFunction<? super JsonValue, ? super JsonValue, ? extends JsonValue> remappingFunction) {
-    final BiFunction<Primitive, Primitive, Primitive> myFunction = (v1, v2) -> Primitive.cast(remappingFunction.apply(v1, v2));
+    final BinaryOperator<Primitive> myFunction = (v1, v2) -> Primitive.cast(remappingFunction.apply(v1, v2));
     return myMap.merge(key, Primitive.cast(value), myFunction);
   }
 
@@ -1361,6 +1421,18 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
   public Integer optInt(String key) {
     Number n = getQuiet(Number.class, key);
     return (n != null) ? Integer.valueOf(n.intValue()) : null;
+  }
+
+
+  /**
+   * Get a JsonValue from this object. If the value does not exist, null is returned.
+   *
+   * @param key the value's key
+   *
+   * @return the value
+   */
+  public JsonValue optJsonValue(String key) {
+    return getPrimitive(key);
   }
 
 
@@ -1519,7 +1591,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
    */
   public void put(String key, Number value) {
     if (value != null) {
-      put(key, PNumber.create(value));
+      put(key, PNumber.cast(value));
     } else {
       put(key, PNull.NULL);
     }
@@ -1764,4 +1836,5 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
     }
     writer.append('}');
   }
+
 }

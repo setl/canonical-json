@@ -64,15 +64,15 @@ public interface Primitive extends JsonValue {
     }
     switch (value.getValueType()) {
       case ARRAY:
-        return JArray.fixCollection(value.asJsonArray());
+        return JArray.asJArray(value.asJsonArray());
       case FALSE:
         return PFalse.FALSE;
       case NUMBER:
-        return PNumber.create(((JsonNumber) value).numberValue());
+        return PNumber.castUnsafe(((JsonNumber) value).numberValue());
       case NULL:
         return PNull.NULL;
       case OBJECT:
-        return JObject.fixMap(value.asJsonObject());
+        return JObject.asJObject(value.asJsonObject());
       case STRING:
         return PString.create(((JsonString) value).getString());
       case TRUE:
@@ -130,13 +130,13 @@ public interface Primitive extends JsonValue {
       return PString.create((String) value);
     }
     if (value instanceof Number) {
-      return PNumber.cast((Number) value);
+      return PNumber.castUnsafe((Number) value);
     }
     if (value instanceof Collection<?>) {
-      return JArray.fixCollection((Collection<?>) value);
+      return JArray.asJArray((Collection<?>) value);
     }
     if (value instanceof Map<?, ?>) {
-      return JObject.fixMap((Map<?, ?>) value);
+      return JObject.asJObject((Map<?, ?>) value);
     }
     throw new IllegalArgumentException("Cannot include item of class " + value.getClass() + " in JSON");
   }

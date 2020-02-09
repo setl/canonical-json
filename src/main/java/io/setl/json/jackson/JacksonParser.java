@@ -111,13 +111,13 @@ public class JacksonParser implements JsonReader {
           case LONG:
             return PNumber.create(jsonParser.getLongValue());
           case BIG_INTEGER:
-            return PNumber.create(jsonParser.getBigIntegerValue());
+            return PNumber.cast(jsonParser.getBigIntegerValue());
           default:
             // hopefully unreachable
             throw new IllegalStateException("Unexpected integer type: " + jsonParser.getNumberType());
         }
       case VALUE_NUMBER_FLOAT:
-        return PNumber.create(jsonParser.getDecimalValue());
+        return PNumber.cast(jsonParser.getDecimalValue());
       default:
         // Reachable if the encoding uses stuff beyond JSON like embedded objects and reference IDs
         throw new IllegalStateException("Unhandled token from Jackson: " + token);

@@ -2,6 +2,7 @@ package io.setl.json.jackson;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.setl.json.exception.JsonIOException;
+import io.setl.json.exception.NonFiniteNumberException;
 import io.setl.json.primitive.numbers.PNumber;
 import java.io.IOException;
 import java.util.Map.Entry;
@@ -89,7 +90,13 @@ public class JacksonGenerator {
 
 
   private void generateNumber(JsonNumber jsonValue) throws IOException {
-    PNumber pNumber = PNumber.cast(jsonValue);
+    PNumber pNumber;
+    try {
+      pNumber = PNumber.cast(jsonValue);
+    } catch (NonFiniteNumberException e) {
+      jsonGenerator.writeString(e.getRepresentation().getString());
+      return;
+    }
     switch (pNumber.getNumberType()) {
       case PNumber.TYPE_INT:
         jsonGenerator.writeNumber(pNumber.intValue());

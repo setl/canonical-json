@@ -4,7 +4,7 @@ import static io.setl.json.parser.JParser.isWhite;
 import static io.setl.json.parser.JParser.safe;
 
 import io.setl.json.io.Input;
-import io.setl.json.primitive.cache.CacheCreator;
+import io.setl.json.primitive.cache.CacheManager;
 import io.setl.json.primitive.cache.ICache;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -201,7 +201,7 @@ public class NumberParser {
 
 
   protected static PNumber doCreateBigDecimal(String txt) {
-    return PNumber.create(new BigDecimal(txt));
+    return PNumber.cast(new BigDecimal(txt));
   }
 
 
@@ -269,7 +269,7 @@ public class NumberParser {
 
     String txt = buf.toString();
 
-    ICache<String, PNumber> cache = CacheCreator.numberCache();
+    ICache<String, PNumber> cache = CacheManager.numberCache();
     PNumber pNumber;
     try {
       if (needBigDecimal) {

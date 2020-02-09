@@ -1,7 +1,6 @@
 package io.setl.json.primitive;
 
-import io.setl.json.Primitive;
-import io.setl.json.primitive.cache.CacheCreator;
+import io.setl.json.primitive.cache.CacheManager;
 import io.setl.json.primitive.cache.ICache;
 import java.io.IOException;
 import java.util.Objects;
@@ -38,7 +37,7 @@ public class PString extends PBase implements JsonString {
    * @return the instance
    */
   public static PString create(@Nonnull String value) {
-    ICache<String, PString> cache = CacheCreator.stringCache();
+    ICache<String, PString> cache = CacheManager.stringCache();
     return cache.get(value,PString::new);
   }
 

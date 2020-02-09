@@ -13,15 +13,15 @@ public class GeneratorTest {
 
   @Test
   public void testBigDecimal() {
-    assertEquals("1.234E0", PNumber.create(new BigDecimal("1.234")).toString());
-    assertEquals("-1.234E0", PNumber.create(new BigDecimal("-1.234")).toString());
-    assertEquals("1.0E-1", PNumber.create(new BigDecimal(".1")).toString());
+    assertEquals("1.234E0", PNumber.cast(new BigDecimal("1.234")).toString());
+    assertEquals("-1.234E0", PNumber.cast(new BigDecimal("-1.234")).toString());
+    assertEquals("1.0E-1", PNumber.cast(new BigDecimal(".1")).toString());
   }
 
 
   @Test
   public void testBigInteger() {
-    assertEquals("987654321987654321987654321987654321", PNumber.create(new BigInteger("987654321987654321987654321987654321")).toString());
+    assertEquals("987654321987654321987654321987654321", PNumber.cast(new BigInteger("987654321987654321987654321987654321")).toString());
   }
 
 
@@ -34,37 +34,37 @@ public class GeneratorTest {
 
   @Test
   public void testDouble() {
-    assertEquals("340282346638528900000000000000000000000", PNumber.create(Double.valueOf(Math.ulp((double) Float.MAX_VALUE) + Float.MAX_VALUE)).toString());
-    assertEquals("1.4012984643248174E-45", PNumber.create(Double.valueOf(Math.ulp((double) Float.MIN_VALUE) + Float.MIN_VALUE)).toString());
+    assertEquals("340282346638528900000000000000000000000", PNumber.cast(Double.valueOf(Math.ulp((double) Float.MAX_VALUE) + Float.MAX_VALUE)).toString());
+    assertEquals("1.4012984643248174E-45", PNumber.cast(Double.valueOf(Math.ulp((double) Float.MIN_VALUE) + Float.MIN_VALUE)).toString());
   }
 
 
   @Test
   public void testFloat() {
-    assertEquals("1.2345E1", PNumber.create(12.345f).toString());
-    assertEquals("0", PNumber.create(0.0f).toString());
-    assertEquals("0", PNumber.create(-0.0f).toString());
+    assertEquals("1.2345E1", PNumber.cast(12.345f).toString());
+    assertEquals("0", PNumber.cast(0.0f).toString());
+    assertEquals("0", PNumber.cast(-0.0f).toString());
   }
 
 
   @Test
   public void testInt() {
-    assertEquals("7654321", PNumber.create(Integer.valueOf(7654321)).toString());
-    assertEquals("-123456789", PNumber.create(Integer.valueOf(-123456789)).toString());
+    assertEquals("7654321", PNumber.cast(Integer.valueOf(7654321)).toString());
+    assertEquals("-123456789", PNumber.cast(Integer.valueOf(-123456789)).toString());
   }
 
 
   @Test
   public void testLong() {
-    assertEquals("987654321987654321", PNumber.create(Long.valueOf(987654321987654321L)).toString());
-    assertEquals("-123456789123456789", PNumber.create(Long.valueOf(-123456789123456789L)).toString());
+    assertEquals("987654321987654321", PNumber.cast(Long.valueOf(987654321987654321L)).toString());
+    assertEquals("-123456789123456789", PNumber.cast(Long.valueOf(-123456789123456789L)).toString());
   }
 
 
   @Test
   public void testShort() {
-    assertEquals("4321", PNumber.create(Short.valueOf((short) 4321)).toString());
-    assertEquals("-12345", PNumber.create(Short.valueOf((short) -12345)).toString());
+    assertEquals("4321", PNumber.cast(Short.valueOf((short) 4321)).toString());
+    assertEquals("-12345", PNumber.cast(Short.valueOf((short) -12345)).toString());
   }
 
 

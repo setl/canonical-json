@@ -1,6 +1,6 @@
 package io.setl.json;
 
-import static io.setl.json.JArray.fixCollection;
+import static io.setl.json.JArray.asJArray;
 import static io.setl.json.JArray.fixPrimitiveCollection;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -14,7 +14,6 @@ import static org.junit.Assert.fail;
 import io.setl.json.exception.IncorrectTypeException;
 import io.setl.json.exception.MissingItemException;
 import io.setl.json.primitive.PTrue;
-import io.setl.json.primitive.numbers.PInt;
 import io.setl.json.primitive.numbers.PNumber;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -344,12 +343,12 @@ public class JArrayTest {
   @Test
   public void testFixCollection() {
     JArray ja = new JArray();
-    assertSame(ja, fixCollection(ja));
+    assertSame(ja, asJArray(ja));
     ja.add("abc");
     ja.add(123);
     ja.addNull();
     ja.add(true);
-    assertEquals(ja, fixCollection(Arrays.asList("abc", PNumber.create(123), null, JsonValue.TRUE)));
+    assertEquals(ja, asJArray(Arrays.asList("abc", PNumber.create(123), null, JsonValue.TRUE)));
   }
 
 

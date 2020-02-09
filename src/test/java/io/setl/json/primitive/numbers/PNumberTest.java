@@ -139,14 +139,14 @@ public class PNumberTest {
     PNumber pc = PNumber.create(1);
     assertTrue(pn.equals(pc));
 
-    pc = PNumber.create(12345678901234L);
+    pc = PNumber.cast(12345678901234L);
     assertFalse(pn.equals(pc));
 
-    pc = PNumber.create(1234.5678);
+    pc = PNumber.cast(1234.5678);
     assertFalse(pn.equals(pc));
 
 
-    pc = PNumber.create(BigInteger.ONE.shiftLeft(64));
+    pc = PNumber.cast(BigInteger.ONE.shiftLeft(64));
     assertFalse(pn.equals(pc));
 
   }

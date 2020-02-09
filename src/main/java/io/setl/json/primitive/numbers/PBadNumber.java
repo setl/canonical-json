@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import javax.json.JsonException;
 import javax.json.stream.JsonParsingException;
 
 /**
@@ -39,7 +38,7 @@ class PBadNumber extends PNumber {
 
 
   protected void check() {
-    throw new JsonException("Numeric value could not be created", failure);
+    throw new JsonParsingException("Numeric value could not be created", failure, failure.getLocation());
   }
 
 

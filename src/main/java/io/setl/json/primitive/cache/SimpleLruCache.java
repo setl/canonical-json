@@ -18,9 +18,8 @@ public class SimpleLruCache<K, V> implements ICache<K, V> {
     private final int maxSize;
 
 
-    public Cache(int initialCapacity) {
-      super(initialCapacity, 0.75f, true);
-      maxSize = initialCapacity;
+    public Cache(int maxSize) {
+      this.maxSize = maxSize;
     }
 
 

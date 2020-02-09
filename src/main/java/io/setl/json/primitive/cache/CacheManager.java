@@ -1,6 +1,5 @@
 package io.setl.json.primitive.cache;
 
-import io.setl.json.Primitive;
 import io.setl.json.primitive.PString;
 import io.setl.json.primitive.numbers.PNumber;
 import java.lang.System.Logger;
@@ -11,7 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * @author Simon Greatrix on 05/02/2020.
  */
-public class CacheCreator {
+public class CacheManager {
 
   private static ICache<String, String> myKeyCache;
 
@@ -23,9 +22,9 @@ public class CacheCreator {
 
 
   private static <K, V> ICache<K, V> createCache(String name) {
-    int maxSize = Integer.getInteger(CacheCreator.class.getPackageName() + "." + name + ".maxSize", 1_000);
+    int maxSize = Integer.getInteger(CacheManager.class.getPackageName() + "." + name + ".maxSize", 1_000);
     String cacheFactory = System.getProperty(
-        CacheCreator.class.getPackageName() + "." + name + ".factory",
+        CacheManager.class.getPackageName() + "." + name + ".factory",
         SimpleLruCacheFactory.class.getName()
     );
 
@@ -41,7 +40,7 @@ public class CacheCreator {
       factory = constructor.newInstance();
     } catch (ClassNotFoundException | ClassCastException | NoSuchMethodException
         | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-      Logger logger = System.getLogger(CacheCreator.class.getName());
+      Logger logger = System.getLogger(CacheManager.class.getName());
       logger.log(Level.ERROR, "Cannot create a cache factory from " + cacheFactory, e);
     }
     return factory.create(maxSize);
@@ -95,7 +94,7 @@ public class CacheCreator {
   }
 
 
-  public static void setValueCache(ICache<Number, Primitive> newCache) {
+  public static void setValueCache(ICache<Number, PNumber> newCache) {
     if (newCache != null) {
       myValueCache = newCache;
     } else {
@@ -119,7 +118,7 @@ public class CacheCreator {
    *
    * @return the cache.
    */
-  public static ICache<Number, Primitive> valueCache() {
+  public static ICache<Number, PNumber> valueCache() {
     return myValueCache;
   }
 

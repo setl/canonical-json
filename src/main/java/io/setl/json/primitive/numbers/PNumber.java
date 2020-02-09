@@ -4,7 +4,7 @@ import io.setl.json.Primitive;
 import io.setl.json.exception.NonFiniteNumberException;
 import io.setl.json.primitive.PBase;
 import io.setl.json.primitive.PString;
-import io.setl.json.primitive.cache.CacheCreator;
+import io.setl.json.primitive.cache.CacheManager;
 import io.setl.json.primitive.cache.ICache;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -37,11 +37,6 @@ public abstract class PNumber extends PBase implements JsonNumber {
       Long.class, n -> new PLong(n.longValue())
   );
 
-  private static final PString REP_INFINITY = PString.create("Infinity");
-
-  private static final PString REP_NAN = PString.create("NaN");
-
-  private static final PString REP_NEG_INFINITY = PString.create("-Infinity");
 
   private static final Map<Class<? extends Number>, UnaryOperator<Number>> SIMPLIFIERS = Map.of(
       AtomicInteger.class, n -> Integer.valueOf(n.intValue()),
@@ -60,11 +55,11 @@ public abstract class PNumber extends PBase implements JsonNumber {
 
   /**
    * Convert a number into a JsonValue. IEEE floating point numbers may specify "Not A Number", "Positive Infinity", or "Negative Infinity". These three special
-   * cases cannot be represented as numbers in JSON and so are rendered as Strings.
+   * cases cannot be represented as numbers in JSON and so will result in a NonFiniteNumberException.
    */
-  public static Primitive cast(Number value) {
-    ICache<Number, Primitive> cache = CacheCreator.valueCache();
-    return cache.get(value, PNumber::castNoCache);
+  public static PNumber cast(Number value) {
+    ICache<Number, PNumber> cache = CacheManager.valueCache();
+    return cache.get(value, PNumber::create);
   }
 
 
@@ -81,38 +76,22 @@ public abstract class PNumber extends PBase implements JsonNumber {
     }
 
     Number number = jsonNumber.numberValue();
-    Primitive p = cast(number);
-    if( p.getValueType() != ValueType.NUMBER ) {
-
-    }
+    return cast(number);
   }
 
 
   /**
-   * Implementation of the "cast" method if caching fails.
-   *
-   * @param value the value
-   *
-   * @return the Primitive
+   * Convert a number into a JsonValue. IEEE floating point numbers may specify "Not A Number", "Positive Infinity", or "Negative Infinity". These three special
+   * cases cannot be represented as numbers in JSON and so are rendered as Strings.
    */
-  protected static Primitive castNoCache(Number value) {
+  public static Primitive castUnsafe(Number value) {
+    ICache<Number, PNumber> cache = CacheManager.valueCache();
     try {
-      return create(value);
-    } catch (NonFiniteNumberException nfe) {
-      switch (nfe.getType()) {
-        case NAN:
-          return REP_NAN;
-        case NEGATIVE_INFINITY:
-          return REP_NEG_INFINITY;
-        case POSITIVE_INFINITY:
-          return REP_INFINITY;
-        default:
-          // Can't happen
-          throw nfe;
-      }
+      return cache.get(value, PNumber::create);
+    } catch (NonFiniteNumberException e) {
+      return e.getRepresentation();
     }
   }
-
 
 
   /**

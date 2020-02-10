@@ -33,6 +33,8 @@ public class PatchFactory {
           .replace("/", output)
           .build();
     }
+
+    // We are going to do a lot of equality tests. We make them faster by optimising the storage.
     JArray jArray = new JArray();
     jArray.add(input);
     jArray.add(output);

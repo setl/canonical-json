@@ -1,20 +1,37 @@
 package io.setl.json.pointer;
 
-import io.setl.json.exception.PointerIndexException;
 import javax.json.JsonArray;
 import javax.json.JsonValue;
+
+import io.setl.json.exception.PointerIndexException;
 
 /**
  * @author Simon Greatrix on 27/01/2020.
  */
-class ArrayPath extends ObjectPath {
+public class ArrayPath extends ObjectPath {
 
   protected final int index;
 
 
-  ArrayPath(String path, String key, PathElement next) {
+  public ArrayPath(String path, String key, PathElement next) {
     super(path, key, next);
     index = Integer.parseInt(key);
+  }
+
+
+  public ArrayPath(int index) {
+    super(Integer.toString(index));
+    this.index = index;
+  }
+
+  @Override
+  public String getEscapedKey() {
+    return key;
+  }
+
+  @Override
+  public int getIndex() {
+    return index;
   }
 
 
@@ -58,4 +75,5 @@ class ArrayPath extends ObjectPath {
   public void replace(JsonArray target, JsonValue value) {
     doReplace(get(target), value);
   }
+
 }

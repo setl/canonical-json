@@ -1,26 +1,32 @@
 package io.setl.json.pointer;
 
-import io.setl.json.exception.NoSuchValueException;
-import io.setl.json.exception.PointerMismatchException;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
+
+import io.setl.json.exception.NoSuchValueException;
+import io.setl.json.exception.PointerMismatchException;
 
 /**
  * A terminal entry in a path which references an object key.
  *
  * @author Simon Greatrix on 27/01/2020.
  */
-class ObjectTerminal implements PathElement {
+public class ObjectTerminal implements PathElement {
 
   protected final String key;
 
-  protected final String path;
+  protected String path;
 
 
-  ObjectTerminal(String path, String key) {
+  public ObjectTerminal(String path, String key) {
     this.path = path;
+    this.key = key;
+  }
+
+
+  public ObjectTerminal(String key) {
     this.key = key;
   }
 
@@ -38,6 +44,14 @@ class ObjectTerminal implements PathElement {
 
 
   @Override
+  public void buildPath(StringBuilder builder) {
+    builder.append('/').append(getEscapedKey());
+    path = builder.toString();
+    getChild().buildPath(builder);
+  }
+
+
+  @Override
   public boolean containsValue(JsonArray target) {
     throw needObject();
   }
@@ -46,6 +60,36 @@ class ObjectTerminal implements PathElement {
   @Override
   public boolean containsValue(JsonObject target) {
     return target.containsKey(key);
+  }
+
+
+  @Override
+  public PathElement getChild() {
+    return null;
+  }
+
+
+  @Override
+  public String getEscapedKey() {
+    return JPointer.escapeKey(key);
+  }
+
+
+  @Override
+  public int getIndex() {
+    return -1;
+  }
+
+
+  @Override
+  public String getKey() {
+    return key;
+  }
+
+
+  @Override
+  public String getPath() {
+    return path;
   }
 
 
@@ -98,4 +142,18 @@ class ObjectTerminal implements PathElement {
       throw new NoSuchValueException(path);
     }
   }
+
+
+  @Override
+  public void setChild(PathElement child) {
+    throw new UnsupportedOperationException();
+  }
+
+
+  @Override
+  public void setPath(String path) {
+    this.path = path;
+  }
+
+
 }

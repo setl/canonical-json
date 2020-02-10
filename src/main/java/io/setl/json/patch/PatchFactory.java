@@ -10,6 +10,8 @@ import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 
 import io.setl.json.JArray;
+import io.setl.json.patch.key.Key;
+import io.setl.json.patch.key.ObjectKey;
 
 /**
  * @author Simon Greatrix on 28/01/2020.
@@ -45,21 +47,21 @@ public class PatchFactory {
 
     JPatchBuilder builder = new JPatchBuilder();
     if (myInput.getValueType() == ValueType.ARRAY) {
-      patchArray(builder, "/", (JsonArray) myInput, (JsonArray) myOutput);
+      patchArray(builder, "/", null, (JsonArray) myInput, (JsonArray) myOutput);
     } else {
-      patchObject(builder, "/", (JsonObject) myInput, (JsonObject) myOutput);
+      patchObject(builder, "/", null, (JsonObject) myInput, (JsonObject) myOutput);
     }
     return builder.build();
   }
 
 
-  private void patchArray(JPatchBuilder builder, String prefix, JsonArray myInput, JsonArray myOutput) {
-    ArrayDiff arrayDiff = new ArrayDiff(builder, prefix, myInput, myOutput);
+  private void patchArray(JPatchBuilder builder, String prefix, Key root, JsonArray myInput, JsonArray myOutput) {
+    ArrayDiff arrayDiff = new ArrayDiff(builder, root, myInput, myOutput);
     arrayDiff.process();
   }
 
 
-  private void patchObject(JPatchBuilder builder, String prefix, JsonObject myInput, JsonObject myOutput) {
+  private void patchObject(JPatchBuilder builder, String prefix, Key root, JsonObject myInput, JsonObject myOutput) {
     TreeSet<String> allKeys = new TreeSet<>(myInput.keySet());
     allKeys.addAll(myOutput.keySet());
     for (String key : allKeys) {
@@ -76,9 +78,9 @@ public class PatchFactory {
         if (in.getValueType() != out.getValueType()) {
           builder.replace(prefix + key, out);
         } else if (in.getValueType() == ValueType.ARRAY) {
-          patchArray(builder, prefix + key + "/", (JsonArray) in, (JsonArray) out);
+          patchArray(builder, prefix + key + "/", new ObjectKey(root, key), (JsonArray) in, (JsonArray) out);
         } else if (in.getValueType() == ValueType.OBJECT) {
-          patchObject(builder, prefix + key + "/", (JsonObject) in, (JsonObject) out);
+          patchObject(builder, prefix + key + "/", new ObjectKey(root, key), (JsonObject) in, (JsonObject) out);
         } else {
           builder.replace(prefix + key, out);
         }

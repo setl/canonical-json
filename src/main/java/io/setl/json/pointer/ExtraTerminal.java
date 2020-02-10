@@ -1,17 +1,18 @@
 package io.setl.json.pointer;
 
-import io.setl.json.exception.PointerIndexException;
 import javax.json.JsonArray;
 import javax.json.JsonValue;
+
+import io.setl.json.exception.PointerIndexException;
 
 /**
  * Special handling for the '-' terminal.
  *
  * @author Simon Greatrix on 27/01/2020.
  */
-class ExtraTerminal extends ObjectTerminal {
+public class ExtraTerminal extends ObjectTerminal {
 
-  ExtraTerminal(String path) {
+  public ExtraTerminal(String path) {
     super(path, "-");
   }
 
@@ -34,6 +35,18 @@ class ExtraTerminal extends ObjectTerminal {
 
 
   @Override
+  public String getEscapedKey() {
+    return "-";
+  }
+
+
+  @Override
+  public int getIndex() {
+    return -2;
+  }
+
+
+  @Override
   public JsonValue getValue(JsonArray target) {
     throw bad(target.size());
   }
@@ -49,4 +62,5 @@ class ExtraTerminal extends ObjectTerminal {
   public void replace(JsonArray target, JsonValue value) {
     throw bad(target.size());
   }
+
 }

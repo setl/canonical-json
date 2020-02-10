@@ -12,14 +12,30 @@ import javax.json.JsonValue.ValueType;
  */
 public class JPointer implements JsonPointer {
 
+  static String escapeKey(String key) {
+    if (key.indexOf('~') == -1 && key.indexOf('/') == -1) {
+      return key;
+    }
+    return key.replace("~", "~0").replace("/", "~1");
+  }
+
+
   protected final String path;
 
   protected final PathElement root;
 
 
-  JPointer(String path, PathElement root) {
+  public JPointer(String path, PathElement root) {
     this.path = path;
     this.root = root;
+  }
+
+
+  public JPointer(PathElement root) {
+    this.root = root;
+    StringBuilder builder = new StringBuilder();
+    root.buildPath(builder);
+    path = builder.toString();
   }
 
 
@@ -72,4 +88,5 @@ public class JPointer implements JsonPointer {
     }
     return target;
   }
+
 }

@@ -7,7 +7,7 @@ import javax.json.JsonValue;
 /**
  * @author Simon Greatrix on 27/01/2020.
  */
-interface PathElement {
+public interface PathElement {
 
   void add(JsonArray target, JsonValue value);
 
@@ -16,6 +16,16 @@ interface PathElement {
   boolean containsValue(JsonArray target);
 
   boolean containsValue(JsonObject target);
+
+  PathElement getChild();
+
+  int getIndex();
+
+  String getKey();
+
+  String getEscapedKey();
+
+  String getPath();
 
   JsonValue getValue(JsonArray target);
 
@@ -28,4 +38,10 @@ interface PathElement {
   void replace(JsonArray target, JsonValue value);
 
   void replace(JsonObject target, JsonValue value);
+
+  void setChild(PathElement child);
+
+  void setPath(String path);
+
+  void buildPath(StringBuilder builder);
 }

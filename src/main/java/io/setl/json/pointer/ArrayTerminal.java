@@ -1,22 +1,33 @@
 package io.setl.json.pointer;
 
-import io.setl.json.exception.PointerIndexException;
 import javax.json.JsonArray;
 import javax.json.JsonValue;
+
+import io.setl.json.exception.PointerIndexException;
 
 /**
  * A terminal entry in a path which references an array index, or an object key which looks like a positive integer.
  *
  * @author Simon Greatrix on 27/01/2020.
  */
-class ArrayTerminal extends ObjectTerminal {
+public class ArrayTerminal extends ObjectTerminal {
 
   private final int index;
 
 
-  ArrayTerminal(String path, String key) {
+  public ArrayTerminal(String path, String key) {
     super(path, key);
     index = Integer.parseInt(key);
+  }
+
+
+  public ArrayTerminal(int index) {
+    super(Integer.toString(index));
+    this.index = index;
+  }
+  @Override
+  public String getEscapedKey() {
+    return key;
   }
 
 
@@ -38,6 +49,12 @@ class ArrayTerminal extends ObjectTerminal {
   @Override
   public boolean containsValue(JsonArray target) {
     return index < target.size();
+  }
+
+
+  @Override
+  public int getIndex() {
+    return index;
   }
 
 
@@ -69,4 +86,5 @@ class ArrayTerminal extends ObjectTerminal {
       throw badIndex(target.size());
     }
   }
+
 }

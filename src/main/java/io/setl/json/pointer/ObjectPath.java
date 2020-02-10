@@ -1,28 +1,34 @@
 package io.setl.json.pointer;
 
-import io.setl.json.exception.NoSuchValueException;
-import io.setl.json.exception.PointerMismatchException;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 
+import io.setl.json.exception.NoSuchValueException;
+import io.setl.json.exception.PointerMismatchException;
+
 /**
  * @author Simon Greatrix on 27/01/2020.
  */
-class ObjectPath implements PathElement {
+public class ObjectPath implements PathElement {
 
   protected final String key;
 
-  protected final PathElement next;
+  protected PathElement child;
 
-  protected final String path;
+  protected String path;
 
 
-  ObjectPath(String path, String key, PathElement next) {
+  public ObjectPath(String path, String key, PathElement child) {
     this.path = path;
     this.key = key;
-    this.next = next;
+    this.child = child;
+  }
+
+
+  public ObjectPath(String key) {
+    this.key = key;
   }
 
 
@@ -44,6 +50,14 @@ class ObjectPath implements PathElement {
 
 
   @Override
+  public void buildPath(StringBuilder builder) {
+    builder.append('/').append(getEscapedKey());
+    path = builder.toString();
+    getChild().buildPath(builder);
+  }
+
+
+  @Override
   public boolean containsValue(JsonArray target) {
     return false;
   }
@@ -58,10 +72,10 @@ class ObjectPath implements PathElement {
   protected void doAdd(JsonValue jv, JsonValue value) {
     switch (jv.getValueType()) {
       case OBJECT:
-        next.add((JsonObject) jv, value);
+        child.add((JsonObject) jv, value);
         break;
       case ARRAY:
-        next.add((JsonArray) jv, value);
+        child.add((JsonArray) jv, value);
         break;
       default:
         throw badPath(jv.getValueType());
@@ -75,9 +89,9 @@ class ObjectPath implements PathElement {
     }
     switch (jv.getValueType()) {
       case OBJECT:
-        return next.containsValue((JsonObject) jv);
+        return child.containsValue((JsonObject) jv);
       case ARRAY:
-        return next.containsValue((JsonArray) jv);
+        return child.containsValue((JsonArray) jv);
       default:
         return false;
     }
@@ -87,9 +101,9 @@ class ObjectPath implements PathElement {
   protected JsonValue doGetValue(JsonValue jv) {
     switch (jv.getValueType()) {
       case OBJECT:
-        return next.getValue((JsonObject) jv);
+        return child.getValue((JsonObject) jv);
       case ARRAY:
-        return next.getValue((JsonArray) jv);
+        return child.getValue((JsonArray) jv);
       default:
         throw badPath(jv.getValueType());
     }
@@ -99,10 +113,10 @@ class ObjectPath implements PathElement {
   protected void doRemove(JsonValue jv) {
     switch (jv.getValueType()) {
       case OBJECT:
-        next.remove((JsonObject) jv);
+        child.remove((JsonObject) jv);
         break;
       case ARRAY:
-        next.remove((JsonArray) jv);
+        child.remove((JsonArray) jv);
         break;
       default:
         throw badPath(jv.getValueType());
@@ -113,10 +127,10 @@ class ObjectPath implements PathElement {
   protected void doReplace(JsonValue jv, JsonValue value) {
     switch (jv.getValueType()) {
       case OBJECT:
-        next.replace((JsonObject) jv, value);
+        child.replace((JsonObject) jv, value);
         break;
       case ARRAY:
-        next.replace((JsonArray) jv, value);
+        child.replace((JsonArray) jv, value);
         break;
       default:
         throw badPath(jv.getValueType());
@@ -130,6 +144,36 @@ class ObjectPath implements PathElement {
       throw new NoSuchValueException(path);
     }
     return jv;
+  }
+
+
+  @Override
+  public PathElement getChild() {
+    return child;
+  }
+
+
+  @Override
+  public String getEscapedKey() {
+    return JPointer.escapeKey(key);
+  }
+
+
+  @Override
+  public int getIndex() {
+    return -1;
+  }
+
+
+  @Override
+  public String getKey() {
+    return key;
+  }
+
+
+  @Override
+  public String getPath() {
+    return path;
   }
 
 
@@ -172,4 +216,17 @@ class ObjectPath implements PathElement {
   public void replace(JsonObject target, JsonValue value) {
     doReplace(get(target), value);
   }
+
+
+  @Override
+  public void setChild(PathElement child) {
+    this.child = child;
+  }
+
+
+  @Override
+  public void setPath(String path) {
+    this.path = path;
+  }
+
 }

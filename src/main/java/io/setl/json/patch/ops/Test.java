@@ -5,9 +5,11 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.Objects;
 import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.json.JsonPatch.Operation;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 
@@ -59,6 +61,32 @@ public class Test extends PatchOperation {
 
 
   @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof Test)) {
+      return false;
+    }
+    if (!super.equals(o)) {
+      return false;
+    }
+
+    Test test = (Test) o;
+    return Objects.equals(digest,test.digest) && Objects.equals(value,test.value);
+  }
+
+
+  @Override
+  public int hashCode() {
+    int result = super.hashCode();
+    result = 31 * result + (digest != null ? digest.hashCode() : 0);
+    result = 31 * result + (value != null ? value.hashCode() : 0);
+    return result;
+  }
+
+
+  @Override
   public <T extends JsonStructure> T apply(T target) {
     JsonValue jsonValue = pointer.getValue(target);
     if (value != null && !value.equals(jsonValue)) {
@@ -104,8 +132,8 @@ public class Test extends PatchOperation {
 
 
   @Override
-  public String getOp() {
-    return "test";
+  public Operation getOperation() {
+    return Operation.TEST;
   }
 
 
@@ -117,7 +145,7 @@ public class Test extends PatchOperation {
   @Override
   public JsonObject toJsonObject() {
     JsonObjectBuilder builder = new JObjectBuilder()
-        .add("op", getOp())
+        .add("op", getOperation().operationName())
         .add("path", getPath());
 
     if (value != null) {

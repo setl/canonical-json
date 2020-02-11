@@ -1,90 +1,240 @@
 package io.setl.json.patch;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonPatch;
-import javax.json.JsonStructure;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 
-import io.setl.json.JArray;
+import org.apache.commons.collections4.ListUtils;
+
+import io.setl.json.patch.key.ArrayKey;
 import io.setl.json.patch.key.Key;
 import io.setl.json.patch.key.ObjectKey;
 
-/**
- * @author Simon Greatrix on 28/01/2020.
- */
-public class PatchFactory {
+public final class PatchFactory {
 
-  public PatchFactory(Map<String, ?> config) {
-    // there is no config
-  }
+  /**
+   * Helper class to improve the speed of the comparison of items in arrays.
+   */
+  static class Item {
 
-
-  public PatchFactory() {
-    // there is no config
-  }
+    final int hashCode;
+    final JsonValue jsonValue;
 
 
-  public JsonPatch create(JsonStructure input, JsonStructure output) {
-    // handle unlikely but simple case where the structure type changes.
-    if (input.getValueType() != output.getValueType()) {
-      return new JPatchBuilder()
-          .replace("/", output)
-          .build();
+    Item(JsonValue jsonValue) {
+      this.jsonValue = jsonValue;
+      hashCode = jsonValue.hashCode();
     }
 
-    // We are going to do a lot of equality tests. We make them faster by optimising the storage.
-    JArray jArray = new JArray();
-    jArray.add(input);
-    jArray.add(output);
-    jArray.optimiseStorage();
 
-    JsonStructure myInput = jArray.getPrimitive(0).getValueSafe(JsonStructure.class);
-    JsonStructure myOutput = jArray.getPrimitive(1).getValueSafe(JsonStructure.class);
-
-    JPatchBuilder builder = new JPatchBuilder();
-    if (myInput.getValueType() == ValueType.ARRAY) {
-      patchArray(builder, "/", null, (JsonArray) myInput, (JsonArray) myOutput);
-    } else {
-      patchObject(builder, "/", null, (JsonObject) myInput, (JsonObject) myOutput);
+    @Override
+    public boolean equals(Object o) {
+      if (o == this) {
+        return true;
+      }
+      if (!(o instanceof Item)) {
+        return false;
+      }
+      Item that = (Item) o;
+      return hashCode == that.hashCode && jsonValue.equals(that.jsonValue);
     }
-    return builder.build();
+
+
+    @Override
+    public int hashCode() {
+      return hashCode;
+    }
+
   }
 
 
-  private void patchArray(JPatchBuilder builder, String prefix, Key root, JsonArray myInput, JsonArray myOutput) {
-    ArrayDiff arrayDiff = new ArrayDiff(builder, root, myInput, myOutput);
-    arrayDiff.process();
+  public static JsonPatch create(JsonValue source, JsonValue target) {
+    return create(source, target, Collections.emptySet());
   }
 
 
-  private void patchObject(JPatchBuilder builder, String prefix, Key root, JsonObject myInput, JsonObject myOutput) {
-    TreeSet<String> allKeys = new TreeSet<>(myInput.keySet());
-    allKeys.addAll(myOutput.keySet());
-    for (String key : allKeys) {
-      JsonValue in = myInput.get(key);
-      JsonValue out = myOutput.get(key);
-      if (in == null) {
-        // it is an add
-        builder.add(prefix + key, out);
-      } else if (out == null) {
-        // it is a remove
-        builder.remove(prefix + key);
-      } else if (!in.equals(out)) {
-        // it is changed
-        if (in.getValueType() != out.getValueType()) {
-          builder.replace(prefix + key, out);
-        } else if (in.getValueType() == ValueType.ARRAY) {
-          patchArray(builder, prefix + key + "/", new ObjectKey(root, key), (JsonArray) in, (JsonArray) out);
-        } else if (in.getValueType() == ValueType.OBJECT) {
-          patchObject(builder, prefix + key + "/", new ObjectKey(root, key), (JsonObject) in, (JsonObject) out);
+  /**
+   * Create a patch that transforms the source into the target.
+   *
+   * @param source   the source JSON
+   * @param target   the target JSON
+   * @param features the features used in creating the patch.
+   *
+   * @return the patch
+   */
+  public static JsonPatch create(JsonValue source, JsonValue target, Set<DiffFeatures> features) {
+    PatchFactory diff = new PatchFactory(features);
+    diff.generateDiffs(source, target);
+    return diff.patchBuilder.build();
+  }
+
+
+  /** The flags affecting this patch's creation. */
+  private final EnumSet<DiffFeatures> features;
+  /** The patch operations that make up the derived patch. */
+  private final JPatchBuilder patchBuilder = new JPatchBuilder();
+
+
+  private PatchFactory(Set<DiffFeatures> features) {
+    this.features = (features == null || features.isEmpty()) ? EnumSet.noneOf(DiffFeatures.class) : EnumSet.copyOf(features);
+  }
+
+
+  private int addRemaining(Key path, JsonArray target, int pos, int targetIdx, int targetSize) {
+    while (targetIdx < targetSize) {
+      JsonValue jsonValue = target.get(targetIdx);
+      String itemKey = new ArrayKey(path, pos).toString();
+      patchBuilder.add(itemKey, jsonValue);
+      pos++;
+      targetIdx++;
+    }
+    return pos;
+  }
+
+
+  private void compareArray(Key path, JsonArray source, JsonArray target) {
+    List<Item> sourceItems = new ArrayList<>(source.size());
+    for (JsonValue jsonValue : source) {
+      sourceItems.add(new Item(jsonValue));
+    }
+    List<Item> targetItems = new ArrayList<>(target.size());
+    for (JsonValue jsonValue : target) {
+      targetItems.add(new Item(jsonValue));
+    }
+    List<Item> lcs = ListUtils.longestCommonSubsequence(sourceItems, targetItems);
+
+    int srcIdx = 0;
+    int targetIdx = 0;
+    int lcsIdx = 0;
+    int srcSize = source.size();
+    int targetSize = target.size();
+    int lcsSize = lcs.size();
+
+    int pos = 0;
+    while (lcsIdx < lcsSize) {
+      Item lcsNode = lcs.get(lcsIdx);
+      Item srcNode = sourceItems.get(srcIdx);
+      Item targetNode = targetItems.get(targetIdx);
+
+      if (lcsNode.equals(srcNode) && lcsNode.equals(targetNode)) {
+        // These nodes are part of the LCS, simply step forward
+        srcIdx++;
+        targetIdx++;
+        lcsIdx++;
+        pos++;
+      } else {
+        if (lcsNode.equals(srcNode)) {
+          // Source node is part of the LCS, but not target node is not, so this is an addition of the target node.
+          String itemKey = new ArrayKey(path, pos).toString();
+          patchBuilder.add(itemKey, targetNode.jsonValue);
+          pos++;
+          targetIdx++;
+        } else if (lcsNode.equals(targetNode)) {
+          // Target node is part of LCS, but source node is not, so this is a removeal of the source node.
+          String itemKey = new ArrayKey(path, pos).toString();
+          if (features.contains(DiffFeatures.EMIT_TESTS)) {
+            patchBuilder.test(itemKey, srcNode.jsonValue);
+          }
+          patchBuilder.remove(itemKey);
+          srcIdx++;
         } else {
-          builder.replace(prefix + key, out);
+          Key itemKey = new ArrayKey(path, pos);
+          //both are unequal to lcs node
+          generateDiffs(itemKey, srcNode.jsonValue, targetNode.jsonValue);
+          srcIdx++;
+          targetIdx++;
+          pos++;
         }
       }
+    }
+
+    while ((srcIdx < srcSize) && (targetIdx < targetSize)) {
+      JsonValue srcNode = source.get(srcIdx);
+      JsonValue targetNode = target.get(targetIdx);
+      generateDiffs(new ArrayKey(path, pos), srcNode, targetNode);
+      srcIdx++;
+      targetIdx++;
+      pos++;
+    }
+    pos = addRemaining(path, target, pos, targetIdx, targetSize);
+    removeRemaining(path, pos, srcIdx, srcSize, source);
+  }
+
+
+  private void compareObjects(Key path, JsonObject source, JsonObject target) {
+    TreeSet<String> allNames = new TreeSet<>(source.keySet());
+    allNames.addAll(target.keySet());
+    for (String name : allNames) {
+      Key child = new ObjectKey(path, name);
+      if (source.containsKey(name)) {
+        if (target.containsKey(name)) {
+          // in both source and target, so generate diffs
+          generateDiffs(child, source.get(name), target.get(name));
+        } else {
+          // only in source, so remove
+          String childPath = child.toString();
+          if (features.contains(DiffFeatures.EMIT_TESTS)) {
+            patchBuilder.test(childPath, source.get(name));
+          }
+          patchBuilder.remove(childPath);
+        }
+      } else {
+        // Not in source so must be in target. Hence this is an add
+        patchBuilder.add(child.toString(), target.get(name));
+      }
+    }
+  }
+
+
+  private void generateDiffs(JsonValue source, JsonValue target) {
+    if (features.contains(DiffFeatures.EMIT_DIGEST)) {
+      patchBuilder.digest("", source);
+    }
+    generateDiffs(null, source, target);
+  }
+
+
+  private void generateDiffs(Key path, JsonValue source, JsonValue target) {
+    if (source.equals(target)) {
+      // nothing to do
+      return;
+    }
+
+    ValueType sourceType = source.getValueType();
+    ValueType targetType = target.getValueType();
+
+    if (sourceType == ValueType.ARRAY && targetType == ValueType.ARRAY) {
+      //both are arrays
+      compareArray(path, (JsonArray) source, (JsonArray) target);
+    } else if (sourceType == ValueType.OBJECT && targetType == ValueType.OBJECT) {
+      //both are json
+      compareObjects(path, (JsonObject) source, (JsonObject) target);
+    } else {
+      //can be replaced
+      if (features.contains(DiffFeatures.EMIT_TESTS)) {
+        patchBuilder.test(path.toString(), source);
+      }
+      patchBuilder.replace(path.toString(), target);
+    }
+  }
+
+
+  private void removeRemaining(Key path, int pos, int srcIdx, int srcSize, JsonArray source) {
+    String itemKey = new ArrayKey(path, pos).toString();
+    while (srcIdx < srcSize) {
+      if (features.contains(DiffFeatures.EMIT_TESTS)) {
+        patchBuilder.test(itemKey, source.get(srcIdx));
+      }
+      patchBuilder.remove(itemKey);
+      srcIdx++;
     }
   }
 

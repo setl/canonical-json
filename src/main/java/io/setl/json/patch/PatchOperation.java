@@ -1,10 +1,12 @@
 package io.setl.json.patch;
 
 import javax.json.JsonObject;
+import javax.json.JsonPatch.Operation;
 import javax.json.JsonPointer;
 import javax.json.JsonStructure;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -56,7 +58,28 @@ public abstract class PatchOperation {
   public abstract <T extends JsonStructure> T apply(T target);
 
 
-  public abstract String getOp();
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof PatchOperation)) {
+      return false;
+    }
+
+    PatchOperation operation = (PatchOperation) o;
+    return path.equals(operation.path);
+  }
+
+
+  @JsonProperty("op")
+  public String getOp() {
+    return getOperation().operationName();
+  }
+
+
+  @JsonIgnore
+  public abstract Operation getOperation();
 
 
   public String getPath() {
@@ -64,9 +87,9 @@ public abstract class PatchOperation {
   }
 
 
-  @JsonIgnore
-  public JsonPointer getPointer() {
-    return pointer;
+  @Override
+  public int hashCode() {
+    return path.hashCode();
   }
 
 

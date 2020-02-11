@@ -1,6 +1,7 @@
 package io.setl.json.patch.ops;
 
 import javax.json.JsonObject;
+import javax.json.JsonPatch.Operation;
 import javax.json.JsonStructure;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -33,15 +34,15 @@ public class Remove extends PatchOperation {
 
 
   @Override
-  public String getOp() {
-    return "remove";
+  public Operation getOperation() {
+    return Operation.REMOVE;
   }
 
 
   @Override
   public JsonObject toJsonObject() {
     return new JObjectBuilder()
-        .add("op", getOp())
+        .add("op", getOperation().operationName())
         .add("path", getPath())
         .build();
   }

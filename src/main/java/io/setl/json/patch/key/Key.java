@@ -1,8 +1,5 @@
 package io.setl.json.patch.key;
 
-import io.setl.json.pointer.JPointer;
-import io.setl.json.pointer.PathElement;
-
 public abstract class Key {
 
   protected final Key parent;
@@ -13,31 +10,20 @@ public abstract class Key {
   }
 
 
-  protected PathElement[] asElement(boolean isTerminal) {
-    PathElement[] result = new PathElement[2];
-    PathElement me = makeElement(isTerminal);
-    result[1] = me;
-    if (getParent() != null) {
-      PathElement[] parentElement = getParent().asElement(false);
-      result[0] = parentElement[0];
-      parentElement[1].setChild(me);
-    } else {
-      result[0] = me;
+  protected abstract String getEscapedKey();
+
+
+  protected StringBuilder toString(StringBuilder builder) {
+    if (parent != null) {
+      parent.toString(builder);
     }
-    return result;
+    return builder.append('/').append(getEscapedKey());
   }
 
 
-  public JPointer asPointer() {
-    return new JPointer(asElement(true)[0]);
+  @Override
+  public String toString() {
+    return toString(new StringBuilder()).toString();
   }
-
-
-  Key getParent() {
-    return parent;
-  }
-
-
-  protected abstract PathElement makeElement(boolean isTerminal);
 
 }

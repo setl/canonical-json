@@ -1,6 +1,7 @@
 package io.setl.json.patch.ops;
 
 import javax.json.JsonObject;
+import javax.json.JsonPatch.Operation;
 import javax.json.JsonPointer;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
@@ -48,21 +49,46 @@ public class Copy extends PatchOperation {
   }
 
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof Copy)) {
+      return false;
+    }
+    if (!super.equals(o)) {
+      return false;
+    }
+
+    Copy copy = (Copy) o;
+    return from.equals(copy.from);
+  }
+
+
   public String getFrom() {
     return from;
   }
 
 
   @Override
-  public String getOp() {
-    return "copy";
+  public Operation getOperation() {
+    return Operation.COPY;
+  }
+
+
+  @Override
+  public int hashCode() {
+    int result = super.hashCode();
+    result = 31 * result + from.hashCode();
+    return result;
   }
 
 
   @Override
   public JsonObject toJsonObject() {
     return new JObjectBuilder()
-        .add("op", getOp())
+        .add("op", getOperation().operationName())
         .add("path", getPath())
         .add("from", from)
         .build();

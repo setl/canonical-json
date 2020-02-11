@@ -12,7 +12,7 @@ import javax.json.JsonValue.ValueType;
  */
 public class JPointer implements JsonPointer {
 
-  static String escapeKey(String key) {
+  public static String escapeKey(String key) {
     if (key.indexOf('~') == -1 && key.indexOf('/') == -1) {
       return key;
     }

@@ -6,6 +6,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Iterator;
 import java.util.List;
 import javax.json.JsonException;
 import javax.json.JsonPatch;
@@ -27,7 +28,7 @@ import io.setl.json.primitive.numbers.PNumber;
 /**
  * @author Simon Greatrix on 28/01/2020.
  */
-public class JPatchBuilder implements JsonPatchBuilder {
+public class JPatchBuilder implements JsonPatchBuilder, Iterable<PatchOperation> {
 
   private final List<PatchOperation> operationList = new ArrayList<>();
 
@@ -57,6 +58,11 @@ public class JPatchBuilder implements JsonPatchBuilder {
   public JsonPatchBuilder add(String path, boolean value) {
     operationList.add(new Add(path, value ? PTrue.TRUE : PFalse.FALSE));
     return this;
+  }
+
+
+  public void addOperation(int index, PatchOperation operation) {
+    operationList.add(index, operation);
   }
 
 
@@ -111,6 +117,17 @@ public class JPatchBuilder implements JsonPatchBuilder {
   }
 
 
+  public PatchOperation getOperation(int index) {
+    return operationList.get(index);
+  }
+
+
+  @Override
+  public Iterator<PatchOperation> iterator() {
+    return operationList.iterator();
+  }
+
+
   @Override
   public JsonPatchBuilder move(String path, String from) {
     operationList.add(new Move(path, from));
@@ -122,6 +139,11 @@ public class JPatchBuilder implements JsonPatchBuilder {
   public JsonPatchBuilder remove(String path) {
     operationList.add(new Remove(path));
     return this;
+  }
+
+
+  public void removeOperation(int index) {
+    operationList.remove(index);
   }
 
 
@@ -150,6 +172,16 @@ public class JPatchBuilder implements JsonPatchBuilder {
   public JsonPatchBuilder replace(String path, boolean value) {
     operationList.add(new Replace(path, value ? PTrue.TRUE : PFalse.FALSE));
     return this;
+  }
+
+
+  public void setOperation(int index, PatchOperation operation) {
+    operationList.set(index, operation);
+  }
+
+
+  public int size() {
+    return operationList.size();
   }
 
 

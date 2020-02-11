@@ -1,6 +1,7 @@
 package io.setl.json.patch.ops;
 
 import javax.json.JsonObject;
+import javax.json.JsonPatch.Operation;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 
@@ -42,8 +43,8 @@ public class Replace extends PatchOperation {
 
 
   @Override
-  public String getOp() {
-    return "replace";
+  public Operation getOperation() {
+    return Operation.REPLACE;
   }
 
 
@@ -53,9 +54,35 @@ public class Replace extends PatchOperation {
 
 
   @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof Replace)) {
+      return false;
+    }
+    if (!super.equals(o)) {
+      return false;
+    }
+
+    Replace replace = (Replace) o;
+
+    return value != null ? value.equals(replace.value) : replace.value == null;
+  }
+
+
+  @Override
+  public int hashCode() {
+    int result = super.hashCode();
+    result = 31 * result + (value != null ? value.hashCode() : 0);
+    return result;
+  }
+
+
+  @Override
   public JsonObject toJsonObject() {
     return new JObjectBuilder()
-        .add("op", getOp())
+        .add("op", getOperation().operationName())
         .add("path", getPath())
         .add("value", getValue())
         .build();

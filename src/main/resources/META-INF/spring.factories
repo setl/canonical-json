@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  io.setl.json.spring.ConfigureCanonicalJson,\
+  io.setl.json.spring.ConfigureCanonicalWebMvc

@@ -1,10 +1,9 @@
 package io.setl.json.spring;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -28,8 +27,15 @@ public class ConfigureCanonicalWebMvc {
    */
   @Bean
   @ConditionalOnExpression("${setl.json.enabled:true}")
-  @ConditionalOnBean(Jackson2ObjectMapperBuilder.class)
-  public WebMvcConfigurer webMvcConfigurer(Jackson2ObjectMapperBuilder mapperBuilder) {
+  public WebMvcConfigurer canonicalWebMvcConfigurer(
+      @Autowired(required = false) Jackson2ObjectMapperBuilder mapperBuilder
+  ) {
+    if (mapperBuilder != null) {
+      ObjectMapper mapper = new ObjectMapper(new CanonicalFactory());
+      mapper.findAndRegisterModules();
+      return new CanonicalWebMvcConfigurer(mapper);
+    }
+
     mapperBuilder.factory(new CanonicalFactory());
     ObjectMapper mapper = mapperBuilder.build();
 
@@ -40,21 +46,6 @@ public class ConfigureCanonicalWebMvc {
       mapper.registerModule(myModule);
     }
 
-    return new CanonicalWebMvcConfigurer(mapper);
-  }
-
-
-  /**
-   * Configure the Web MVC to generate JSON responses in canonical form.
-   *
-   * @return the configurer
-   */
-  @Bean
-  @ConditionalOnExpression("${setl.json.enabled:true}")
-  @ConditionalOnMissingBean(Jackson2ObjectMapperBuilder.class)
-  public WebMvcConfigurer webMvcConfigurer() {
-    ObjectMapper mapper = new ObjectMapper(new CanonicalFactory());
-    mapper.findAndRegisterModules();
     return new CanonicalWebMvcConfigurer(mapper);
   }
 

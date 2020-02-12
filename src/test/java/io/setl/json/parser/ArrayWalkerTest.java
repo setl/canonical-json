@@ -62,17 +62,6 @@ public class ArrayWalkerTest {
 
 
   @Test
-  public void getLocation() {
-    walker.next();
-    walker.next();
-    JsonLocation l = walker.getLocation();
-    assertEquals(-1, l.getColumnNumber());
-    assertEquals(-1, l.getLineNumber());
-    assertEquals(-1, l.getStreamOffset());
-  }
-
-
-  @Test
   public void getLong() {
     walker.next();
     walker.next();

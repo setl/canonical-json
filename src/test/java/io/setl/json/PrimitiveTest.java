@@ -9,7 +9,7 @@ import static org.junit.Assert.fail;
 import io.setl.json.primitive.PNull;
 import io.setl.json.primitive.numbers.PNumber;
 import io.setl.json.primitive.PString;
-import io.setl.json.primitive.numbers.PInt;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;

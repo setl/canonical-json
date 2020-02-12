@@ -6,7 +6,6 @@ import static org.junit.Assert.assertFalse;
 import io.setl.json.JArray;
 import io.setl.json.JObject;
 import io.setl.json.primitive.PTrue;
-import io.setl.json.primitive.numbers.PInt;
 import io.setl.json.primitive.numbers.PNumber;
 import java.io.StringReader;
 import java.math.BigDecimal;

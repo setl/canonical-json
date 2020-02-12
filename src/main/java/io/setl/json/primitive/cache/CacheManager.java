@@ -1,11 +1,13 @@
 package io.setl.json.primitive.cache;
 
-import io.setl.json.primitive.PString;
-import io.setl.json.primitive.numbers.PNumber;
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Objects;
+
+import io.setl.json.primitive.PString;
+import io.setl.json.primitive.numbers.PNumber;
 
 /**
  * @author Simon Greatrix on 05/02/2020.
@@ -67,39 +69,43 @@ public class CacheManager {
   }
 
 
+  /**
+   * Set the cache that maps object keys to a fixed representation.
+   *
+   * @param newCache the new cache (or null for no caching)
+   */
   public static void setKeyCache(ICache<String, String> newCache) {
-    if (newCache != null) {
-      myKeyCache = newCache;
-    } else {
-      myKeyCache = new NoCache<>();
-    }
+    myKeyCache = Objects.requireNonNullElseGet(newCache, NoCache::new);
   }
 
 
+  /**
+   * Set the cache that maps the textual representation of numerical values to a fixed representation.
+   *
+   * @param newNumberCache the new cache (or null for no caching)
+   */
   public static void setNumberCache(ICache<String, PNumber> newNumberCache) {
-    if (newNumberCache != null) {
-      myNumberCache = newNumberCache;
-    } else {
-      myNumberCache = new NoCache<>();
-    }
+    myNumberCache = Objects.requireNonNullElseGet(newNumberCache, NoCache::new);
   }
 
 
+  /**
+   * Set the cache that maps string values to a fixed representation.
+   *
+   * @param newCache the new cache (or null for no caching)
+   */
   public static void setStringCache(ICache<String, PString> newCache) {
-    if (newCache != null) {
-      myStringCache = newCache;
-    } else {
-      myStringCache = new NoCache<>();
-    }
+    myStringCache = Objects.requireNonNullElseGet(newCache, NoCache::new);
   }
 
 
+  /**
+   * Set the cache that maps numeric values to a fixed representation.
+   *
+   * @param newCache the new cache (or null for no caching)
+   */
   public static void setValueCache(ICache<Number, PNumber> newCache) {
-    if (newCache != null) {
-      myValueCache = newCache;
-    } else {
-      myValueCache = new NoCache<>();
-    }
+    myValueCache = Objects.requireNonNullElseGet(newCache, NoCache::new);
   }
 
 

@@ -36,6 +36,11 @@ public class JPatch implements JsonPatch {
   }
 
 
+  /**
+   * Create a new instance from its JSON representation.
+   *
+   * @param array the representation
+   */
   public JPatch(JsonArray array) {
     int s = array.size();
     operations = new ArrayList<>(s);

@@ -90,7 +90,7 @@ public class PatchFactoryTest {
         case 6:
           value = PNumber.create(random.nextInt());
           break;
-        case 7:
+        default:
           value = random.nextBoolean() ? PTrue.TRUE : PFalse.FALSE;
           break;
       }

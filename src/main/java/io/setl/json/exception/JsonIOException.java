@@ -15,4 +15,9 @@ public class JsonIOException extends JsonException {
     super("I/O failure", e);
   }
 
+
+  public IOException cause() {
+    return (IOException) getCause();
+  }
+
 }

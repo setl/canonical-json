@@ -30,11 +30,47 @@ import io.setl.json.patch.PatchOperation;
 @JsonInclude(Include.NON_NULL)
 public class Test extends PatchOperation {
 
-  private final String digest;
+  /** The default digest algorithm used to calculate digests of canonical JSON (SHA-512/256). */
+  public static final String DEFAULT_DIGEST = "SHA-512/256";
 
+
+  /**
+   * Calculate the digest of the canonical representation of a JsonValue, using the specified algorithm.
+   *
+   * @param algorithm the algorithm. If null or empty, the default algorithm is used.
+   * @param jsonValue the value
+   *
+   * @return the digest
+   *
+   * @throws JsonException if the algorithm is invalid
+   */
+  public static byte[] digest(String algorithm, JsonValue jsonValue) {
+    if (algorithm == null || algorithm.isEmpty()) {
+      algorithm = DEFAULT_DIGEST;
+    }
+    MessageDigest hash;
+    try {
+      hash = MessageDigest.getInstance(algorithm);
+    } catch (NoSuchAlgorithmException e) {
+      throw new JsonException("Invalid digest algorithm: \"" + algorithm + "\"", e);
+    }
+
+    String canonical = Primitive.cast(jsonValue).toString();
+    return hash.digest(canonical.getBytes(UTF_8));
+  }
+
+
+  private final String digest;
   private final JsonValue value;
 
 
+  /**
+   * New instance. At least one of <code>value</code> or <code>digest</code> must be specified.
+   *
+   * @param path   the path to test
+   * @param value  the value to check against
+   * @param digest the digest to check against
+   */
   @JsonCreator
   public Test(
       @JsonProperty("path") String path,
@@ -50,6 +86,11 @@ public class Test extends PatchOperation {
   }
 
 
+  /**
+   * Create a new instance from its JSON representation.
+   *
+   * @param object representation of the test
+   */
   public Test(JObject object) {
     super(object);
     this.value = object.optJsonValue("value");
@@ -57,32 +98,6 @@ public class Test extends PatchOperation {
     if (value == null && digest == null) {
       throw new IllegalArgumentException("Test case must specify at value or digest");
     }
-  }
-
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (!(o instanceof Test)) {
-      return false;
-    }
-    if (!super.equals(o)) {
-      return false;
-    }
-
-    Test test = (Test) o;
-    return Objects.equals(digest,test.digest) && Objects.equals(value,test.value);
-  }
-
-
-  @Override
-  public int hashCode() {
-    int result = super.hashCode();
-    result = 31 * result + (digest != null ? digest.hashCode() : 0);
-    result = 31 * result + (value != null ? value.hashCode() : 0);
-    return result;
   }
 
 
@@ -104,25 +119,34 @@ public class Test extends PatchOperation {
     String algorithm;
     byte[] expected;
     if (p == -1) {
-      algorithm = "SHA-512/256";
+      algorithm = DEFAULT_DIGEST;
       expected = Base64.getUrlDecoder().decode(digest);
     } else {
       algorithm = digest.substring(0, p);
       expected = Base64.getUrlDecoder().decode(digest.substring(p + 1));
     }
 
-    MessageDigest hash;
-    try {
-      hash = MessageDigest.getInstance(algorithm);
-    } catch (NoSuchAlgorithmException e) {
-      throw new JsonException("Invalid digest algorithm: \"" + algorithm + "\"", e);
-    }
-
-    String canonical = Primitive.cast(jsonValue).toString();
-    byte[] actual = hash.digest(canonical.getBytes(UTF_8));
+    byte[] actual = digest(algorithm, jsonValue);
     if (!MessageDigest.isEqual(expected, actual)) {
       throw new NoSuchValueException(getPath());
     }
+  }
+
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof Test)) {
+      return false;
+    }
+    if (!super.equals(o)) {
+      return false;
+    }
+
+    Test test = (Test) o;
+    return Objects.equals(digest, test.digest) && Objects.equals(value, test.value);
   }
 
 
@@ -139,6 +163,15 @@ public class Test extends PatchOperation {
 
   public JsonValue getValue() {
     return value;
+  }
+
+
+  @Override
+  public int hashCode() {
+    int result = super.hashCode();
+    result = 31 * result + (digest != null ? digest.hashCode() : 0);
+    result = 31 * result + (value != null ? value.hashCode() : 0);
+    return result;
   }
 
 

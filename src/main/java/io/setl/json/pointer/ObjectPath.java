@@ -20,6 +20,13 @@ public class ObjectPath implements PathElement {
   protected String path;
 
 
+  /**
+   * New path element that steps down through an object.
+   *
+   * @param path  the path for logging
+   * @param key   the key in the object to select
+   * @param child the descendants of this element
+   */
   public ObjectPath(String path, String key, PathElement child) {
     this.path = path;
     this.key = key;

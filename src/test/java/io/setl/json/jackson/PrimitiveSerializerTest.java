@@ -2,16 +2,18 @@ package io.setl.json.jackson;
 
 import static org.junit.Assert.assertEquals;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import java.io.IOException;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Before;
+import org.junit.Test;
+
 import io.setl.json.JArray;
 import io.setl.json.JObject;
 import io.setl.json.Primitive;
 import io.setl.json.jackson.objects.Car;
 import io.setl.json.jackson.objects.Fleet;
 import io.setl.json.jackson.objects.Truck;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * @author Simon Greatrix on 2020-01-07.
@@ -45,18 +47,27 @@ public class PrimitiveSerializerTest {
 
 
   @Test
-  public void serialize() throws JsonProcessingException {
+  public void serialize() throws IOException {
     ObjectMapper mapper = new ObjectMapper(new CanonicalFactory());
+    mapper.registerModule(new JsonModule());
+
     String json = mapper.writeValueAsString(fleet);
     // Warning, if you refactor the code, the class names in this will break.
     assertEquals(
-        "{\"vehicles\":[[\"io.setl.json.jackson.objects.Car\",{\"make\":\"Ford\",\"metadata\":[\"STRING\",\"META\"],\"model\":\"Mondeo\","
-            + "\"seatingCapacity\":5,\"topSpeed\":120}],[\"io.setl.json.jackson.objects.Truck\",{\"documents\":null,\"make\":\"Isuzu\","
-            + "\"metadata\":[\"ARRAY\",[1,\"B\"]],\"model\":\"NQR\",\"payloadCapacity\":7500}],[\"io.setl.json.jackson.objects.Car\","
+        "{\"vehicles\":["
+            + "[\"io.setl.json.jackson.objects.Car\","
+            + "{\"make\":\"Ford\",\"metadata\":\"META\",\"model\":\"Mondeo\",\"seatingCapacity\":5,\"topSpeed\":120}],"
+            + "[\"io.setl.json.jackson.objects.Truck\","
+            + "{\"documents\":null,\"make\":\"Isuzu\",\"metadata\":[1,\"B\"],\"model\":\"NQR\",\"payloadCapacity\":7500}],"
+            + "[\"io.setl.json.jackson.objects.Car\","
             + "{\"make\":\"Mercedes-Benz\",\"metadata\":{\"A\":123},\"model\":\"S500\",\"seatingCapacity\":5,\"topSpeed\":250}],"
-            + "[\"io.setl.json.jackson.objects.Truck\",{\"documents\":{\"A\":123},\"make\":\"BMW\",\"metadata\":null,\"model\":\"X6\","
-            + "\"payloadCapacity\":6000}]]}",
+            + "[\"io.setl.json.jackson.objects.Truck\","
+            + "{\"documents\":{\"A\":123},\"make\":\"BMW\",\"metadata\":null,\"model\":\"X6\",\"payloadCapacity\":6000}]]}",
         json
     );
+
+    Fleet copy = mapper.readValue(json, Fleet.class);
+    assertEquals(fleet, copy);
   }
+
 }

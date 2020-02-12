@@ -1,9 +1,5 @@
 package io.setl.json.jackson;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import io.setl.json.exception.JsonIOException;
-import io.setl.json.exception.NonFiniteNumberException;
-import io.setl.json.primitive.numbers.PNumber;
 import java.io.IOException;
 import java.util.Map.Entry;
 import javax.json.JsonArray;
@@ -11,6 +7,12 @@ import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.json.JsonValue;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+
+import io.setl.json.exception.JsonIOException;
+import io.setl.json.exception.NonFiniteNumberException;
+import io.setl.json.primitive.numbers.PNumber;
 
 /**
  * Write a Json Value out to a Jackson Generator.
@@ -32,6 +34,9 @@ public class JacksonGenerator {
   }
 
 
+  /**
+   * Close this and the underlying generator.
+   */
   public void close() {
     try {
       jsonGenerator.close();
@@ -125,4 +130,5 @@ public class JacksonGenerator {
     }
     jsonGenerator.writeEndObject();
   }
+
 }

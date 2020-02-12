@@ -1,19 +1,14 @@
 package io.setl.json.patch;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
-import javax.json.JsonException;
+import javax.annotation.Nonnull;
 import javax.json.JsonPatch;
 import javax.json.JsonPatchBuilder;
 import javax.json.JsonValue;
 
-import io.setl.json.Primitive;
 import io.setl.json.patch.ops.Add;
 import io.setl.json.patch.ops.Copy;
 import io.setl.json.patch.ops.Move;
@@ -88,7 +83,7 @@ public class JPatchBuilder implements JsonPatchBuilder, Iterable<PatchOperation>
    * @return the builder
    */
   public JsonPatchBuilder digest(String path, JsonValue value) {
-    return digest(path, "SHA-512/256", value);
+    return digest(path, Test.DEFAULT_DIGEST, value);
   }
 
 
@@ -102,17 +97,8 @@ public class JPatchBuilder implements JsonPatchBuilder, Iterable<PatchOperation>
    * @return the builder
    */
   public JsonPatchBuilder digest(String path, String algorithm, JsonValue value) {
-    MessageDigest hash;
-    try {
-      hash = MessageDigest.getInstance(algorithm);
-    } catch (NoSuchAlgorithmException e) {
-      throw new JsonException("Invalid digest algorithm: \"" + algorithm + "\"", e);
-    }
-
-    String canonical = Primitive.cast(value).toString();
-    byte[] actual = hash.digest(canonical.getBytes(UTF_8));
-
-    operationList.add(new Test(path, null, algorithm + "=" + Base64.getUrlEncoder().encodeToString(actual)));
+    byte[] hash = Test.digest(algorithm, value);
+    operationList.add(new Test(path, null, algorithm + "=" + Base64.getUrlEncoder().encodeToString(hash)));
     return this;
   }
 
@@ -122,6 +108,7 @@ public class JPatchBuilder implements JsonPatchBuilder, Iterable<PatchOperation>
   }
 
 
+  @Nonnull
   @Override
   public Iterator<PatchOperation> iterator() {
     return operationList.iterator();

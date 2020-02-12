@@ -24,6 +24,12 @@ public class Move extends PatchOperation {
   private final JsonPointer fromPointer;
 
 
+  /**
+   * New instance.
+   *
+   * @param path the path to move to
+   * @param from the path to move from
+   */
   @JsonCreator
   public Move(
       @JsonProperty("path") String path,
@@ -35,6 +41,11 @@ public class Move extends PatchOperation {
   }
 
 
+  /**
+   * New instance from its JSON representation.
+   *
+   * @param object the representation
+   */
   public Move(JObject object) {
     super(object);
     this.from = object.getString("from");

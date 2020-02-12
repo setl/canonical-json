@@ -1,11 +1,12 @@
 package io.setl.json.jackson.objects;
 
+import javax.json.JsonValue;
+
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
-import io.setl.json.Primitive;
 
 /**
  * @author Simon Greatrix on 2020-01-07.
@@ -16,7 +17,7 @@ public abstract class Vehicle {
 
   private String make;
 
-  private Primitive metadata;
+  private JsonValue metadata;
 
   private String model;
 
@@ -32,12 +33,33 @@ public abstract class Vehicle {
   }
 
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof Vehicle)) {
+      return false;
+    }
+
+    Vehicle vehicle = (Vehicle) o;
+
+    if (!make.equals(vehicle.make)) {
+      return false;
+    }
+    if (metadata != null ? !metadata.equals(vehicle.metadata) : vehicle.metadata != null) {
+      return false;
+    }
+    return model.equals(vehicle.model);
+  }
+
+
   public String getMake() {
     return make;
   }
 
 
-  public Primitive getMetadata() {
+  public JsonValue getMetadata() {
     return metadata;
   }
 
@@ -47,12 +69,21 @@ public abstract class Vehicle {
   }
 
 
+  @Override
+  public int hashCode() {
+    int result = make.hashCode();
+    result = 31 * result + (metadata != null ? metadata.hashCode() : 0);
+    result = 31 * result + model.hashCode();
+    return result;
+  }
+
+
   public void setMake(String make) {
     this.make = make;
   }
 
 
-  public void setMetadata(Primitive metadata) {
+  public void setMetadata(JsonValue metadata) {
     this.metadata = metadata;
   }
 
@@ -60,4 +91,5 @@ public abstract class Vehicle {
   public void setModel(String model) {
     this.model = model;
   }
+
 }

@@ -1,6 +1,5 @@
 package io.setl.json.parser;
 
-import io.setl.json.io.Location;
 import java.math.BigDecimal;
 import javax.json.JsonArray;
 import javax.json.JsonNumber;
@@ -8,7 +7,6 @@ import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
-import javax.json.stream.JsonLocation;
 import javax.json.stream.JsonParser.Event;
 
 /**
@@ -104,11 +102,6 @@ abstract class WalkingParser extends BaseIterator<Event> {
 
   public int getInt() {
     return getNumber().intValue();
-  }
-
-
-  public JsonLocation getLocation() {
-    return Location.UNSET;
   }
 
 

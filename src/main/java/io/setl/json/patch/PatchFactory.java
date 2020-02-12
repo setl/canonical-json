@@ -138,7 +138,7 @@ public final class PatchFactory {
           pos++;
           targetIdx++;
         } else if (lcsNode.equals(targetNode)) {
-          // Target node is part of LCS, but source node is not, so this is a removeal of the source node.
+          // Target node is part of LCS, but source node is not, so this is a removal of the source node.
           String itemKey = new ArrayKey(path, pos).toString();
           if (features.contains(DiffFeatures.EMIT_TESTS)) {
             patchBuilder.test(itemKey, srcNode.jsonValue);

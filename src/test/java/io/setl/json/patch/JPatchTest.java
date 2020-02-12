@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
+import io.setl.json.jackson.JsonModule;
 import io.setl.json.primitive.PString;
 
 /**
@@ -21,13 +22,13 @@ public class JPatchTest {
   @Before
   public void createPatch() {
     JPatchBuilder builder = new JPatchBuilder();
-    builder.add("/a/b/c",1);
-    builder.copy("/a/b/ex1","/a/b/ex2");
-    builder.digest("/a/b/c","SHA-256", PString.create("Hello, World!"));
-    builder.move("/a/x","/a/y");
+    builder.add("/a/b/c", 1);
+    builder.copy("/a/b/ex1", "/a/b/ex2");
+    builder.digest("/a/b/c", "SHA-256", PString.create("Hello, World!"));
+    builder.move("/a/x", "/a/y");
     builder.remove("/c/d");
-    builder.replace("/x","/y");
-    builder.test("/a/b/d1",true);
+    builder.replace("/x", "/y");
+    builder.test("/a/b/d1", true);
 
     patch = (JPatch) builder.build();
   }
@@ -36,6 +37,7 @@ public class JPatchTest {
   @Test
   public void getOperations() throws IOException {
     ObjectMapper mapper = new ObjectMapper();
+    mapper.registerModule(new JsonModule());
     String json = mapper.writeValueAsString(patch);
     JPatch copy = mapper.readValue(json, JPatch.class);
     assertEquals(patch, copy);

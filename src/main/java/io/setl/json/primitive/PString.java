@@ -1,11 +1,12 @@
 package io.setl.json.primitive;
 
-import io.setl.json.primitive.cache.CacheManager;
-import io.setl.json.primitive.cache.ICache;
 import java.io.IOException;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.json.JsonString;
+
+import io.setl.json.primitive.cache.CacheManager;
+import io.setl.json.primitive.cache.ICache;
 
 /**
  * @author Simon Greatrix on 08/01/2020.
@@ -38,7 +39,7 @@ public class PString extends PBase implements JsonString {
    */
   public static PString create(@Nonnull String value) {
     ICache<String, PString> cache = CacheManager.stringCache();
-    return cache.get(value,PString::new);
+    return cache.get(value, PString::new);
   }
 
 
@@ -244,6 +245,12 @@ public class PString extends PBase implements JsonString {
 
 
   @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+
+  @Override
   public String toString() {
     return format(value);
   }
@@ -253,4 +260,5 @@ public class PString extends PBase implements JsonString {
   public void writeTo(Appendable writer) throws IOException {
     format(writer, value);
   }
+
 }

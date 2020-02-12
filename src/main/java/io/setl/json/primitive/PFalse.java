@@ -16,6 +16,7 @@ public class PFalse extends PBase {
   }
 
 
+  @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
   @Override
   public boolean equals(Object obj) {
     return JsonValue.FALSE.equals(obj);

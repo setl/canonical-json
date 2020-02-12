@@ -25,14 +25,14 @@ public class CanonicalFactory extends JsonFactory {
 
 
   @Override
-  protected JsonGenerator _createGenerator(Writer out, IOContext ctxt) {
-    return new CanonicalGenerator(ctxt, _generatorFeatures, _objectCodec, out);
+  protected JsonGenerator _createGenerator(Writer out, IOContext ioContext) {
+    return new CanonicalGenerator(ioContext, _generatorFeatures, _objectCodec, out);
   }
 
 
   @Override
-  protected JsonGenerator _createUTF8Generator(OutputStream out, IOContext ctxt) {
-    return new CanonicalGenerator(ctxt, _generatorFeatures, _objectCodec, new Utf8Writer(out));
+  protected JsonGenerator _createUTF8Generator(OutputStream out, IOContext ioContext) {
+    return new CanonicalGenerator(ioContext, _generatorFeatures, _objectCodec, new Utf8Writer(out));
   }
 
 

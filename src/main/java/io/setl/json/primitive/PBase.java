@@ -3,7 +3,6 @@ package io.setl.json.primitive;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.setl.json.Primitive;
 import io.setl.json.jackson.PBaseSerializer;
-import java.util.Objects;
 
 /**
  * Representation of a value in a JSON object or array.
@@ -27,17 +26,17 @@ public abstract class PBase implements Primitive {
    *
    * @param <T>     required type
    * @param reqType the required type
-   * @param dflt    default value if type is not correct
+   * @param defaultValue    default value if type is not correct
    *
    * @return the value
    */
   @Override
-  public <T> T getValue(Class<T> reqType, T dflt) {
+  public <T> T getValue(Class<T> reqType, T defaultValue) {
     Object value = getValue();
     if (reqType.isInstance(value)) {
       return reqType.cast(value);
     }
-    return dflt;
+    return defaultValue;
   }
 
 

@@ -24,6 +24,12 @@ public class Copy extends PatchOperation {
   private final JsonPointer fromPointer;
 
 
+  /**
+   * Create a new copy operation.
+   *
+   * @param path the path to copy to
+   * @param from the path to copy from
+   */
   @JsonCreator
   public Copy(
       @JsonProperty("path") String path,
@@ -35,6 +41,11 @@ public class Copy extends PatchOperation {
   }
 
 
+  /**
+   * New instance from the JSON representation.
+   *
+   * @param object the representation of the copy operation
+   */
   public Copy(JObject object) {
     super(object);
     this.from = object.getString("from");

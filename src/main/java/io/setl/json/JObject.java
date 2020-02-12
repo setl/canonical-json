@@ -145,7 +145,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
 
     @Override
-    public boolean addAll(Collection<? extends Entry<String, JsonValue>> c) {
+    public boolean addAll(@Nonnull Collection<? extends Entry<String, JsonValue>> c) {
       throw new UnsupportedOperationException();
     }
 
@@ -187,6 +187,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
     }
 
 
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     @Override
     public boolean equals(Object o) {
       return mySet.equals(o);
@@ -206,6 +207,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
 
     @Override
+    @Nonnull
     public Iterator<Entry<String, JsonValue>> iterator() {
       final Iterator<Entry<String, Primitive>> myIterator = mySet.iterator();
       return new Iterator<>() {
@@ -243,7 +245,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
 
     @Override
-    public boolean removeAll(Collection<?> c) {
+    public boolean removeAll(@Nonnull Collection<?> c) {
       return mySet.removeAll(c);
     }
 
@@ -255,7 +257,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
 
     @Override
-    public boolean retainAll(Collection<?> c) {
+    public boolean retainAll(@Nonnull Collection<?> c) {
       return mySet.retainAll(c);
     }
 
@@ -279,19 +281,24 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
 
     @Override
+    @Nonnull
     public Object[] toArray() {
       return mySet.toArray();
     }
 
 
+    @SuppressWarnings("SuspiciousToArrayCall")
     @Override
-    public <T> T[] toArray(T[] a) {
+    @Nonnull
+    public <T> T[] toArray(@Nonnull T[] a) {
       return mySet.toArray(a);
     }
 
 
+    @SuppressWarnings("SuspiciousToArrayCall")
     @Override
-    public <T> T[] toArray(IntFunction<T[]> generator) {
+    @Nonnull
+    public <T> T[] toArray(@Nonnull IntFunction<T[]> generator) {
       return mySet.toArray(generator);
     }
 
@@ -315,6 +322,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
     }
 
 
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     @Override
     public boolean equals(Object o) {
       if (this == o) {
@@ -417,7 +425,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
     }
 
 
-    public boolean addAll(Collection<? extends JsonValue> c) {
+    public boolean addAll(@Nonnull Collection<? extends JsonValue> c) {
       throw new UnsupportedOperationException("Add is not supported on a map's values");
     }
 
@@ -435,7 +443,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
 
     @Override
-    public boolean containsAll(Collection<?> c) {
+    public boolean containsAll(@Nonnull Collection<?> c) {
       return me.containsAll(c);
     }
 
@@ -447,6 +455,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
 
     @Override
+    @Nonnull
     public Iterator<JsonValue> iterator() {
       final Iterator<Primitive> myIterator = me.iterator();
       return new Iterator<>() {
@@ -483,7 +492,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
 
     @Override
-    public boolean removeAll(Collection<?> c) {
+    public boolean removeAll(@Nonnull Collection<?> c) {
       return me.removeAll(c);
     }
 
@@ -495,7 +504,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
 
     @Override
-    public boolean retainAll(Collection<?> c) {
+    public boolean retainAll(@Nonnull Collection<?> c) {
       return me.retainAll(c);
     }
 
@@ -519,17 +528,21 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
 
     @Override
+    @Nonnull
     public Object[] toArray() {
       return me.toArray();
     }
 
 
+    @SuppressWarnings("SuspiciousToArrayCall")
     @Override
-    public <T> T[] toArray(T[] a) {
+    @Nonnull
+    public <T> T[] toArray(@Nonnull T[] a) {
       return me.toArray(a);
     }
 
 
+    @SuppressWarnings("SuspiciousToArrayCall")
     @Override
     public <T> T[] toArray(IntFunction<T[]> generator) {
       return me.toArray(generator);
@@ -576,6 +589,11 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
   }
 
 
+  /**
+   * Create a new instance as a deep copy of the provided map.
+   *
+   * @param map the map to copy.
+   */
   public JObject(Map<String, ?> map) {
     myMap = new TreeMap<>(CODE_POINT_ORDER);
     for (Entry<String, ?> e : map.entrySet()) {
@@ -678,11 +696,13 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
 
   @Override
+  @Nonnull
   public Set<Entry<String, JsonValue>> entrySet() {
     return new MyEntries(myMap.entrySet());
   }
 
 
+  @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
   @Override
   public boolean equals(Object o) {
     if (o == this) {
@@ -731,27 +751,27 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
   /**
    * Get an array from the object.
    *
-   * @param key  the key
-   * @param dflt the default
+   * @param key          the key
+   * @param defaultValue the default
    *
    * @return the array, or the default
    */
-  public JArray getArray(String key, @Nonnull Function<String, JArray> dflt) {
-    return getQuiet(JArray.class, key, dflt);
+  public JArray getArray(String key, @Nonnull Function<String, JArray> defaultValue) {
+    return getQuiet(JArray.class, key, defaultValue);
   }
 
 
   /**
    * Get an array from the object.
    *
-   * @param key  the key
-   * @param dflt the default
+   * @param key          the key
+   * @param defaultValue the default
    *
    * @return the array, or the default
    */
   @Nonnull
-  public JArray getArray(String key, @Nonnull JArray dflt) {
-    return getQuiet(JArray.class, key, dflt);
+  public JArray getArray(String key, @Nonnull JArray defaultValue) {
+    return getQuiet(JArray.class, key, defaultValue);
   }
 
 
@@ -769,16 +789,16 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
   /**
    * Get a big decimal from the object.
    *
-   * @param key  the key
-   * @param dflt the default
+   * @param key          the key
+   * @param defaultValue the default
    *
    * @return the big decimal, or the default
    */
   @Nonnull
-  public BigDecimal getBigDecimal(String key, @Nonnull BigDecimal dflt) {
+  public BigDecimal getBigDecimal(String key, @Nonnull BigDecimal defaultValue) {
     Number n = getQuiet(Number.class, key);
     if (n == null) {
-      return dflt;
+      return defaultValue;
     }
     return Primitive.toBigDecimal(n);
   }
@@ -787,15 +807,15 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
   /**
    * Get a big decimal from the object.
    *
-   * @param key  the key
-   * @param dflt the default
+   * @param key          the key
+   * @param defaultValue the default
    *
    * @return the big decimal, or the default
    */
-  public BigDecimal getBigDecimal(String key, @Nonnull Function<String, BigDecimal> dflt) {
+  public BigDecimal getBigDecimal(String key, @Nonnull Function<String, BigDecimal> defaultValue) {
     Number n = getQuiet(Number.class, key);
     if (n == null) {
-      return dflt.apply(key);
+      return defaultValue.apply(key);
     }
     return Primitive.toBigDecimal(n);
   }
@@ -816,16 +836,16 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
   /**
    * Get a big integer from the object.
    *
-   * @param key  the key
-   * @param dflt the default
+   * @param key          the key
+   * @param defaultValue the default
    *
    * @return the big integer, or the default
    */
   @Nonnull
-  public BigInteger getBigInteger(String key, @Nonnull BigInteger dflt) {
+  public BigInteger getBigInteger(String key, @Nonnull BigInteger defaultValue) {
     Number n = getQuiet(Number.class, key);
     if (n == null) {
-      return dflt;
+      return defaultValue;
     }
     return Primitive.toBigInteger(n);
   }
@@ -834,15 +854,15 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
   /**
    * Get a big integer from the object.
    *
-   * @param key  the key
-   * @param dflt the default
+   * @param key          the key
+   * @param defaultValue the default
    *
    * @return the big integer, or the default
    */
-  public BigInteger getBigInteger(String key, @Nonnull Function<String, BigInteger> dflt) {
+  public BigInteger getBigInteger(String key, @Nonnull Function<String, BigInteger> defaultValue) {
     Number n = getQuiet(Number.class, key);
     if (n == null) {
-      return dflt.apply(key);
+      return defaultValue.apply(key);
     }
     return Primitive.toBigInteger(n);
   }
@@ -863,27 +883,27 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
   /**
    * Get a Boolean from the object.
    *
-   * @param key  the key
-   * @param dflt the default
+   * @param key          the key
+   * @param defaultValue the default
    *
    * @return the Boolean, or the default
    */
-  public boolean getBoolean(String key, boolean dflt) {
-    return getQuiet(Boolean.class, key, Boolean.valueOf(dflt)).booleanValue();
+  public boolean getBoolean(String key, boolean defaultValue) {
+    return getQuiet(Boolean.class, key, defaultValue).booleanValue();
   }
 
 
   /**
    * Get a Boolean from the object.
    *
-   * @param key  the key
-   * @param dflt the default
+   * @param key          the key
+   * @param defaultValue the default
    *
    * @return the Boolean, or the default
    */
-  public boolean getBoolean(String key, @Nonnull Predicate<String> dflt) {
+  public boolean getBoolean(String key, @Nonnull Predicate<String> defaultValue) {
     Boolean value = getQuiet(Boolean.class, key);
-    return (value != null) ? value.booleanValue() : dflt.test(key);
+    return (value != null) ? value.booleanValue() : defaultValue.test(key);
   }
 
 
@@ -908,28 +928,28 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
   /**
    * Get a double from the object.
    *
-   * @param key  the key
-   * @param dflt the default
+   * @param key          the key
+   * @param defaultValue the default
    *
    * @return the double, or the default
    */
-  public double getDouble(String key, double dflt) {
+  public double getDouble(String key, double defaultValue) {
     Double n = optDouble(key);
-    return (n != null) ? n.doubleValue() : dflt;
+    return (n != null) ? n.doubleValue() : defaultValue;
   }
 
 
   /**
    * Get a double from the object.
    *
-   * @param key  the key
-   * @param dflt the default
+   * @param key          the key
+   * @param defaultValue the default
    *
    * @return the double, or the default
    */
-  public double getDouble(String key, @Nonnull ToDoubleFunction<String> dflt) {
+  public double getDouble(String key, @Nonnull ToDoubleFunction<String> defaultValue) {
     Double n = optDouble(key);
-    return (n != null) ? n.doubleValue() : dflt.applyAsDouble(key);
+    return (n != null) ? n.doubleValue() : defaultValue.applyAsDouble(key);
   }
 
 
@@ -954,28 +974,28 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
   /**
    * Get an integer from the object.
    *
-   * @param key  the key
-   * @param dflt the default
+   * @param key          the key
+   * @param defaultValue the default
    *
    * @return the integer, or the default
    */
-  public int getInt(String key, int dflt) {
+  public int getInt(String key, int defaultValue) {
     Number n = getQuiet(Number.class, key);
-    return (n != null) ? n.intValue() : dflt;
+    return (n != null) ? n.intValue() : defaultValue;
   }
 
 
   /**
    * Get an integer from the object.
    *
-   * @param key  the key
-   * @param dflt the default
+   * @param key          the key
+   * @param defaultValue the default
    *
    * @return the integer, or the default
    */
-  public int getInt(String key, @Nonnull ToIntFunction<String> dflt) {
+  public int getInt(String key, @Nonnull ToIntFunction<String> defaultValue) {
     Number n = getQuiet(Number.class, key);
-    return (n != null) ? n.intValue() : dflt.applyAsInt(key);
+    return (n != null) ? n.intValue() : defaultValue.applyAsInt(key);
   }
 
 
@@ -1035,15 +1055,15 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
   /**
    * Get a JsonValue from this object. If the value does not exist, the default value is returned.
    *
-   * @param key  the value's key
-   * @param dflt the default value
+   * @param key          the value's key
+   * @param defaultValue the default value
    *
    * @return the value
    */
-  public JsonValue getJsonValue(String key, JsonValue dflt) {
+  public JsonValue getJsonValue(String key, JsonValue defaultValue) {
     Primitive primitive = getPrimitive(key);
     if (primitive == null) {
-      return dflt;
+      return defaultValue;
     }
     return primitive;
   }
@@ -1052,15 +1072,15 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
   /**
    * Get a JsonValue from this object. If the value does not exist, the function is invoked to create a value.
    *
-   * @param key  the value's key
-   * @param dflt supplier of a default value
+   * @param key          the value's key
+   * @param defaultValue supplier of a default value
    *
    * @return the value
    */
-  public JsonValue getJsonValue(String key, @Nonnull Function<String, JsonValue> dflt) {
+  public JsonValue getJsonValue(String key, @Nonnull Function<String, JsonValue> defaultValue) {
     Primitive primitive = getPrimitive(key);
     if (primitive == null) {
-      return dflt.apply(key);
+      return defaultValue.apply(key);
     }
     return primitive;
   }
@@ -1069,28 +1089,28 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
   /**
    * Get a long from the object.
    *
-   * @param key  the key
-   * @param dflt the default
+   * @param key          the key
+   * @param defaultValue the default
    *
    * @return the long, or the default
    */
-  public long getLong(String key, long dflt) {
+  public long getLong(String key, long defaultValue) {
     Number n = getQuiet(Number.class, key);
-    return (n != null) ? n.longValue() : dflt;
+    return (n != null) ? n.longValue() : defaultValue;
   }
 
 
   /**
    * Get a long from the object.
    *
-   * @param key  the key
-   * @param dflt the default
+   * @param key          the key
+   * @param defaultValue the default
    *
    * @return the long, or the default
    */
-  public long getLong(String key, @Nonnull ToLongFunction<String> dflt) {
+  public long getLong(String key, @Nonnull ToLongFunction<String> defaultValue) {
     Number n = getQuiet(Number.class, key);
-    return (n != null) ? n.longValue() : dflt.applyAsLong(key);
+    return (n != null) ? n.longValue() : defaultValue.applyAsLong(key);
   }
 
 
@@ -1108,26 +1128,26 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
   /**
    * Get an object from the object.
    *
-   * @param key  the key
-   * @param dflt the default
+   * @param key          the key
+   * @param defaultValue the default
    *
    * @return the object, or the default
    */
-  public JObject getObject(String key, @Nonnull Function<String, JObject> dflt) {
-    return getQuiet(JObject.class, key, dflt);
+  public JObject getObject(String key, @Nonnull Function<String, JObject> defaultValue) {
+    return getQuiet(JObject.class, key, defaultValue);
   }
 
 
   /**
    * Get an object from the object.
    *
-   * @param key  the key
-   * @param dflt the default
+   * @param key          the key
+   * @param defaultValue the default
    *
    * @return the object, or the default
    */
-  public JObject getObject(String key, JObject dflt) {
-    return getQuiet(JObject.class, key, dflt);
+  public JObject getObject(String key, JObject defaultValue) {
+    return getQuiet(JObject.class, key, defaultValue);
   }
 
 
@@ -1171,8 +1191,8 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
   }
 
 
-  private <T> T getQuiet(Class<T> clazz, String key, T dflt) {
-    return getQuiet(clazz, key, (Function<String, T>) k -> dflt);
+  private <T> T getQuiet(Class<T> clazz, String key, T defaultValue) {
+    return getQuiet(clazz, key, (Function<String, T>) k -> defaultValue);
   }
 
 
@@ -1192,26 +1212,26 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
   /**
    * Get a String from the object.
    *
-   * @param key  the key
-   * @param dflt the default
+   * @param key          the key
+   * @param defaultValue the default
    *
    * @return the String, or the default
    */
-  public String getString(String key, @Nonnull UnaryOperator<String> dflt) {
-    return getQuiet(String.class, key, dflt);
+  public String getString(String key, @Nonnull UnaryOperator<String> defaultValue) {
+    return getQuiet(String.class, key, defaultValue);
   }
 
 
   /**
    * Get a String from the object.
    *
-   * @param key  the key
-   * @param dflt the default
+   * @param key          the key
+   * @param defaultValue the default
    *
    * @return the String, or the default
    */
-  public String getString(String key, String dflt) {
-    return getQuiet(String.class, key, dflt);
+  public String getString(String key, String defaultValue) {
+    return getQuiet(String.class, key, defaultValue);
   }
 
 
@@ -1227,11 +1247,11 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
 
   @Override
-  public <T> T getValue(Class<T> reqType, T dflt) {
+  public <T> T getValue(Class<T> reqType, T defaultValue) {
     if (reqType.isInstance(this)) {
       return reqType.cast(this);
     }
-    return dflt;
+    return defaultValue;
   }
 
 
@@ -1266,6 +1286,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
 
   @Override
+  @Nonnull
   public SortedMap<String, JsonValue> headMap(String toKey) {
     return new JObject(myMap.headMap(toKey, false), false);
   }
@@ -1299,6 +1320,16 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
   }
 
 
+  /**
+   * Verify if the type of the specified property is as required.
+   *
+   * @param key  the key
+   * @param type the desired type
+   *
+   * @return True if the property exists and has the required type. False if the property exists and does not have the required type.
+   *
+   * @throws MissingItemException if the property does not exist
+   */
   public boolean isType(String key, ValueType type) {
     Primitive primitive = getPrimitive(key);
     if (primitive == null) {
@@ -1309,6 +1340,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
 
   @Override
+  @Nonnull
   public Set<String> keySet() {
     return myMap.keySet();
   }
@@ -1420,7 +1452,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
   @Nullable
   public Integer optInt(String key) {
     Number n = getQuiet(Number.class, key);
-    return (n != null) ? Integer.valueOf(n.intValue()) : null;
+    return (n != null) ? n.intValue() : null;
   }
 
 
@@ -1444,7 +1476,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
   @Nullable
   public Long optLong(String key) {
     Number n = getQuiet(Number.class, key);
-    return (n != null) ? Long.valueOf(n.longValue()) : null;
+    return (n != null) ? n.longValue() : null;
   }
 
 
@@ -1613,7 +1645,12 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
   }
 
 
-  public void putAll(Map<? extends String, ? extends JsonValue> m) {
+  /**
+   * Put all the contents of the supplied map into this.
+   *
+   * @param m the map of values
+   */
+  public void putAll(@Nonnull Map<? extends String, ? extends JsonValue> m) {
     if (m instanceof JObject) {
       myMap.putAll(((JObject) m).myMap);
     } else {
@@ -1777,6 +1814,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
 
   @Override
+  @Nonnull
   public SortedMap<String, JsonValue> subMap(String fromKey, String toKey) {
     return new JObject(myMap.subMap(fromKey, true, toKey, false), false);
   }
@@ -1789,6 +1827,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
 
   @Override
+  @Nonnull
   public SortedMap<String, JsonValue> tailMap(String fromKey) {
     return new JObject(myMap.tailMap(fromKey, true), false);
   }
@@ -1814,6 +1853,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
 
   @Override
+  @Nonnull
   public Collection<JsonValue> values() {
     return new MyValues(myMap.values());
   }

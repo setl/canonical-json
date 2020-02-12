@@ -16,6 +16,7 @@ public class PNull extends PBase {
   }
 
 
+  @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
   @Override
   public boolean equals(Object obj) {
     return JsonValue.NULL.equals(obj);

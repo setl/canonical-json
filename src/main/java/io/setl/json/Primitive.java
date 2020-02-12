@@ -1,15 +1,5 @@
 package io.setl.json;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
-import io.setl.json.io.Utf8Appendable;
-import io.setl.json.primitive.PFalse;
-import io.setl.json.primitive.PNull;
-import io.setl.json.primitive.PString;
-import io.setl.json.primitive.PTrue;
-import io.setl.json.primitive.numbers.PNumber;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
@@ -26,21 +16,16 @@ import javax.json.JsonNumber;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 
+import io.setl.json.io.Utf8Appendable;
+import io.setl.json.primitive.PFalse;
+import io.setl.json.primitive.PNull;
+import io.setl.json.primitive.PString;
+import io.setl.json.primitive.PTrue;
+import io.setl.json.primitive.numbers.PNumber;
+
 /**
  * @author Simon Greatrix on 08/01/2020.
  */
-@JsonTypeInfo(use = Id.NAME)
-@JsonSubTypes(
-    {
-        @Type(name = "ARRAY", value = JArray.class),
-        @Type(name = "TRUE", value = PTrue.class),
-        @Type(name = "FALSE", value = PFalse.class),
-        @Type(name = "NULL", value = PNull.class),
-        @Type(name = "OBJECT", value = JObject.class),
-        @Type(name = "NUMBER", value = PNumber.class),
-        @Type(name = "STRING", value = PString.class)
-    }
-)
 public interface Primitive extends JsonValue {
 
   /**
@@ -103,7 +88,7 @@ public interface Primitive extends JsonValue {
   }
 
   /**
-   * Do a best effort conversion of any object to a Primitive.
+   * Do a best effort conversion of any object to a Primitive, creating a new Primitive to represent the values where appropriate.
    *
    * @param value the value
    *
@@ -155,11 +140,10 @@ public interface Primitive extends JsonValue {
     }
     switch (jv.getValueType()) {
       case ARRAY:
+      case OBJECT:
         return jv;
       case FALSE:
         return Boolean.FALSE;
-      case OBJECT:
-        return jv;
       case NUMBER:
         return ((JsonNumber) jv).numberValue();
       case NULL:
@@ -177,19 +161,19 @@ public interface Primitive extends JsonValue {
   /**
    * Get the value enclosed in a JSON value.
    *
-   * @param reqType the required type
-   * @param jv      the JSON value
-   * @param dflt    the default value to return if the value is missing or not the correct type
-   * @param <T>     the required type
+   * @param reqType      the required type
+   * @param jv           the JSON value
+   * @param defaultValue the default value to return if the value is missing or not the correct type
+   * @param <T>          the required type
    *
    * @return the value if possible, otherwise the default
    */
-  static <T> T getValue(Class<T> reqType, JsonValue jv, T dflt) {
+  static <T> T getValue(Class<T> reqType, JsonValue jv, T defaultValue) {
     Object value = getValue(jv);
     if (reqType.isInstance(value)) {
       return reqType.cast(value);
     }
-    return dflt;
+    return defaultValue;
   }
 
   static <T> T getValue(Class<T> reqType, JsonValue jv) {
@@ -249,12 +233,12 @@ public interface Primitive extends JsonValue {
 
   @Override
   default JArray asJsonArray() {
-    return JArray.class.cast(this);
+    return (JArray) this;
   }
 
   @Override
   default JObject asJsonObject() {
-    return JObject.class.cast(this);
+    return (JObject) this;
   }
 
   /**
@@ -269,18 +253,19 @@ public interface Primitive extends JsonValue {
    *
    * @return the value
    */
+  @SuppressWarnings("checkstyle:OverloadMethodsDeclarationOrder")
   Object getValue();
 
   /**
    * Get the value encapsulated by this primitive.
    *
-   * @param <T>     required type
-   * @param reqType the required type
-   * @param dflt    default value if type is not correct
+   * @param <T>          required type
+   * @param reqType      the required type
+   * @param defaultValue default value if type is not correct
    *
    * @return the value
    */
-  <T> T getValue(Class<T> reqType, T dflt);
+  <T> T getValue(Class<T> reqType, T defaultValue);
 
   /**
    * Get the value encapsulated by this primitive. Throws a ClassCastException if the type is incorrect.
@@ -311,4 +296,5 @@ public interface Primitive extends JsonValue {
    * @throws IOException if writing fails
    */
   void writeTo(Appendable writer) throws IOException;
+
 }

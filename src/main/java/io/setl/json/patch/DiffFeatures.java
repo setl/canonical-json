@@ -28,7 +28,7 @@ public enum DiffFeatures {
    * <p>The resulting patches are NOT standard per RFC 6902 and can only be processed by a library that understand canonical form and the "digest" extension.
    * This isn't default behavior.
    */
-  EMIT_DIGEST;
+  EMIT_DIGEST
 
 
 }

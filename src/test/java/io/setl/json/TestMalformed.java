@@ -23,12 +23,10 @@ public class TestMalformed {
 
   public static boolean isDebug = false;
 
-  private static String PATH = "malformed/";
-
 
   private JsonValue loadResource(String resource) throws IOException {
     try (
-        InputStream input = TestMalformed.class.getClassLoader().getResourceAsStream(PATH + resource);
+        InputStream input = TestMalformed.class.getClassLoader().getResourceAsStream("malformed/" + resource);
         Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8)
     ) {
       return new JReaderFactory().createReader(reader).readValue();

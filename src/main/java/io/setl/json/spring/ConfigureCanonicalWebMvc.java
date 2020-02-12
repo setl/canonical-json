@@ -30,7 +30,7 @@ public class ConfigureCanonicalWebMvc {
   public WebMvcConfigurer canonicalWebMvcConfigurer(
       @Autowired(required = false) Jackson2ObjectMapperBuilder mapperBuilder
   ) {
-    if (mapperBuilder != null) {
+    if (mapperBuilder == null) {
       ObjectMapper mapper = new ObjectMapper(new CanonicalFactory());
       mapper.findAndRegisterModules();
       return new CanonicalWebMvcConfigurer(mapper);

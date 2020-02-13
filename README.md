@@ -1,23 +1,16 @@
 # Canonical JSON
 
-Implementation of the [Canonical JSON format](https://web.archive.org/web/20191120120802/http://gibson042.github.io/canonicaljson-spec/).
+Implementation of the [Canonical JSON
+format](https://web.archive.org/web/20191120120802/http://gibson042.github.io/canonicaljson-spec/).
 
-The implementation is in three parts.
+The implementation conforms to [JSR 374: Java API for JSON Processing
+1.1](https://javadoc.io/static/javax.json/javax.json-api/1.1.4/index.html?overview-summary.html).
 
-## Document model
-The core classes, Primitive, JsonObject and JsonArray can be used to create any
-JSON data structure. The `writeTo` and `toString` methods on these three classes
-generate Canonical JSON.
+The implementation can be used with
+[Jackson](https://github.com/FasterXML/jackson). It exports a Jackson Module
+which adds serializers and deserializers for the java.json.JsonValue types.
 
-## Parser
-There is a comprehensive JSON parser which will parse any correct JSON. It does
-not require the input to be canonical.
-
-## Jackson integration
-By creating a Jackson `ObjectMapper` like this:
-
-```
-ObjectMapper mapper = new ObjectMapper(new CanonicalFactory());
-```
-
-Jackson will generate canonical JSON.
+The implementation can be used with [Spring](https://spring.io/). If the
+"setl.json.enabled" property is unset or true, it will register a Web MVC
+Configurer to allow the input and output of JsonValue instances, and the
+generation of Canonical JSON in responses.

@@ -13,23 +13,33 @@ public interface PathElement {
 
   void add(JsonObject target, JsonValue value);
 
+  void buildPath(StringBuilder builder);
+
+  boolean contains(PathElement other);
+
   boolean containsValue(JsonArray target);
 
   boolean containsValue(JsonObject target);
 
+  void copy(JsonArray source, JsonArray target);
+
+  void copy(JsonObject source, JsonObject target);
+
   PathElement getChild();
+
+  String getEscapedKey();
 
   int getIndex();
 
   String getKey();
-
-  String getEscapedKey();
 
   String getPath();
 
   JsonValue getValue(JsonArray target);
 
   JsonValue getValue(JsonObject target);
+
+  boolean isArrayType();
 
   void remove(JsonArray target);
 
@@ -43,5 +53,4 @@ public interface PathElement {
 
   void setPath(String path);
 
-  void buildPath(StringBuilder builder);
 }

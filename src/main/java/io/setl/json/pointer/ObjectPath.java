@@ -1,10 +1,15 @@
 package io.setl.json.pointer;
 
+import java.util.Objects;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 
+import io.setl.json.JArray;
+import io.setl.json.JObject;
 import io.setl.json.exception.NoSuchValueException;
 import io.setl.json.exception.PointerMismatchException;
 
@@ -65,6 +70,24 @@ public class ObjectPath implements PathElement {
 
 
   @Override
+  public boolean contains(PathElement other) {
+    PathElement otherChild = other.getChild();
+    if (otherChild == null) {
+      // other is a terminal, this is not, so other is less specific than this
+      return false;
+    }
+
+    if (other.isArrayType()) {
+      // only matches if it is a wildcard match
+      return "-".equals(key) && child.contains(otherChild);
+    }
+
+    // keys must match
+    return Objects.equals(key, other.getKey()) && child.contains(otherChild);
+  }
+
+
+  @Override
   public boolean containsValue(JsonArray target) {
     return false;
   }
@@ -73,6 +96,82 @@ public class ObjectPath implements PathElement {
   @Override
   public boolean containsValue(JsonObject target) {
     return doContains(target.get(key));
+  }
+
+
+  @Override
+  public void copy(@Nonnull JsonArray source, @Nullable JsonArray target) {
+    if (!"-".equals(key)) {
+      // the key cannot exist in an array.
+      return;
+    }
+
+    int targetSize = target.size();
+    for (int i = 0; i < source.size(); i++) {
+      JsonValue sourceValue = source.get(i);
+      JsonValue targetValue = (i < targetSize) ? target.get(i) : null;
+      switch (sourceValue.getValueType()) {
+        case OBJECT:
+          if (targetValue == null || targetValue.getValueType() != ValueType.OBJECT) {
+            targetValue = new JObject();
+            if (i < targetSize) {
+              target.set(i, targetValue);
+            } else {
+              target.add(targetValue);
+            }
+          }
+          child.copy((JsonObject) sourceValue, (JsonObject) targetValue);
+          break;
+
+        case ARRAY:
+          if (targetValue == null || targetValue.getValueType() != ValueType.ARRAY) {
+            targetValue = new JArray();
+            if (i < targetSize) {
+              target.set(i, targetValue);
+            } else {
+              target.add(targetValue);
+            }
+          }
+          child.copy((JsonArray) sourceValue, (JsonArray) targetValue);
+          break;
+
+        default:
+          // do nothing
+          break;
+      }
+    }
+  }
+
+
+  @Override
+  public void copy(@Nonnull JsonObject source, @Nullable JsonObject target) {
+    JsonValue sourceValue = source.get(key);
+    if (sourceValue == null) {
+      return;
+    }
+
+    JsonValue targetValue = target.get(key);
+    switch (sourceValue.getValueType()) {
+      case OBJECT:
+        if (targetValue == null || targetValue.getValueType() != ValueType.OBJECT) {
+          targetValue = new JObject();
+          target.put(key, targetValue);
+        }
+        child.copy((JsonObject) sourceValue, (JsonObject) targetValue);
+        break;
+
+      case ARRAY:
+        if (targetValue == null || targetValue.getValueType() != ValueType.ARRAY) {
+          targetValue = new JArray();
+          target.put(key, targetValue);
+        }
+        child.copy((JsonArray) sourceValue, (JsonArray) targetValue);
+        break;
+
+      default:
+        // do nothing
+        break;
+    }
   }
 
 
@@ -193,6 +292,12 @@ public class ObjectPath implements PathElement {
   @Override
   public JsonValue getValue(JsonObject target) {
     return doGetValue(get(target));
+  }
+
+
+  @Override
+  public boolean isArrayType() {
+    return false;
   }
 
 

@@ -43,6 +43,13 @@ public class ArrayTerminal extends ObjectTerminal {
 
 
   @Override
+  public boolean contains(PathElement other) {
+    // indices must match
+    return index == other.getIndex();
+  }
+
+
+  @Override
   public boolean containsValue(JsonArray target) {
     return index < target.size();
   }
@@ -67,6 +74,12 @@ public class ArrayTerminal extends ObjectTerminal {
     } catch (IndexOutOfBoundsException e) {
       throw badIndex(target.size());
     }
+  }
+
+
+  @Override
+  public boolean isArrayType() {
+    return true;
   }
 
 

@@ -1,5 +1,6 @@
 package io.setl.json.pointer;
 
+import java.util.Objects;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
@@ -48,6 +49,18 @@ public class ObjectTerminal implements PathElement {
     builder.append('/').append(getEscapedKey());
     path = builder.toString();
     getChild().buildPath(builder);
+  }
+
+
+  @Override
+  public boolean contains(PathElement other) {
+    if (other.isArrayType()) {
+      // only matches if it is a wildcard match
+      return "-".equals(key);
+    }
+
+    // keys must match
+    return Objects.equals(key, other.getKey());
   }
 
 
@@ -106,6 +119,12 @@ public class ObjectTerminal implements PathElement {
       throw new NoSuchValueException(path);
     }
     return jv;
+  }
+
+
+  @Override
+  public boolean isArrayType() {
+    return false;
   }
 
 

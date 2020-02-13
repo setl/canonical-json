@@ -24,20 +24,23 @@ public class ArrayPath extends ObjectPath {
     this.index = index;
   }
 
-  @Override
-  public String getEscapedKey() {
-    return key;
-  }
-
-  @Override
-  public int getIndex() {
-    return index;
-  }
-
 
   @Override
   public void add(JsonArray target, JsonValue value) {
     doAdd(get(target), value);
+  }
+
+
+  @Override
+  public boolean contains(PathElement other) {
+    PathElement otherChild = other.getChild();
+    if (otherChild == null) {
+      // other is a terminal, this is not, so other is less specific than this
+      return false;
+    }
+
+    // indices must match
+    return index == other.getIndex() && child.contains(otherChild);
   }
 
 
@@ -60,8 +63,26 @@ public class ArrayPath extends ObjectPath {
 
 
   @Override
+  public String getEscapedKey() {
+    return key;
+  }
+
+
+  @Override
+  public int getIndex() {
+    return index;
+  }
+
+
+  @Override
   public JsonValue getValue(JsonArray target) {
     return doGetValue(get(target));
+  }
+
+
+  @Override
+  public boolean isArrayType() {
+    return true;
   }
 
 

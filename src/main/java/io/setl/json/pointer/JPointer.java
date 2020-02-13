@@ -1,16 +1,20 @@
 package io.setl.json.pointer;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
-import javax.json.JsonPointer;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 
+import io.setl.json.JArray;
+import io.setl.json.JObject;
+
 /**
  * @author Simon Greatrix on 27/01/2020.
  */
-public class JPointer implements JsonPointer {
+public class JPointer implements JsonExtendedPointer {
 
   /**
    * Perform the escaping of the '~' and '/' characters as required by the standard.
@@ -63,11 +67,56 @@ public class JPointer implements JsonPointer {
 
 
   @Override
+  public boolean contains(JsonExtendedPointer other) {
+    if (other instanceof EmptyPointer) {
+      // Empty cannot be contained within this.
+      return false;
+    }
+    return root.contains(((JPointer) other).root);
+  }
+
+
+  @Override
   public boolean containsValue(JsonStructure target) {
     if (target.getValueType() == ValueType.OBJECT) {
       return root.containsValue((JsonObject) target);
     }
     return root.containsValue((JsonArray) target);
+  }
+
+
+  @Nonnull
+  @Override
+  @SuppressWarnings("unchecked")
+  public <T extends JsonStructure> T copy(@Nonnull T source, @Nullable T target) {
+    if (source instanceof JsonObject) {
+      return (T) doCopy((JsonObject) source, (JsonObject) target);
+    }
+    return (T) doCopy((JsonArray) source, (JsonArray) target);
+  }
+
+
+  private JsonObject doCopy(JsonObject source, JsonObject target) {
+    if (target == null) {
+      target = new JObject();
+    }
+    root.copy(source, target);
+    return target;
+  }
+
+
+  private JsonArray doCopy(JsonArray source, JsonArray target) {
+    if (target == null) {
+      target = new JArray();
+    }
+    root.copy(source, target);
+    return target;
+  }
+
+
+  @Override
+  public String getPath() {
+    return path;
   }
 
 

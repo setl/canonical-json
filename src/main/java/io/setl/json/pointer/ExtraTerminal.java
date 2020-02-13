@@ -29,6 +29,18 @@ public class ExtraTerminal extends ObjectTerminal {
 
 
   @Override
+  public boolean contains(PathElement other) {
+    if (other.isArrayType()) {
+      // this is a wildcard match
+      return true;
+    }
+
+    // keys must match
+    return "-".equals(other.getKey());
+  }
+
+
+  @Override
   public boolean containsValue(JsonArray target) {
     return false;
   }

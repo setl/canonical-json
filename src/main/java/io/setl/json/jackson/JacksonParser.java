@@ -1,8 +1,17 @@
 package io.setl.json.jackson;
 
+import java.io.IOException;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonStructure;
+import javax.json.JsonValue;
+import javax.json.stream.JsonParsingException;
+
 import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+
 import io.setl.json.JArray;
 import io.setl.json.JObject;
 import io.setl.json.exception.JsonIOException;
@@ -11,15 +20,7 @@ import io.setl.json.primitive.PFalse;
 import io.setl.json.primitive.PNull;
 import io.setl.json.primitive.PString;
 import io.setl.json.primitive.PTrue;
-import io.setl.json.primitive.numbers.PInt;
 import io.setl.json.primitive.numbers.PNumber;
-import java.io.IOException;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-import javax.json.JsonStructure;
-import javax.json.JsonValue;
-import javax.json.stream.JsonParsingException;
 
 /**
  * @author Simon Greatrix on 31/01/2020.
@@ -135,7 +136,7 @@ public class JacksonParser implements JsonReader {
   public JsonStructure read() {
     checkUsed();
     try {
-      JsonToken token = jsonParser.nextToken();
+      JsonToken token = jsonParser.hasCurrentToken() ? jsonParser.currentToken() : jsonParser.nextToken();
       if (token == JsonToken.START_ARRAY) {
         return doReadArray();
       }
@@ -153,7 +154,7 @@ public class JacksonParser implements JsonReader {
   public JsonArray readArray() {
     checkUsed();
     try {
-      JsonToken token = jsonParser.nextToken();
+      JsonToken token = jsonParser.hasCurrentToken() ? jsonParser.currentToken() : jsonParser.nextToken();
       if (token == JsonToken.START_ARRAY) {
         return doReadArray();
       }
@@ -168,7 +169,7 @@ public class JacksonParser implements JsonReader {
   public JsonObject readObject() {
     checkUsed();
     try {
-      JsonToken token = jsonParser.nextToken();
+      JsonToken token = jsonParser.hasCurrentToken() ? jsonParser.currentToken() : jsonParser.nextToken();
       if (token == JsonToken.START_OBJECT) {
         return doReadObject();
       }
@@ -183,9 +184,11 @@ public class JacksonParser implements JsonReader {
   public JsonValue readValue() {
     checkUsed();
     try {
-      return doReadValue(jsonParser.nextToken());
+      JsonToken token = jsonParser.hasCurrentToken() ? jsonParser.currentToken() : jsonParser.nextToken();
+      return doReadValue(token);
     } catch (IOException e) {
       throw new JsonIOException(e);
     }
   }
+
 }

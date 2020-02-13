@@ -393,6 +393,7 @@ public class JArray implements JsonArray, Primitive {
   }
 
 
+  @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -417,26 +418,26 @@ public class JArray implements JsonArray, Primitive {
   /**
    * Get an array from the array.
    *
-   * @param index the index
-   * @param dflt  the default
+   * @param index        the index
+   * @param defaultValue the default
    *
    * @return the array, or the default
    */
-  public JsonArray getArray(int index, IntFunction<JsonArray> dflt) {
-    return getQuiet(JsonArray.class, index, dflt);
+  public JsonArray getArray(int index, IntFunction<JsonArray> defaultValue) {
+    return getQuiet(JsonArray.class, index, defaultValue);
   }
 
 
   /**
    * Get an array from the array.
    *
-   * @param index the index
-   * @param dflt  the default
+   * @param index        the index
+   * @param defaultValue the default
    *
    * @return the array, or the default
    */
-  public JsonArray getArray(int index, JsonArray dflt) {
-    return getQuiet(JsonArray.class, index, dflt);
+  public JsonArray getArray(int index, JsonArray defaultValue) {
+    return getQuiet(JsonArray.class, index, defaultValue);
   }
 
 
@@ -454,15 +455,15 @@ public class JArray implements JsonArray, Primitive {
   /**
    * Get a big decimal from the array.
    *
-   * @param index the index
-   * @param dflt  the default
+   * @param index        the index
+   * @param defaultValue the default
    *
    * @return the big decimal, or the default
    */
-  public BigDecimal getBigDecimal(int index, BigDecimal dflt) {
+  public BigDecimal getBigDecimal(int index, BigDecimal defaultValue) {
     Number n = getQuiet(Number.class, index);
     if (n == null) {
-      return dflt;
+      return defaultValue;
     }
     return Primitive.toBigDecimal(n);
   }
@@ -471,15 +472,15 @@ public class JArray implements JsonArray, Primitive {
   /**
    * Get a big decimal from the array.
    *
-   * @param index the index
-   * @param dflt  the default
+   * @param index        the index
+   * @param defaultValue the default
    *
    * @return the big decimal, or the default
    */
-  public BigDecimal getBigDecimal(int index, IntFunction<BigDecimal> dflt) {
+  public BigDecimal getBigDecimal(int index, IntFunction<BigDecimal> defaultValue) {
     Number n = getQuiet(Number.class, index);
     if (n == null) {
-      return dflt.apply(index);
+      return defaultValue.apply(index);
     }
     return Primitive.toBigDecimal(n);
   }
@@ -500,15 +501,15 @@ public class JArray implements JsonArray, Primitive {
   /**
    * Get a big integer from the array.
    *
-   * @param index the index
-   * @param dflt  the default
+   * @param index        the index
+   * @param defaultValue the default
    *
    * @return the big integer, or the default
    */
-  public BigInteger getBigInteger(int index, BigInteger dflt) {
+  public BigInteger getBigInteger(int index, BigInteger defaultValue) {
     Number n = getQuiet(Number.class, index);
     if (n == null) {
-      return dflt;
+      return defaultValue;
     }
     return Primitive.toBigInteger(n);
   }
@@ -517,15 +518,15 @@ public class JArray implements JsonArray, Primitive {
   /**
    * Get a big integer from the array.
    *
-   * @param index the index
-   * @param dflt  the default
+   * @param index        the index
+   * @param defaultValue the default
    *
    * @return the big integer, or the default
    */
-  public BigInteger getBigInteger(int index, IntFunction<BigInteger> dflt) {
+  public BigInteger getBigInteger(int index, IntFunction<BigInteger> defaultValue) {
     Number n = getQuiet(Number.class, index);
     if (n == null) {
-      return dflt.apply(index);
+      return defaultValue.apply(index);
     }
     return Primitive.toBigInteger(n);
   }
@@ -546,27 +547,27 @@ public class JArray implements JsonArray, Primitive {
   /**
    * Get a Boolean from the array.
    *
-   * @param index the index
-   * @param dflt  the default
+   * @param index        the index
+   * @param defaultValue the default
    *
    * @return the Boolean, or the default
    */
-  public boolean getBoolean(int index, boolean dflt) {
-    return getQuiet(Boolean.class, index, dflt);
+  public boolean getBoolean(int index, boolean defaultValue) {
+    return getQuiet(Boolean.class, index, defaultValue);
   }
 
 
   /**
    * Get a Boolean from the array.
    *
-   * @param index the index
-   * @param dflt  the default
+   * @param index        the index
+   * @param defaultValue the default
    *
    * @return the Boolean, or the default
    */
-  public boolean getBoolean(int index, IntPredicate dflt) {
+  public boolean getBoolean(int index, IntPredicate defaultValue) {
     Boolean value = getQuiet(Boolean.class, index);
-    return (value != null) ? value : dflt.test(index);
+    return (value != null) ? value : defaultValue.test(index);
   }
 
 
@@ -591,28 +592,28 @@ public class JArray implements JsonArray, Primitive {
   /**
    * Get a double from the array.
    *
-   * @param index the index
-   * @param dflt  the default
+   * @param index        the index
+   * @param defaultValue the default
    *
    * @return the double, or the default
    */
-  public double getDouble(int index, double dflt) {
+  public double getDouble(int index, double defaultValue) {
     Double n = optDouble(index);
-    return (n != null) ? n : dflt;
+    return (n != null) ? n : defaultValue;
   }
 
 
   /**
    * Get a double from the array.
    *
-   * @param index the index
-   * @param dflt  the default
+   * @param index        the index
+   * @param defaultValue the default
    *
    * @return the double, or the default
    */
-  public double getDouble(int index, IntToDoubleFunction dflt) {
+  public double getDouble(int index, IntToDoubleFunction defaultValue) {
     Double n = optDouble(index);
-    return (n != null) ? n : dflt.applyAsDouble(index);
+    return (n != null) ? n : defaultValue.applyAsDouble(index);
   }
 
 
@@ -637,28 +638,28 @@ public class JArray implements JsonArray, Primitive {
   /**
    * Get an integer from the array.
    *
-   * @param index the index
-   * @param dflt  the default
+   * @param index        the index
+   * @param defaultValue the default
    *
    * @return the integer, or the default
    */
-  public int getInt(int index, int dflt) {
+  public int getInt(int index, int defaultValue) {
     Number n = getQuiet(Number.class, index);
-    return (n != null) ? n.intValue() : dflt;
+    return (n != null) ? n.intValue() : defaultValue;
   }
 
 
   /**
    * Get an integer from the array.
    *
-   * @param index the index
-   * @param dflt  the default
+   * @param index        the index
+   * @param defaultValue the default
    *
    * @return the integer, or the default
    */
-  public int getInt(int index, IntUnaryOperator dflt) {
+  public int getInt(int index, IntUnaryOperator defaultValue) {
     Number n = getQuiet(Number.class, index);
-    return (n != null) ? n.intValue() : dflt.applyAsInt(index);
+    return (n != null) ? n.intValue() : defaultValue.applyAsInt(index);
   }
 
 
@@ -700,28 +701,28 @@ public class JArray implements JsonArray, Primitive {
   /**
    * Get a long from the array.
    *
-   * @param index the index
-   * @param dflt  the default
+   * @param index        the index
+   * @param defaultValue the default
    *
    * @return the long, or the default
    */
-  public long getLong(int index, IntToLongFunction dflt) {
+  public long getLong(int index, IntToLongFunction defaultValue) {
     Number n = getQuiet(Number.class, index);
-    return (n != null) ? n.longValue() : dflt.applyAsLong(index);
+    return (n != null) ? n.longValue() : defaultValue.applyAsLong(index);
   }
 
 
   /**
    * Get a long from the array.
    *
-   * @param index the index
-   * @param dflt  the default
+   * @param index        the index
+   * @param defaultValue the default
    *
    * @return the long, or the default
    */
-  public long getLong(int index, long dflt) {
+  public long getLong(int index, long defaultValue) {
     Number n = getQuiet(Number.class, index);
-    return (n != null) ? n.longValue() : dflt;
+    return (n != null) ? n.longValue() : defaultValue;
   }
 
 
@@ -739,26 +740,26 @@ public class JArray implements JsonArray, Primitive {
   /**
    * Get an object from the array.
    *
-   * @param index the index
-   * @param dflt  the default
+   * @param index        the index
+   * @param defaultValue the default
    *
    * @return the object, or the default
    */
-  public JsonObject getObject(int index, IntFunction<JsonObject> dflt) {
-    return getQuiet(JsonObject.class, index, dflt);
+  public JsonObject getObject(int index, IntFunction<JsonObject> defaultValue) {
+    return getQuiet(JsonObject.class, index, defaultValue);
   }
 
 
   /**
    * Get an object from the array.
    *
-   * @param index the index
-   * @param dflt  the default
+   * @param index        the index
+   * @param defaultValue the default
    *
    * @return the object, or the default
    */
-  public JsonObject getObject(int index, JsonObject dflt) {
-    return getQuiet(JsonObject.class, index, dflt);
+  public JsonObject getObject(int index, JsonObject defaultValue) {
+    return getQuiet(JsonObject.class, index, defaultValue);
   }
 
 
@@ -795,8 +796,8 @@ public class JArray implements JsonArray, Primitive {
   }
 
 
-  private <T> T getQuiet(Class<T> clazz, int index, T dflt) {
-    return getQuiet(clazz, index, (IntFunction<T>) i -> dflt);
+  private <T> T getQuiet(Class<T> clazz, int index, T defaultValue) {
+    return getQuiet(clazz, index, (IntFunction<T>) i -> defaultValue);
   }
 
 
@@ -816,26 +817,26 @@ public class JArray implements JsonArray, Primitive {
   /**
    * Get a String from the array.
    *
-   * @param index the index
-   * @param dflt  the default
+   * @param index        the index
+   * @param defaultValue the default
    *
    * @return the String, or the default
    */
-  public String getString(int index, IntFunction<String> dflt) {
-    return getQuiet(String.class, index, dflt);
+  public String getString(int index, IntFunction<String> defaultValue) {
+    return getQuiet(String.class, index, defaultValue);
   }
 
 
   /**
    * Get a String from the array.
    *
-   * @param index the index
-   * @param dflt  the default
+   * @param index        the index
+   * @param defaultValue the default
    *
    * @return the String, or the default
    */
-  public String getString(int index, String dflt) {
-    return getQuiet(String.class, index, dflt);
+  public String getString(int index, String defaultValue) {
+    return getQuiet(String.class, index, defaultValue);
   }
 
 
@@ -852,11 +853,11 @@ public class JArray implements JsonArray, Primitive {
 
 
   @Override
-  public <T> T getValue(Class<T> reqType, T dflt) {
+  public <T> T getValue(Class<T> reqType, T defaultValue) {
     if (reqType.isInstance(this)) {
       return reqType.cast(this);
     }
-    return dflt;
+    return defaultValue;
   }
 
 
@@ -1094,6 +1095,7 @@ public class JArray implements JsonArray, Primitive {
           break;
         case OBJECT:
           ((JObject) current).optimiseStorage(values);
+          break;
         default:
           Primitive single = values.computeIfAbsent(current, c -> c);
           if (single != current) {
@@ -1228,6 +1230,7 @@ public class JArray implements JsonArray, Primitive {
   }
 
 
+  @SuppressWarnings("SuspiciousToArrayCall")
   @Override
   @Nonnull
   public <T> T[] toArray(@Nonnull T[] a) {
@@ -1235,6 +1238,7 @@ public class JArray implements JsonArray, Primitive {
   }
 
 
+  @SuppressWarnings("SuspiciousToArrayCall")
   @Override
   public <T> T[] toArray(IntFunction<T[]> generator) {
     return myList.toArray(generator);

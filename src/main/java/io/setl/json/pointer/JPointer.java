@@ -12,7 +12,14 @@ import javax.json.JsonValue.ValueType;
  */
 public class JPointer implements JsonPointer {
 
-  static String escapeKey(String key) {
+  /**
+   * Perform the escaping of the '~' and '/' characters as required by the standard.
+   *
+   * @param key the key to escape
+   *
+   * @return the escape key (or the original key if no escaping was required)
+   */
+  public static String escapeKey(String key) {
     if (key.indexOf('~') == -1 && key.indexOf('/') == -1) {
       return key;
     }
@@ -31,6 +38,11 @@ public class JPointer implements JsonPointer {
   }
 
 
+  /**
+   * New instance created from a specified PathElement.
+   *
+   * @param root the root of this pointer's path
+   */
   public JPointer(PathElement root) {
     this.root = root;
     StringBuilder builder = new StringBuilder();

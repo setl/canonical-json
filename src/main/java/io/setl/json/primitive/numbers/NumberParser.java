@@ -154,7 +154,7 @@ public class NumberParser {
   }
 
 
-  static protected PNumber doCreate(String txt) {
+  protected static PNumber doCreate(String txt) {
     int length = txt.length();
     // Integer.MAX_VALUE takes 10 characters
     if (length < 10) {

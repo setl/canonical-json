@@ -50,14 +50,14 @@ public class Utf8Appendable implements Appendable {
   /**
    * Append part of a character array.
    *
-   * @param cbuf the array
-   * @param off  the offset into the array
-   * @param len  the number of characters to write
+   * @param buffer the array
+   * @param offset  the offset into the array
+   * @param length  the number of characters to write
    */
-  public void append(char[] cbuf, int off, int len) throws IOException {
-    int e = off + len;
-    for (int i = off; i < e; i++) {
-      write(cbuf[i]);
+  public void append(char[] buffer, int offset, int length) throws IOException {
+    int e = offset + length;
+    for (int i = offset; i < e; i++) {
+      write(buffer[i]);
     }
   }
 

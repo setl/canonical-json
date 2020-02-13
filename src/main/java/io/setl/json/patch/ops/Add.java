@@ -1,6 +1,7 @@
 package io.setl.json.patch.ops;
 
 import javax.json.JsonObject;
+import javax.json.JsonPatch.Operation;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 
@@ -28,10 +29,12 @@ public class Add extends PatchOperation {
     this.value = value;
   }
 
+
   public Add(JObject object) {
     super(object);
     this.value = object.getJsonValue("value");
   }
+
 
   @Override
   public <T extends JsonStructure> T apply(T target) {
@@ -40,8 +43,26 @@ public class Add extends PatchOperation {
 
 
   @Override
-  public String getOp() {
-    return "add";
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof Add)) {
+      return false;
+    }
+    if (!super.equals(o)) {
+      return false;
+    }
+
+    Add add = (Add) o;
+
+    return value.equals(add.value);
+  }
+
+
+  @Override
+  public Operation getOperation() {
+    return Operation.ADD;
   }
 
 
@@ -51,9 +72,17 @@ public class Add extends PatchOperation {
 
 
   @Override
+  public int hashCode() {
+    int result = super.hashCode();
+    result = 31 * result + value.hashCode();
+    return result;
+  }
+
+
+  @Override
   public JsonObject toJsonObject() {
     return new JObjectBuilder()
-        .add("op", getOp())
+        .add("op", getOperation().operationName())
         .add("path", getPath())
         .add("value", getValue())
         .build();

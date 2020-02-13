@@ -1,6 +1,5 @@
 package io.setl.json.primitive.numbers;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -125,7 +124,7 @@ class PBadNumber extends PNumber {
 
 
   @Override
-  public void writeTo(OutputStream out) throws IOException {
+  public void writeTo(OutputStream out) {
     throw unsupported();
   }
 }

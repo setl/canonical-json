@@ -1,8 +1,9 @@
 package io.setl.json.primitive.cache;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.function.Function;
+
 import org.junit.Test;
 
 /**
@@ -12,10 +13,10 @@ public class NoCacheTest {
 
   @Test
   public void test() {
-    ICache<String,String> cache = new NoCacheFactory().create(3);
-    assertEquals("a",cache.get("a", Function.identity()));
+    ICache<String, String> cache = new NoCacheFactory().create(3);
+    assertEquals("a", cache.get("a", Function.identity()));
     // "a" was not cached
-    assertEquals("",cache.get("a",a->""));
+    assertEquals("", cache.get("a", a -> ""));
   }
 
 }

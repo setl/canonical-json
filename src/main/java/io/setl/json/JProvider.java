@@ -77,7 +77,7 @@ public class JProvider extends JsonProvider {
 
   @Override
   public JsonPatch createDiff(JsonStructure source, JsonStructure target) {
-    return new PatchFactory(null).create(source, target);
+    return PatchFactory.create(source, target);
   }
 
 

@@ -1,6 +1,7 @@
 package io.setl.json.patch.ops;
 
 import javax.json.JsonObject;
+import javax.json.JsonPatch.Operation;
 import javax.json.JsonPointer;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
@@ -23,6 +24,12 @@ public class Copy extends PatchOperation {
   private final JsonPointer fromPointer;
 
 
+  /**
+   * Create a new copy operation.
+   *
+   * @param path the path to copy to
+   * @param from the path to copy from
+   */
   @JsonCreator
   public Copy(
       @JsonProperty("path") String path,
@@ -34,6 +41,11 @@ public class Copy extends PatchOperation {
   }
 
 
+  /**
+   * New instance from the JSON representation.
+   *
+   * @param object the representation of the copy operation
+   */
   public Copy(JObject object) {
     super(object);
     this.from = object.getString("from");
@@ -48,21 +60,46 @@ public class Copy extends PatchOperation {
   }
 
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof Copy)) {
+      return false;
+    }
+    if (!super.equals(o)) {
+      return false;
+    }
+
+    Copy copy = (Copy) o;
+    return from.equals(copy.from);
+  }
+
+
   public String getFrom() {
     return from;
   }
 
 
   @Override
-  public String getOp() {
-    return "copy";
+  public Operation getOperation() {
+    return Operation.COPY;
+  }
+
+
+  @Override
+  public int hashCode() {
+    int result = super.hashCode();
+    result = 31 * result + from.hashCode();
+    return result;
   }
 
 
   @Override
   public JsonObject toJsonObject() {
     return new JObjectBuilder()
-        .add("op", getOp())
+        .add("op", getOperation().operationName())
         .add("path", getPath())
         .add("from", from)
         .build();

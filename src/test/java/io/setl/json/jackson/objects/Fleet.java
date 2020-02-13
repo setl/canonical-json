@@ -24,4 +24,26 @@ public class Fleet {
   public void setVehicles(List<Vehicle> vehicles) {
     this.vehicles = vehicles;
   }
+
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof Fleet)) {
+      return false;
+    }
+
+    Fleet fleet = (Fleet) o;
+
+    return vehicles.equals(fleet.vehicles);
+  }
+
+
+  @Override
+  public int hashCode() {
+    return vehicles.hashCode();
+  }
+
 }

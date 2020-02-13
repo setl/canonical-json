@@ -12,7 +12,7 @@ import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.core.io.IOContext;
 import com.fasterxml.jackson.core.json.DupDetector;
 import com.fasterxml.jackson.core.json.JsonWriteContext;
-import com.fasterxml.jackson.core.util.VersionUtil;
+
 import io.setl.json.JArray;
 import io.setl.json.JObject;
 import io.setl.json.Primitive;
@@ -37,8 +37,6 @@ import javax.json.JsonValue.ValueType;
  * @author Simon Greatrix on 16/09/2019.
  */
 public class CanonicalGenerator extends JsonGenerator {
-
-  public static final Version LIBRARY_VERSION = VersionUtil.parseVersion("1.0", "io.setl", "canonical-json");
 
   private static final int DISALLOWED_FEATURES = Feature.WRITE_NUMBERS_AS_STRINGS.getMask()
       + Feature.WRITE_BIGDECIMAL_AS_PLAIN.getMask()
@@ -186,9 +184,9 @@ public class CanonicalGenerator extends JsonGenerator {
       }
     }
 
-    DupDetector dups = Feature.STRICT_DUPLICATE_DETECTION.enabledIn(features)
+    DupDetector detector = Feature.STRICT_DUPLICATE_DETECTION.enabledIn(features)
         ? DupDetector.rootDetector(this) : null;
-    writeContext = JsonWriteContext.createRootContext(dups);
+    writeContext = JsonWriteContext.createRootContext(detector);
   }
 
 
@@ -216,10 +214,10 @@ public class CanonicalGenerator extends JsonGenerator {
 
     if (isEnabled(Feature.AUTO_CLOSE_JSON_CONTENT)) {
       while (true) {
-        JsonStreamContext ctxt = getOutputContext();
-        if (ctxt.inArray()) {
+        JsonStreamContext context = getOutputContext();
+        if (context.inArray()) {
           writeEndArray();
-        } else if (ctxt.inObject()) {
+        } else if (context.inObject()) {
           writeEndObject();
         } else {
           break;
@@ -355,7 +353,7 @@ public class CanonicalGenerator extends JsonGenerator {
 
   @Override
   public Version version() {
-    return LIBRARY_VERSION;
+    return JsonModule.LIBRARY_VERSION;
   }
 
 

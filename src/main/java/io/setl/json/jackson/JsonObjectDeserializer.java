@@ -1,6 +1,7 @@
 package io.setl.json.jackson;
 
 import java.io.IOException;
+import javax.json.JsonObject;
 import javax.json.JsonValue;
 import javax.json.stream.JsonParsingException;
 
@@ -15,14 +16,14 @@ import io.setl.json.exception.JsonIOException;
 /**
  * @author Simon Greatrix on 12/02/2020.
  */
-public class JsonValueDeserializer extends JsonDeserializer<JsonValue> {
+public class JsonObjectDeserializer extends JsonDeserializer<JsonObject> {
 
 
   @Override
-  public JsonValue deserialize(JsonParser p, DeserializationContext context) throws IOException {
+  public JsonObject deserialize(JsonParser p, DeserializationContext context) throws IOException {
     try {
       JacksonParser parser = new JacksonParser(p);
-      return parser.readValue();
+      return parser.readObject();
     } catch (JsonIOException jsonIOException) {
       throw jsonIOException.cause();
     } catch (JsonParsingException jsonParsingException) {
@@ -34,14 +35,14 @@ public class JsonValueDeserializer extends JsonDeserializer<JsonValue> {
 
 
   @Override
-  public JsonValue getEmptyValue(DeserializationContext context) {
-    return JsonValue.NULL;
+  public JsonObject getEmptyValue(DeserializationContext context) {
+    return JsonValue.EMPTY_JSON_OBJECT;
   }
 
 
   @Override
   public Class<?> handledType() {
-    return JsonValue.class;
+    return JsonObject.class;
   }
 
 }

@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import io.setl.json.JObject;
 import io.setl.json.builder.JObjectBuilder;
 import io.setl.json.primitive.PString;
-import io.setl.json.primitive.numbers.PInt;
 import io.setl.json.primitive.numbers.PNumber;
 import java.util.Map;
 import javax.json.JsonValue;

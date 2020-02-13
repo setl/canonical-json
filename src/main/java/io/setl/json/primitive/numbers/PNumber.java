@@ -39,14 +39,14 @@ public abstract class PNumber extends PBase implements JsonNumber {
 
 
   private static final Map<Class<? extends Number>, UnaryOperator<Number>> SIMPLIFIERS = Map.of(
-      AtomicInteger.class, n -> Integer.valueOf(n.intValue()),
+      AtomicInteger.class, n -> n.intValue(),
       AtomicLong.class, n -> simplify(n.longValue()),
       BigDecimal.class, n -> simplify((BigDecimal) n),
       BigInteger.class, n -> simplify((BigInteger) n, true),
-      Byte.class, n -> Integer.valueOf(n.intValue()),
-      Integer.class, n -> Integer.valueOf(n.intValue()),
+      Byte.class, n -> n.intValue(),
+      Integer.class, n -> n.intValue(),
       Long.class, n -> simplify(n.longValue()),
-      Short.class, n -> Integer.valueOf(n.intValue()),
+      Short.class, n -> n.intValue(),
 
       Double.class, n -> simplify(n.doubleValue()),
       Float.class, n -> simplify(n.floatValue())

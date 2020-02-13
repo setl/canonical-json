@@ -5,7 +5,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 
 import io.setl.json.builder.JArrayBuilder;
 import io.setl.json.builder.JObjectBuilder;

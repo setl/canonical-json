@@ -9,9 +9,9 @@ import javax.json.JsonValue;
 /**
  * @author Simon Greatrix on 27/01/2020.
  */
-class EmptyPointer implements JsonPointer {
+public class EmptyPointer implements JsonPointer {
 
-  static final EmptyPointer INSTANCE = new EmptyPointer();
+  public static final EmptyPointer INSTANCE = new EmptyPointer();
 
 
   private EmptyPointer() {

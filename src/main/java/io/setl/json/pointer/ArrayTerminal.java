@@ -25,10 +25,6 @@ public class ArrayTerminal extends ObjectTerminal {
     super(Integer.toString(index));
     this.index = index;
   }
-  @Override
-  public String getEscapedKey() {
-    return key;
-  }
 
 
   @Override
@@ -49,6 +45,12 @@ public class ArrayTerminal extends ObjectTerminal {
   @Override
   public boolean containsValue(JsonArray target) {
     return index < target.size();
+  }
+
+
+  @Override
+  public String getEscapedKey() {
+    return key;
   }
 
 

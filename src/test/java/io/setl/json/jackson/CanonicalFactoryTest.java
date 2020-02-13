@@ -57,17 +57,19 @@ public class CanonicalFactoryTest {
 
 
   @Test
-  public void diable_4() {
+  public void disable() {
     instance.disable(Feature.AUTO_CLOSE_TARGET);
   }
 
 
+  @SuppressWarnings("deprecation")
   @Test(expected = UnsupportedOperationException.class)
   public void disable_1() {
     instance.disable(Feature.QUOTE_FIELD_NAMES);
   }
 
 
+  @SuppressWarnings("deprecation")
   @Test(expected = UnsupportedOperationException.class)
   public void disable_2() {
     instance.disable(Feature.QUOTE_NON_NUMERIC_NUMBERS);
@@ -90,6 +92,7 @@ public class CanonicalFactoryTest {
   }
 
 
+  @SuppressWarnings("deprecation")
   @Test(expected = UnsupportedOperationException.class)
   public void enable_1() {
     instance.enable(Feature.ESCAPE_NON_ASCII);
@@ -103,6 +106,7 @@ public class CanonicalFactoryTest {
 
 
   @Test(expected = UnsupportedOperationException.class)
+  @SuppressWarnings("deprecation")
   public void enable_3() {
     instance.enable(Feature.WRITE_NUMBERS_AS_STRINGS);
   }

@@ -30,6 +30,27 @@ public class Car extends Vehicle {
   }
 
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof Car)) {
+      return false;
+    }
+    if (!super.equals(o)) {
+      return false;
+    }
+
+    Car car = (Car) o;
+
+    if (seatingCapacity != car.seatingCapacity) {
+      return false;
+    }
+    return Double.compare(car.topSpeed, topSpeed) == 0;
+  }
+
+
   public int getSeatingCapacity() {
     return seatingCapacity;
   }
@@ -37,6 +58,17 @@ public class Car extends Vehicle {
 
   public double getTopSpeed() {
     return topSpeed;
+  }
+
+
+  @Override
+  public int hashCode() {
+    int result = super.hashCode();
+    long temp;
+    result = 31 * result + seatingCapacity;
+    temp = Double.doubleToLongBits(topSpeed);
+    result = 31 * result + (int) (temp ^ (temp >>> 32));
+    return result;
   }
 
 
@@ -48,4 +80,5 @@ public class Car extends Vehicle {
   public void setTopSpeed(double topSpeed) {
     this.topSpeed = topSpeed;
   }
+
 }

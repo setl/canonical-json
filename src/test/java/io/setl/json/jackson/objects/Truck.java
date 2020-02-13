@@ -23,6 +23,27 @@ public class Truck extends Vehicle {
   }
 
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof Truck)) {
+      return false;
+    }
+    if (!super.equals(o)) {
+      return false;
+    }
+
+    Truck truck = (Truck) o;
+
+    if (Double.compare(truck.payloadCapacity, payloadCapacity) != 0) {
+      return false;
+    }
+    return documents != null ? documents.equals(truck.documents) : truck.documents == null;
+  }
+
+
   public JObject getDocuments() {
     return documents;
   }
@@ -30,6 +51,17 @@ public class Truck extends Vehicle {
 
   public double getPayloadCapacity() {
     return payloadCapacity;
+  }
+
+
+  @Override
+  public int hashCode() {
+    int result = super.hashCode();
+    long temp;
+    result = 31 * result + (documents != null ? documents.hashCode() : 0);
+    temp = Double.doubleToLongBits(payloadCapacity);
+    result = 31 * result + (int) (temp ^ (temp >>> 32));
+    return result;
   }
 
 
@@ -41,4 +73,5 @@ public class Truck extends Vehicle {
   public void setPayloadCapacity(double payloadCapacity) {
     this.payloadCapacity = payloadCapacity;
   }
+
 }

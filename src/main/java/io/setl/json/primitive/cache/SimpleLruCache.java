@@ -35,7 +35,7 @@ public class SimpleLruCache<K, V> implements ICache<K, V> {
 
 
   public SimpleLruCache(int maxSize) {
-    myCache = new Cache(maxSize);
+    myCache = new Cache<>(maxSize);
   }
 
 

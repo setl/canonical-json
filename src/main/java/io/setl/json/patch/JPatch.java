@@ -36,6 +36,11 @@ public class JPatch implements JsonPatch {
   }
 
 
+  /**
+   * Create a new instance from its JSON representation.
+   *
+   * @param array the representation
+   */
   public JPatch(JsonArray array) {
     int s = array.size();
     operations = new ArrayList<>(s);
@@ -79,8 +84,27 @@ public class JPatch implements JsonPatch {
   }
 
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof JPatch)) {
+      return false;
+    }
+
+    JPatch jPatch = (JPatch) o;
+    return operations.equals(jPatch.operations);
+  }
+
+
   public List<PatchOperation> getOperations() {
     return Collections.unmodifiableList(operations);
+  }
+
+
+  public int hashCode() {
+    return operations.hashCode();
   }
 
 
@@ -91,6 +115,11 @@ public class JPatch implements JsonPatch {
       jsonArray.add(op.toJsonObject());
     }
     return jsonArray;
+  }
+
+
+  public String toString() {
+    return toJsonArray().toString();
   }
 
 }

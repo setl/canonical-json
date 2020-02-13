@@ -39,7 +39,7 @@ public class Utf8Writer extends Writer implements Appendable {
 
 
   @Override
-  public void write(@Nonnull char[] cbuf, int off, int len) throws IOException {
-    appendable.append(cbuf, off, len);
+  public void write(@Nonnull char[] buffer, int offset, int length) throws IOException {
+    appendable.append(buffer, offset, length);
   }
 }

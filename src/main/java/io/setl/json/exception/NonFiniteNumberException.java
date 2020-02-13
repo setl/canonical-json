@@ -16,6 +16,7 @@ public class NonFiniteNumberException extends ArithmeticException {
   private static final long serialVersionUID = 1L;
 
 
+
   /**
    * Possible types of non-finite number.
    */
@@ -25,8 +26,9 @@ public class NonFiniteNumberException extends ArithmeticException {
     POSITIVE_INFINITY
   }
 
-  private final Type type;
 
+
+  private final Type type;
 
 
   /**
@@ -59,6 +61,11 @@ public class NonFiniteNumberException extends ArithmeticException {
   }
 
 
+  /**
+   * Get the standard representation of the non-finite number.
+   *
+   * @return the representation
+   */
   public PString getRepresentation() {
     switch (getType()) {
       case NAN:

@@ -13,7 +13,7 @@ generate Canonical JSON.
 There is a comprehensive JSON parser which will parse any correct JSON. It does
 not require the input to be canonical.
 
-## Jackson integeration
+## Jackson integration
 By creating a Jackson `ObjectMapper` like this:
 
 ```

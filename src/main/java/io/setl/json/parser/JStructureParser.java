@@ -11,6 +11,8 @@ import javax.json.stream.JsonLocation;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
 
+import io.setl.json.io.Location;
+
 /**
  * @author Simon Greatrix on 15/01/2020.
  */
@@ -124,7 +126,7 @@ public class JStructureParser extends BaseIterator<Event> implements JsonParser 
 
   @Override
   public JsonLocation getLocation() {
-    return delegate.getLocation();
+    return Location.UNSET;
   }
 
 

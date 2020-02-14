@@ -39,11 +39,6 @@ public class ObjectPath implements PathElement {
   }
 
 
-  public ObjectPath(String key) {
-    this.key = key;
-  }
-
-
   @Override
   public void add(JsonArray target, JsonValue value) {
     throw notObject();
@@ -58,14 +53,6 @@ public class ObjectPath implements PathElement {
 
   private PointerMismatchException badPath(ValueType actual) {
     return new PointerMismatchException("Path does not exist", path, actual);
-  }
-
-
-  @Override
-  public void buildPath(StringBuilder builder) {
-    builder.append('/').append(getEscapedKey());
-    path = builder.toString();
-    getChild().buildPath(builder);
   }
 
 
@@ -100,37 +87,33 @@ public class ObjectPath implements PathElement {
 
 
   @Override
-  public void copy(@Nonnull JsonArray source, @Nullable JsonArray target) {
+  public void copy(JsonArray source, JsonArray target) {
     if (!"-".equals(key)) {
       // the key cannot exist in an array.
       return;
     }
 
-    int targetSize = target.size();
-    for (int i = 0; i < source.size(); i++) {
+    int s = source.size();
+    while (target.size() < s) {
+      target.add(null);
+    }
+
+    for (int i = 0; i < s; i++) {
       JsonValue sourceValue = source.get(i);
-      JsonValue targetValue = (i < targetSize) ? target.get(i) : null;
+      JsonValue targetValue = target.get(i);
       switch (sourceValue.getValueType()) {
         case OBJECT:
-          if (targetValue == null || targetValue.getValueType() != ValueType.OBJECT) {
+          if (targetValue.getValueType() != ValueType.OBJECT) {
             targetValue = new JObject();
-            if (i < targetSize) {
-              target.set(i, targetValue);
-            } else {
-              target.add(targetValue);
-            }
+            target.set(i, targetValue);
           }
           child.copy((JsonObject) sourceValue, (JsonObject) targetValue);
           break;
 
         case ARRAY:
-          if (targetValue == null || targetValue.getValueType() != ValueType.ARRAY) {
+          if (targetValue.getValueType() != ValueType.ARRAY) {
             targetValue = new JArray();
-            if (i < targetSize) {
-              target.set(i, targetValue);
-            } else {
-              target.add(targetValue);
-            }
+            target.set(i, targetValue);
           }
           child.copy((JsonArray) sourceValue, (JsonArray) targetValue);
           break;
@@ -260,12 +243,6 @@ public class ObjectPath implements PathElement {
 
 
   @Override
-  public String getEscapedKey() {
-    return JPointer.escapeKey(key);
-  }
-
-
-  @Override
   public int getIndex() {
     return -1;
   }
@@ -274,12 +251,6 @@ public class ObjectPath implements PathElement {
   @Override
   public String getKey() {
     return key;
-  }
-
-
-  @Override
-  public String getPath() {
-    return path;
   }
 
 
@@ -329,16 +300,5 @@ public class ObjectPath implements PathElement {
     doReplace(get(target), value);
   }
 
-
-  @Override
-  public void setChild(PathElement child) {
-    this.child = child;
-  }
-
-
-  @Override
-  public void setPath(String path) {
-    this.path = path;
-  }
 
 }

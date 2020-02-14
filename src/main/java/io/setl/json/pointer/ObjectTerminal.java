@@ -27,11 +27,6 @@ public class ObjectTerminal implements PathElement {
   }
 
 
-  public ObjectTerminal(String key) {
-    this.key = key;
-  }
-
-
   @Override
   public void add(JsonArray target, JsonValue value) {
     throw needObject();
@@ -45,20 +40,7 @@ public class ObjectTerminal implements PathElement {
 
 
   @Override
-  public void buildPath(StringBuilder builder) {
-    builder.append('/').append(getEscapedKey());
-    path = builder.toString();
-    getChild().buildPath(builder);
-  }
-
-
-  @Override
   public boolean contains(PathElement other) {
-    if (other.isArrayType()) {
-      // only matches if it is a wildcard match
-      return "-".equals(key);
-    }
-
     // keys must match
     return Objects.equals(key, other.getKey());
   }
@@ -77,14 +59,23 @@ public class ObjectTerminal implements PathElement {
 
 
   @Override
-  public PathElement getChild() {
-    return null;
+  public void copy(JsonArray source, JsonArray target) {
+    // No way this can match.
   }
 
 
   @Override
-  public String getEscapedKey() {
-    return JPointer.escapeKey(key);
+  public void copy(JsonObject source, JsonObject target) {
+    JsonValue value = source.get(key);
+    if (value != null) {
+      target.put(key, value);
+    }
+  }
+
+
+  @Override
+  public PathElement getChild() {
+    return null;
   }
 
 
@@ -97,12 +88,6 @@ public class ObjectTerminal implements PathElement {
   @Override
   public String getKey() {
     return key;
-  }
-
-
-  @Override
-  public String getPath() {
-    return path;
   }
 
 
@@ -161,18 +146,5 @@ public class ObjectTerminal implements PathElement {
       throw new NoSuchValueException(path);
     }
   }
-
-
-  @Override
-  public void setChild(PathElement child) {
-    throw new UnsupportedOperationException();
-  }
-
-
-  @Override
-  public void setPath(String path) {
-    this.path = path;
-  }
-
 
 }

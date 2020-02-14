@@ -75,12 +75,12 @@ public class EmptyPointer implements JsonExtendedPointer {
     if (target == null) {
       target = new JArray();
     }
-    int s = Math.min(source.size(), target.size());
+    int s = source.size();
+    while (target.size() < s) {
+      target.add(null);
+    }
     for (int i = 0; i < s; i++) {
       target.set(i, source.get(i));
-    }
-    for (int i = s; i < source.size(); i++) {
-      target.add(source.get(i));
     }
     return target;
   }

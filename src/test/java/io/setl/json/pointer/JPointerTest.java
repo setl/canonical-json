@@ -2,11 +2,13 @@ package io.setl.json.pointer;
 
 import static org.junit.Assert.assertEquals;
 
+import javax.json.JsonObject;
+
+import org.junit.Test;
+
 import io.setl.json.Primitive;
 import io.setl.json.builder.JArrayBuilder;
 import io.setl.json.builder.JObjectBuilder;
-import javax.json.JsonObject;
-import org.junit.Test;
 
 /**
  * @author Simon Greatrix on 27/01/2020.
@@ -16,6 +18,22 @@ public class JPointerTest {
   @Test(expected = IllegalArgumentException.class)
   public void badPath() {
     JPointerFactory.create("bad-path-without-leading-slash");
+  }
+
+
+  @Test
+  public void escape() {
+    assertEquals("ab~0~1c", JPointer.escapeKey("ab~/c"));
+    assertEquals("ab~1c", JPointer.escapeKey("ab/c"));
+    assertEquals("ab~0c", JPointer.escapeKey("ab~c"));
+    assertEquals("ab|c", JPointer.escapeKey("ab|c"));
+  }
+
+
+  @Test
+  public void getPath() {
+    JsonExtendedPointer pointer = JPointerFactory.create("/a/b");
+    assertEquals("/a/b", pointer.getPath());
   }
 
 
@@ -47,4 +65,5 @@ public class JPointerTest {
     assertEquals(Primitive.create(7), JPointerFactory.create("/ ").getValue(exampleObject));
     assertEquals(Primitive.create(8), JPointerFactory.create("/m~0n").getValue(exampleObject));
   }
+
 }

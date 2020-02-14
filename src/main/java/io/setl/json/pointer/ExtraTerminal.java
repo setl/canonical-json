@@ -47,8 +47,16 @@ public class ExtraTerminal extends ObjectTerminal {
 
 
   @Override
-  public String getEscapedKey() {
-    return "-";
+  public void copy(JsonArray source, JsonArray target) {
+    // works as a wildcard
+    int s = source.size();
+    while (target.size() < s) {
+      target.add(null);
+    }
+    for (int i = 0; i < s; i++) {
+      JsonValue value = source.get(i);
+      target.set(i, value);
+    }
   }
 
 

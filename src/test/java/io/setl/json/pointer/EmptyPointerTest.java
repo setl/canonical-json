@@ -1,15 +1,20 @@
 package io.setl.json.pointer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import io.setl.json.Primitive;
-import io.setl.json.builder.JObjectBuilder;
-import io.setl.json.exception.PointerMismatchException;
+import javax.json.JsonArray;
 import javax.json.JsonException;
 import javax.json.JsonObject;
-import javax.json.JsonPointer;
+import javax.json.JsonValue;
+
 import org.junit.Test;
+
+import io.setl.json.Primitive;
+import io.setl.json.builder.JArrayBuilder;
+import io.setl.json.builder.JObjectBuilder;
+import io.setl.json.exception.PointerMismatchException;
 
 /**
  * @author Simon Greatrix on 27/01/2020.
@@ -20,7 +25,7 @@ public class EmptyPointerTest {
 
   JsonObject object2 = new JObjectBuilder().add("c", "d").build();
 
-  JsonPointer pointer = JPointerFactory.create("");
+  JsonExtendedPointer pointer = JPointerFactory.create("");
 
 
   @Test
@@ -38,8 +43,38 @@ public class EmptyPointerTest {
 
 
   @Test
+  public void containsPointer() {
+    assertTrue(pointer.contains(pointer));
+    JsonExtendedPointer p2 = JPointerFactory.create("/");
+    assertTrue(pointer.contains(p2));
+    assertFalse(p2.contains(pointer));
+  }
+
+
+  @Test
   public void containsValue() {
     assertTrue(pointer.containsValue(object1));
+  }
+
+
+  @Test
+  public void copyArray() {
+    JsonArray array = new JArrayBuilder().add(1).add(2).add(JsonValue.EMPTY_JSON_OBJECT).build();
+    JsonArray o = pointer.copy(array, null);
+    assertEquals(array, o);
+  }
+
+
+  @Test
+  public void copyObject() {
+    JsonObject o = pointer.copy(object1, null);
+    assertEquals(object1, o);
+  }
+
+
+  @Test
+  public void getPath() {
+    assertEquals("", pointer.getPath());
   }
 
 
@@ -59,4 +94,5 @@ public class EmptyPointerTest {
   public void replace() {
     pointer.replace(object1, object2);
   }
+
 }

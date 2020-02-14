@@ -9,6 +9,8 @@ import io.setl.json.builder.JArrayBuilder;
 import io.setl.json.builder.JObjectBuilder;
 import io.setl.json.exception.NoSuchValueException;
 import io.setl.json.exception.PointerMismatchException;
+
+import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonPointer;
 import org.junit.Test;
@@ -163,5 +165,23 @@ public class ObjectTerminalTest {
         ).build();
     JsonPointer pointer = JPointerFactory.create("/bim/waldo");
     pointer.replace(jsonObject, Primitive.create(1));
+  }
+
+  @Test
+  public void containsPath() {
+    JsonExtendedPointer pointer = JPointerFactory.create("/a");
+    assertTrue(pointer.contains(JPointerFactory.create("/a/b")));
+    assertFalse(pointer.contains(JPointerFactory.create("/b/b")));
+    assertFalse(pointer.contains(JPointerFactory.create("")));
+    assertFalse(pointer.contains(JPointerFactory.create("/b")));
+  }
+
+
+  @Test
+  public void copyArray() {
+    JsonExtendedPointer pointer = JPointerFactory.create("/a");
+    JsonArray array = new JArrayBuilder().add(1).add(2).build();
+    JsonArray out = pointer.copy(array,null);
+    assertEquals("[]",out.toString());
   }
 }

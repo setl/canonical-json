@@ -1,8 +1,12 @@
 package io.setl.json.pointer;
 
 import javax.json.JsonArray;
+import javax.json.JsonObject;
 import javax.json.JsonValue;
+import javax.json.JsonValue.ValueType;
 
+import io.setl.json.JArray;
+import io.setl.json.JObject;
 import io.setl.json.exception.PointerIndexException;
 
 /**
@@ -18,11 +22,6 @@ public class ArrayPath extends ObjectPath {
     index = Integer.parseInt(key);
   }
 
-
-  public ArrayPath(int index) {
-    super(Integer.toString(index));
-    this.index = index;
-  }
 
 
   @Override
@@ -53,18 +52,50 @@ public class ArrayPath extends ObjectPath {
   }
 
 
+  @Override
+  public void copy(JsonArray source, JsonArray target) {
+    while (target.size() <= index) {
+      target.add(null);
+    }
+
+    if (source.size() <= index) {
+      // element does not exist in source
+      return;
+    }
+
+    JsonValue sourceValue = source.get(index);
+    JsonValue targetValue = target.get(index);
+    switch (sourceValue.getValueType()) {
+      case OBJECT:
+        if (targetValue == null || targetValue.getValueType() != ValueType.OBJECT) {
+          targetValue = new JObject();
+          target.set(index, targetValue);
+        }
+        child.copy((JsonObject) sourceValue, (JsonObject) targetValue);
+        break;
+
+      case ARRAY:
+        if (targetValue == null || targetValue.getValueType() != ValueType.ARRAY) {
+          targetValue = new JArray();
+          target.set(index, targetValue);
+        }
+        child.copy((JsonArray) sourceValue, (JsonArray) targetValue);
+        break;
+
+      default:
+        // do nothing
+        break;
+
+    }
+  }
+
+
   private JsonValue get(JsonArray target) {
     try {
       return target.get(index);
     } catch (IndexOutOfBoundsException e) {
       throw new PointerIndexException("No such item", path, target.size());
     }
-  }
-
-
-  @Override
-  public String getEscapedKey() {
-    return key;
   }
 
 

@@ -42,19 +42,6 @@ public class JPointer implements JsonExtendedPointer {
   }
 
 
-  /**
-   * New instance created from a specified PathElement.
-   *
-   * @param root the root of this pointer's path
-   */
-  public JPointer(PathElement root) {
-    this.root = root;
-    StringBuilder builder = new StringBuilder();
-    root.buildPath(builder);
-    path = builder.toString();
-  }
-
-
   @Override
   public <T extends JsonStructure> T add(T target, JsonValue value) {
     if (target.getValueType() == ValueType.OBJECT) {

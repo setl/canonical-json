@@ -1,5 +1,7 @@
 package io.setl.json.pointer;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.json.JsonArray;
 import javax.json.JsonValue;
 
@@ -21,12 +23,6 @@ public class ArrayTerminal extends ObjectTerminal {
   }
 
 
-  public ArrayTerminal(int index) {
-    super(Integer.toString(index));
-    this.index = index;
-  }
-
-
   @Override
   public void add(JsonArray target, JsonValue value) {
     try {
@@ -38,7 +34,7 @@ public class ArrayTerminal extends ObjectTerminal {
 
 
   private PointerIndexException badIndex(int size) {
-    return new PointerIndexException("Array index to large", path, size);
+    return new PointerIndexException("Array index too large", path, size);
   }
 
 
@@ -56,8 +52,16 @@ public class ArrayTerminal extends ObjectTerminal {
 
 
   @Override
-  public String getEscapedKey() {
-    return key;
+  public void copy(@Nonnull JsonArray source, @Nullable JsonArray target) {
+    while (target.size() <= index) {
+      target.add(null);
+    }
+    if (source.size() <= index) {
+      return;
+    }
+
+    JsonValue value = source.get(index);
+    target.set(index, value);
   }
 
 

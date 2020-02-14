@@ -1,7 +1,5 @@
 package io.setl.json.pointer;
 
-import javax.json.JsonPointer;
-
 /**
  * @author Simon Greatrix on 27/01/2020.
  */
@@ -14,7 +12,7 @@ public class JPointerFactory {
    *
    * @return the pointer
    */
-  public static JsonPointer create(String path) {
+  public static JsonExtendedPointer create(String path) {
     if (path.equals("")) {
       return EmptyPointer.INSTANCE;
     }
@@ -23,34 +21,35 @@ public class JPointerFactory {
     }
 
     // first the terminal element
-    int pos = path.lastIndexOf('/');
-    String txt = unescape(path.substring(pos + 1));
+    String remaining = path;
+    int pos = remaining.lastIndexOf('/');
+    String txt = unescape(remaining.substring(pos + 1));
 
     PathElement element;
     if (txt.equals("-")) {
-      element = new ExtraTerminal(path);
+      element = new ExtraTerminal(remaining);
     } else if (isNumber(txt)) {
-      element = new ArrayTerminal(path, txt);
+      element = new ArrayTerminal(remaining, txt);
     } else {
-      element = new ObjectTerminal(path, txt);
+      element = new ObjectTerminal(remaining, txt);
     }
-    path = path.substring(0, pos);
+    remaining = remaining.substring(0, pos);
 
     while (true) {
-      pos = path.lastIndexOf('/');
+      pos = remaining.lastIndexOf('/');
       if (pos == -1) {
         break;
       }
-      txt = unescape(path.substring(pos + 1));
+      txt = unescape(remaining.substring(pos + 1));
       if (isNumber(txt)) {
-        element = new ArrayPath(path, txt, element);
+        element = new ArrayPath(remaining, txt, element);
       } else {
-        element = new ObjectPath(path, txt, element);
+        element = new ObjectPath(remaining, txt, element);
       }
-      path = path.substring(0, pos);
+      remaining = remaining.substring(0, pos);
     }
 
-    return new JPointer(path,element);
+    return new JPointer(path, element);
   }
 
 

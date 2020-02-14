@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import io.setl.json.JArray;
 import io.setl.json.Primitive;
 import io.setl.json.builder.JArrayBuilder;
 import io.setl.json.exception.PointerIndexException;
@@ -100,5 +101,24 @@ public class ArrayTerminalTest {
   public void replace2() {
     JsonPointer pointer = JPointerFactory.create("/1/3");
     pointer.replace(array, Primitive.create(false));
+  }
+
+  @Test
+  public void containsPointer() {
+    JsonExtendedPointer pointer = JPointerFactory.create("/a/0");
+    assertFalse(pointer.contains(JPointerFactory.create("/a/-")));
+    assertTrue(pointer.contains(JPointerFactory.create("/a/0/a")));
+  }
+
+  @Test
+  public void copy() {
+    JsonArray output = new JArray();
+    JsonExtendedPointer pointer = JPointerFactory.create("/1/1");
+    pointer.copy(array,output);
+    assertEquals("[null,[null,1]]",output.toString());
+    output = new JArray();
+    pointer = JPointerFactory.create("/1/3");
+    pointer.copy(array,output);
+    assertEquals("[null,[null,null,null,null]]",output.toString());
   }
 }

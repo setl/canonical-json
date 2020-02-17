@@ -13,12 +13,6 @@ import javax.json.JsonStructure;
 public interface JsonExtendedPointer extends JsonPointer {
 
   /**
-   * Checks if this pointer points at a parent structure of whatever the other pointer points at. The '-' end-of-array marker is treated as a wildcard in this
-   * which matches any array index. Hence "/a/-/b" contains "/a/5/b".
-   */
-  boolean contains(JsonExtendedPointer other);
-
-  /**
    * If the source contains a value for this pointer, copy it into the target. Existing sub-structures are over-written, not combined. Any required parent
    * structures are created in the target. The '-' end-of-array marker is treated as a wildcard in this which matches any array index.
    *
@@ -36,5 +30,19 @@ public interface JsonExtendedPointer extends JsonPointer {
    * @return the path
    */
   String getPath();
+
+  /**
+   * Get the root path element. The empty path has no root element.
+   *
+   * @return the root element
+   */
+  @Nullable
+  PathElement getRoot();
+
+  /**
+   * Checks if this pointer points at a parent structure of whatever the other pointer points at. The '-' end-of-array marker is treated as a wildcard in this
+   * which matches any array index. Hence "/a/-/b" contains "/a/5/b".
+   */
+  boolean isParentOf(JsonExtendedPointer other);
 
 }

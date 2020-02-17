@@ -1,0 +1,67 @@
+package io.setl.json.pointer.tree;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import io.setl.json.pointer.JPointerFactory;
+import io.setl.json.pointer.JsonExtendedPointer;
+
+/**
+ * @author Simon Greatrix on 17/02/2020.
+ */
+public class PointerTreeBuilder {
+
+  /** All the effective pointers. There is no pointer in this list which also has a parent in this list. */
+  private List<JsonExtendedPointer> pointers = new ArrayList<>();
+
+  /** Have we seen the "" pointer?. */
+  private boolean seenRoot = false;
+
+
+  public PointerTreeBuilder add(String path) {
+    return add(JPointerFactory.create(path));
+  }
+
+
+  public PointerTreeBuilder add(JsonExtendedPointer newPointer) {
+    if (newPointer.getPath().isEmpty()) {
+      // the new pointer is the root
+      pointers.clear();
+      seenRoot = true;
+    }
+    // If we've seen the root, nothing else matters
+    if (seenRoot) {
+      return this;
+    }
+
+    for (JsonExtendedPointer pointer : pointers) {
+      if (pointer.isParentOf(newPointer)) {
+        // parent is present, so do not add
+        return this;
+      }
+    }
+
+    // Remove any children of the new pointer
+    pointers.removeIf(newPointer::isParentOf);
+    pointers.add(newPointer);
+    return this;
+  }
+
+
+  public PointerTree build() {
+    if (seenRoot) {
+      return PointerRootTree.ROOT;
+    }
+
+    if (pointers.isEmpty()) {
+      return PointerEmptyTree.EMPTY;
+    }
+
+    pointers.sort((Comparator.comparing(JsonExtendedPointer::getPath)));
+
+    return new PointerTreeImpl(Collections.unmodifiableList(pointers));
+  }
+
+}

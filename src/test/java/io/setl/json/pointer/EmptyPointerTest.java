@@ -44,10 +44,10 @@ public class EmptyPointerTest {
 
   @Test
   public void containsPointer() {
-    assertTrue(pointer.contains(pointer));
+    assertTrue(pointer.isParentOf(pointer));
     JsonExtendedPointer p2 = JPointerFactory.create("/");
-    assertTrue(pointer.contains(p2));
-    assertFalse(p2.contains(pointer));
+    assertTrue(pointer.isParentOf(p2));
+    assertFalse(p2.isParentOf(pointer));
   }
 
 

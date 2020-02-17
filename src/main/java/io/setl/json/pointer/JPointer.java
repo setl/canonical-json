@@ -32,7 +32,6 @@ public class JPointer implements JsonExtendedPointer {
 
 
   protected final String path;
-
   protected final PathElement root;
 
 
@@ -50,16 +49,6 @@ public class JPointer implements JsonExtendedPointer {
       root.add((JsonArray) target, value);
     }
     return target;
-  }
-
-
-  @Override
-  public boolean contains(JsonExtendedPointer other) {
-    if (other instanceof EmptyPointer) {
-      // Empty cannot be contained within this.
-      return false;
-    }
-    return root.contains(((JPointer) other).root);
   }
 
 
@@ -107,12 +96,29 @@ public class JPointer implements JsonExtendedPointer {
   }
 
 
+  @Nullable
+  @Override
+  public PathElement getRoot() {
+    return root;
+  }
+
+
   @Override
   public JsonValue getValue(JsonStructure target) {
     if (target.getValueType() == ValueType.OBJECT) {
       return root.getValue((JsonObject) target);
     }
     return root.getValue((JsonArray) target);
+  }
+
+
+  @Override
+  public boolean isParentOf(JsonExtendedPointer other) {
+    if (other instanceof EmptyPointer) {
+      // Empty cannot be contained within this.
+      return false;
+    }
+    return root.contains(((JPointer) other).root);
   }
 
 

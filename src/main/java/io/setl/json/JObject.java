@@ -1012,7 +1012,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
   @Override
   public JsonArray getJsonArray(String name) {
-    return getArray(name);
+    return optArray(name);
   }
 
 
@@ -1025,7 +1025,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
   @Override
   public JsonObject getJsonObject(String name) {
-    return getObject(name);
+    return optObject(name);
   }
 
 

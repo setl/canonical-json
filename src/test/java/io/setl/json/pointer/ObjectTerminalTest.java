@@ -170,10 +170,10 @@ public class ObjectTerminalTest {
   @Test
   public void containsPath() {
     JsonExtendedPointer pointer = JPointerFactory.create("/a");
-    assertTrue(pointer.contains(JPointerFactory.create("/a/b")));
-    assertFalse(pointer.contains(JPointerFactory.create("/b/b")));
-    assertFalse(pointer.contains(JPointerFactory.create("")));
-    assertFalse(pointer.contains(JPointerFactory.create("/b")));
+    assertTrue(pointer.isParentOf(JPointerFactory.create("/a/b")));
+    assertFalse(pointer.isParentOf(JPointerFactory.create("/b/b")));
+    assertFalse(pointer.isParentOf(JPointerFactory.create("")));
+    assertFalse(pointer.isParentOf(JPointerFactory.create("/b")));
   }
 
 

@@ -13,7 +13,6 @@ import org.junit.Test;
 import io.setl.json.JArray;
 import io.setl.json.builder.JArrayBuilder;
 import io.setl.json.exception.PointerIndexException;
-import io.setl.json.io.JReader;
 import io.setl.json.io.JReaderFactory;
 
 /**
@@ -28,16 +27,16 @@ public class ArrayPathTest {
   public void containsPointer() {
     JsonExtendedPointer pointer = JPointerFactory.create("/2/1");
     JsonExtendedPointer pointer2 = JPointerFactory.create("/2/1");
-    assertTrue(pointer.contains(pointer2));
+    assertTrue(pointer.isParentOf(pointer2));
     pointer2 = JPointerFactory.create("/2/1/a/b");
-    assertTrue(pointer.contains(pointer2));
-    assertFalse(pointer2.contains(pointer));
+    assertTrue(pointer.isParentOf(pointer2));
+    assertFalse(pointer2.isParentOf(pointer));
     pointer2 = JPointerFactory.create("/2/a/b");
-    assertFalse(pointer.contains(pointer2));
+    assertFalse(pointer.isParentOf(pointer2));
     pointer2 = JPointerFactory.create("/2/a");
-    assertFalse(pointer.contains(pointer2));
+    assertFalse(pointer.isParentOf(pointer2));
     pointer2 = JPointerFactory.create("");
-    assertFalse(pointer.contains(pointer2));
+    assertFalse(pointer.isParentOf(pointer2));
   }
 
 

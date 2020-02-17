@@ -106,8 +106,8 @@ public class ArrayTerminalTest {
   @Test
   public void containsPointer() {
     JsonExtendedPointer pointer = JPointerFactory.create("/a/0");
-    assertFalse(pointer.contains(JPointerFactory.create("/a/-")));
-    assertTrue(pointer.contains(JPointerFactory.create("/a/0/a")));
+    assertFalse(pointer.isParentOf(JPointerFactory.create("/a/-")));
+    assertTrue(pointer.isParentOf(JPointerFactory.create("/a/0/a")));
   }
 
   @Test

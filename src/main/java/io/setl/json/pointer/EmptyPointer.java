@@ -38,7 +38,7 @@ public class EmptyPointer implements JsonExtendedPointer {
 
 
   @Override
-  public boolean contains(JsonExtendedPointer other) {
+  public boolean isParentOf(JsonExtendedPointer other) {
     return true;
   }
 
@@ -89,6 +89,12 @@ public class EmptyPointer implements JsonExtendedPointer {
   @Override
   public String getPath() {
     return "";
+  }
+
+
+  @Override
+  public PathElement getRoot() {
+    return null;
   }
 
 

@@ -4,20 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-
 import io.setl.json.Primitive;
 import io.setl.json.builder.JArrayBuilder;
 import io.setl.json.builder.JObjectBuilder;
 import io.setl.json.exception.PointerIndexException;
 import io.setl.json.primitive.PNull;
 import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.json.JsonPointer;
-import javax.json.JsonValue;
 
 import org.junit.Test;
 
@@ -67,15 +61,15 @@ public class ExtraTerminalTest {
   @Test
   public void containsPath() {
     JsonExtendedPointer pointer = JPointerFactory.create("/1/-");
-    assertTrue(pointer.contains(JPointerFactory.create("/1/4")));
-    assertTrue(pointer.contains(JPointerFactory.create("/1/3/a")));
-    assertTrue(pointer.contains(JPointerFactory.create("/1/3/1")));
-    assertTrue(pointer.contains(JPointerFactory.create("/1/-/a")));
-    assertTrue(pointer.contains(JPointerFactory.create("/1/-/1")));
-    assertTrue(pointer.contains(JPointerFactory.create("/1/-")));
-    assertTrue(pointer.contains(JPointerFactory.create("/1/-/-")));
-    assertFalse(pointer.contains(JPointerFactory.create("/1/x/a")));
-    assertFalse(pointer.contains(JPointerFactory.create("/1/x")));
+    assertTrue(pointer.isParentOf(JPointerFactory.create("/1/4")));
+    assertTrue(pointer.isParentOf(JPointerFactory.create("/1/3/a")));
+    assertTrue(pointer.isParentOf(JPointerFactory.create("/1/3/1")));
+    assertTrue(pointer.isParentOf(JPointerFactory.create("/1/-/a")));
+    assertTrue(pointer.isParentOf(JPointerFactory.create("/1/-/1")));
+    assertTrue(pointer.isParentOf(JPointerFactory.create("/1/-")));
+    assertTrue(pointer.isParentOf(JPointerFactory.create("/1/-/-")));
+    assertFalse(pointer.isParentOf(JPointerFactory.create("/1/x/a")));
+    assertFalse(pointer.isParentOf(JPointerFactory.create("/1/x")));
   }
 
   @Test

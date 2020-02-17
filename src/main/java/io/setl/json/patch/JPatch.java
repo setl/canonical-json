@@ -9,6 +9,7 @@ import javax.json.JsonStructure;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import io.setl.json.JArray;
 import io.setl.json.JObject;
@@ -31,7 +32,7 @@ public class JPatch implements JsonPatch {
 
 
   @JsonCreator
-  public JPatch(@JsonProperty("operations") List<PatchOperation> operationList) {
+  public JPatch(List<PatchOperation> operationList) {
     operations = new ArrayList<>(operationList);
   }
 
@@ -98,6 +99,7 @@ public class JPatch implements JsonPatch {
   }
 
 
+  @JsonValue
   public List<PatchOperation> getOperations() {
     return Collections.unmodifiableList(operations);
   }

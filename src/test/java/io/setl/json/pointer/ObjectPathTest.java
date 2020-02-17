@@ -46,13 +46,13 @@ public class ObjectPathTest {
   @Test
   public void containsPath() {
     JsonExtendedPointer pointer = JPointerFactory.create("/a/1");
-    assertTrue(pointer.contains(JPointerFactory.create("/a/1/b")));
-    assertFalse(pointer.contains(JPointerFactory.create("/a")));
+    assertTrue(pointer.isParentOf(JPointerFactory.create("/a/1/b")));
+    assertFalse(pointer.isParentOf(JPointerFactory.create("/a")));
 
     pointer = JPointerFactory.create("/-/1");
-    assertTrue(pointer.contains(JPointerFactory.create("/2/1")));
-    assertTrue(pointer.contains(JPointerFactory.create("/1/1/a")));
-    assertTrue(pointer.contains(JPointerFactory.create("/-/1/a")));
+    assertTrue(pointer.isParentOf(JPointerFactory.create("/2/1")));
+    assertTrue(pointer.isParentOf(JPointerFactory.create("/1/1/a")));
+    assertTrue(pointer.isParentOf(JPointerFactory.create("/-/1/a")));
   }
 
 

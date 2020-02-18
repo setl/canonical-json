@@ -199,6 +199,18 @@ public class ObjectPath implements PathElement {
   }
 
 
+  protected JsonValue doOptValue(JsonValue jv) {
+    switch (jv.getValueType()) {
+      case OBJECT:
+        return child.optValue((JsonObject) jv);
+      case ARRAY:
+        return child.optValue((JsonArray) jv);
+      default:
+        return null;
+    }
+  }
+
+
   protected void doRemove(JsonValue jv) {
     switch (jv.getValueType()) {
       case OBJECT:
@@ -274,6 +286,22 @@ public class ObjectPath implements PathElement {
 
   private PointerMismatchException notObject() {
     return new PointerMismatchException("JSON object required", path, ValueType.OBJECT, ValueType.ARRAY);
+  }
+
+
+  @Override
+  public JsonValue optValue(JsonArray target) {
+    return null;
+  }
+
+
+  @Override
+  public JsonValue optValue(JsonObject target) {
+    JsonValue jv = target.get(key);
+    if (jv == null) {
+      return null;
+    }
+    return doOptValue(jv);
   }
 
 

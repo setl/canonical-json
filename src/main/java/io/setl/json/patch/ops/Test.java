@@ -61,28 +61,30 @@ public class Test extends PatchOperation {
 
 
   private final String digest;
+  private final Boolean isPresent;
   private final JsonValue value;
 
 
   /**
    * New instance. At least one of <code>value</code> or <code>digest</code> must be specified.
    *
-   * @param path   the path to test
-   * @param value  the value to check against
-   * @param digest the digest to check against
+   * @param path      the path to test
+   * @param value     the value to check against
+   * @param digest    the digest to check against
+   * @param isPresent If true, the value must be present. If false, the value must be absent. If null, the value can be either
    */
   @JsonCreator
   public Test(
       @JsonProperty("path") String path,
       @JsonProperty("value") JsonValue value,
-      @JsonProperty("digest") String digest
+      @JsonProperty("digest") String digest,
+      @JsonProperty("isPresent") Boolean isPresent
   ) {
     super(path);
     this.value = value;
     this.digest = digest;
-    if (value == null && digest == null) {
-      throw new IllegalArgumentException("Test case must specify at value or digest");
-    }
+    this.isPresent = isPresent;
+    checkConfig();
   }
 
 
@@ -95,15 +97,31 @@ public class Test extends PatchOperation {
     super(object);
     this.value = object.optJsonValue("value");
     this.digest = object.optString("digest");
-    if (value == null && digest == null) {
-      throw new IllegalArgumentException("Test case must specify at value or digest");
-    }
+    this.isPresent = object.optBoolean("isPresent");
+    checkConfig();
   }
 
 
   @Override
   public <T extends JsonStructure> T apply(T target) {
-    JsonValue jsonValue = pointer.getValue(target);
+    JsonValue jsonValue = pointer.optValue(target);
+    if (isPresent != null) {
+      if (isPresent) {
+        if (jsonValue != null) {
+          return target;
+        }
+        throw new JsonException("Required value was not present at " + getPath());
+      }
+      if (jsonValue == null) {
+        return target;
+      }
+      throw new JsonException("Value was present when required to be absent at " + getPath());
+    }
+
+    // by value and by digest tests require the value to be present
+    if (jsonValue == null) {
+      throw new NoSuchValueException(getPath());
+    }
     if (value != null && !value.equals(jsonValue)) {
       throw new NoSuchValueException(getPath());
     }
@@ -111,6 +129,14 @@ public class Test extends PatchOperation {
       checkDigest(jsonValue);
     }
     return target;
+  }
+
+
+  private void checkConfig() {
+    int c = (((value != null) ? 1 : 0) + ((digest != null) ? 1 : 0) + ((isPresent != null) ? 1 : 0));
+    if (c != 1) {
+      throw new IllegalArgumentException("Test case must specify exactly one of 'value', 'digest', or 'isPresent'");
+    }
   }
 
 

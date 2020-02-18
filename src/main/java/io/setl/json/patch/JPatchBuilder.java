@@ -98,7 +98,7 @@ public class JPatchBuilder implements JsonPatchBuilder, Iterable<PatchOperation>
    */
   public JsonPatchBuilder digest(String path, String algorithm, JsonValue value) {
     byte[] hash = Test.digest(algorithm, value);
-    operationList.add(new Test(path, null, algorithm + "=" + Base64.getUrlEncoder().encodeToString(hash)));
+    operationList.add(new Test(path, null, algorithm + "=" + Base64.getUrlEncoder().encodeToString(hash), null));
     return this;
   }
 
@@ -174,28 +174,28 @@ public class JPatchBuilder implements JsonPatchBuilder, Iterable<PatchOperation>
 
   @Override
   public JsonPatchBuilder test(String path, JsonValue value) {
-    operationList.add(new Test(path, value, null));
+    operationList.add(new Test(path, value, null, null));
     return this;
   }
 
 
   @Override
   public JsonPatchBuilder test(String path, String value) {
-    operationList.add(new Test(path, PString.create(value), null));
+    operationList.add(new Test(path, PString.create(value), null, null));
     return this;
   }
 
 
   @Override
   public JsonPatchBuilder test(String path, int value) {
-    operationList.add(new Test(path, PNumber.create(value), null));
+    operationList.add(new Test(path, PNumber.create(value), null, null));
     return this;
   }
 
 
   @Override
   public JsonPatchBuilder test(String path, boolean value) {
-    operationList.add(new Test(path, value ? PTrue.TRUE : PFalse.FALSE, null));
+    operationList.add(new Test(path, value ? PTrue.TRUE : PFalse.FALSE, null, null));
     return this;
   }
 

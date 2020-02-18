@@ -105,6 +105,12 @@ public class EmptyPointer implements JsonExtendedPointer {
 
 
   @Override
+  public JsonValue optValue(JsonStructure target) {
+    return target;
+  }
+
+
+  @Override
   public <T extends JsonStructure> T remove(T target) {
     throw new JsonException("Cannot remove root structure");
   }

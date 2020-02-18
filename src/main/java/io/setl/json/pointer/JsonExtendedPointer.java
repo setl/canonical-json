@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.json.JsonPointer;
 import javax.json.JsonStructure;
+import javax.json.JsonValue;
 
 /**
  * Extensions to the standard pointer functionality.
@@ -44,5 +45,16 @@ public interface JsonExtendedPointer extends JsonPointer {
    * which matches any array index. Hence "/a/-/b" contains "/a/5/b".
    */
   boolean isParentOf(JsonExtendedPointer other);
+
+  /**
+   * Returns the value at the referenced location in the specified {@code target}, or null if there is no such value.
+   *
+   * @param target the target referenced by this {@code JsonPointer}
+   *
+   * @return the referenced value in the target, or null
+   *
+   * @throws NullPointerException if {@code target} is null
+   */
+  JsonValue optValue(JsonStructure target);
 
 }

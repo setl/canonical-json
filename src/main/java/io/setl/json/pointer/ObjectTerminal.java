@@ -119,6 +119,18 @@ public class ObjectTerminal implements PathElement {
 
 
   @Override
+  public JsonValue optValue(JsonArray target) {
+    return null;
+  }
+
+
+  @Override
+  public JsonValue optValue(JsonObject target) {
+    return target.get(key);
+  }
+
+
+  @Override
   public void remove(JsonArray target) {
     throw needObject();
   }

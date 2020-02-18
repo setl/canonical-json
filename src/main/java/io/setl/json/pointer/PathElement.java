@@ -35,6 +35,10 @@ public interface PathElement {
 
   boolean isArrayType();
 
+  JsonValue optValue(JsonArray target);
+
+  JsonValue optValue(JsonObject target);
+
   void remove(JsonArray target);
 
   void remove(JsonObject target);

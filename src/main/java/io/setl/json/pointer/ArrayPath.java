@@ -23,7 +23,6 @@ public class ArrayPath extends ObjectPath {
   }
 
 
-
   @Override
   public void add(JsonArray target, JsonValue value) {
     doAdd(get(target), value);
@@ -114,6 +113,15 @@ public class ArrayPath extends ObjectPath {
   @Override
   public boolean isArrayType() {
     return true;
+  }
+
+
+  @Override
+  public JsonValue optValue(JsonArray target) {
+    if (0 <= index && index < target.size()) {
+      return doOptValue(target.get(index));
+    }
+    return null;
   }
 
 

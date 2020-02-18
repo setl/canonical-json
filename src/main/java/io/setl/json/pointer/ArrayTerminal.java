@@ -80,7 +80,13 @@ public class ArrayTerminal extends ObjectTerminal {
     }
   }
 
-
+  @Override
+  public JsonValue optValue(JsonArray target) {
+    if( 0<=index && index<target.size() ) {
+      return target.get(index);
+    }
+    return null;
+  }
   @Override
   public boolean isArrayType() {
     return true;

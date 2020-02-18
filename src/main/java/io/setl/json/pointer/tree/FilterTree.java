@@ -17,7 +17,7 @@ import io.setl.json.pointer.PathElement;
 class FilterTree implements Filter {
 
   /**
-   * Invoke the appropriate filter method on a child value
+   * Invoke the appropriate filter method on a child value.
    *
    * @param f the filter to apply
    * @param v the value to filter
@@ -34,7 +34,7 @@ class FilterTree implements Filter {
       case ARRAY:
         return f.containsAll((JsonArray) v);
       default:
-        return false;
+        return f.allowValue();
     }
   }
 
@@ -52,6 +52,12 @@ class FilterTree implements Filter {
 
     Filter tree = descendants.computeIfAbsent(key, k -> new FilterTree());
     tree.add(child);
+  }
+
+
+  @Override
+  public boolean allowValue() {
+    return false;
   }
 
 

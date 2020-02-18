@@ -2,12 +2,12 @@ package io.setl.json.pointer.tree;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonStructure;
+import javax.json.JsonValue;
 
 import org.junit.Test;
 
@@ -44,6 +44,12 @@ public class PointerEmptyTreeTest {
 
 
   @Test
+  public void getPointers() {
+    assertTrue(PointerEmptyTree.EMPTY.getPointers().isEmpty());
+  }
+
+
+  @Test
   public void isParentOf() {
     assertFalse(PointerEmptyTree.EMPTY.isParentOf(JPointerFactory.create("/foo")));
   }
@@ -53,7 +59,7 @@ public class PointerEmptyTreeTest {
   public void removeArray() {
     JsonArray array = new JArrayBuilder().add("a").add(1).build();
     JsonArray s = PointerEmptyTree.EMPTY.remove(array);
-    assertEquals(s,array);
+    assertEquals(s, array);
   }
 
 
@@ -61,7 +67,7 @@ public class PointerEmptyTreeTest {
   public void removeObject() {
     JsonObject object = new JObjectBuilder().add("a", "b").add("b", 1).build();
     JsonObject s = PointerEmptyTree.EMPTY.remove(object);
-    assertEquals(object,s);
+    assertEquals(object, s);
   }
 
 }

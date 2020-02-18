@@ -27,6 +27,12 @@ public class FilterDeny implements Filter {
 
 
   @Override
+  public boolean allowValue() {
+    return false;
+  }
+
+
+  @Override
   public boolean containsAll(JsonObject jsonObject) {
     return false;
   }

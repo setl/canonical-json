@@ -27,6 +27,12 @@ public class FilterAccept implements Filter {
 
 
   @Override
+  public boolean allowValue() {
+    return true;
+  }
+
+
+  @Override
   public boolean containsAll(JsonObject jsonObject) {
     return true;
   }

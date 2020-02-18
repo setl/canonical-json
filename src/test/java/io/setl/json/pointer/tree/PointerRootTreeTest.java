@@ -1,12 +1,20 @@
 package io.setl.json.pointer.tree;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
+import java.util.List;
 import javax.json.JsonArray;
+import javax.json.JsonValue;
 
 import org.junit.Test;
 
 import io.setl.json.builder.JArrayBuilder;
+import io.setl.json.pointer.EmptyPointer;
+import io.setl.json.pointer.JPointerFactory;
+import io.setl.json.pointer.JsonExtendedPointer;
 
 /**
  * @author Simon Greatrix on 17/02/2020.
@@ -23,17 +31,29 @@ public class PointerRootTreeTest {
   @Test
   public void copy() {
     JsonArray array = new JArrayBuilder().add("a").add(1).build();
-    assertTrue(PointerRootTree.ROOT.containsAll(array));
+    JsonArray s = PointerRootTree.ROOT.copy(array);
+    assertEquals(s, array);
+    assertNotSame(s, array);
+  }
+
+
+  @Test
+  public void getPointers() {
+    List<JsonExtendedPointer> pointerList = PointerRootTree.ROOT.getPointers();
+    assertEquals(1, pointerList.size());
+    assertEquals(EmptyPointer.INSTANCE, pointerList.get(0));
   }
 
 
   @Test
   public void isParentOf() {
+    assertTrue(PointerRootTree.ROOT.isParentOf(JPointerFactory.create("/a")));
   }
 
 
   @Test
   public void remove() {
+    assertNull(PointerRootTree.ROOT.remove(JsonValue.EMPTY_JSON_ARRAY));
   }
 
 }

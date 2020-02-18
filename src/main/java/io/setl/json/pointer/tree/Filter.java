@@ -18,13 +18,11 @@ interface Filter {
   void add(PathElement element);
 
   /**
-   * Check if all elements of the object are accessible by paths in this filter.
+   * Does the filter accept a non-structural value at this location?.
    *
-   * @param jsonObject the object to check
-   *
-   * @return true if everything is accessible
+   * @return true if a non-structural value is OK
    */
-  boolean containsAll(JsonObject jsonObject);
+  boolean allowValue();
 
   /**
    * Check if all elements of the array are accessible by paths in this filter.
@@ -34,5 +32,14 @@ interface Filter {
    * @return true if everything is accessible
    */
   boolean containsAll(JsonArray jsonArray);
+
+  /**
+   * Check if all elements of the object are accessible by paths in this filter.
+   *
+   * @param jsonObject the object to check
+   *
+   * @return true if everything is accessible
+   */
+  boolean containsAll(JsonObject jsonObject);
 
 }

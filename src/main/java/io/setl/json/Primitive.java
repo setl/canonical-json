@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.json.JsonNumber;
 import javax.json.JsonString;
+import javax.json.JsonStructure;
 import javax.json.JsonValue;
 
 import io.setl.json.io.Utf8Appendable;
@@ -126,6 +127,25 @@ public interface Primitive extends JsonValue {
     throw new IllegalArgumentException("Cannot include item of class " + value.getClass() + " in JSON");
   }
 
+  /**
+   * Return an empty structure of the same type is the example.
+   *
+   * @param example the example
+   * @param <T>     the desired type
+   *
+   * @return the empty structure
+   */
+  @SuppressWarnings("unchecked")
+  static <T extends JsonStructure> T createEmpty(T example) {
+    switch (example.getValueType()) {
+      case ARRAY:
+        return (T) JsonValue.EMPTY_JSON_ARRAY;
+      case OBJECT:
+        return (T) JsonValue.EMPTY_JSON_OBJECT;
+      default:
+        throw new IllegalArgumentException("Type " + example.getValueType() + " is not a structure");
+    }
+  }
 
   /**
    * Extract the contained value from a JsonValue.
@@ -156,7 +176,6 @@ public interface Primitive extends JsonValue {
         throw new IllegalArgumentException("Unknown value type: " + jv.getValueType());
     }
   }
-
 
   /**
    * Get the value enclosed in a JSON value.

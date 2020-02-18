@@ -1,5 +1,6 @@
 package io.setl.json.pointer.tree;
 
+import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -8,8 +9,6 @@ import javax.json.JsonObject;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 
-import io.setl.json.JArray;
-import io.setl.json.JObject;
 import io.setl.json.Primitive;
 import io.setl.json.pointer.JsonExtendedPointer;
 
@@ -18,7 +17,9 @@ import io.setl.json.pointer.JsonExtendedPointer;
  */
 public class PointerTreeImpl implements PointerTree {
 
+  /** The filter for checking containsAll. */
   private final Filter filter;
+
   /** The pointers that make up this tree. */
   private final List<JsonExtendedPointer> pointers;
 
@@ -48,25 +49,39 @@ public class PointerTreeImpl implements PointerTree {
 
   @Override
   @Nonnull
-  @SuppressWarnings("unchecked")
   public <T extends JsonStructure> T copy(@Nonnull T value) {
     // Create an appropriate root
-    T result;
-    switch (value.getValueType()) {
-      case ARRAY:
-        result = (T) new JArray();
-        break;
-      case OBJECT:
-        result = (T) new JObject();
-        break;
-      default:
-        throw new IllegalArgumentException("Value of type " + value.getValueType() + " is not structure");
-    }
-
+    T result = Primitive.createEmpty(value);
     for (JsonExtendedPointer p : pointers) {
       result = p.copy(value, result);
     }
     return result;
+  }
+
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof PointerTree)) {
+      return false;
+    }
+
+    PointerTree that = (PointerTree) o;
+
+    return pointers.equals(that.getPointers());
+  }
+
+
+  public List<JsonExtendedPointer> getPointers() {
+    return Collections.unmodifiableList(pointers);
+  }
+
+
+  @Override
+  public int hashCode() {
+    return pointers.hashCode();
   }
 
 
@@ -87,7 +102,9 @@ public class PointerTreeImpl implements PointerTree {
     @SuppressWarnings("unchecked")
     T target = (T) Primitive.cast(value).copy();
     for (JsonExtendedPointer p : pointers) {
-      p.remove(target);
+      if (p.containsValue(target)) {
+        p.remove(target);
+      }
     }
     return target;
   }

@@ -39,7 +39,6 @@ public class JPatchTest {
     ObjectMapper mapper = new ObjectMapper();
     mapper.registerModule(new JsonModule());
     String json = mapper.writeValueAsString(patch);
-    System.out.println(json);
     JPatch copy = mapper.readValue(json, JPatch.class);
     assertEquals(patch, copy);
   }

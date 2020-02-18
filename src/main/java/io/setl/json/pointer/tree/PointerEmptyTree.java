@@ -1,5 +1,7 @@
 package io.setl.json.pointer.tree;
 
+import java.util.Collections;
+import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.json.JsonStructure;
@@ -30,18 +32,15 @@ public class PointerEmptyTree implements PointerTree {
 
   @Nonnull
   @Override
-  @SuppressWarnings("unchecked")
   public <T extends JsonStructure> T copy(@Nonnull T value) {
-    // Nothing can be copied, so return an empty structure
-    switch (value.getValueType()) {
-      case ARRAY:
-        return (T) JsonValue.EMPTY_JSON_ARRAY;
-      case OBJECT:
-        return (T) JsonValue.EMPTY_JSON_OBJECT;
-      default:
-        // unreachable
-        throw new IllegalArgumentException("Value of type " + value.getValueType() + " is not structure");
-    }
+    // Nothing can be copied, so create an empty response
+    return Primitive.createEmpty(value);
+  }
+
+
+  @Override
+  public List<JsonExtendedPointer> getPointers() {
+    return Collections.emptyList();
   }
 
 

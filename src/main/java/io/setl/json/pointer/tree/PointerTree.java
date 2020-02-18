@@ -1,5 +1,6 @@
 package io.setl.json.pointer.tree;
 
+import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.json.JsonStructure;
@@ -27,12 +28,19 @@ public interface PointerTree {
   /**
    * Copy as much of the provided value as this tree of pointers can access.
    *
-   * @param value the value to copy
+   * @param source the value to copy
    *
    * @return the copy
    */
   @Nonnull
-  <T extends JsonStructure> T copy(@Nonnull T value);
+  <T extends JsonStructure> T copy(@Nonnull T source);
+
+  /**
+   * Get the pointers that were incorporated into this tree.
+   *
+   * @return the pointers
+   */
+  List<JsonExtendedPointer> getPointers();
 
   /**
    * Check if this tree contains a parent of the specified pointer.

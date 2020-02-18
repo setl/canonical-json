@@ -73,7 +73,7 @@ public class JPointer implements JsonExtendedPointer {
 
 
   private JsonObject doCopy(JsonObject source, JsonObject target) {
-    if (target == null) {
+    if (target == null || target == JsonValue.EMPTY_JSON_OBJECT) {
       target = new JObject();
     }
     root.copy(source, target);
@@ -82,11 +82,25 @@ public class JPointer implements JsonExtendedPointer {
 
 
   private JsonArray doCopy(JsonArray source, JsonArray target) {
-    if (target == null) {
+    if (target == null || target == JsonValue.EMPTY_JSON_ARRAY) {
       target = new JArray();
     }
     root.copy(source, target);
     return target;
+  }
+
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof JsonExtendedPointer)) {
+      return false;
+    }
+
+    JsonExtendedPointer jPointer = (JsonExtendedPointer) o;
+    return path.equals(jPointer.getPath());
   }
 
 
@@ -109,6 +123,12 @@ public class JPointer implements JsonExtendedPointer {
       return root.getValue((JsonObject) target);
     }
     return root.getValue((JsonArray) target);
+  }
+
+
+  @Override
+  public int hashCode() {
+    return path.hashCode();
   }
 
 

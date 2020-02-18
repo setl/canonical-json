@@ -1,11 +1,14 @@
 package io.setl.json.pointer.tree;
 
+import java.util.Collections;
+import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 
 import io.setl.json.Primitive;
+import io.setl.json.pointer.EmptyPointer;
 import io.setl.json.pointer.JsonExtendedPointer;
 
 /**
@@ -25,7 +28,7 @@ public class PointerRootTree implements PointerTree {
 
 
   @Override
-  public boolean containsAll(JsonValue value) {
+  public boolean containsAll(@Nonnull JsonValue value) {
     return true;
   }
 
@@ -34,7 +37,14 @@ public class PointerRootTree implements PointerTree {
   @Override
   @SuppressWarnings("unchecked")
   public <T extends JsonStructure> T copy(@Nonnull T value) {
+    // everything is copied
     return (T) Primitive.cast(value).copy();
+  }
+
+
+  @Override
+  public List<JsonExtendedPointer> getPointers() {
+    return Collections.singletonList(EmptyPointer.INSTANCE);
   }
 
 

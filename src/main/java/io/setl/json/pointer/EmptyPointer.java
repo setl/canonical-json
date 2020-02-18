@@ -38,12 +38,6 @@ public class EmptyPointer implements JsonExtendedPointer {
 
 
   @Override
-  public boolean isParentOf(JsonExtendedPointer other) {
-    return true;
-  }
-
-
-  @Override
   public boolean containsValue(JsonStructure target) {
     return true;
   }
@@ -62,7 +56,7 @@ public class EmptyPointer implements JsonExtendedPointer {
 
   @Nonnull
   private JsonObject copy(@Nonnull JsonObject source, @Nullable JsonObject target) {
-    if (target == null) {
+    if (target == null || target == JsonValue.EMPTY_JSON_OBJECT) {
       target = new JObject();
     }
     target.putAll(source);
@@ -72,7 +66,7 @@ public class EmptyPointer implements JsonExtendedPointer {
 
   @Nonnull
   private JsonArray copy(@Nonnull JsonArray source, @Nullable JsonArray target) {
-    if (target == null) {
+    if (target == null || target == JsonValue.EMPTY_JSON_ARRAY) {
       target = new JArray();
     }
     int s = source.size();
@@ -101,6 +95,12 @@ public class EmptyPointer implements JsonExtendedPointer {
   @Override
   public JsonValue getValue(JsonStructure target) {
     return target;
+  }
+
+
+  @Override
+  public boolean isParentOf(JsonExtendedPointer other) {
+    return true;
   }
 
 

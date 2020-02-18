@@ -66,7 +66,7 @@ public class Test extends PatchOperation {
 
 
   /**
-   * New instance. At least one of <code>value</code> or <code>digest</code> must be specified.
+   * New instance. Exactly one of <code>value</code>, <code>digest</code>, or <code>isPresent</code> must be specified.
    *
    * @param path      the path to test
    * @param value     the value to check against
@@ -85,6 +85,50 @@ public class Test extends PatchOperation {
     this.digest = digest;
     this.isPresent = isPresent;
     checkConfig();
+  }
+
+
+  /**
+   * New instance for a value comparison.
+   *
+   * @param path  the path to test
+   * @param value the value it must equal
+   */
+  public Test(String path, JsonValue value) {
+    super(path);
+    Objects.requireNonNull(value, "Test value must not be null");
+    this.value = value;
+    this.digest = null;
+    this.isPresent = null;
+  }
+
+
+  /**
+   * New instance for a value comparison.
+   *
+   * @param path   the path to test
+   * @param digest the digest the value must have
+   */
+  public Test(String path, String digest) {
+    super(path);
+    Objects.requireNonNull(digest, "Test value must not be null");
+    this.value = null;
+    this.digest = digest;
+    this.isPresent = null;
+  }
+
+
+  /**
+   * New instance for a presence check.
+   *
+   * @param path      the path to test
+   * @param isPresent if true, the value must be present; if false, the value must be absent
+   */
+  public Test(String path, boolean isPresent) {
+    super(path);
+    this.value = null;
+    this.digest = null;
+    this.isPresent = isPresent;
   }
 
 

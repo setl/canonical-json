@@ -19,7 +19,7 @@ import io.setl.json.pointer.JsonExtendedPointer;
 public class PointerRootTree implements PointerTree {
 
   /** The root tree. */
-  public static final PointerTree ROOT = new PointerRootTree();
+  public static final PointerTree INSTANCE = new PointerRootTree();
 
 
   private PointerRootTree() {

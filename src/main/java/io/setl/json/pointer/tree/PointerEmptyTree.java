@@ -16,7 +16,7 @@ import io.setl.json.pointer.JsonExtendedPointer;
 public class PointerEmptyTree implements PointerTree {
 
   /** The empty tree. */
-  public static final PointerTree EMPTY = new PointerEmptyTree();
+  public static final PointerTree INSTANCE = new PointerEmptyTree();
 
 
   private PointerEmptyTree() {

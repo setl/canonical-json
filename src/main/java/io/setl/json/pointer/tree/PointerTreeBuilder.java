@@ -52,11 +52,11 @@ public class PointerTreeBuilder {
 
   public PointerTree build() {
     if (seenRoot) {
-      return PointerRootTree.ROOT;
+      return PointerRootTree.INSTANCE;
     }
 
     if (pointers.isEmpty()) {
-      return PointerEmptyTree.EMPTY;
+      return PointerEmptyTree.INSTANCE;
     }
 
     pointers.sort((Comparator.comparing(JsonExtendedPointer::getPath)));

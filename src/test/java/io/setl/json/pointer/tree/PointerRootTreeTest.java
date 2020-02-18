@@ -24,14 +24,14 @@ public class PointerRootTreeTest {
   @Test
   public void containsAll() {
     JsonArray array = new JArrayBuilder().add("a").add(1).build();
-    assertTrue(PointerRootTree.ROOT.containsAll(array));
+    assertTrue(PointerRootTree.INSTANCE.containsAll(array));
   }
 
 
   @Test
   public void copy() {
     JsonArray array = new JArrayBuilder().add("a").add(1).build();
-    JsonArray s = PointerRootTree.ROOT.copy(array);
+    JsonArray s = PointerRootTree.INSTANCE.copy(array);
     assertEquals(s, array);
     assertNotSame(s, array);
   }
@@ -39,7 +39,7 @@ public class PointerRootTreeTest {
 
   @Test
   public void getPointers() {
-    List<JsonExtendedPointer> pointerList = PointerRootTree.ROOT.getPointers();
+    List<JsonExtendedPointer> pointerList = PointerRootTree.INSTANCE.getPointers();
     assertEquals(1, pointerList.size());
     assertEquals(EmptyPointer.INSTANCE, pointerList.get(0));
   }
@@ -47,13 +47,13 @@ public class PointerRootTreeTest {
 
   @Test
   public void isParentOf() {
-    assertTrue(PointerRootTree.ROOT.isParentOf(JPointerFactory.create("/a")));
+    assertTrue(PointerRootTree.INSTANCE.isParentOf(JPointerFactory.create("/a")));
   }
 
 
   @Test
   public void remove() {
-    assertNull(PointerRootTree.ROOT.remove(JsonValue.EMPTY_JSON_ARRAY));
+    assertNull(PointerRootTree.INSTANCE.remove(JsonValue.EMPTY_JSON_ARRAY));
   }
 
 }

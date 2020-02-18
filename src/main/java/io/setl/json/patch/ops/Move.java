@@ -2,17 +2,18 @@ package io.setl.json.patch.ops;
 
 import javax.json.JsonObject;
 import javax.json.JsonPatch.Operation;
-import javax.json.JsonPointer;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.setl.json.JObject;
 import io.setl.json.builder.JObjectBuilder;
 import io.setl.json.patch.PatchOperation;
 import io.setl.json.pointer.JPointerFactory;
+import io.setl.json.pointer.JsonExtendedPointer;
 
 /**
  * @author Simon Greatrix on 06/02/2020.
@@ -21,7 +22,7 @@ public class Move extends PatchOperation {
 
   private final String from;
 
-  private final JsonPointer fromPointer;
+  private final JsonExtendedPointer fromPointer;
 
 
   /**
@@ -80,6 +81,12 @@ public class Move extends PatchOperation {
 
   public String getFrom() {
     return from;
+  }
+
+
+  @JsonIgnore
+  public JsonExtendedPointer getFromPointer() {
+    return fromPointer;
   }
 
 

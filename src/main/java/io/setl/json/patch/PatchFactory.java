@@ -198,7 +198,12 @@ public final class PatchFactory {
     if (features.contains(DiffFeatures.EMIT_DIGEST)) {
       patchBuilder.digest("", source);
     }
+
     generateDiffs(null, source, target);
+
+    if (features.contains(DiffFeatures.EMIT_DIGEST)) {
+      patchBuilder.digest("", target);
+    }
   }
 
 

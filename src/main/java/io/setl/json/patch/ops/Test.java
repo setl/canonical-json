@@ -23,6 +23,8 @@ import io.setl.json.Primitive;
 import io.setl.json.builder.JObjectBuilder;
 import io.setl.json.exception.NoSuchValueException;
 import io.setl.json.patch.PatchOperation;
+import io.setl.json.pointer.JsonExtendedPointer;
+import io.setl.json.pointer.JsonExtendedPointer.ResultOfAdd;
 
 /**
  * @author Simon Greatrix on 06/02/2020.
@@ -61,29 +63,29 @@ public class Test extends PatchOperation {
 
 
   private final String digest;
-  private final Boolean isPresent;
+  private final ResultOfAdd resultOfAdd;
   private final JsonValue value;
 
 
   /**
    * New instance. Exactly one of <code>value</code>, <code>digest</code>, or <code>isPresent</code> must be specified.
    *
-   * @param path      the path to test
-   * @param value     the value to check against
-   * @param digest    the digest to check against
-   * @param isPresent If true, the value must be present. If false, the value must be absent. If null, the value can be either
+   * @param path        the path to test
+   * @param value       the value to check against
+   * @param digest      the digest to check against
+   * @param resultOfAdd the required result of an add operation to this
    */
   @JsonCreator
   public Test(
       @JsonProperty("path") String path,
       @JsonProperty("value") JsonValue value,
       @JsonProperty("digest") String digest,
-      @JsonProperty("isPresent") Boolean isPresent
+      @JsonProperty("resultOfAdd") ResultOfAdd resultOfAdd
   ) {
     super(path);
     this.value = value;
     this.digest = digest;
-    this.isPresent = isPresent;
+    this.resultOfAdd = resultOfAdd;
     checkConfig();
   }
 
@@ -91,44 +93,44 @@ public class Test extends PatchOperation {
   /**
    * New instance for a value comparison.
    *
-   * @param path  the path to test
-   * @param value the value it must equal
+   * @param pointer the path to test
+   * @param value   the value it must equal
    */
-  public Test(String path, JsonValue value) {
-    super(path);
+  public Test(JsonExtendedPointer pointer, JsonValue value) {
+    super(pointer);
     Objects.requireNonNull(value, "Test value must not be null");
     this.value = value;
     this.digest = null;
-    this.isPresent = null;
+    this.resultOfAdd = null;
   }
 
 
   /**
    * New instance for a value comparison.
    *
-   * @param path   the path to test
-   * @param digest the digest the value must have
+   * @param pointer the path to test
+   * @param digest  the digest the value must have
    */
-  public Test(String path, String digest) {
-    super(path);
+  public Test(JsonExtendedPointer pointer, String digest) {
+    super(pointer);
     Objects.requireNonNull(digest, "Test value must not be null");
     this.value = null;
     this.digest = digest;
-    this.isPresent = null;
+    this.resultOfAdd = null;
   }
 
 
   /**
    * New instance for a presence check.
    *
-   * @param path      the path to test
-   * @param isPresent if true, the value must be present; if false, the value must be absent
+   * @param pointer     the path to test
+   * @param resultOfAdd Desired result of an add operation
    */
-  public Test(String path, boolean isPresent) {
-    super(path);
+  public Test(JsonExtendedPointer pointer, ResultOfAdd resultOfAdd) {
+    super(pointer);
     this.value = null;
     this.digest = null;
-    this.isPresent = isPresent;
+    this.resultOfAdd = resultOfAdd;
   }
 
 
@@ -141,31 +143,28 @@ public class Test extends PatchOperation {
     super(object);
     this.value = object.optJsonValue("value");
     this.digest = object.optString("digest");
-    this.isPresent = object.optBoolean("isPresent");
+    String name = object.optString("resultOfAdd");
+    if (name != null) {
+      this.resultOfAdd = ResultOfAdd.valueOf(name);
+    } else {
+      this.resultOfAdd = null;
+    }
     checkConfig();
   }
 
 
   @Override
   public <T extends JsonStructure> T apply(T target) {
-    JsonValue jsonValue = pointer.optValue(target);
-    if (isPresent != null) {
-      if (isPresent) {
-        if (jsonValue != null) {
-          return target;
-        }
-        throw new JsonException("Required value was not present at " + getPath());
+    if (resultOfAdd != null) {
+      ResultOfAdd actual = pointer.testAdd(target);
+      if (actual != resultOfAdd) {
+        throw new JsonException("Add will " + actual + ", required to " + resultOfAdd + " at " + getPath());
       }
-      if (jsonValue == null) {
-        return target;
-      }
-      throw new JsonException("Value was present when required to be absent at " + getPath());
+      return target;
     }
 
     // by value and by digest tests require the value to be present
-    if (jsonValue == null) {
-      throw new NoSuchValueException(getPath());
-    }
+    JsonValue jsonValue = pointer.getValue(target);
     if (value != null && !value.equals(jsonValue)) {
       throw new NoSuchValueException(getPath());
     }
@@ -177,9 +176,9 @@ public class Test extends PatchOperation {
 
 
   private void checkConfig() {
-    int c = (((value != null) ? 1 : 0) + ((digest != null) ? 1 : 0) + ((isPresent != null) ? 1 : 0));
+    int c = (((value != null) ? 1 : 0) + ((digest != null) ? 1 : 0) + ((resultOfAdd != null) ? 1 : 0));
     if (c != 1) {
-      throw new IllegalArgumentException("Test case must specify exactly one of 'value', 'digest', or 'isPresent'");
+      throw new IllegalArgumentException("Test case must specify exactly one of 'value', 'digest', or 'resultOfAdd'");
     }
   }
 
@@ -198,7 +197,7 @@ public class Test extends PatchOperation {
 
     byte[] actual = digest(algorithm, jsonValue);
     if (!MessageDigest.isEqual(expected, actual)) {
-      throw new NoSuchValueException(getPath());
+      throw new JsonException("Digest mismatch. Saw \"" + Base64.getUrlEncoder().encodeToString(actual) + "\" at " + getPath());
     }
   }
 
@@ -231,6 +230,11 @@ public class Test extends PatchOperation {
   }
 
 
+  public ResultOfAdd getResultOfAdd() {
+    return resultOfAdd;
+  }
+
+
   public JsonValue getValue() {
     return value;
   }
@@ -256,6 +260,9 @@ public class Test extends PatchOperation {
     }
     if (digest != null) {
       builder.add("digest", getDigest());
+    }
+    if (resultOfAdd != null) {
+      builder.add("resultOfAdd", resultOfAdd.name());
     }
 
     return builder.build();

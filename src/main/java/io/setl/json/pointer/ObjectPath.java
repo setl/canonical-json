@@ -12,6 +12,7 @@ import io.setl.json.JArray;
 import io.setl.json.JObject;
 import io.setl.json.exception.NoSuchValueException;
 import io.setl.json.exception.PointerMismatchException;
+import io.setl.json.pointer.JsonExtendedPointer.ResultOfAdd;
 
 /**
  * @author Simon Greatrix on 27/01/2020.
@@ -239,6 +240,18 @@ public class ObjectPath implements PathElement {
   }
 
 
+  protected ResultOfAdd doTestAdd(JsonValue jv) {
+    switch (jv.getValueType()) {
+      case OBJECT:
+        return child.testAdd((JsonObject) jv);
+      case ARRAY:
+        return child.testAdd((JsonArray) jv);
+      default:
+        return ResultOfAdd.FAIL;
+    }
+  }
+
+
   private JsonValue get(JsonObject target) {
     JsonValue jv = target.get(key);
     if (jv == null) {
@@ -326,6 +339,22 @@ public class ObjectPath implements PathElement {
   @Override
   public void replace(JsonObject target, JsonValue value) {
     doReplace(get(target), value);
+  }
+
+
+  @Override
+  public ResultOfAdd testAdd(JsonArray target) {
+    return ResultOfAdd.FAIL;
+  }
+
+
+  @Override
+  public ResultOfAdd testAdd(JsonObject target) {
+    JsonValue jv = target.get(key);
+    if (jv == null) {
+      return ResultOfAdd.FAIL;
+    }
+    return doTestAdd(jv);
   }
 
 

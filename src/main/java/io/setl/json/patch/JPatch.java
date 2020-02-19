@@ -1,14 +1,12 @@
 package io.setl.json.patch;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.json.JsonArray;
 import javax.json.JsonPatch;
 import javax.json.JsonStructure;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import io.setl.json.JArray;
@@ -99,9 +97,14 @@ public class JPatch implements JsonPatch {
   }
 
 
+  /**
+   * Get the operations that constitute this patch. Note that the patch may be manipulated by changing the values in this list.
+   *
+   * @return a mutable list of operations
+   */
   @JsonValue
   public List<PatchOperation> getOperations() {
-    return Collections.unmodifiableList(operations);
+    return operations;
   }
 
 

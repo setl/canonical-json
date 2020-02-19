@@ -25,6 +25,13 @@ public class PointerTreeBuilder {
   }
 
 
+  /**
+   * Add the provided pointer to this tree.
+   *
+   * @param newPointer the new pointer
+   *
+   * @return this
+   */
   public PointerTreeBuilder add(JsonExtendedPointer newPointer) {
     if (newPointer.getPath().isEmpty()) {
       // the new pointer is the root
@@ -50,6 +57,11 @@ public class PointerTreeBuilder {
   }
 
 
+  /**
+   * Build the pointer tree.
+   *
+   * @return the tree
+   */
   public PointerTree build() {
     if (seenRoot) {
       return PointerRootTree.INSTANCE;

@@ -22,7 +22,7 @@ public class JsonObjectDeserializer extends JsonDeserializer<JsonObject> {
   @Override
   public JsonObject deserialize(JsonParser p, DeserializationContext context) throws IOException {
     try {
-      JacksonParser parser = new JacksonParser(p);
+      JacksonReader parser = new JacksonReader(p);
       return parser.readObject();
     } catch (JsonIOException jsonIOException) {
       throw jsonIOException.cause();

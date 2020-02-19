@@ -4,6 +4,7 @@ import javax.json.JsonArray;
 import javax.json.JsonValue;
 
 import io.setl.json.exception.PointerIndexException;
+import io.setl.json.pointer.JsonExtendedPointer.ResultOfAdd;
 
 /**
  * Special handling for the '-' terminal.
@@ -81,6 +82,12 @@ public class ExtraTerminal extends ObjectTerminal {
   @Override
   public void replace(JsonArray target, JsonValue value) {
     throw bad(target.size());
+  }
+
+
+  @Override
+  public ResultOfAdd testAdd(JsonArray target) {
+    return ResultOfAdd.CREATE;
   }
 
 }

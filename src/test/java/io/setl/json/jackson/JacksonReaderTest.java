@@ -26,7 +26,7 @@ import org.mockito.Mockito;
 /**
  * @author Simon Greatrix on 31/01/2020.
  */
-public class JacksonParserTest {
+public class JacksonReaderTest {
 
   @Test
   public void test1() throws IOException {
@@ -50,9 +50,9 @@ public class JacksonParserTest {
     jacksonGenerator.close();
 
     SmileParser smileParser = smileFactory.createParser(outputStream.toByteArray());
-    JacksonParser jacksonParser = new JacksonParser(smileParser);
-    JsonValue output = jacksonParser.read();
-    jacksonParser.close();
+    JacksonReader jacksonReader = new JacksonReader(smileParser);
+    JsonValue output = jacksonReader.read();
+    jacksonReader.close();
 
     assertEquals(object.toString(), output.toString());
   }
@@ -62,7 +62,7 @@ public class JacksonParserTest {
   public void test10() throws IOException {
     JsonParser mock = Mockito.mock(JsonParser.class);
     Mockito.doThrow(new IOException()).when(mock).nextToken();
-    JacksonParser parser = new JacksonParser(mock);
+    JacksonReader parser = new JacksonReader(mock);
     parser.read();
   }
 
@@ -71,7 +71,7 @@ public class JacksonParserTest {
   public void test11() throws IOException {
     JsonParser mock = Mockito.mock(JsonParser.class);
     Mockito.doThrow(new IOException()).when(mock).nextToken();
-    JacksonParser parser = new JacksonParser(mock);
+    JacksonReader parser = new JacksonReader(mock);
     parser.readArray();
   }
 
@@ -80,7 +80,7 @@ public class JacksonParserTest {
   public void test12() throws IOException {
     JsonParser mock = Mockito.mock(JsonParser.class);
     Mockito.doThrow(new IOException()).when(mock).nextToken();
-    JacksonParser parser = new JacksonParser(mock);
+    JacksonReader parser = new JacksonReader(mock);
     parser.readObject();
   }
 
@@ -89,8 +89,8 @@ public class JacksonParserTest {
     SmileFactory smileFactory = new SmileFactory();
     smileFactory.enable(Feature.CHECK_SHARED_STRING_VALUES);
     SmileParser smileParser = smileFactory.createParser(new byte[0]);
-    JacksonParser jacksonParser = new JacksonParser(smileParser);
-    jacksonParser.readValue();
+    JacksonReader jacksonReader = new JacksonReader(smileParser);
+    jacksonReader.readValue();
   }
 
 
@@ -106,13 +106,13 @@ public class JacksonParserTest {
     jacksonGenerator.close();
 
     SmileParser smileParser = smileFactory.createParser(outputStream.toByteArray());
-    JacksonParser jacksonParser = new JacksonParser(smileParser);
-    JsonValue output = jacksonParser.readValue();
+    JacksonReader jacksonReader = new JacksonReader(smileParser);
+    JsonValue output = jacksonReader.readValue();
     assertEquals(JsonValue.NULL, output);
 
     try {
       // should not be able to read two values
-      jacksonParser.readValue();
+      jacksonReader.readValue();
       fail();
     } catch (IllegalStateException e) {
       // correct
@@ -142,9 +142,9 @@ public class JacksonParserTest {
     jacksonGenerator.close();
 
     SmileParser smileParser = smileFactory.createParser(outputStream.toByteArray());
-    JacksonParser jacksonParser = new JacksonParser(smileParser);
-    JsonObject output = jacksonParser.readObject();
-    jacksonParser.close();
+    JacksonReader jacksonReader = new JacksonReader(smileParser);
+    JsonObject output = jacksonReader.readObject();
+    jacksonReader.close();
 
     assertEquals(object.toString(), output.toString());
   }
@@ -162,8 +162,8 @@ public class JacksonParserTest {
     jacksonGenerator.close();
 
     SmileParser smileParser = smileFactory.createParser(outputStream.toByteArray());
-    JacksonParser jacksonParser = new JacksonParser(smileParser);
-    jacksonParser.readObject();
+    JacksonReader jacksonReader = new JacksonReader(smileParser);
+    jacksonReader.readObject();
   }
 
 
@@ -179,8 +179,8 @@ public class JacksonParserTest {
     jacksonGenerator.close();
 
     SmileParser smileParser = smileFactory.createParser(outputStream.toByteArray());
-    JacksonParser jacksonParser = new JacksonParser(smileParser);
-    jacksonParser.readArray();
+    JacksonReader jacksonReader = new JacksonReader(smileParser);
+    jacksonReader.readArray();
   }
 
 
@@ -196,8 +196,8 @@ public class JacksonParserTest {
     jacksonGenerator.close();
 
     SmileParser smileParser = smileFactory.createParser(outputStream.toByteArray());
-    JacksonParser jacksonParser = new JacksonParser(smileParser);
-    jacksonParser.read();
+    JacksonReader jacksonReader = new JacksonReader(smileParser);
+    jacksonReader.read();
   }
 
 
@@ -218,9 +218,9 @@ public class JacksonParserTest {
     jacksonGenerator.close();
 
     SmileParser smileParser = smileFactory.createParser(outputStream.toByteArray());
-    JacksonParser jacksonParser = new JacksonParser(smileParser);
-    JsonStructure output = jacksonParser.read();
-    jacksonParser.close();
+    JacksonReader jacksonReader = new JacksonReader(smileParser);
+    JsonStructure output = jacksonReader.read();
+    jacksonReader.close();
 
     assertEquals(array.toString(), output.toString());
   }
@@ -243,9 +243,9 @@ public class JacksonParserTest {
     jacksonGenerator.close();
 
     SmileParser smileParser = smileFactory.createParser(outputStream.toByteArray());
-    JacksonParser jacksonParser = new JacksonParser(smileParser);
-    JsonStructure output = jacksonParser.readArray();
-    jacksonParser.close();
+    JacksonReader jacksonReader = new JacksonReader(smileParser);
+    JsonStructure output = jacksonReader.readArray();
+    jacksonReader.close();
 
     assertEquals(array.toString(), output.toString());
   }
@@ -255,7 +255,7 @@ public class JacksonParserTest {
   public void test9() throws IOException {
     JsonParser mock = Mockito.mock(JsonParser.class);
     Mockito.doThrow(new IOException()).when(mock).nextToken();
-    JacksonParser parser = new JacksonParser(mock);
+    JacksonReader parser = new JacksonReader(mock);
     parser.readValue();
   }
 }

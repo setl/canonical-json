@@ -11,6 +11,7 @@ import javax.json.stream.JsonParsingException;
 import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.TreeNode;
 
 import io.setl.json.JArray;
 import io.setl.json.JObject;
@@ -25,15 +26,20 @@ import io.setl.json.primitive.numbers.PNumber;
 /**
  * @author Simon Greatrix on 31/01/2020.
  */
-public class JacksonParser implements JsonReader {
+public class JacksonReader implements JsonReader {
 
   private final JsonParser jsonParser;
 
   private boolean isUsed = false;
 
 
-  public JacksonParser(JsonParser jsonParser) {
+  public JacksonReader(JsonParser jsonParser) {
     this.jsonParser = jsonParser;
+  }
+
+
+  public JacksonReader(TreeNode treeNode) {
+    this.jsonParser = treeNode.traverse();
   }
 
 

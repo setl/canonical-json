@@ -8,6 +8,7 @@ import javax.json.JsonValue.ValueType;
 import io.setl.json.JArray;
 import io.setl.json.JObject;
 import io.setl.json.exception.PointerIndexException;
+import io.setl.json.pointer.JsonExtendedPointer.ResultOfAdd;
 
 /**
  * @author Simon Greatrix on 27/01/2020.
@@ -134,6 +135,15 @@ public class ArrayPath extends ObjectPath {
   @Override
   public void replace(JsonArray target, JsonValue value) {
     doReplace(get(target), value);
+  }
+
+
+  @Override
+  public ResultOfAdd testAdd(JsonArray target) {
+    if (0 <= index && index < target.size()) {
+      return doTestAdd(target.get(index));
+    }
+    return ResultOfAdd.FAIL;
   }
 
 }

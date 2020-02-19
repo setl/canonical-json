@@ -152,6 +152,15 @@ public class JPointer implements JsonExtendedPointer {
 
 
   @Override
+  public ResultOfAdd testAdd(JsonStructure target) {
+    if (target.getValueType() == ValueType.OBJECT) {
+      return root.testAdd((JsonObject) target);
+    }
+    return root.testAdd((JsonArray) target);
+  }
+
+
+  @Override
   public <T extends JsonStructure> T remove(T target) {
     if (target.getValueType() == ValueType.OBJECT) {
       root.remove((JsonObject) target);

@@ -1,7 +1,9 @@
 package io.setl.json.jackson;
 
 import java.io.IOException;
-import javax.json.JsonStructure;
+import java.util.Collections;
+import javax.json.JsonArray;
+import javax.json.JsonPatch;
 import javax.json.stream.JsonParsingException;
 
 import com.fasterxml.jackson.core.JsonLocation;
@@ -11,17 +13,19 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
 import io.setl.json.exception.JsonIOException;
+import io.setl.json.patch.JPatch;
 
 /**
- * @author Simon Greatrix on 12/02/2020.
+ * @author Simon Greatrix on 18/02/2020.
  */
-public class JsonStructureDeserializer extends JsonDeserializer<JsonStructure> {
+public class JsonPatchDeserializer extends JsonDeserializer<JsonPatch> {
 
   @Override
-  public JsonStructure deserialize(JsonParser p, DeserializationContext context) throws IOException {
+  public JsonPatch deserialize(JsonParser p, DeserializationContext context) throws IOException {
     try {
       JacksonReader parser = new JacksonReader(p);
-      return parser.read();
+      JsonArray jsonArray = parser.readArray();
+      return new JPatch(jsonArray);
     } catch (JsonIOException jsonIOException) {
       throw jsonIOException.cause();
     } catch (JsonParsingException jsonParsingException) {
@@ -33,8 +37,14 @@ public class JsonStructureDeserializer extends JsonDeserializer<JsonStructure> {
 
 
   @Override
+  public JsonPatch getEmptyValue(DeserializationContext context) {
+    return new JPatch(Collections.emptyList());
+  }
+
+
+  @Override
   public Class<?> handledType() {
-    return JsonStructure.class;
+    return JsonPatch.class;
   }
 
 }

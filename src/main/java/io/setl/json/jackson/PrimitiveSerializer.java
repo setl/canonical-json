@@ -1,13 +1,15 @@
 package io.setl.json.jackson;
 
+import java.io.IOException;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.type.WritableTypeId;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+
 import io.setl.json.Primitive;
-import java.io.IOException;
 
 /**
  * @author Simon Greatrix on 2020-01-07.
@@ -21,7 +23,8 @@ public class PrimitiveSerializer<T extends Primitive> extends JsonSerializer<T> 
       return;
     }
 
-    gen.writeRawValue(value.toString());
+    JacksonGenerator jacksonGenerator = new JacksonGenerator(gen);
+    jacksonGenerator.generate(value);
   }
 
 
@@ -54,4 +57,5 @@ public class PrimitiveSerializer<T extends Primitive> extends JsonSerializer<T> 
     }
     typeSer.writeTypeSuffix(gen, typeIdDef);
   }
+
 }

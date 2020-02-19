@@ -6,6 +6,7 @@ import javax.json.JsonArray;
 import javax.json.JsonValue;
 
 import io.setl.json.exception.PointerIndexException;
+import io.setl.json.pointer.JsonExtendedPointer.ResultOfAdd;
 
 /**
  * A terminal entry in a path which references an array index, or an object key which looks like a positive integer.
@@ -80,16 +81,19 @@ public class ArrayTerminal extends ObjectTerminal {
     }
   }
 
-  @Override
-  public JsonValue optValue(JsonArray target) {
-    if( 0<=index && index<target.size() ) {
-      return target.get(index);
-    }
-    return null;
-  }
+
   @Override
   public boolean isArrayType() {
     return true;
+  }
+
+
+  @Override
+  public JsonValue optValue(JsonArray target) {
+    if (0 <= index && index < target.size()) {
+      return target.get(index);
+    }
+    return null;
   }
 
 
@@ -110,6 +114,12 @@ public class ArrayTerminal extends ObjectTerminal {
     } catch (IndexOutOfBoundsException e) {
       throw badIndex(target.size());
     }
+  }
+
+
+  @Override
+  public ResultOfAdd testAdd(JsonArray target) {
+    return (0 < index && index <= target.size()) ? ResultOfAdd.CREATE : ResultOfAdd.FAIL;
   }
 
 }

@@ -2,6 +2,7 @@ package io.setl.json.jackson;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonPatch;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 
@@ -29,6 +30,7 @@ public class JsonModule extends SimpleModule {
     addDeserializer(JsonArray.class, new JsonArrayDeserializer());
     addDeserializer(JsonStructure.class, new JsonStructureDeserializer());
     addDeserializer(JsonValue.class, new JsonValueDeserializer());
+    addDeserializer(JsonPatch.class, new JsonPatchDeserializer());
   }
 
 }

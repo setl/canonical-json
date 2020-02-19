@@ -51,6 +51,12 @@ public abstract class PatchOperation {
   }
 
 
+  protected PatchOperation(JsonExtendedPointer pointer) {
+    this.path = pointer.getPath();
+    this.pointer = pointer;
+  }
+
+
   protected PatchOperation(JObject object) {
     this(object.getString("path"));
   }

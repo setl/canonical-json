@@ -8,6 +8,7 @@ import javax.json.JsonValue.ValueType;
 
 import io.setl.json.exception.NoSuchValueException;
 import io.setl.json.exception.PointerMismatchException;
+import io.setl.json.pointer.JsonExtendedPointer.ResultOfAdd;
 
 /**
  * A terminal entry in a path which references an object key.
@@ -157,6 +158,18 @@ public class ObjectTerminal implements PathElement {
     if (jv == null) {
       throw new NoSuchValueException(path);
     }
+  }
+
+
+  @Override
+  public ResultOfAdd testAdd(JsonArray target) {
+    return ResultOfAdd.FAIL;
+  }
+
+
+  @Override
+  public ResultOfAdd testAdd(JsonObject target) {
+    return target.containsKey(key) ? ResultOfAdd.UPDATE : ResultOfAdd.CREATE;
   }
 
 }

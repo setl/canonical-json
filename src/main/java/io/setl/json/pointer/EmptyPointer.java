@@ -121,4 +121,10 @@ public class EmptyPointer implements JsonExtendedPointer {
     throw new JsonException("Cannot replace root structure");
   }
 
+
+  @Override
+  public ResultOfAdd testAdd(JsonStructure target) {
+    return ResultOfAdd.UPDATE;
+  }
+
 }

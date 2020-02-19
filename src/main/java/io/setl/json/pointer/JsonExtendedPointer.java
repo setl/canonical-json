@@ -13,6 +13,13 @@ import javax.json.JsonValue;
  */
 public interface JsonExtendedPointer extends JsonPointer {
 
+  /** The result of an add operation. The add operation will always create items in an array, but may create or update them in an object. */
+  enum ResultOfAdd {
+    CREATE,
+    UPDATE,
+    FAIL
+  }
+
   /**
    * If the source contains a value for this pointer, copy it into the target. Existing sub-structures are over-written, not combined. Any required parent
    * structures are created in the target. The '-' end-of-array marker is treated as a wildcard in this which matches any array index.
@@ -56,5 +63,14 @@ public interface JsonExtendedPointer extends JsonPointer {
    * @throws NullPointerException if {@code target} is null
    */
   JsonValue optValue(JsonStructure target);
+
+  /**
+   * Test what an add operation to this pointer would do to the target.
+   *
+   * @param target the target
+   *
+   * @return the result
+   */
+  ResultOfAdd testAdd(JsonStructure target);
 
 }

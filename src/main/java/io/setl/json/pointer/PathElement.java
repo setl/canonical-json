@@ -4,6 +4,8 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 
+import io.setl.json.pointer.JsonExtendedPointer.ResultOfAdd;
+
 /**
  * @author Simon Greatrix on 27/01/2020.
  */
@@ -46,5 +48,9 @@ public interface PathElement {
   void replace(JsonArray target, JsonValue value);
 
   void replace(JsonObject target, JsonValue value);
+
+  ResultOfAdd testAdd(JsonArray target);
+
+  ResultOfAdd testAdd(JsonObject target);
 
 }

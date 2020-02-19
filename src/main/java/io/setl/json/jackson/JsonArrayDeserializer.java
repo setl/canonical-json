@@ -21,7 +21,7 @@ public class JsonArrayDeserializer extends JsonDeserializer<JsonArray> {
   @Override
   public JsonArray deserialize(JsonParser p, DeserializationContext context) throws IOException {
     try {
-      JacksonParser parser = new JacksonParser(p);
+      JacksonReader parser = new JacksonReader(p);
       return parser.readArray();
     } catch (JsonIOException jsonIOException) {
       throw jsonIOException.cause();

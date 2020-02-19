@@ -125,6 +125,8 @@ public class JacksonReader implements JsonReader {
         }
       case VALUE_NUMBER_FLOAT:
         return PNumber.cast(jsonParser.getDecimalValue());
+      case VALUE_EMBEDDED_OBJECT:
+        return PString.create(jsonParser.getText());
       default:
         // Reachable if the encoding uses stuff beyond JSON like embedded objects and reference IDs
         throw new IllegalStateException("Unhandled token from Jackson: " + token);

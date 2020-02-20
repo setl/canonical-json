@@ -38,7 +38,7 @@ public interface PointerTree {
    *
    * @return the copy
    */
-  @Nonnull
+  @Nullable
   <T extends JsonStructure> T copy(@Nonnull T source);
 
   /**

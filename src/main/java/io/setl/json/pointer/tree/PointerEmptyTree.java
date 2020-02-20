@@ -30,11 +30,10 @@ public class PointerEmptyTree implements PointerTree {
   }
 
 
-  @Nonnull
   @Override
   public <T extends JsonStructure> T copy(@Nonnull T value) {
-    // Nothing can be copied, so create an empty response
-    return Primitive.createEmpty(value);
+    // Nothing can be copied, so return null
+    return null;
   }
 
 

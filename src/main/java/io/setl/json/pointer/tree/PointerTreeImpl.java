@@ -48,7 +48,7 @@ public class PointerTreeImpl implements PointerTree {
 
 
   @Override
-  @Nonnull
+  @Nullable
   public <T extends JsonStructure> T copy(@Nonnull T value) {
     // Create an appropriate root
     T result = Primitive.createEmpty(value);

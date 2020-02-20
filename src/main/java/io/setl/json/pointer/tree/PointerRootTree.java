@@ -33,7 +33,7 @@ public class PointerRootTree implements PointerTree {
   }
 
 
-  @Nonnull
+  @Nullable
   @Override
   @SuppressWarnings("unchecked")
   public <T extends JsonStructure> T copy(@Nonnull T value) {

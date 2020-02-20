@@ -2,6 +2,7 @@ package io.setl.json.pointer.tree;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import javax.json.JsonArray;
@@ -30,7 +31,7 @@ public class PointerEmptyTreeTest {
   public void copyArray() {
     JsonArray array = new JArrayBuilder().add("a").add(1).build();
     JsonArray s = PointerEmptyTree.INSTANCE.copy(array);
-    assertTrue(s.isEmpty());
+    assertNull(s);
   }
 
 
@@ -38,7 +39,7 @@ public class PointerEmptyTreeTest {
   public void copyObject() {
     JsonObject object = new JObjectBuilder().add("a", "b").add("b", 1).build();
     JsonStructure s = PointerEmptyTree.INSTANCE.copy(object);
-    assertTrue(((JsonObject) s).isEmpty());
+    assertNull(s);
   }
 
 

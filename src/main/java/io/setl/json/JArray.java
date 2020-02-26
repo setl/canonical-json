@@ -269,6 +269,11 @@ public class JArray implements JsonArray, Primitive {
   }
 
 
+  public JArray(int size) {
+    myList = new ArrayList<>(size);
+  }
+
+
   public JArray(Collection<?> c) {
     myList = new ArrayList<>(asJArray(c).myList);
   }

@@ -21,7 +21,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.setl.json.JObject;
 import io.setl.json.Primitive;
 import io.setl.json.builder.JObjectBuilder;
-import io.setl.json.exception.NoSuchValueException;
+import io.setl.json.exception.IncorrectDigestException;
+import io.setl.json.exception.IncorrectValueException;
 import io.setl.json.patch.PatchOperation;
 import io.setl.json.pointer.JsonExtendedPointer;
 import io.setl.json.pointer.JsonExtendedPointer.ResultOfAdd;
@@ -166,7 +167,7 @@ public class Test extends PatchOperation {
     // by value and by digest tests require the value to be present
     JsonValue jsonValue = pointer.getValue(target);
     if (value != null && !value.equals(jsonValue)) {
-      throw new NoSuchValueException(getPath());
+      throw new IncorrectValueException("Test failed. Value at \"" + getPath() + "\" is not " + value);
     }
     if (digest != null) {
       checkDigest(jsonValue);
@@ -197,7 +198,7 @@ public class Test extends PatchOperation {
 
     byte[] actual = digest(algorithm, jsonValue);
     if (!MessageDigest.isEqual(expected, actual)) {
-      throw new JsonException("Digest mismatch. Saw \"" + Base64.getUrlEncoder().encodeToString(actual) + "\" at " + getPath());
+      throw new IncorrectDigestException("Test failed. Digest for " + getPath() + " is \"" + Base64.getUrlEncoder().encodeToString(actual) + "\".");
     }
   }
 

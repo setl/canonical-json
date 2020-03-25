@@ -20,7 +20,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'org.sonarqube'
 
 group 'io.setl'
-version '1.0-SNAPSHOT'
+version '1.4'
 
 checkstyle {
     toolVersion = "7.8.2"

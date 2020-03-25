@@ -8,7 +8,7 @@ import io.setl.json.Primitive;
 /**
  * @author Simon Greatrix on 08/01/2020.
  */
-public class PTrue extends PBase {
+public class PTrue extends PBase implements PBoolean {
 
   public static final PTrue TRUE = new PTrue();
 

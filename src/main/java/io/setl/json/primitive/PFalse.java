@@ -6,7 +6,7 @@ import javax.json.JsonValue;
 /**
  * @author Simon Greatrix on 08/01/2020.
  */
-public class PFalse extends PBase {
+public class PFalse extends PBase implements PBoolean {
 
   public static final PFalse FALSE = new PFalse();
 

@@ -1,5 +1,6 @@
 package io.setl.json.builder;
 
+import io.setl.json.JCanonicalObject;
 import io.setl.json.JObject;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -13,7 +14,7 @@ import javax.json.JsonValue;
  */
 public class JObjectBuilder implements JsonObjectBuilder {
 
-  private final JObject object = new JObject();
+  private final JObject object = new JCanonicalObject();
 
 
   @Override

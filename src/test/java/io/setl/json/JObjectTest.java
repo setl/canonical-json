@@ -36,7 +36,7 @@ import org.junit.Test;
 @SuppressWarnings("checkstyle:AvoidEscapedUnicodeCharacters")
 public class JObjectTest {
 
-  private JObject json = new JObject();
+  private JCanonicalObject json = new JCanonicalObject();
 
 
   @Test
@@ -60,7 +60,7 @@ public class JObjectTest {
 
   @Test
   public void comparator() {
-    assertEquals(JObject.CODE_POINT_ORDER, json.comparator());
+    assertEquals(JCanonicalObject.CODE_POINT_ORDER, json.comparator());
   }
 
 
@@ -447,7 +447,7 @@ public class JObjectTest {
     json.put("null");
     json.put("small number", new BigDecimal("1e-5"));
     json.put("big number", new BigDecimal("1e+5"));
-    json.put("object", new JObject());
+    json.put("object", new JCanonicalObject());
     json.put("array", new JArray());
     json.put("boolean", true);
   }
@@ -485,7 +485,7 @@ public class JObjectTest {
 
     HashMap<String, Object> hm2 = new HashMap<>();
     hm.forEach((k, v) -> hm2.put(String.valueOf(k), v));
-    JObject fixed3 = new JObject(hm2);
+    JObject fixed3 = new JCanonicalObject(hm2);
     assertEquals(fixed, fixed3);
     assertNotSame(fixed, fixed3);
 
@@ -817,9 +817,9 @@ public class JObjectTest {
 
   @Test
   public void testGetObjectStringFunctionOfStringJsonObject() {
-    JObject o1 = new JObject();
+    JObject o1 = new JCanonicalObject();
     o1.put("a", 3);
-    JObject o2 = new JObject();
+    JObject o2 = new JCanonicalObject();
     o1.put("a", "three");
 
     json.put("object", o1);
@@ -832,9 +832,9 @@ public class JObjectTest {
 
   @Test
   public void testGetObjectStringJsonObject() {
-    JObject o1 = new JObject();
+    JObject o1 = new JCanonicalObject();
     o1.put("a", 3);
-    JObject o2 = new JObject();
+    JObject o2 = new JCanonicalObject();
     o1.put("a", "three");
 
     json.put("object", o1);
@@ -1001,7 +1001,7 @@ public class JObjectTest {
 
   @Test
   public void testOptObject() {
-    JObject o1 = new JObject();
+    JObject o1 = new JCanonicalObject();
     o1.put("a", 3);
     json.put("object", o1);
     assertNull(json.optObject("null"));
@@ -1063,7 +1063,7 @@ public class JObjectTest {
 
   @Test
   public void testPutStringJsonObject() {
-    JObject o1 = new JObject();
+    JObject o1 = new JCanonicalObject();
     o1.put("x", 3.5);
     assertFalse(json.containsKey("a"));
     json.put("a", o1);
@@ -1113,8 +1113,10 @@ public class JObjectTest {
     String k2 = "big number";
     assertTrue(json.containsKey(k1));
     assertTrue(json.containsKey(k2));
-    json.removeArray(k1);
-    json.removeArray(k2);
+    JArray array = json.removeArray(k1);
+    assertNotNull(array);
+    assertTrue(array.isEmpty());
+    assertNull(json.removeArray(k2));
     assertFalse(json.containsKey(k1));
     assertTrue(json.containsKey(k2));
   }
@@ -1126,8 +1128,8 @@ public class JObjectTest {
     String k2 = "big number";
     assertTrue(json.containsKey(k1));
     assertTrue(json.containsKey(k2));
-    json.removeBoolean(k1);
-    json.removeBoolean(k2);
+    assertNotNull(json.removeBoolean(k1));
+    assertNull(json.removeBoolean(k2));
     assertFalse(json.containsKey(k1));
     assertTrue(json.containsKey(k2));
   }
@@ -1152,8 +1154,10 @@ public class JObjectTest {
     String k1 = "big number";
     assertTrue(json.containsKey(k1));
     assertTrue(json.containsKey(k2));
-    json.removeNumber(k1);
-    json.removeNumber(k2);
+    assertNull(json.removeNumber(k2));
+    Number n = json.removeNumber(k1);
+    assertTrue(n instanceof Integer);
+    assertEquals(100_000,n);
     assertFalse(json.containsKey(k1));
     assertTrue(json.containsKey(k2));
   }
@@ -1165,8 +1169,8 @@ public class JObjectTest {
     String k2 = "big number";
     assertTrue(json.containsKey(k1));
     assertTrue(json.containsKey(k2));
-    json.removeObject(k1);
-    json.removeObject(k2);
+    assertNotNull(json.removeObject(k1));
+    assertNull(json.removeObject(k2));
     assertFalse(json.containsKey(k1));
     assertTrue(json.containsKey(k2));
   }
@@ -1178,8 +1182,8 @@ public class JObjectTest {
     String k2 = "big number";
     assertTrue(json.containsKey(k1));
     assertTrue(json.containsKey(k2));
-    json.removeString(k1);
-    json.removeString(k2);
+    assertEquals("string",json.removeString(k1));
+    assertNull(json.removeString(k2));
     assertFalse(json.containsKey(k1));
     assertTrue(json.containsKey(k2));
   }

@@ -1,6 +1,7 @@
 package io.setl.json.parser;
 
 import io.setl.json.JArray;
+import io.setl.json.JCanonicalObject;
 import io.setl.json.JObject;
 import io.setl.json.Primitive;
 import io.setl.json.io.Input;
@@ -343,7 +344,7 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
 
   private JObject doObject(int recursion) {
     checkState(Event.START_OBJECT);
-    JObject jObject = new JObject();
+    JObject jObject = new JCanonicalObject();
     while (true) {
       ensureNextInObject();
       iteratorFetchNext();

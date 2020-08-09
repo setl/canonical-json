@@ -1,6 +1,6 @@
 package io.setl.json.merge;
 
-import io.setl.json.JObject;
+import io.setl.json.JCanonicalObject;
 import io.setl.json.Primitive;
 import java.util.Map.Entry;
 import javax.json.JsonMergePatch;
@@ -21,7 +21,7 @@ public class JMerge implements JsonMergePatch {
 
     JsonObject output;
     if (target == null || target.getValueType() != ValueType.OBJECT) {
-      output = new JObject();
+      output = new JCanonicalObject();
     } else {
       output = (JsonObject) target;
     }

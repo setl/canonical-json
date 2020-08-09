@@ -14,6 +14,7 @@ import com.fasterxml.jackson.core.json.DupDetector;
 import com.fasterxml.jackson.core.json.JsonWriteContext;
 
 import io.setl.json.JArray;
+import io.setl.json.JCanonicalObject;
 import io.setl.json.JObject;
 import io.setl.json.Primitive;
 import io.setl.json.primitive.PFalse;
@@ -96,7 +97,7 @@ public class CanonicalGenerator extends JsonGenerator {
 
   static class ObjectContainer implements Container {
 
-    final JObject object = new JObject();
+    final JObject object = new JCanonicalObject();
 
 
     @Override

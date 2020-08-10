@@ -1,7 +1,5 @@
 package io.setl.json.builder;
 
-import io.setl.json.JCanonicalObject;
-import io.setl.json.JObject;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import javax.json.JsonArrayBuilder;
@@ -9,12 +7,15 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
+import io.setl.json.JNavigableObject;
+import io.setl.json.JObject;
+
 /**
  * @author Simon Greatrix on 10/01/2020.
  */
 public class JObjectBuilder implements JsonObjectBuilder {
 
-  private final JObject object = new JCanonicalObject();
+  private final JObject object = new JObject();
 
 
   @Override
@@ -118,4 +119,5 @@ public class JObjectBuilder implements JsonObjectBuilder {
   public String toString() {
     return object.toString();
   }
+
 }

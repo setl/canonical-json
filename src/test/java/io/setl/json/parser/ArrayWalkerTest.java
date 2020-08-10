@@ -5,13 +5,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import io.setl.json.builder.JArrayBuilder;
-import io.setl.json.builder.JObjectBuilder;
 import java.math.BigDecimal;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
-import javax.json.stream.JsonLocation;
+
 import org.junit.Test;
+
+import io.setl.json.builder.JArrayBuilder;
+import io.setl.json.builder.JObjectBuilder;
 
 /**
  * @author Simon Greatrix on 17/01/2020.
@@ -130,4 +131,5 @@ public class ArrayWalkerTest {
     // NB: The initial START_ARRAY is correctly not returned by the walker
     assertEquals(" START_ARRAY VALUE_NUMBER VALUE_NUMBER VALUE_NUMBER VALUE_NUMBER START_OBJECT VALUE_STRING END_ARRAY", buf.toString());
   }
+
 }

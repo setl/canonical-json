@@ -64,7 +64,9 @@ public class Test extends PatchOperation {
 
 
   private final String digest;
+
   private final ResultOfAdd resultOfAdd;
+
   private final JsonValue value;
 
 

@@ -1,16 +1,18 @@
 package io.setl.json.jackson;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
+
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.io.CharacterEscapes;
 import com.fasterxml.jackson.core.io.IOContext;
+
 import io.setl.json.io.Utf8Writer;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Writer;
 
 public class CanonicalFactory extends JsonFactory {
 
@@ -110,4 +112,5 @@ public class CanonicalFactory extends JsonFactory {
   public JsonFactory setCharacterEscapes(CharacterEscapes esc) {
     throw new UnsupportedOperationException("Canonical JSON must use standard escapes");
   }
+
 }

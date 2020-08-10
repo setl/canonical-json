@@ -1,12 +1,13 @@
 package io.setl.json.io;
 
+import java.io.IOException;
+import java.io.Writer;
+import javax.json.stream.JsonGenerationException;
+
 import io.setl.json.Primitive;
 import io.setl.json.builder.JArrayBuilder;
 import io.setl.json.builder.JObjectBuilder;
 import io.setl.json.exception.JsonIOException;
-import java.io.IOException;
-import java.io.Writer;
-import javax.json.stream.JsonGenerationException;
 
 /**
  * @author Simon Greatrix on 27/01/2020.
@@ -48,6 +49,7 @@ class JSafeGenerator extends JGenerator {
     public void writeValue(Primitive primitive) {
       builder.add(primitive);
     }
+
   }
 
 
@@ -97,6 +99,7 @@ class JSafeGenerator extends JGenerator {
       builder.add(key, primitive);
       key = null;
     }
+
   }
 
 

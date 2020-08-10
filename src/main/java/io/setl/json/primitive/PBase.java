@@ -1,6 +1,7 @@
 package io.setl.json.primitive;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import io.setl.json.Primitive;
 import io.setl.json.jackson.PBaseSerializer;
 
@@ -24,9 +25,9 @@ public abstract class PBase implements Primitive {
   /**
    * Get the value encapsulated by this primitive.
    *
-   * @param <T>     required type
-   * @param reqType the required type
-   * @param defaultValue    default value if type is not correct
+   * @param <T>          required type
+   * @param reqType      the required type
+   * @param defaultValue default value if type is not correct
    *
    * @return the value
    */
@@ -58,4 +59,5 @@ public abstract class PBase implements Primitive {
   public int hashCode() {
     return getValue().hashCode();
   }
+
 }

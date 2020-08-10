@@ -48,4 +48,5 @@ class ArrayWalker extends WalkingParser {
   JsonValue primaryObject() {
     return array;
   }
+
 }

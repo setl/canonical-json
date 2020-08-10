@@ -53,7 +53,7 @@ public class JPatchBuilderTest {
         + "{\"op\":\"test\",\"path\":\"/a/b/d1\",\"value\":10},"
         + "{\"op\":\"test\",\"path\":\"/a/b/d2\",\"value\":true},"
         + "{\"op\":\"test\",\"path\":\"/a/b/d3\",\"value\":\"z\"},"
-        + "{\"op\":\"test\",\"path\":\"/a/b/d4\",\"value\":{}}]",builder.build().toString());
+        + "{\"op\":\"test\",\"path\":\"/a/b/d4\",\"value\":{}}]", builder.build().toString());
   }
 
 }

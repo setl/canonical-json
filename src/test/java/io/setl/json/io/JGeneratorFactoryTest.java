@@ -1,16 +1,19 @@
 package io.setl.json.io;
 
-import static io.setl.json.io.JGeneratorFactory.TRUST_KEY_ORDER;
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.nio.charset.StandardCharsets.UTF_8;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import static io.setl.json.io.JGeneratorFactory.TRUST_KEY_ORDER;
 
 import java.io.OutputStream;
 import java.io.Writer;
 import java.util.Map;
 import javax.json.JsonException;
 import javax.json.stream.JsonGenerator;
+
 import org.junit.Test;
 
 /**
@@ -69,4 +72,5 @@ public class JGeneratorFactoryTest {
   public void testCreateGenerator2() {
     factory.createGenerator(OutputStream.nullOutputStream(), ISO_8859_1);
   }
+
 }

@@ -10,4 +10,5 @@ public class PointerIndexException extends JsonException {
   public PointerIndexException(String message, String path, int size) {
     super(message + " [path=" + path + " size=" + size + "]");
   }
+
 }

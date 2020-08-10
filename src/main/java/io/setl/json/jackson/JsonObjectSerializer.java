@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonMapFormatVisitor;
 import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.StringKeySerializer;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
-import io.setl.json.JCanonicalObject;
 import io.setl.json.JObject;
 
 /**
@@ -38,4 +37,5 @@ public class JsonObjectSerializer extends PrimitiveSerializer<JObject> {
   public Class<JObject> handledType() {
     return JObject.class;
   }
+
 }

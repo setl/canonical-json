@@ -127,4 +127,5 @@ class PBadNumber extends PNumber {
   public void writeTo(OutputStream out) {
     throw unsupported();
   }
+
 }

@@ -1,5 +1,7 @@
 package io.setl.json.jackson.objects;
 
+import java.util.Objects;
+
 import io.setl.json.JObject;
 
 /**
@@ -40,7 +42,7 @@ public class Truck extends Vehicle {
     if (Double.compare(truck.payloadCapacity, payloadCapacity) != 0) {
       return false;
     }
-    return documents != null ? documents.equals(truck.documents) : truck.documents == null;
+    return Objects.equals(documents, truck.documents);
   }
 
 

@@ -6,7 +6,8 @@ import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 
 import io.setl.json.JArray;
-import io.setl.json.JCanonicalObject;
+import io.setl.json.JNavigableObject;
+import io.setl.json.JObject;
 import io.setl.json.exception.PointerIndexException;
 import io.setl.json.pointer.JsonExtendedPointer.ResultOfAdd;
 
@@ -68,7 +69,7 @@ public class ArrayPath extends ObjectPath {
     switch (sourceValue.getValueType()) {
       case OBJECT:
         if (targetValue == null || targetValue.getValueType() != ValueType.OBJECT) {
-          targetValue = new JCanonicalObject();
+          targetValue = new JObject();
           target.set(index, targetValue);
         }
         child.copy((JsonObject) sourceValue, (JsonObject) targetValue);

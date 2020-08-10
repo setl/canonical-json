@@ -3,10 +3,6 @@ package io.setl.json.parser;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import io.setl.json.JArray;
-import io.setl.json.JObject;
-import io.setl.json.primitive.PTrue;
-import io.setl.json.primitive.numbers.PNumber;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -14,7 +10,13 @@ import java.util.Map.Entry;
 import java.util.stream.Stream;
 import javax.json.JsonValue;
 import javax.json.stream.JsonParser.Event;
+
 import org.junit.Test;
+
+import io.setl.json.JArray;
+import io.setl.json.JObject;
+import io.setl.json.primitive.PTrue;
+import io.setl.json.primitive.numbers.PNumber;
 
 /**
  * @author Simon Greatrix on 15/01/2020.
@@ -150,4 +152,5 @@ public class JParserTest {
     }
     assertEquals(" OBJECT NUMBER NUMBER FALSE ARRAY", buf.toString());
   }
+
 }

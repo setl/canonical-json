@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import io.setl.json.JArray;
-import io.setl.json.JCanonicalObject;
+import io.setl.json.JNavigableObject;
 import io.setl.json.JObject;
 import io.setl.json.Primitive;
 import io.setl.json.jackson.objects.Car;
@@ -29,7 +29,7 @@ public class PrimitiveSerializerTest {
     Car car1 = new Car("Ford", "Mondeo", 5, 120);
     car1.setMetadata(Primitive.create("META"));
     Car car2 = new Car("Mercedes-Benz", "S500", 5, 250.0);
-    JObject object = new JCanonicalObject();
+    JObject object = new JObject();
     object.put("A", 123);
     car2.setMetadata(object);
 

@@ -14,7 +14,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.TreeNode;
 
 import io.setl.json.JArray;
-import io.setl.json.JCanonicalObject;
+import io.setl.json.JNavigableObject;
 import io.setl.json.JObject;
 import io.setl.json.exception.JsonIOException;
 import io.setl.json.io.Location;
@@ -77,7 +77,7 @@ public class JacksonReader implements JsonReader {
 
   private JsonObject doReadObject() throws IOException {
     // Read the object. The start object token has already been read.
-    JObject jObject = new JCanonicalObject();
+    JObject jObject = new JObject();
     while (true) {
       JsonToken token = jsonParser.nextToken();
       if (token == JsonToken.END_OBJECT) {
@@ -111,6 +111,7 @@ public class JacksonReader implements JsonReader {
       case VALUE_NULL:
         return PNull.NULL;
       case VALUE_STRING:
+      case VALUE_EMBEDDED_OBJECT:
         return PString.create(jsonParser.getText());
       case VALUE_NUMBER_INT:
         switch (jsonParser.getNumberType()) {
@@ -126,8 +127,6 @@ public class JacksonReader implements JsonReader {
         }
       case VALUE_NUMBER_FLOAT:
         return PNumber.cast(jsonParser.getDecimalValue());
-      case VALUE_EMBEDDED_OBJECT:
-        return PString.create(jsonParser.getText());
       default:
         // Reachable if the encoding uses stuff beyond JSON like embedded objects and reference IDs
         throw new IllegalStateException("Unhandled token from Jackson: " + token);

@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 
 import io.setl.json.JArray;
-import io.setl.json.JCanonicalObject;
+import io.setl.json.JNavigableObject;
 import io.setl.json.JObject;
 import io.setl.json.primitive.PFalse;
 import io.setl.json.primitive.PNull;
@@ -56,7 +56,7 @@ public class Convert {
 
 
   private static JsonValue createJsonObject(ObjectNode node) {
-    JObject object = new JCanonicalObject();
+    JObject object = new JObject();
     Iterator<Entry<String, JsonNode>> iterator = node.fields();
     while (iterator.hasNext()) {
       Entry<String, JsonNode> entry = iterator.next();

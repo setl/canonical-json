@@ -14,7 +14,7 @@ import io.setl.json.pointer.JsonExtendedPointer;
 public class PointerTreeBuilder {
 
   /** All the effective pointers. There is no pointer in this list which also has a parent in this list. */
-  private List<JsonExtendedPointer> pointers = new ArrayList<>();
+  private final List<JsonExtendedPointer> pointers = new ArrayList<>();
 
   /** Have we seen the "" pointer?. */
   private boolean seenRoot = false;

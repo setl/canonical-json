@@ -2,14 +2,14 @@ package io.setl.json.pointer;
 
 import java.util.Objects;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 
 import io.setl.json.JArray;
-import io.setl.json.JCanonicalObject;
+import io.setl.json.JNavigableObject;
+import io.setl.json.JObject;
 import io.setl.json.exception.NoSuchValueException;
 import io.setl.json.exception.PointerMismatchException;
 import io.setl.json.pointer.JsonExtendedPointer.ResultOfAdd;
@@ -19,11 +19,11 @@ import io.setl.json.pointer.JsonExtendedPointer.ResultOfAdd;
  */
 public class ObjectPath implements PathElement {
 
+  protected final PathElement child;
+
   protected final String key;
 
-  protected PathElement child;
-
-  protected String path;
+  protected final String path;
 
 
   /**
@@ -105,7 +105,7 @@ public class ObjectPath implements PathElement {
       switch (sourceValue.getValueType()) {
         case OBJECT:
           if (targetValue.getValueType() != ValueType.OBJECT) {
-            targetValue = new JCanonicalObject();
+            targetValue = new JObject();
             target.set(i, targetValue);
           }
           child.copy((JsonObject) sourceValue, (JsonObject) targetValue);
@@ -128,7 +128,7 @@ public class ObjectPath implements PathElement {
 
 
   @Override
-  public void copy(@Nonnull JsonObject source, @Nullable JsonObject target) {
+  public void copy(@Nonnull JsonObject source, @Nonnull JsonObject target) {
     JsonValue sourceValue = source.get(key);
     if (sourceValue == null) {
       return;
@@ -138,7 +138,7 @@ public class ObjectPath implements PathElement {
     switch (sourceValue.getValueType()) {
       case OBJECT:
         if (targetValue == null || targetValue.getValueType() != ValueType.OBJECT) {
-          targetValue = new JCanonicalObject();
+          targetValue = new JObject();
           target.put(key, targetValue);
         }
         child.copy((JsonObject) sourceValue, (JsonObject) targetValue);

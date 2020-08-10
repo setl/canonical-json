@@ -52,19 +52,19 @@ public class ArrayPathTest {
     JsonArray array = new JReaderFactory().createReader(new StringReader("[1,[0,{\"a\":true}]]")).readArray();
     JsonExtendedPointer pointer = JPointerFactory.create("/1/1/a");
     JsonArray out = new JArray();
-    pointer.copy(array,out);
-    assertEquals("[null,[null,{\"a\":true}]]",out.toString());
+    pointer.copy(array, out);
+    assertEquals("[null,[null,{\"a\":true}]]", out.toString());
 
     array = new JReaderFactory().createReader(new StringReader("[1,{\"1\":{\"a\":true}}]")).readArray();
     pointer = JPointerFactory.create("/1/1/a");
     out = new JArray();
-    pointer.copy(array,out);
-    assertEquals("[null,{\"1\":{\"a\":true}}]",out.toString());
+    pointer.copy(array, out);
+    assertEquals("[null,{\"1\":{\"a\":true}}]", out.toString());
 
     pointer = JPointerFactory.create("/4/1/a");
     out = new JArray();
-    pointer.copy(array,out);
-    assertEquals("[null,null,null,null,null]",out.toString());
+    pointer.copy(array, out);
+    assertEquals("[null,null,null,null,null]", out.toString());
   }
 
 

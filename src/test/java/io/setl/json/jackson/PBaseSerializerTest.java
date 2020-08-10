@@ -5,8 +5,9 @@ import static org.junit.Assert.assertEquals;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper.Base;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import io.setl.json.primitive.PBase;
 import org.junit.Test;
+
+import io.setl.json.primitive.PBase;
 
 /**
  * @author Simon Greatrix on 2020-01-07.

@@ -4,13 +4,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import javax.json.JsonArray;
+import javax.json.JsonPointer;
+
+import org.junit.Test;
+
 import io.setl.json.JArray;
 import io.setl.json.Primitive;
 import io.setl.json.builder.JArrayBuilder;
 import io.setl.json.exception.PointerIndexException;
-import javax.json.JsonArray;
-import javax.json.JsonPointer;
-import org.junit.Test;
 
 /**
  * @author Simon Greatrix on 27/01/2020.
@@ -44,6 +46,14 @@ public class ArrayTerminalTest {
 
 
   @Test
+  public void containsPointer() {
+    JsonExtendedPointer pointer = JPointerFactory.create("/a/0");
+    assertFalse(pointer.isParentOf(JPointerFactory.create("/a/-")));
+    assertTrue(pointer.isParentOf(JPointerFactory.create("/a/0/a")));
+  }
+
+
+  @Test
   public void containsValue() {
     JsonPointer pointer = JPointerFactory.create("/1/0");
     assertTrue(pointer.containsValue(array));
@@ -57,6 +67,19 @@ public class ArrayTerminalTest {
   public void containsValue2() {
     JsonPointer pointer = JPointerFactory.create("/1/3");
     assertFalse(pointer.containsValue(array));
+  }
+
+
+  @Test
+  public void copy() {
+    JsonArray output = new JArray();
+    JsonExtendedPointer pointer = JPointerFactory.create("/1/1");
+    pointer.copy(array, output);
+    assertEquals("[null,[null,1]]", output.toString());
+    output = new JArray();
+    pointer = JPointerFactory.create("/1/3");
+    pointer.copy(array, output);
+    assertEquals("[null,[null,null,null,null]]", output.toString());
   }
 
 
@@ -103,22 +126,4 @@ public class ArrayTerminalTest {
     pointer.replace(array, Primitive.create(false));
   }
 
-  @Test
-  public void containsPointer() {
-    JsonExtendedPointer pointer = JPointerFactory.create("/a/0");
-    assertFalse(pointer.isParentOf(JPointerFactory.create("/a/-")));
-    assertTrue(pointer.isParentOf(JPointerFactory.create("/a/0/a")));
-  }
-
-  @Test
-  public void copy() {
-    JsonArray output = new JArray();
-    JsonExtendedPointer pointer = JPointerFactory.create("/1/1");
-    pointer.copy(array,output);
-    assertEquals("[null,[null,1]]",output.toString());
-    output = new JArray();
-    pointer = JPointerFactory.create("/1/3");
-    pointer.copy(array,output);
-    assertEquals("[null,[null,null,null,null]]",output.toString());
-  }
 }

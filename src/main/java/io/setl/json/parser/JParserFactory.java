@@ -75,4 +75,5 @@ public class JParserFactory implements JsonParserFactory {
     map.put(REQUIRE_SINGLE_ROOT, singleRoot);
     return Collections.unmodifiableSortedMap(map);
   }
+
 }

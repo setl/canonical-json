@@ -1,12 +1,13 @@
 package io.setl.json.builder;
 
-import io.setl.json.JArray;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
+
+import io.setl.json.JArray;
 
 /**
  * @author Simon Greatrix on 10/01/2020.
@@ -272,4 +273,5 @@ public class JArrayBuilder implements JsonArrayBuilder {
   public String toString() {
     return array.toString();
   }
+
 }

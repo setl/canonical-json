@@ -36,7 +36,7 @@ public class PointerTreeBuilderTest {
     assertTrue(tree instanceof PointerTreeImpl);
 
     PointerTreeImpl impl = (PointerTreeImpl) tree;
-    assertEquals(4,impl.getPointers().size());
+    assertEquals(4, impl.getPointers().size());
     assertTrue(impl.getPointers().contains(JPointerFactory.create("/a/b")));
     assertTrue(impl.getPointers().contains(JPointerFactory.create("/a/c/-/a")));
     assertTrue(impl.getPointers().contains(JPointerFactory.create("/z")));

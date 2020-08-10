@@ -26,6 +26,7 @@ public final class PatchFactory {
   static class Item {
 
     final int hashCode;
+
     final JsonValue jsonValue;
 
 
@@ -79,6 +80,7 @@ public final class PatchFactory {
 
   /** The flags affecting this patch's creation. */
   private final EnumSet<DiffFeatures> features;
+
   /** The patch operations that make up the derived patch. */
   private final JPatchBuilder patchBuilder = new JPatchBuilder();
 

@@ -8,7 +8,6 @@ import org.junit.Test;
 public class ObjectWalkerTest {
 
 
-
   @Test
   public void close() {
   }
@@ -55,6 +54,11 @@ public class ObjectWalkerTest {
 
 
   @Test
+  public void getValue() {
+  }
+
+
+  @Test
   public void getValueStream() {
   }
 
@@ -65,16 +69,12 @@ public class ObjectWalkerTest {
 
 
   @Test
+  public void testGetArray() {
+  }
+
+
+  @Test
   public void testGetObject() {
   }
 
-
-  @Test
-  public void getValue() {
-  }
-
-
-  @Test
-  public void testGetArray() {
-  }
 }

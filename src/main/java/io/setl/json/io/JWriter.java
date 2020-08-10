@@ -1,7 +1,5 @@
 package io.setl.json.io;
 
-import io.setl.json.Primitive;
-import io.setl.json.exception.JsonIOException;
 import java.io.IOException;
 import java.io.Writer;
 import javax.json.JsonArray;
@@ -9,6 +7,9 @@ import javax.json.JsonObject;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 import javax.json.JsonWriter;
+
+import io.setl.json.Primitive;
+import io.setl.json.exception.JsonIOException;
 
 /**
  * @author Simon Greatrix on 10/01/2020.
@@ -72,4 +73,5 @@ public class JWriter implements JsonWriter {
   public void writeObject(JsonObject object) {
     write((JsonValue) object);
   }
+
 }

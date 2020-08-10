@@ -9,4 +9,5 @@ public class SimpleLruCacheFactory implements ICacheFactory {
   public <K, V> ICache<K, V> create(int maxSize) {
     return new SimpleLruCache<>(maxSize);
   }
+
 }

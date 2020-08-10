@@ -15,4 +15,5 @@ public class NoCache<K, V> implements ICache<K, V> {
   public V get(K key, Function<K, V> creator) {
     return creator.apply(key);
   }
+
 }

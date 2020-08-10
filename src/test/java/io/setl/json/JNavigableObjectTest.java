@@ -10,10 +10,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import io.setl.json.exception.IncorrectTypeException;
-import io.setl.json.exception.MissingItemException;
-import io.setl.json.primitive.PString;
-import io.setl.json.primitive.numbers.PNumber;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.AbstractMap.SimpleEntry;
@@ -28,20 +24,46 @@ import java.util.NavigableMap;
 import java.util.NavigableSet;
 import java.util.Set;
 import java.util.Spliterator;
+import java.util.TreeMap;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
+
 import org.junit.Before;
 import org.junit.Test;
 
-@SuppressWarnings("checkstyle:AvoidEscapedUnicodeCharacters")
-public class JObjectTest {
+import io.setl.json.exception.IncorrectTypeException;
+import io.setl.json.exception.MissingItemException;
+import io.setl.json.primitive.PString;
+import io.setl.json.primitive.numbers.PNumber;
 
-  private JObject json = new JObject();
+@SuppressWarnings("checkstyle:AvoidEscapedUnicodeCharacters")
+public class JNavigableObjectTest {
+
+  private JNavigableObject json = new JNavigableObject(new TreeMap<>(JObject.CODE_POINT_ORDER));
 
 
   @Test
   public void asJsonObject() {
     assertSame(json, json.asJsonObject());
+  }
+
+
+  @Test
+  public void ceilingEntry() {
+    Entry<String, JsonValue> e = json.ceilingEntry("n");
+    assertEquals("null", e.getKey());
+  }
+
+
+  @Test
+  public void ceilingKey() {
+    assertEquals("null", json.ceilingKey("n"));
+  }
+
+
+  @Test
+  public void comparator() {
+    assertEquals(JObject.CODE_POINT_ORDER, json.comparator());
   }
 
 
@@ -63,6 +85,27 @@ public class JObjectTest {
   public void computeIfPresent() {
     json.computeIfPresent("null", (k, v) -> JsonValue.TRUE);
     assertEquals(JsonValue.TRUE, json.get("null"));
+  }
+
+
+  @Test
+  public void descendingKeySet() {
+    NavigableSet<String> set = json.descendingKeySet();
+    assertEquals("\07", set.last());
+  }
+
+
+  @Test
+  public void descendingMap() {
+    NavigableMap<String, JsonValue> map = json.descendingMap();
+    assertEquals("\07", map.lastKey());
+  }
+
+
+  @Test
+  public void entryEquals() {
+    Entry<String, JsonValue> entry = json.firstEntry();
+    assertTrue(entry.equals(new SimpleEntry<>("\07", PString.create("bell"))));
   }
 
 
@@ -219,6 +262,24 @@ public class JObjectTest {
 
 
   @Test
+  public void firstKey() {
+    assertEquals("\07", json.firstKey());
+  }
+
+
+  @Test
+  public void floorEntry() {
+    assertEquals("null", json.floorEntry("nullllll").getKey());
+  }
+
+
+  @Test
+  public void floorKey() {
+    assertEquals("null", json.floorKey("nullllll"));
+  }
+
+
+  @Test
   public void getJsonArray() {
     assertNotNull(json.getJsonArray("array"));
   }
@@ -262,6 +323,19 @@ public class JObjectTest {
   }
 
 
+  @Test
+  public void headMap() {
+    assertEquals(1, json.headMap("\07", true).size());
+    assertEquals(0, json.headMap("\07").size());
+  }
+
+
+  @Test
+  public void higherEntry() {
+    String k = json.higherKey("l");
+    Entry<String, JsonValue> e = json.higherEntry("l");
+    assertEquals(k, e.getKey());
+  }
 
 
   @Test
@@ -277,6 +351,20 @@ public class JObjectTest {
   }
 
 
+  @Test
+  public void lastEntry() {
+    String k = json.lastKey();
+    Entry<String, JsonValue> e = json.lastEntry();
+
+  }
+
+
+  @Test
+  public void lowerEntry() {
+    String k = json.lowerKey("l");
+    Entry<String, JsonValue> e = json.lowerEntry("l");
+    assertEquals(k, e.getKey());
+  }
 
 
   @Test
@@ -288,11 +376,24 @@ public class JObjectTest {
   }
 
 
+  @Test
+  public void navigableKeySet() {
+    assertNotNull(json.navigableKeySet());
+  }
+
 
   @Test
   public void optimiseStorage() {
     // how to test this?
     json.optimiseStorage();
+  }
+
+
+  @Test
+  public void poll() {
+    json.pollFirstEntry();
+    json.pollLastEntry();
+    assertEquals(9, json.size());
   }
 
 
@@ -355,6 +456,18 @@ public class JObjectTest {
   }
 
 
+  @Test
+  public void subMap() {
+    assertEquals(7, json.subMap("a", "z").size());
+    assertEquals(7, json.subMap("a", false, "z", false).size());
+  }
+
+
+  @Test
+  public void tailMap() {
+    assertEquals(6, json.tailMap("null", false).size());
+    assertEquals(7, json.tailMap("null").size());
+  }
 
 
   @Test

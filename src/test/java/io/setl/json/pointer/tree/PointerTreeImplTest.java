@@ -14,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import io.setl.json.JArray;
-import io.setl.json.JCanonicalObject;
 import io.setl.json.JObject;
 import io.setl.json.pointer.JPointerFactory;
 import io.setl.json.primitive.PString;
@@ -45,23 +44,23 @@ public class PointerTreeImplTest {
     // if we don't ask for anything it is all OK
     assertTrue(tree.containsAll(root));
 
-    root.add(new JCanonicalObject(Map.of("a", 1)));
+    root.add(new JObject(Map.of("a", 1)));
     assertTrue(tree.containsAll(root));
   }
 
 
   @Test
   public void containsAllObject() {
-    JObject root = new JCanonicalObject();
+    JObject root = new JObject();
     // if we don't ask for anything it is all OK
     assertTrue(tree.containsAll(root));
 
-    JObject objectA = new JCanonicalObject();
+    JObject objectA = new JObject();
     root.put("a", objectA);
     objectA.put("b", 1);
     assertTrue(tree.containsAll(root));
 
-    objectA.put("b", new JCanonicalObject(Map.of("x", "y")));
+    objectA.put("b", new JObject(Map.of("x", "y")));
     assertTrue(tree.containsAll(root));
 
     objectA.put("b", new JArray(List.of(1, 2, 3)));
@@ -74,8 +73,8 @@ public class PointerTreeImplTest {
 
     JArray arrayB = new JArray();
     root.put("b", arrayB);
-    arrayB.add(new JCanonicalObject(Map.of("a", true)));
-    arrayB.add(new JCanonicalObject(Map.of("b", true)));
+    arrayB.add(new JObject(Map.of("a", true)));
+    arrayB.add(new JObject(Map.of("b", true)));
     assertTrue(tree.containsAll(root));
 
     arrayB.add(false);
@@ -100,9 +99,9 @@ public class PointerTreeImplTest {
   @Test
   public void copyArray() {
     JArray root = new JArray();
-    root.add(new JCanonicalObject(Map.of("a", true, "b", false, "c", 1)));
-    root.add(new JCanonicalObject(Map.of("c", 2)));
-    root.add(new JCanonicalObject(Map.of("a", 2)));
+    root.add(new JObject(Map.of("a", true, "b", false, "c", 1)));
+    root.add(new JObject(Map.of("c", 2)));
+    root.add(new JObject(Map.of("a", 2)));
 
     JsonArray copy = tree.copy(root);
     assertEquals("[{\"a\":true,\"b\":false},{},{\"a\":2}]", copy.toString());
@@ -111,8 +110,8 @@ public class PointerTreeImplTest {
 
   @Test
   public void copyObject() {
-    JObject root = new JCanonicalObject();
-    root.put("a", new JCanonicalObject(Map.of("a", 1, "b", 2)));
+    JObject root = new JObject();
+    root.put("a", new JObject(Map.of("a", 1, "b", 2)));
     root.put("b", new JArray(List.of(
         Map.of("a", 1, "b", 2, "c", 3),
         Map.of("a", 1, "b", 2, "c", 3),
@@ -134,8 +133,8 @@ public class PointerTreeImplTest {
 
   @Test
   public void remove() {
-    JObject root = new JCanonicalObject();
-    root.put("a", new JCanonicalObject(Map.of("a", 1, "b", 2)));
+    JObject root = new JObject();
+    root.put("a", new JObject(Map.of("a", 1, "b", 2)));
     root.put("b", new JArray(List.of(
         Map.of("a", 1, "b", 2, "c", 3),
         Map.of("a", 1, "b", 2, "c", 3),

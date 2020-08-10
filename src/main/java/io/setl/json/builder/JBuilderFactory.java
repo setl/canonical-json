@@ -1,6 +1,5 @@
 package io.setl.json.builder;
 
-import io.setl.json.Primitive;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -9,6 +8,8 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonBuilderFactory;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+
+import io.setl.json.Primitive;
 
 /**
  * @author Simon Greatrix on 10/01/2020.
@@ -64,4 +65,5 @@ public class JBuilderFactory implements JsonBuilderFactory {
   public Map<String, ?> getConfigInUse() {
     return Collections.emptyMap();
   }
+
 }

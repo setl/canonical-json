@@ -8,7 +8,9 @@ import javax.annotation.Nonnull;
  *
  * @author Simon Greatrix on 05/02/2020.
  */
-public interface ICache<K,V> {
+public interface ICache<K, V> {
+
   @Nonnull
-  V get(K key, Function<K,V> creator);
+  V get(K key, Function<K, V> creator);
+
 }

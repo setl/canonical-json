@@ -47,4 +47,5 @@ public class CacheManagerTest {
     CacheManager.setValueCache(null);
     assertNotNull(CacheManager.valueCache());
   }
+
 }

@@ -44,6 +44,17 @@ public class Replace extends PatchOperation {
 
 
   @Override
+  public Operation getOperation() {
+    return Operation.REPLACE;
+  }
+
+
+  public JsonValue getValue() {
+    return value;
+  }
+
+
+  @Override
   public boolean equals(Object o) {
     if (this == o) {
       return true;
@@ -58,17 +69,6 @@ public class Replace extends PatchOperation {
     Replace replace = (Replace) o;
 
     return Objects.equals(value, replace.value);
-  }
-
-
-  @Override
-  public Operation getOperation() {
-    return Operation.REPLACE;
-  }
-
-
-  public JsonValue getValue() {
-    return value;
   }
 
 

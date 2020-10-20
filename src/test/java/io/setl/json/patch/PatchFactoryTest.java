@@ -15,8 +15,7 @@ import javax.json.JsonValue;
 import org.junit.Test;
 
 import io.setl.json.JArray;
-import io.setl.json.JNavigableObject;
-import io.setl.json.JObject;
+import io.setl.json.JCanonicalObject;
 import io.setl.json.Primitive;
 import io.setl.json.primitive.PFalse;
 import io.setl.json.primitive.PNull;
@@ -30,7 +29,6 @@ import io.setl.json.primitive.numbers.PNumber;
 public class PatchFactoryTest {
 
   private static final int MAX_DEPTH = 5;
-
   private static Random random = new Random(0x7e57ab1e);
 
 
@@ -38,9 +36,7 @@ public class PatchFactoryTest {
   static class PatchSet<T extends JsonStructure> {
 
     T after;
-
     T before;
-
     JsonPatch patch;
 
   }
@@ -57,7 +53,7 @@ public class PatchFactoryTest {
 
 
   private static JsonObject createObject(int depth) {
-    JsonObject object = new JObject();
+    JsonObject object = new JCanonicalObject();
     int size = random.nextInt(16);
     for (int i = 0; i < size; i++) {
       String key = Character.toString('a' + i);

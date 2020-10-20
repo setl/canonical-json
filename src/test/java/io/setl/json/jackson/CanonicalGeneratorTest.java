@@ -1,7 +1,6 @@
 package io.setl.json.jackson;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -9,25 +8,23 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Base64;
-import java.util.List;
-
 import com.fasterxml.jackson.core.Base64Variants;
 import com.fasterxml.jackson.core.JsonGenerator.Feature;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.core.io.SerializedString;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.IntNode;
+import io.setl.json.JArray;
+import io.setl.json.JCanonicalObject;
+import io.setl.json.JObject;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Base64;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
-
-import io.setl.json.JArray;
-import io.setl.json.JNavigableObject;
-import io.setl.json.JObject;
 
 /**
  * @author Simon Greatrix on 06/01/2020.
@@ -167,7 +164,7 @@ public class CanonicalGeneratorTest {
     JArray array = new JArray();
     array.add("A");
     array.add(1);
-    JObject object = new JObject();
+    JObject object = new JCanonicalObject();
     object.put("A", 1);
     object.put("B", 2);
     array.add(object);
@@ -402,5 +399,4 @@ public class CanonicalGeneratorTest {
     instance.writeUTF8String(data, 0, data.length);
     assertEquals("\"Hello, World!\"", writer.toString());
   }
-
 }

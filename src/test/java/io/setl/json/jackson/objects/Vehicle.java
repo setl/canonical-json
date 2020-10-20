@@ -1,6 +1,5 @@
 package io.setl.json.jackson.objects;
 
-import java.util.Objects;
 import javax.json.JsonValue;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -48,7 +47,7 @@ public abstract class Vehicle {
     if (!make.equals(vehicle.make)) {
       return false;
     }
-    if (!Objects.equals(metadata, vehicle.metadata)) {
+    if (metadata != null ? !metadata.equals(vehicle.metadata) : vehicle.metadata != null) {
       return false;
     }
     return model.equals(vehicle.model);

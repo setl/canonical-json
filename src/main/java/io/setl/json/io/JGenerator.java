@@ -1,5 +1,8 @@
 package io.setl.json.io;
 
+import io.setl.json.Primitive;
+import io.setl.json.exception.JsonIOException;
+import io.setl.json.primitive.PNull;
 import java.io.IOException;
 import java.io.Writer;
 import java.math.BigDecimal;
@@ -7,10 +10,6 @@ import java.math.BigInteger;
 import javax.json.JsonValue;
 import javax.json.stream.JsonGenerationException;
 import javax.json.stream.JsonGenerator;
-
-import io.setl.json.Primitive;
-import io.setl.json.exception.JsonIOException;
-import io.setl.json.primitive.PNull;
 
 /**
  * @author Simon Greatrix on 27/01/2020.
@@ -34,7 +33,6 @@ public abstract class JGenerator implements JsonGenerator {
     void writeStart();
 
     void writeValue(Primitive primitive);
-
   }
 
 
@@ -87,7 +85,6 @@ public abstract class JGenerator implements JsonGenerator {
         throw new JsonIOException(e);
       }
     }
-
   }
 
 
@@ -273,5 +270,4 @@ public abstract class JGenerator implements JsonGenerator {
   public JsonGenerator writeStartObject(String name) {
     return writeKey(name).writeStartObject();
   }
-
 }

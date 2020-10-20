@@ -39,7 +39,7 @@ class FilterTree implements Filter {
   }
 
 
-  private final Map<String, Filter> descendants = new HashMap<>();
+  private Map<String, Filter> descendants = new HashMap<>();
 
 
   public void add(PathElement element) {

@@ -9,7 +9,6 @@ import static org.junit.Assert.assertTrue;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import javax.json.JsonValue.ValueType;
-
 import org.junit.Test;
 
 /**
@@ -158,5 +157,4 @@ public class PBigDecimalTest {
     pbd = new PBigDecimal(bd, true);
     assertEquals(bd.toBigIntegerExact().toString(), pbd.toString());
   }
-
 }

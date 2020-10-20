@@ -1,13 +1,12 @@
 package io.setl.json.io;
 
-import java.io.IOException;
-import java.io.Writer;
-import javax.json.stream.JsonGenerationException;
-
-import io.setl.json.JObject;
+import io.setl.json.JCanonicalObject;
 import io.setl.json.Primitive;
 import io.setl.json.exception.JsonIOException;
 import io.setl.json.primitive.PString;
+import java.io.IOException;
+import java.io.Writer;
+import javax.json.stream.JsonGenerationException;
 
 /**
  * @author Simon Greatrix on 27/01/2020.
@@ -64,7 +63,6 @@ class JTrustedGenerator extends JGenerator {
       }
       writePrimitive(primitive);
     }
-
   }
 
 
@@ -107,7 +105,7 @@ class JTrustedGenerator extends JGenerator {
       if (writtenKey) {
         throw new JsonGenerationException("Cannot write key twice in object context");
       }
-      if (lastKey != null && JObject.CODE_POINT_ORDER.compare(lastKey, key) > -1) {
+      if (lastKey != null && JCanonicalObject.CODE_POINT_ORDER.compare(lastKey, key) > -1) {
         throw new JsonGenerationException("Key " + Primitive.create(key) + " must not come after " + Primitive.create(lastKey));
       }
       lastKey = key;
@@ -136,7 +134,6 @@ class JTrustedGenerator extends JGenerator {
       writePrimitive(primitive);
       writtenKey = false;
     }
-
   }
 
 
@@ -193,5 +190,4 @@ class JTrustedGenerator extends JGenerator {
       throw new JsonIOException(e);
     }
   }
-
 }

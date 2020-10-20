@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import javax.json.JsonValue;
-
 import org.junit.Test;
 
 /**
@@ -119,5 +118,4 @@ public class JObjectBuilderTest {
   public void testToString() {
     assertNotNull(builder.toString());
   }
-
 }

@@ -183,5 +183,4 @@ public class PBigDecimal extends PNumber {
     writer.append('E');
     writer.append(Integer.toString(precision - scale - 1));
   }
-
 }

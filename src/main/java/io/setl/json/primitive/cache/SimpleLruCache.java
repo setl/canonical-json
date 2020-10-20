@@ -27,7 +27,6 @@ public class SimpleLruCache<K, V> implements ICache<K, V> {
     protected boolean removeEldestEntry(Entry<K, V> eldest) {
       return size() > maxSize;
     }
-
   }
 
 
@@ -47,5 +46,4 @@ public class SimpleLruCache<K, V> implements ICache<K, V> {
       return myCache.computeIfAbsent(key, creator);
     }
   }
-
 }

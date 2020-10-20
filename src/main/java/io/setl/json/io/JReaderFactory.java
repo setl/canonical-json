@@ -37,5 +37,4 @@ public class JReaderFactory implements JsonReaderFactory {
   public Map<String, ?> getConfigInUse() {
     return Collections.emptyMap();
   }
-
 }

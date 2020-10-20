@@ -10,5 +10,4 @@ public class NoSuchValueException extends JsonException {
   public NoSuchValueException(String path) {
     super("JSON Structure did not contain item at: " + path);
   }
-
 }

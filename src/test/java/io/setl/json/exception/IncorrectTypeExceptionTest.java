@@ -4,15 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
+import io.setl.json.JArray;
+import io.setl.json.JCanonicalObject;
+import io.setl.json.JObject;
 import java.util.EnumSet;
 import javax.json.JsonValue.ValueType;
-
 import org.junit.Before;
 import org.junit.Test;
-
-import io.setl.json.JArray;
-import io.setl.json.JNavigableObject;
-import io.setl.json.JObject;
 
 public class IncorrectTypeExceptionTest {
 
@@ -23,13 +21,13 @@ public class IncorrectTypeExceptionTest {
 
   @Before
   public void setUp() {
-    object = new JObject();
+    object = new JCanonicalObject();
     object.put("array", new JArray());
     object.put("boolean", true);
     object.put("null");
     object.put("string", "text");
     object.put("number", 123);
-    object.put("object", new JObject());
+    object.put("object", new JCanonicalObject());
 
     array = new JArray();
     array.addAll(object.values());

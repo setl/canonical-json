@@ -2,9 +2,8 @@ package io.setl.json.parser;
 
 import static io.setl.json.parser.JParser.safe;
 
-import javax.json.stream.JsonParsingException;
-
 import io.setl.json.io.Input;
+import javax.json.stream.JsonParsingException;
 
 /**
  * @author Simon Greatrix on 13/01/2020.
@@ -102,5 +101,4 @@ class StringParser {
     }
     buf.append((char) u);
   }
-
 }

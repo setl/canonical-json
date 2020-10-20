@@ -6,5 +6,4 @@ package io.setl.json.primitive.cache;
 public interface ICacheFactory {
 
   <K, V> ICache<K, V> create(int maxSize);
-
 }

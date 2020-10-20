@@ -103,5 +103,4 @@ public class MutableLocation extends Location {
     lastWasCR = false;
     columnNumber++;
   }
-
 }

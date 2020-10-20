@@ -2,16 +2,6 @@ package io.setl.json.jackson;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Writer;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.LinkedList;
-import javax.json.JsonValue;
-import javax.json.JsonValue.ValueType;
-
 import com.fasterxml.jackson.core.Base64Variant;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonStreamContext;
@@ -24,13 +14,22 @@ import com.fasterxml.jackson.core.json.DupDetector;
 import com.fasterxml.jackson.core.json.JsonWriteContext;
 
 import io.setl.json.JArray;
-import io.setl.json.JNavigableObject;
+import io.setl.json.JCanonicalObject;
 import io.setl.json.JObject;
 import io.setl.json.Primitive;
 import io.setl.json.primitive.PFalse;
 import io.setl.json.primitive.PJson;
 import io.setl.json.primitive.PNull;
 import io.setl.json.primitive.PTrue;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.LinkedList;
+import javax.json.JsonValue;
+import javax.json.JsonValue.ValueType;
 
 /**
  * Generator for canonical JSON. Note that as the canonical form requires a specific ordering of object properties, no output is created until the root object
@@ -67,7 +66,6 @@ public class CanonicalGenerator extends JsonGenerator {
      * @param writer the writer
      */
     void writeTo(Writer writer) throws IOException;
-
   }
 
 
@@ -93,14 +91,13 @@ public class CanonicalGenerator extends JsonGenerator {
     public void writeTo(Writer writer) throws IOException {
       array.writeTo(writer);
     }
-
   }
 
 
 
   static class ObjectContainer implements Container {
 
-    final JObject object = new JObject();
+    final JObject object = new JCanonicalObject();
 
 
     @Override
@@ -119,7 +116,6 @@ public class CanonicalGenerator extends JsonGenerator {
     public void writeTo(Writer writer) throws IOException {
       object.writeTo(writer);
     }
-
   }
 
 
@@ -150,7 +146,6 @@ public class CanonicalGenerator extends JsonGenerator {
     public void writeTo(Writer writer) throws IOException {
       writer.write(raw);
     }
-
   }
 
 
@@ -712,5 +707,4 @@ public class CanonicalGenerator extends JsonGenerator {
   public void writeUTF8String(byte[] text, int offset, int length) throws IOException {
     writePrimitive(Primitive.create(new String(text, offset, length, UTF_8)));
   }
-
 }

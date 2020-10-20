@@ -51,5 +51,4 @@ public class PNull extends PBase {
   public void writeTo(Appendable writer) throws IOException {
     writer.append("null");
   }
-
 }

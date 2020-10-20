@@ -36,12 +36,31 @@ import org.junit.Test;
 @SuppressWarnings("checkstyle:AvoidEscapedUnicodeCharacters")
 public class JObjectTest {
 
-  private JObject json = new JObject();
+  private JCanonicalObject json = new JCanonicalObject();
 
 
   @Test
   public void asJsonObject() {
     assertSame(json, json.asJsonObject());
+  }
+
+
+  @Test
+  public void ceilingEntry() {
+    Entry<String, JsonValue> e = json.ceilingEntry("n");
+    assertEquals("null", e.getKey());
+  }
+
+
+  @Test
+  public void ceilingKey() {
+    assertEquals("null", json.ceilingKey("n"));
+  }
+
+
+  @Test
+  public void comparator() {
+    assertEquals(JCanonicalObject.CODE_POINT_ORDER, json.comparator());
   }
 
 
@@ -63,6 +82,27 @@ public class JObjectTest {
   public void computeIfPresent() {
     json.computeIfPresent("null", (k, v) -> JsonValue.TRUE);
     assertEquals(JsonValue.TRUE, json.get("null"));
+  }
+
+
+  @Test
+  public void descendingKeySet() {
+    NavigableSet<String> set = json.descendingKeySet();
+    assertEquals("\07", set.last());
+  }
+
+
+  @Test
+  public void descendingMap() {
+    NavigableMap<String, JsonValue> map = json.descendingMap();
+    assertEquals("\07", map.lastKey());
+  }
+
+
+  @Test
+  public void entryEquals() {
+    Entry<String, JsonValue> entry = json.firstEntry();
+    assertTrue(entry.equals(new SimpleEntry<>("\07", PString.create("bell"))));
   }
 
 
@@ -219,6 +259,24 @@ public class JObjectTest {
 
 
   @Test
+  public void firstKey() {
+    assertEquals("\07", json.firstKey());
+  }
+
+
+  @Test
+  public void floorEntry() {
+    assertEquals("null", json.floorEntry("nullllll").getKey());
+  }
+
+
+  @Test
+  public void floorKey() {
+    assertEquals("null", json.floorKey("nullllll"));
+  }
+
+
+  @Test
   public void getJsonArray() {
     assertNotNull(json.getJsonArray("array"));
   }
@@ -262,6 +320,19 @@ public class JObjectTest {
   }
 
 
+  @Test
+  public void headMap() {
+    assertEquals(1, json.headMap("\07", true).size());
+    assertEquals(0, json.headMap("\07").size());
+  }
+
+
+  @Test
+  public void higherEntry() {
+    String k = json.higherKey("l");
+    Entry<String, JsonValue> e = json.higherEntry("l");
+    assertEquals(k, e.getKey());
+  }
 
 
   @Test
@@ -277,6 +348,20 @@ public class JObjectTest {
   }
 
 
+  @Test
+  public void lastEntry() {
+    String k = json.lastKey();
+    Entry<String, JsonValue> e = json.lastEntry();
+
+  }
+
+
+  @Test
+  public void lowerEntry() {
+    String k = json.lowerKey("l");
+    Entry<String, JsonValue> e = json.lowerEntry("l");
+    assertEquals(k, e.getKey());
+  }
 
 
   @Test
@@ -288,11 +373,24 @@ public class JObjectTest {
   }
 
 
+  @Test
+  public void navigableKeySet() {
+    assertNotNull(json.navigableKeySet());
+  }
+
 
   @Test
   public void optimiseStorage() {
     // how to test this?
     json.optimiseStorage();
+  }
+
+
+  @Test
+  public void poll() {
+    json.pollFirstEntry();
+    json.pollLastEntry();
+    assertEquals(9, json.size());
   }
 
 
@@ -349,12 +447,24 @@ public class JObjectTest {
     json.put("null");
     json.put("small number", new BigDecimal("1e-5"));
     json.put("big number", new BigDecimal("1e+5"));
-    json.put("object", new JObject());
+    json.put("object", new JCanonicalObject());
     json.put("array", new JArray());
     json.put("boolean", true);
   }
 
 
+  @Test
+  public void subMap() {
+    assertEquals(7, json.subMap("a", "z").size());
+    assertEquals(7, json.subMap("a", false, "z", false).size());
+  }
+
+
+  @Test
+  public void tailMap() {
+    assertEquals(6, json.tailMap("null", false).size());
+    assertEquals(7, json.tailMap("null").size());
+  }
 
 
   @Test
@@ -375,7 +485,7 @@ public class JObjectTest {
 
     HashMap<String, Object> hm2 = new HashMap<>();
     hm.forEach((k, v) -> hm2.put(String.valueOf(k), v));
-    JObject fixed3 = new JObject(hm2);
+    JObject fixed3 = new JCanonicalObject(hm2);
     assertEquals(fixed, fixed3);
     assertNotSame(fixed, fixed3);
 
@@ -707,9 +817,9 @@ public class JObjectTest {
 
   @Test
   public void testGetObjectStringFunctionOfStringJsonObject() {
-    JObject o1 = new JObject();
+    JObject o1 = new JCanonicalObject();
     o1.put("a", 3);
-    JObject o2 = new JObject();
+    JObject o2 = new JCanonicalObject();
     o1.put("a", "three");
 
     json.put("object", o1);
@@ -722,9 +832,9 @@ public class JObjectTest {
 
   @Test
   public void testGetObjectStringJsonObject() {
-    JObject o1 = new JObject();
+    JObject o1 = new JCanonicalObject();
     o1.put("a", 3);
-    JObject o2 = new JObject();
+    JObject o2 = new JCanonicalObject();
     o1.put("a", "three");
 
     json.put("object", o1);
@@ -891,7 +1001,7 @@ public class JObjectTest {
 
   @Test
   public void testOptObject() {
-    JObject o1 = new JObject();
+    JObject o1 = new JCanonicalObject();
     o1.put("a", 3);
     json.put("object", o1);
     assertNull(json.optObject("null"));
@@ -953,7 +1063,7 @@ public class JObjectTest {
 
   @Test
   public void testPutStringJsonObject() {
-    JObject o1 = new JObject();
+    JObject o1 = new JCanonicalObject();
     o1.put("x", 3.5);
     assertFalse(json.containsKey("a"));
     json.put("a", o1);

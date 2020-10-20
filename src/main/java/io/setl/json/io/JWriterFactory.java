@@ -42,5 +42,4 @@ public class JWriterFactory implements JsonWriterFactory {
   public Map<String, ?> getConfigInUse() {
     return Collections.emptyMap();
   }
-
 }

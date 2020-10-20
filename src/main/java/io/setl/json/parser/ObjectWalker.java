@@ -1,12 +1,11 @@
 package io.setl.json.parser;
 
+import io.setl.json.primitive.PNull;
+import io.setl.json.primitive.PString;
 import java.util.NoSuchElementException;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import javax.json.stream.JsonParser.Event;
-
-import io.setl.json.primitive.PNull;
-import io.setl.json.primitive.PString;
 
 /**
  * @author Simon Greatrix on 15/01/2020.
@@ -69,5 +68,4 @@ class ObjectWalker extends WalkingParser {
   JsonValue primaryObject() {
     return object;
   }
-
 }

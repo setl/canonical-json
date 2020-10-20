@@ -42,5 +42,4 @@ public class Utf8Writer extends Writer implements Appendable {
   public void write(@Nonnull char[] buffer, int offset, int length) throws IOException {
     appendable.append(buffer, offset, length);
   }
-
 }

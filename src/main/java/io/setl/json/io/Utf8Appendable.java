@@ -51,8 +51,8 @@ public class Utf8Appendable implements Appendable {
    * Append part of a character array.
    *
    * @param buffer the array
-   * @param offset the offset into the array
-   * @param length the number of characters to write
+   * @param offset  the offset into the array
+   * @param length  the number of characters to write
    */
   public void append(char[] buffer, int offset, int length) throws IOException {
     int e = offset + length;
@@ -134,5 +134,4 @@ public class Utf8Appendable implements Appendable {
 
     write((int) ch);
   }
-
 }

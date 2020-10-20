@@ -16,6 +16,16 @@ public class Fleet {
   }
 
 
+  public List<Vehicle> getVehicles() {
+    return vehicles;
+  }
+
+
+  public void setVehicles(List<Vehicle> vehicles) {
+    this.vehicles = vehicles;
+  }
+
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -31,19 +41,9 @@ public class Fleet {
   }
 
 
-  public List<Vehicle> getVehicles() {
-    return vehicles;
-  }
-
-
   @Override
   public int hashCode() {
     return vehicles.hashCode();
-  }
-
-
-  public void setVehicles(List<Vehicle> vehicles) {
-    this.vehicles = vehicles;
   }
 
 }

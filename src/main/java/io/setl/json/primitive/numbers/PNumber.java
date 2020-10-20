@@ -1,5 +1,11 @@
 package io.setl.json.primitive.numbers;
 
+import io.setl.json.Primitive;
+import io.setl.json.exception.NonFiniteNumberException;
+import io.setl.json.primitive.PBase;
+import io.setl.json.primitive.PString;
+import io.setl.json.primitive.cache.CacheManager;
+import io.setl.json.primitive.cache.ICache;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -10,13 +16,6 @@ import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import javax.json.JsonNumber;
 import javax.json.JsonValue;
-
-import io.setl.json.Primitive;
-import io.setl.json.exception.NonFiniteNumberException;
-import io.setl.json.primitive.PBase;
-import io.setl.json.primitive.PString;
-import io.setl.json.primitive.cache.CacheManager;
-import io.setl.json.primitive.cache.ICache;
 
 /**
  * @author Simon Greatrix on 08/01/2020.
@@ -40,14 +39,14 @@ public abstract class PNumber extends PBase implements JsonNumber {
 
 
   private static final Map<Class<? extends Number>, UnaryOperator<Number>> SIMPLIFIERS = Map.of(
-      AtomicInteger.class, Number::intValue,
+      AtomicInteger.class, n -> n.intValue(),
       AtomicLong.class, n -> simplify(n.longValue()),
       BigDecimal.class, n -> simplify((BigDecimal) n),
       BigInteger.class, n -> simplify((BigInteger) n, true),
-      Byte.class, Number::intValue,
-      Integer.class, Number::intValue,
+      Byte.class, n -> n.intValue(),
+      Integer.class, n -> n.intValue(),
       Long.class, n -> simplify(n.longValue()),
-      Short.class, Number::intValue,
+      Short.class, n -> n.intValue(),
 
       Double.class, n -> simplify(n.doubleValue()),
       Float.class, n -> simplify(n.floatValue())
@@ -321,5 +320,4 @@ public abstract class PNumber extends PBase implements JsonNumber {
   public void writeTo(Appendable writer) throws IOException {
     writer.append(toString());
   }
-
 }

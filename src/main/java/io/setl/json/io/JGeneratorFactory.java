@@ -64,5 +64,4 @@ public class JGeneratorFactory implements JsonGeneratorFactory {
   public Map<String, ?> getConfigInUse() {
     return Map.of(TRUST_KEY_ORDER, trustKeyOrder);
   }
-
 }

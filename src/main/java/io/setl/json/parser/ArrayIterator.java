@@ -49,5 +49,4 @@ class ArrayIterator extends BaseIterator<JsonValue> {
     next = null;
     return jsonValue;
   }
-
 }

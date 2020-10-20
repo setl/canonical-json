@@ -57,5 +57,4 @@ class ValueIterator extends BaseIterator<JsonValue> {
     next = null;
     return jsonValue;
   }
-
 }

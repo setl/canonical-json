@@ -5,6 +5,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
+import io.setl.json.JArray;
+import io.setl.json.JCanonicalObject;
+import io.setl.json.JObject;
+import io.setl.json.Primitive;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,13 +17,7 @@ import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-
 import org.junit.Test;
-
-import io.setl.json.JArray;
-import io.setl.json.JNavigableObject;
-import io.setl.json.JObject;
-import io.setl.json.Primitive;
 
 /**
  * @author Simon Greatrix on 10/01/2020.
@@ -53,7 +51,7 @@ public class JBuilderFactoryTest {
 
   @Test
   public void testCreateArrayBuilder() {
-    JObject object = new JObject();
+    JObject object = new JCanonicalObject();
     object.put("A", 1);
     JArray array = new JArray();
     array.add(object);
@@ -82,23 +80,22 @@ public class JBuilderFactoryTest {
 
   @Test
   public void testCreateObjectBuilder() {
-    JsonObject jsonObject = new JObject();
+    JsonObject jsonObject = new JCanonicalObject();
     jsonObject.put("A", Primitive.create("B"));
     JsonObjectBuilder builder = factory.createObjectBuilder(jsonObject);
     assertNotNull(builder);
-    builder.add("B", "C");
+    builder.add("B","C");
     JsonObject jo = builder.build();
-    assertEquals(2, jo.size());
+    assertEquals(2,jo.size());
     jo.remove("B");
-    assertEquals(jsonObject, jo);
+    assertEquals(jsonObject,jo);
   }
 
 
   @Test
   public void testCreateObjectBuilder1() {
-    JsonObjectBuilder builder = factory.createObjectBuilder(Map.of("A", 1, "B", true, "C", Collections.emptyList()));
+    JsonObjectBuilder builder = factory.createObjectBuilder(Map.of("A",1,"B",true,"C", Collections.emptyList()));
     JsonObject object = builder.build();
-    assertEquals("{\"A\":1,\"B\":true,\"C\":[]}", object.toString());
+    assertEquals("{\"A\":1,\"B\":true,\"C\":[]}",object.toString());
   }
-
 }

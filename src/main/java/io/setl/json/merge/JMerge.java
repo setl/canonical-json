@@ -1,14 +1,12 @@
 package io.setl.json.merge;
 
+import io.setl.json.JCanonicalObject;
+import io.setl.json.Primitive;
 import java.util.Map.Entry;
 import javax.json.JsonMergePatch;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
-
-import io.setl.json.JNavigableObject;
-import io.setl.json.JObject;
-import io.setl.json.Primitive;
 
 /**
  * @author Simon Greatrix on 28/01/2020.
@@ -23,7 +21,7 @@ public class JMerge implements JsonMergePatch {
 
     JsonObject output;
     if (target == null || target.getValueType() != ValueType.OBJECT) {
-      output = new JObject();
+      output = new JCanonicalObject();
     } else {
       output = (JsonObject) target;
     }
@@ -34,7 +32,7 @@ public class JMerge implements JsonMergePatch {
       } else {
         String key = entry.getKey();
         JsonValue current = output.get(key);
-        output.put(key, mergePatch(current, entry.getValue()));
+        output.put(key, mergePatch(current,entry.getValue()));
       }
     }
     return output;
@@ -70,5 +68,4 @@ public class JMerge implements JsonMergePatch {
   public JsonValue toJsonValue() {
     return patch;
   }
-
 }

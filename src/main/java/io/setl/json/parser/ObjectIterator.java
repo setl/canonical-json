@@ -74,5 +74,4 @@ class ObjectIterator extends BaseIterator<Entry<String, JsonValue>> {
     keyName = null;
     return new SimpleImmutableEntry<>(name, jsonValue);
   }
-
 }

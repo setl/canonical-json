@@ -1,5 +1,6 @@
 package io.setl.json.io;
 
+import io.setl.json.parser.JParser;
 import java.io.Reader;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -10,16 +11,14 @@ import javax.json.JsonValue.ValueType;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParsingException;
 
-import io.setl.json.parser.JParser;
-
 /**
  * @author Simon Greatrix on 10/01/2020.
  */
 public class JReader implements JsonReader {
 
-  private final JsonParser jParser;
-
   private boolean isUsed = false;
+
+  private final JsonParser jParser;
 
 
   /**
@@ -92,5 +91,4 @@ public class JReader implements JsonReader {
     jParser.next();
     return jParser.getValue();
   }
-
 }

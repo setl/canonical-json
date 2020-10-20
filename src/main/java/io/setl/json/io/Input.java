@@ -10,9 +10,9 @@ import javax.json.stream.JsonParsingException;
  */
 public class Input {
 
-  private final MutableLocation location = new MutableLocation();
-
   private final Reader reader;
+
+  private final MutableLocation location = new MutableLocation();
 
   private boolean seenEOF = false;
 

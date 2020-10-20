@@ -94,5 +94,4 @@ public class Location implements JsonLocation {
         this.columnNumber, this.lineNumber, this.streamOffset
     );
   }
-
 }

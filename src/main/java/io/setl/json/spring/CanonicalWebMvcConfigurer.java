@@ -12,7 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 class CanonicalWebMvcConfigurer implements WebMvcConfigurer {
 
-  final ObjectMapper mapper;
+  ObjectMapper mapper;
 
 
   public CanonicalWebMvcConfigurer(ObjectMapper mapper) {

@@ -9,8 +9,7 @@ import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 
 import io.setl.json.JArray;
-import io.setl.json.JNavigableObject;
-import io.setl.json.JObject;
+import io.setl.json.JCanonicalObject;
 
 /**
  * @author Simon Greatrix on 27/01/2020.
@@ -33,7 +32,6 @@ public class JPointer implements JsonExtendedPointer {
 
 
   protected final String path;
-
   protected final PathElement root;
 
 
@@ -76,7 +74,7 @@ public class JPointer implements JsonExtendedPointer {
 
   private JsonObject doCopy(JsonObject source, JsonObject target) {
     if (target == null || target == JsonValue.EMPTY_JSON_OBJECT) {
-      target = new JObject();
+      target = new JCanonicalObject();
     }
     root.copy(source, target);
     return target;
@@ -154,6 +152,15 @@ public class JPointer implements JsonExtendedPointer {
 
 
   @Override
+  public ResultOfAdd testAdd(JsonStructure target) {
+    if (target.getValueType() == ValueType.OBJECT) {
+      return root.testAdd((JsonObject) target);
+    }
+    return root.testAdd((JsonArray) target);
+  }
+
+
+  @Override
   public <T extends JsonStructure> T remove(T target) {
     if (target.getValueType() == ValueType.OBJECT) {
       root.remove((JsonObject) target);
@@ -172,15 +179,6 @@ public class JPointer implements JsonExtendedPointer {
       root.replace((JsonArray) target, value);
     }
     return target;
-  }
-
-
-  @Override
-  public ResultOfAdd testAdd(JsonStructure target) {
-    if (target.getValueType() == ValueType.OBJECT) {
-      return root.testAdd((JsonObject) target);
-    }
-    return root.testAdd((JsonArray) target);
   }
 
 }

@@ -17,6 +17,7 @@ import javax.json.JsonString;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 
+import io.setl.json.exception.NotJsonException;
 import io.setl.json.io.Utf8Appendable;
 import io.setl.json.primitive.PFalse;
 import io.setl.json.primitive.PNull;
@@ -124,7 +125,7 @@ public interface Primitive extends JsonValue {
     if (value instanceof Map<?, ?>) {
       return JObject.asJObject((Map<?, ?>) value);
     }
-    throw new IllegalArgumentException("Cannot include item of class " + value.getClass() + " in JSON");
+    throw new NotJsonException(value);
   }
 
   /**

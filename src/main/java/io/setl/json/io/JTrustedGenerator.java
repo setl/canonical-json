@@ -1,12 +1,13 @@
 package io.setl.json.io;
 
+import java.io.IOException;
+import java.io.Writer;
+import javax.json.stream.JsonGenerationException;
+
 import io.setl.json.JObject;
 import io.setl.json.Primitive;
 import io.setl.json.exception.JsonIOException;
 import io.setl.json.primitive.PString;
-import java.io.IOException;
-import java.io.Writer;
-import javax.json.stream.JsonGenerationException;
 
 /**
  * @author Simon Greatrix on 27/01/2020.
@@ -63,6 +64,7 @@ class JTrustedGenerator extends JGenerator {
       }
       writePrimitive(primitive);
     }
+
   }
 
 
@@ -134,6 +136,7 @@ class JTrustedGenerator extends JGenerator {
       writePrimitive(primitive);
       writtenKey = false;
     }
+
   }
 
 
@@ -190,4 +193,5 @@ class JTrustedGenerator extends JGenerator {
       throw new JsonIOException(e);
     }
   }
+
 }

@@ -2,15 +2,11 @@ package io.setl.json.io;
 
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.nio.charset.StandardCharsets.UTF_8;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
-import io.setl.json.builder.JArrayBuilder;
-import io.setl.json.builder.JObjectBuilder;
-import io.setl.json.primitive.PFalse;
-import io.setl.json.primitive.PNull;
-import io.setl.json.primitive.PTrue;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -19,8 +15,15 @@ import javax.json.JsonArray;
 import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonWriter;
+
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import io.setl.json.builder.JArrayBuilder;
+import io.setl.json.builder.JObjectBuilder;
+import io.setl.json.primitive.PFalse;
+import io.setl.json.primitive.PNull;
+import io.setl.json.primitive.PTrue;
 
 /**
  * @author Simon Greatrix on 27/01/2020.
@@ -62,16 +65,17 @@ public class JWriterTest {
 
 
   @Test(expected = JsonException.class)
-  public void utf8Only() {
-    new JWriterFactory().createWriter(new ByteArrayOutputStream(), ISO_8859_1);
-  }
-
-  @Test(expected = JsonException.class)
   public void failedWrite() throws IOException {
     Writer writer = Mockito.mock(Writer.class);
     Mockito.doThrow(new IOException()).when(writer).append(any(String.class));
     JWriter jWriter = new JWriter(writer);
     jWriter.write(PFalse.FALSE);
+  }
+
+
+  @Test(expected = JsonException.class)
+  public void utf8Only() {
+    new JWriterFactory().createWriter(new ByteArrayOutputStream(), ISO_8859_1);
   }
 
 
@@ -119,4 +123,5 @@ public class JWriterTest {
     String out = new String(outputStream.toByteArray(), UTF_8);
     assertEquals("{\"à\":\"ç\"}", out);
   }
+
 }

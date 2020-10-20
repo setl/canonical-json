@@ -2,7 +2,6 @@ package io.setl.json.pointer;
 
 import java.util.Objects;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
@@ -19,11 +18,11 @@ import io.setl.json.pointer.JsonExtendedPointer.ResultOfAdd;
  */
 public class ObjectPath implements PathElement {
 
+  protected final PathElement child;
+
   protected final String key;
 
-  protected PathElement child;
-
-  protected String path;
+  protected final String path;
 
 
   /**
@@ -128,7 +127,7 @@ public class ObjectPath implements PathElement {
 
 
   @Override
-  public void copy(@Nonnull JsonObject source, @Nullable JsonObject target) {
+  public void copy(@Nonnull JsonObject source, @Nonnull JsonObject target) {
     JsonValue sourceValue = source.get(key);
     if (sourceValue == null) {
       return;

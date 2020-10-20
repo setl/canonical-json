@@ -1,10 +1,11 @@
 package io.setl.json.exception;
 
-import io.setl.json.primitive.PString;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 import javax.json.JsonValue.ValueType;
+
+import io.setl.json.primitive.PString;
 
 /**
  * An exception thrown when a type-checking accessor finds data of the wrong type. The javax.json API requires that this extends from ClassCastException.

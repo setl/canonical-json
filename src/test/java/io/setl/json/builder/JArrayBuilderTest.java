@@ -11,6 +11,7 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
+
 import org.junit.Test;
 
 /**
@@ -293,4 +294,5 @@ public class JArrayBuilderTest {
   public void testToString() {
     assertNotNull(builder.toString());
   }
+
 }

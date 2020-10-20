@@ -3,12 +3,13 @@ package io.setl.json.primitive.numbers;
 import static io.setl.json.parser.JParser.isWhite;
 import static io.setl.json.parser.JParser.safe;
 
-import io.setl.json.io.Input;
-import io.setl.json.primitive.cache.CacheManager;
-import io.setl.json.primitive.cache.ICache;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import javax.json.stream.JsonParsingException;
+
+import io.setl.json.io.Input;
+import io.setl.json.primitive.cache.CacheManager;
+import io.setl.json.primitive.cache.ICache;
 
 /**
  * @author Simon Greatrix on 13/01/2020.
@@ -283,4 +284,5 @@ public class NumberParser {
     pNumber.check();
     return pNumber;
   }
+
 }

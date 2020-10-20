@@ -3,14 +3,6 @@ package io.setl.json.jackson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.dataformat.smile.SmileFactory;
-import com.fasterxml.jackson.dataformat.smile.SmileGenerator;
-import com.fasterxml.jackson.dataformat.smile.SmileGenerator.Feature;
-import com.fasterxml.jackson.dataformat.smile.SmileParser;
-import io.setl.json.builder.JArrayBuilder;
-import io.setl.json.builder.JObjectBuilder;
-import io.setl.json.exception.JsonIOException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -20,8 +12,18 @@ import javax.json.JsonObject;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 import javax.json.stream.JsonParsingException;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.dataformat.smile.SmileFactory;
+import com.fasterxml.jackson.dataformat.smile.SmileGenerator;
+import com.fasterxml.jackson.dataformat.smile.SmileGenerator.Feature;
+import com.fasterxml.jackson.dataformat.smile.SmileParser;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import io.setl.json.builder.JArrayBuilder;
+import io.setl.json.builder.JObjectBuilder;
+import io.setl.json.exception.JsonIOException;
 
 /**
  * @author Simon Greatrix on 31/01/2020.
@@ -83,6 +85,7 @@ public class JacksonReaderTest {
     JacksonReader parser = new JacksonReader(mock);
     parser.readObject();
   }
+
 
   @Test(expected = JsonParsingException.class)
   public void test14() throws IOException {
@@ -258,4 +261,5 @@ public class JacksonReaderTest {
     JacksonReader parser = new JacksonReader(mock);
     parser.readValue();
   }
+
 }

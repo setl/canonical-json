@@ -29,6 +29,7 @@ import io.setl.json.primitive.numbers.PNumber;
 public class PatchFactoryTest {
 
   private static final int MAX_DEPTH = 5;
+
   private static Random random = new Random(0x7e57ab1e);
 
 
@@ -36,7 +37,9 @@ public class PatchFactoryTest {
   static class PatchSet<T extends JsonStructure> {
 
     T after;
+
     T before;
+
     JsonPatch patch;
 
   }

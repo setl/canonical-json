@@ -889,7 +889,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
    * @return the Boolean, or the default
    */
   public boolean getBoolean(String key, boolean defaultValue) {
-    return getQuiet(Boolean.class, key, defaultValue).booleanValue();
+    return getQuiet(Boolean.class, key, defaultValue);
   }
 
 
@@ -903,7 +903,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
    */
   public boolean getBoolean(String key, @Nonnull Predicate<String> defaultValue) {
     Boolean value = getQuiet(Boolean.class, key);
-    return (value != null) ? value.booleanValue() : defaultValue.test(key);
+    return (value != null) ? value : defaultValue.test(key);
   }
 
 
@@ -935,7 +935,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
    */
   public double getDouble(String key, double defaultValue) {
     Double n = optDouble(key);
-    return (n != null) ? n.doubleValue() : defaultValue;
+    return (n != null) ? n : defaultValue;
   }
 
 
@@ -949,7 +949,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
    */
   public double getDouble(String key, @Nonnull ToDoubleFunction<String> defaultValue) {
     Double n = optDouble(key);
-    return (n != null) ? n.doubleValue() : defaultValue.applyAsDouble(key);
+    return (n != null) ? n : defaultValue.applyAsDouble(key);
   }
 
 
@@ -967,7 +967,7 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
     if (n == null) {
       throw new IncorrectTypeException(key, ValueType.NUMBER, p.getValueType());
     }
-    return n.doubleValue();
+    return n;
   }
 
 
@@ -1164,7 +1164,8 @@ public class JObject implements NavigableMap<String, JsonValue>, JsonObject, Pri
 
   @Override
   public JsonValue getOrDefault(Object key, JsonValue defaultValue) {
-    return myMap.getOrDefault(key, Primitive.cast(defaultValue));
+    JsonValue value = myMap.get(key);
+    return value != null ? value : defaultValue;
   }
 
 

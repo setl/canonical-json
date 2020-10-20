@@ -4,12 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
-import io.setl.json.JArray;
-import io.setl.json.JObject;
 import java.util.EnumSet;
 import javax.json.JsonValue.ValueType;
+
 import org.junit.Before;
 import org.junit.Test;
+
+import io.setl.json.JArray;
+import io.setl.json.JObject;
 
 public class IncorrectTypeExceptionTest {
 

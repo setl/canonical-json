@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonArrayFormatVisitor;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
+
 import io.setl.json.JArray;
 
 /**
@@ -26,4 +27,5 @@ public class JsonArraySerializer extends PrimitiveSerializer<JArray> {
   public Class<JArray> handledType() {
     return JArray.class;
   }
+
 }

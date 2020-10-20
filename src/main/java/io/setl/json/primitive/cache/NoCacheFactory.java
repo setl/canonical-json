@@ -9,4 +9,5 @@ public class NoCacheFactory implements ICacheFactory {
   public <K, V> ICache<K, V> create(int maxSize) {
     return new NoCache<>();
   }
+
 }

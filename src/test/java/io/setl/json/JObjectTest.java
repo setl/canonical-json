@@ -1113,8 +1113,10 @@ public class JObjectTest {
     String k2 = "big number";
     assertTrue(json.containsKey(k1));
     assertTrue(json.containsKey(k2));
-    json.removeArray(k1);
-    json.removeArray(k2);
+    JArray array = json.removeArray(k1);
+    assertNotNull(array);
+    assertTrue(array.isEmpty());
+    assertNull(json.removeArray(k2));
     assertFalse(json.containsKey(k1));
     assertTrue(json.containsKey(k2));
   }
@@ -1126,8 +1128,8 @@ public class JObjectTest {
     String k2 = "big number";
     assertTrue(json.containsKey(k1));
     assertTrue(json.containsKey(k2));
-    json.removeBoolean(k1);
-    json.removeBoolean(k2);
+    assertNotNull(json.removeBoolean(k1));
+    assertNull(json.removeBoolean(k2));
     assertFalse(json.containsKey(k1));
     assertTrue(json.containsKey(k2));
   }
@@ -1152,8 +1154,10 @@ public class JObjectTest {
     String k1 = "big number";
     assertTrue(json.containsKey(k1));
     assertTrue(json.containsKey(k2));
-    json.removeNumber(k1);
-    json.removeNumber(k2);
+    assertNull(json.removeNumber(k2));
+    Number n = json.removeNumber(k1);
+    assertTrue(n instanceof Integer);
+    assertEquals(100_000,n);
     assertFalse(json.containsKey(k1));
     assertTrue(json.containsKey(k2));
   }
@@ -1165,8 +1169,8 @@ public class JObjectTest {
     String k2 = "big number";
     assertTrue(json.containsKey(k1));
     assertTrue(json.containsKey(k2));
-    json.removeObject(k1);
-    json.removeObject(k2);
+    assertNotNull(json.removeObject(k1));
+    assertNull(json.removeObject(k2));
     assertFalse(json.containsKey(k1));
     assertTrue(json.containsKey(k2));
   }
@@ -1178,8 +1182,8 @@ public class JObjectTest {
     String k2 = "big number";
     assertTrue(json.containsKey(k1));
     assertTrue(json.containsKey(k2));
-    json.removeString(k1);
-    json.removeString(k2);
+    assertEquals("string",json.removeString(k1));
+    assertNull(json.removeString(k2));
     assertFalse(json.containsKey(k1));
     assertTrue(json.containsKey(k2));
   }

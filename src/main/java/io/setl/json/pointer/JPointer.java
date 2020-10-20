@@ -32,6 +32,7 @@ public class JPointer implements JsonExtendedPointer {
 
 
   protected final String path;
+
   protected final PathElement root;
 
 
@@ -152,15 +153,6 @@ public class JPointer implements JsonExtendedPointer {
 
 
   @Override
-  public ResultOfAdd testAdd(JsonStructure target) {
-    if (target.getValueType() == ValueType.OBJECT) {
-      return root.testAdd((JsonObject) target);
-    }
-    return root.testAdd((JsonArray) target);
-  }
-
-
-  @Override
   public <T extends JsonStructure> T remove(T target) {
     if (target.getValueType() == ValueType.OBJECT) {
       root.remove((JsonObject) target);
@@ -179,6 +171,15 @@ public class JPointer implements JsonExtendedPointer {
       root.replace((JsonArray) target, value);
     }
     return target;
+  }
+
+
+  @Override
+  public ResultOfAdd testAdd(JsonStructure target) {
+    if (target.getValueType() == ValueType.OBJECT) {
+      return root.testAdd((JsonObject) target);
+    }
+    return root.testAdd((JsonArray) target);
   }
 
 }

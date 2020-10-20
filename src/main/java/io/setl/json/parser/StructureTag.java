@@ -11,4 +11,5 @@ class StructureTag {
   StructureTag(StructureTag parent) {
     this.parent = parent;
   }
+
 }

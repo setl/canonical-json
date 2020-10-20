@@ -5,10 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import io.setl.json.JObject;
-import io.setl.json.builder.JArrayBuilder;
-import io.setl.json.builder.JObjectBuilder;
-import io.setl.json.io.Location;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map.Entry;
@@ -21,7 +17,13 @@ import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
+
 import org.junit.Test;
+
+import io.setl.json.JObject;
+import io.setl.json.builder.JArrayBuilder;
+import io.setl.json.builder.JObjectBuilder;
+import io.setl.json.io.Location;
 
 /**
  * @author Simon Greatrix on 17/01/2020.
@@ -340,4 +342,5 @@ public class JStructureParserTest {
         buf.toString()
     );
   }
+
 }

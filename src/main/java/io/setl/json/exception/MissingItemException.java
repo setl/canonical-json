@@ -1,10 +1,11 @@
 package io.setl.json.exception;
 
-import io.setl.json.primitive.PString;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 import javax.json.JsonValue.ValueType;
+
+import io.setl.json.primitive.PString;
 
 /**
  * Exception thrown when at attempt to retrieve a required datum from a JObject or JArray fails because the datum is missing. The javax.json API requires that

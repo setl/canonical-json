@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import javax.json.JsonValue.ValueType;
+
 import org.junit.Test;
 
 /**
@@ -132,4 +133,5 @@ public class PLongTest {
   public void testToString() {
     assertNotNull(pl.toString());
   }
+
 }

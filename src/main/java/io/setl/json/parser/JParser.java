@@ -1,5 +1,15 @@
 package io.setl.json.parser;
 
+import java.io.Reader;
+import java.math.BigDecimal;
+import java.util.Map.Entry;
+import java.util.stream.Stream;
+import javax.json.JsonValue;
+import javax.json.JsonValue.ValueType;
+import javax.json.stream.JsonLocation;
+import javax.json.stream.JsonParser;
+import javax.json.stream.JsonParsingException;
+
 import io.setl.json.JArray;
 import io.setl.json.JObject;
 import io.setl.json.Primitive;
@@ -10,15 +20,6 @@ import io.setl.json.primitive.PString;
 import io.setl.json.primitive.PTrue;
 import io.setl.json.primitive.numbers.NumberParser;
 import io.setl.json.primitive.numbers.PNumber;
-import java.io.Reader;
-import java.math.BigDecimal;
-import java.util.Map.Entry;
-import java.util.stream.Stream;
-import javax.json.JsonValue;
-import javax.json.JsonValue.ValueType;
-import javax.json.stream.JsonLocation;
-import javax.json.stream.JsonParser;
-import javax.json.stream.JsonParsingException;
 
 /**
  * @author Simon Greatrix on 10/01/2020.
@@ -673,4 +674,5 @@ public class JParser extends BaseIterator<JsonParser.Event> implements JsonParse
     }
     isObject[depth] = startObject;
   }
+
 }

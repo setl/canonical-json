@@ -2,10 +2,10 @@ package io.setl.json.io;
 
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.nio.charset.StandardCharsets.UTF_8;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import io.setl.json.primitive.PTrue;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Reader;
@@ -15,8 +15,11 @@ import javax.json.JsonObject;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 import javax.json.stream.JsonParsingException;
+
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import io.setl.json.primitive.PTrue;
 
 /**
  * @author Simon Greatrix on 27/01/2020.
@@ -39,6 +42,7 @@ public class JReaderTest {
     jReader.close();
   }
 
+
   @Test(expected = JsonParsingException.class)
   public void close3() throws IOException {
     Reader reader = Mockito.mock(Reader.class);
@@ -46,6 +50,7 @@ public class JReaderTest {
     JReader jReader = new JReaderFactory().createReader(reader);
     jReader.close();
   }
+
 
   @Test
   public void emptyConfig() {
@@ -129,4 +134,5 @@ public class JReaderTest {
     JsonValue value = jReader.readValue();
     jReader.close();
   }
+
 }

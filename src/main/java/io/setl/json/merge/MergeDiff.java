@@ -1,11 +1,12 @@
 package io.setl.json.merge;
 
-import io.setl.json.JObject;
 import java.util.HashSet;
 import java.util.Iterator;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
+
+import io.setl.json.JObject;
 
 /**
  * @author Simon Greatrix on 28/01/2020.
@@ -75,4 +76,5 @@ public class MergeDiff {
       }
     }
   }
+
 }

@@ -12,6 +12,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,6 +40,7 @@ public class Utf8WriterTest {
       isFlushed = true;
       super.flush();
     }
+
   }
 
 
@@ -149,4 +151,5 @@ public class Utf8WriterTest {
     writer.write(test, 3, 6);
     verifyUtf8("lo, Wo".toCharArray());
   }
+
 }

@@ -2,7 +2,6 @@ package io.setl.json.patch.ops;
 
 import javax.json.JsonObject;
 import javax.json.JsonPatch.Operation;
-import javax.json.JsonPointer;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 
@@ -83,10 +82,12 @@ public class Copy extends PatchOperation {
     return from;
   }
 
+
   @JsonIgnore
   public JsonExtendedPointer getFromPointer() {
     return fromPointer;
   }
+
 
   @Override
   public Operation getOperation() {

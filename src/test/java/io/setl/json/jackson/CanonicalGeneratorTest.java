@@ -15,7 +15,6 @@ import com.fasterxml.jackson.core.io.SerializedString;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.IntNode;
 import io.setl.json.JArray;
-import io.setl.json.JCanonicalObject;
 import io.setl.json.JObject;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -164,7 +163,7 @@ public class CanonicalGeneratorTest {
     JArray array = new JArray();
     array.add("A");
     array.add(1);
-    JObject object = new JCanonicalObject();
+    JObject object = new JObject();
     object.put("A", 1);
     object.put("B", 2);
     array.add(object);

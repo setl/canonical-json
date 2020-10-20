@@ -187,7 +187,7 @@ public class JArrayTest {
   @Test
   public void testAddIntJsonObject() {
     JArray ja = new JArray(Arrays.asList(0, 1, 2));
-    JObject jo = new JCanonicalObject(Collections.singletonMap("a", 1));
+    JObject jo = new JObject(Collections.singletonMap("a", 1));
     ja.add(2, jo);
     ja.add(2, (JObject) null);
     assertEquals(1, ja.getInt(1, -1));
@@ -248,7 +248,7 @@ public class JArrayTest {
   @Test
   public void testAddJsonObject() {
     JArray ja = new JArray(Arrays.asList(0, 1, 2));
-    JObject jo = new JCanonicalObject(Collections.singletonMap("a", 1));
+    JObject jo = new JObject(Collections.singletonMap("a", 1));
     ja.add(jo);
     ja.add((JObject) null);
     assertEquals(2, ja.getInt(2, -1));
@@ -662,8 +662,8 @@ public class JArrayTest {
     Map<String, Number> map2 = Collections.singletonMap("b", 1);
 
     JArray ja = new JArray(Arrays.asList(0, map1, 4));
-    JObject j1 = new JCanonicalObject(map1);
-    JObject j2 = new JCanonicalObject(map2);
+    JObject j1 = new JObject(map1);
+    JObject j2 = new JObject(map2);
 
     assertNull(ja.optObject(0));
     assertEquals(j1, ja.optObject(1));
@@ -863,7 +863,7 @@ public class JArrayTest {
   @Test
   public void testSetObject() {
     JArray ja = new JArray(Arrays.asList(1, 2, 3));
-    JObject j2 = new JCanonicalObject(Collections.singletonMap("x", "y"));
+    JObject j2 = new JObject(Collections.singletonMap("x", "y"));
     ja.set(0, (JObject) null);
     ja.set(1, j2);
     assertEquals(Primitive.NULL, ja.get(0));

@@ -9,7 +9,7 @@ import javax.json.JsonStructure;
 import javax.json.JsonValue;
 
 import io.setl.json.JArray;
-import io.setl.json.JCanonicalObject;
+import io.setl.json.JObject;
 import io.setl.json.exception.PointerMismatchException;
 
 /**
@@ -57,7 +57,7 @@ public class EmptyPointer implements JsonExtendedPointer {
   @Nonnull
   private JsonObject copy(@Nonnull JsonObject source, @Nullable JsonObject target) {
     if (target == null || target == JsonValue.EMPTY_JSON_OBJECT) {
-      target = new JCanonicalObject();
+      target = new JObject();
     }
     target.putAll(source);
     return target;

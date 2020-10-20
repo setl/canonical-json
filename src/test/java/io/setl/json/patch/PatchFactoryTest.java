@@ -15,7 +15,7 @@ import javax.json.JsonValue;
 import org.junit.Test;
 
 import io.setl.json.JArray;
-import io.setl.json.JCanonicalObject;
+import io.setl.json.JObject;
 import io.setl.json.Primitive;
 import io.setl.json.primitive.PFalse;
 import io.setl.json.primitive.PNull;
@@ -53,7 +53,7 @@ public class PatchFactoryTest {
 
 
   private static JsonObject createObject(int depth) {
-    JsonObject object = new JCanonicalObject();
+    JsonObject object = new JObject();
     int size = random.nextInt(16);
     for (int i = 0; i < size; i++) {
       String key = Character.toString('a' + i);

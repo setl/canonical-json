@@ -7,8 +7,6 @@ import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrappe
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonMapFormatVisitor;
 import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.StringKeySerializer;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-
-import io.setl.json.JCanonicalObject;
 import io.setl.json.JObject;
 
 /**

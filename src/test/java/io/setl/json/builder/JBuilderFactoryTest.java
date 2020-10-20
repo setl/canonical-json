@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
 import io.setl.json.JArray;
-import io.setl.json.JCanonicalObject;
 import io.setl.json.JObject;
 import io.setl.json.Primitive;
 import java.util.ArrayList;
@@ -51,7 +50,7 @@ public class JBuilderFactoryTest {
 
   @Test
   public void testCreateArrayBuilder() {
-    JObject object = new JCanonicalObject();
+    JObject object = new JObject();
     object.put("A", 1);
     JArray array = new JArray();
     array.add(object);
@@ -80,7 +79,7 @@ public class JBuilderFactoryTest {
 
   @Test
   public void testCreateObjectBuilder() {
-    JsonObject jsonObject = new JCanonicalObject();
+    JsonObject jsonObject = new JObject();
     jsonObject.put("A", Primitive.create("B"));
     JsonObjectBuilder builder = factory.createObjectBuilder(jsonObject);
     assertNotNull(builder);

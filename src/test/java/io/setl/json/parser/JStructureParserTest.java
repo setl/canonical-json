@@ -5,7 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import io.setl.json.JCanonicalObject;
+import io.setl.json.JObject;
 import io.setl.json.builder.JArrayBuilder;
 import io.setl.json.builder.JObjectBuilder;
 import io.setl.json.io.Location;
@@ -287,7 +287,7 @@ public class JStructureParserTest {
     Stream<JsonValue> stream = parser.getValueStream();
     List<JsonValue> jvs = stream.collect(Collectors.toList());
     assertEquals(1, jvs.size());
-    assertTrue(jvs.get(0) instanceof JCanonicalObject);
+    assertTrue(jvs.get(0) instanceof JObject);
   }
 
 

@@ -9,7 +9,7 @@ import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 
 import io.setl.json.JArray;
-import io.setl.json.JCanonicalObject;
+import io.setl.json.JObject;
 
 /**
  * @author Simon Greatrix on 27/01/2020.
@@ -74,7 +74,7 @@ public class JPointer implements JsonExtendedPointer {
 
   private JsonObject doCopy(JsonObject source, JsonObject target) {
     if (target == null || target == JsonValue.EMPTY_JSON_OBJECT) {
-      target = new JCanonicalObject();
+      target = new JObject();
     }
     root.copy(source, target);
     return target;

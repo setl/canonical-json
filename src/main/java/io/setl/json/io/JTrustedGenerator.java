@@ -1,6 +1,6 @@
 package io.setl.json.io;
 
-import io.setl.json.JCanonicalObject;
+import io.setl.json.JObject;
 import io.setl.json.Primitive;
 import io.setl.json.exception.JsonIOException;
 import io.setl.json.primitive.PString;
@@ -105,7 +105,7 @@ class JTrustedGenerator extends JGenerator {
       if (writtenKey) {
         throw new JsonGenerationException("Cannot write key twice in object context");
       }
-      if (lastKey != null && JCanonicalObject.CODE_POINT_ORDER.compare(lastKey, key) > -1) {
+      if (lastKey != null && JObject.CODE_POINT_ORDER.compare(lastKey, key) > -1) {
         throw new JsonGenerationException("Key " + Primitive.create(key) + " must not come after " + Primitive.create(lastKey));
       }
       lastKey = key;

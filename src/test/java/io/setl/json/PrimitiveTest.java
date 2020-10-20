@@ -46,9 +46,9 @@ public class PrimitiveTest {
     testCreate(ValueType.STRING, "abc", "abc");
     testCreate(ValueType.NUMBER, 123, 123);
     testCreate(ValueType.ARRAY, new JArray(), new JArray());
-    testCreate(ValueType.OBJECT, new JCanonicalObject(), new JCanonicalObject());
+    testCreate(ValueType.OBJECT, new JObject(), new JObject());
     testCreate(ValueType.ARRAY, new JArray(), new ArrayList<>());
-    testCreate(ValueType.OBJECT, new JCanonicalObject(), new HashMap<>());
+    testCreate(ValueType.OBJECT, new JObject(), new HashMap<>());
 
     try {
       Primitive.create(this.getClass());

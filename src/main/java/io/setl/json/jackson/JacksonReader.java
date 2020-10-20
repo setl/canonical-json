@@ -14,7 +14,6 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.TreeNode;
 
 import io.setl.json.JArray;
-import io.setl.json.JCanonicalObject;
 import io.setl.json.JObject;
 import io.setl.json.exception.JsonIOException;
 import io.setl.json.io.Location;
@@ -77,7 +76,7 @@ public class JacksonReader implements JsonReader {
 
   private JsonObject doReadObject() throws IOException {
     // Read the object. The start object token has already been read.
-    JObject jObject = new JCanonicalObject();
+    JObject jObject = new JObject();
     while (true) {
       JsonToken token = jsonParser.nextToken();
       if (token == JsonToken.END_OBJECT) {

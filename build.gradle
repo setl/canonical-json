@@ -1,5 +1,3 @@
-import com.github.spotbugs.SpotBugsTask
-
 buildscript {
     repositories {
         maven { url "http://si-nexus01.dev.setl.io:8081/repository/maven-public/" }
@@ -22,13 +20,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'org.sonarqube'
 
 group 'io.setl'
-version '1.2-SNAPSHOT'
-sourceCompatibility = 11
-targetCompatibility = 11
-
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-}
+version '1.0-SNAPSHOT'
 
 checkstyle {
     toolVersion = "7.8.2"
@@ -42,15 +34,15 @@ spotbugs {
     reportsDir = file("$project.buildDir/findbugsReports")
 }
 
-task findSecurityBugs(type: SpotBugsTask) {
-    classes = fileTree(project.rootDir.absolutePath).include("**/*.class")
-    source = fileTree(project.rootDir.absolutePath).include("**/*.java")
+task findSecurityBugs(type: com.github.spotbugs.SpotBugsTask) {
+    classes = fileTree(project.rootDir.absolutePath).include("**/*.class");
+    source = fileTree(project.rootDir.absolutePath).include("**/*.java");
     classpath = files()
     pluginClasspath = project.configurations.spotbugsPlugins
 }
 
 jacoco {
-    toolVersion = "0.8.5"
+    toolVersion = "0.8.2"
 }
 
 repositories {
@@ -73,14 +65,15 @@ dependencies {
     compileOnly group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
     compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.9'
     compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.9'
+    compileOnly group: 'io.swagger.core.v3', name: 'swagger-annotations', version: '2.1.1'
     compileOnly group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: '2.2.4.RELEASE'
     compileOnly group: 'org.springframework', name: 'spring-webmvc', version: '5.2.3.RELEASE'
 
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    testCompile group: 'org.mockito', name: 'mockito-core', version: '3.2.4'
     testCompile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-smile', version: '2.10.2'
     testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.9'
     testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.9'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'org.mockito', name: 'mockito-core', version: '3.2.4'
 
     spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.10.0'
 }

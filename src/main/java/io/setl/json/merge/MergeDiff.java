@@ -1,6 +1,5 @@
 package io.setl.json.merge;
 
-import io.setl.json.JCanonicalObject;
 import io.setl.json.JObject;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -26,7 +25,7 @@ public class MergeDiff {
       return new JMerge(output);
     }
 
-    JsonObject merge = new JCanonicalObject();
+    JsonObject merge = new JObject();
     JsonObject inObject = (JsonObject) input;
     JsonObject outObject = (JsonObject) output;
 
@@ -63,7 +62,7 @@ public class MergeDiff {
       JsonValue outValue = outObject.get(s);
 
       if (inValue.getValueType() == ValueType.OBJECT && outValue.getValueType() == ValueType.OBJECT) {
-        JObject childMerge = new JCanonicalObject();
+        JObject childMerge = new JObject();
         doDiff(childMerge, (JsonObject) inValue, (JsonObject) outValue);
         if (!childMerge.isEmpty()) {
           merge.put(s, childMerge);

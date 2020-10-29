@@ -74,11 +74,13 @@ public class JacksonReader implements JsonReader {
   }
 
 
-  private JsonObject doReadObject() throws IOException {
+  private JsonObject doReadObject(boolean getNext) throws IOException {
     // Read the object. The start object token has already been read.
     JObject jObject = new JObject();
+
+    // Due to weirdness in Jackson, sometimes the START_OBJECT and FIELD_NAME have been read, sometimes just START_OBJECT
+    JsonToken token = getNext ? jsonParser.nextToken() : jsonParser.currentToken();
     while (true) {
-      JsonToken token = jsonParser.nextToken();
       if (token == JsonToken.END_OBJECT) {
         return jObject;
       }
@@ -88,8 +90,10 @@ public class JacksonReader implements JsonReader {
         throw new IllegalStateException("Expected a field name inside object, but saw " + token);
       }
       String fieldName = jsonParser.getText();
-
       jObject.put(fieldName, doReadValue(jsonParser.nextToken()));
+
+      // Advance to next field
+      token = jsonParser.nextToken();
     }
   }
 
@@ -102,7 +106,13 @@ public class JacksonReader implements JsonReader {
       case START_ARRAY:
         return doReadArray();
       case START_OBJECT:
-        return doReadObject();
+        return doReadObject(true);
+      case FIELD_NAME:
+        return doReadObject(false);
+      case END_OBJECT:
+        return JsonValue.EMPTY_JSON_OBJECT;
+      case END_ARRAY:
+        return JsonValue.EMPTY_JSON_ARRAY;
       case VALUE_FALSE:
         return PFalse.FALSE;
       case VALUE_TRUE:
@@ -148,7 +158,7 @@ public class JacksonReader implements JsonReader {
         return doReadArray();
       }
       if (token == JsonToken.START_OBJECT) {
-        return doReadObject();
+        return doReadObject(true);
       }
       throw new JsonParsingException("Cannot create structure when next item in JSON stream is " + token, getLocation());
     } catch (IOException e) {
@@ -178,7 +188,7 @@ public class JacksonReader implements JsonReader {
     try {
       JsonToken token = jsonParser.hasCurrentToken() ? jsonParser.currentToken() : jsonParser.nextToken();
       if (token == JsonToken.START_OBJECT) {
-        return doReadObject();
+        return doReadObject(true);
       }
       throw new JsonParsingException("Cannot create object when next item in JSON stream is " + token, getLocation());
     } catch (IOException e) {

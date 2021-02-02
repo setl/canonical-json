@@ -23,16 +23,23 @@ public class AppendableOutput implements PrettyOutput {
   private int indent = 0;
 
 
+  /**
+   * Create a pretty output writing to the specified Appendable.
+   *
+   * @param appendable          the output destination
+   * @param smallStructureLimit the maximum size for a small structure
+   */
   public AppendableOutput(Appendable appendable, int smallStructureLimit) {
     this.appendable = appendable;
     if (smallStructureLimit < 2) {
       this.smallStructureLimit = 0;
     } else {
-      this.smallStructureLimit = smallStructureLimit-2;
+      this.smallStructureLimit = smallStructureLimit - 2;
     }
   }
 
 
+  @Override
   public PrettyOutput append(CharSequence csq) {
     try {
       appendable.append(csq);
@@ -52,6 +59,7 @@ public class AppendableOutput implements PrettyOutput {
   }
 
 
+  @Override
   public PrettyOutput append(CharSequence csq, int start, int end) {
     try {
       appendable.append(csq, start, end);
@@ -62,6 +70,7 @@ public class AppendableOutput implements PrettyOutput {
   }
 
 
+  @Override
   public PrettyOutput append(char c) {
     try {
       if (c < 3) {

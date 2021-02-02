@@ -71,6 +71,13 @@ public class GeneratorFactory implements JsonGeneratorFactory {
   }
 
 
+  /**
+   * Create a generator encapsulating the given appendable.
+   *
+   * @param appendable the appendable
+   *
+   * @return the generator
+   */
   public Generator createGenerator(Appendable appendable) {
     if (trustKeyOrder) {
       return new TrustedGenerator(createFormatter(appendable));

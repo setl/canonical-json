@@ -1840,6 +1840,7 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
   }
 
 
+  @Override
   public String toCanonicalString() {
     StringBuilder buf = new StringBuilder();
     Generator generator = CanonicalJsonProvider.CANONICAL_GENERATOR_FACTORY.createGenerator(buf);
@@ -1853,6 +1854,7 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
   }
 
 
+  @Override
   public String toPrettyString() {
     StringBuilder buf = new StringBuilder();
     Generator generator = CanonicalJsonProvider.PRETTY_GENERATOR_FACTORY.createGenerator(buf);

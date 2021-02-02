@@ -15,12 +15,6 @@ import io.setl.json.pointer.JsonExtendedPointer;
  */
 public interface PointerTree {
 
-  /** An empty tree. */
-  PointerTree EMPTY = PointerEmptyTree.INSTANCE;
-
-  /** A tree that points to the root. */
-  PointerTree ROOT = PointerRootTree.INSTANCE;
-
   /**
    * Check if this tree of pointers contains pointers to all parts of the specified value.
    *

@@ -1,7 +1,5 @@
 package io.setl.json;
 
-import static io.setl.json.CJArray.asJArray;
-import static io.setl.json.CJArray.fixCollection;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -11,10 +9,9 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import io.setl.json.exception.IncorrectTypeException;
-import io.setl.json.exception.MissingItemException;
-import io.setl.json.primitive.CJTrue;
-import io.setl.json.primitive.numbers.CJNumber;
+import static io.setl.json.CJArray.asJArray;
+import static io.setl.json.CJArray.fixCollection;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -28,7 +25,13 @@ import java.util.Spliterator;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
+
 import org.junit.Test;
+
+import io.setl.json.exception.IncorrectTypeException;
+import io.setl.json.exception.MissingItemException;
+import io.setl.json.primitive.CJTrue;
+import io.setl.json.primitive.numbers.CJNumber;
 
 public class CJArrayTest {
 
@@ -550,7 +553,9 @@ public class CJArrayTest {
       // correct
     }
 
-    ja = new CJArray(Arrays.asList(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Float.NaN, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY));
+    ja = new CJArray(Arrays.asList(Double.NaN, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY,
+        Float.NaN, Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY
+    ));
     assertEquals("[\"NaN\",\"-Infinity\",\"Infinity\",\"NaN\",\"-Infinity\",\"Infinity\"]", ja.toString());
     assertTrue(Double.isNaN(ja.optDouble(0)));
     assertTrue(Double.isInfinite(ja.getDouble(1)));
@@ -922,4 +927,5 @@ public class CJArrayTest {
     assertEquals(10, ja.toArray(new JsonValue[5]).length);
     assertEquals(10, ja.toArray(JsonValue[]::new).length);
   }
+
 }

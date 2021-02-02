@@ -104,7 +104,7 @@ class SafeGenerator extends Generator {
 
 
 
-  protected class RootContext implements Context {
+  protected static class RootContext implements Context {
 
     Canonical output = null;
 

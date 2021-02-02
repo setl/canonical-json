@@ -29,6 +29,7 @@ import io.setl.json.primitive.numbers.CJNumber;
 /**
  * @author Simon Greatrix on 08/01/2020.
  */
+@SuppressWarnings("OverloadMethodsDeclarationOrder")
 public interface Canonical extends JsonValue {
 
   /**
@@ -328,8 +329,10 @@ public interface Canonical extends JsonValue {
   }
 
   /**
-   * Get the canonical JSON representation of the specified value
+   * Get the canonical JSON representation of the specified value.
+   *
    * @param value the value
+   *
    * @return the canonical JSON
    */
   static String toCanonicalString(Canonical value) {
@@ -338,7 +341,9 @@ public interface Canonical extends JsonValue {
 
   /**
    * Get a pretty JSON representation of the specified value.
+   *
    * @param value the value
+   *
    * @return the pretty JSON
    */
   static String toPrettyString(Canonical value) {

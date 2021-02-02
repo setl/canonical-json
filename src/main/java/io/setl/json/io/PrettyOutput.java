@@ -58,7 +58,7 @@ interface PrettyOutput extends Appendable {
 
 
   /**
-   * Append a special symbol to the output
+   * Append a special symbol to the output.
    *
    * @param special the symbol
    *

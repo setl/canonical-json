@@ -1,7 +1,5 @@
 package io.setl.json.pointer;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.json.JsonArray;
 import javax.json.JsonValue;
 
@@ -53,7 +51,7 @@ public class ArrayTerminal extends ObjectTerminal {
 
 
   @Override
-  public void copy(@Nonnull JsonArray source, @Nullable JsonArray target) {
+  public void copy(JsonArray source, JsonArray target) {
     while (target.size() <= index) {
       target.add(null);
     }

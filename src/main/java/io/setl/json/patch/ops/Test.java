@@ -7,8 +7,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Objects;
 import javax.json.JsonException;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.json.JsonPatch.Operation;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
@@ -18,9 +16,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import io.setl.json.JObject;
-import io.setl.json.Primitive;
-import io.setl.json.builder.JObjectBuilder;
+import io.setl.json.CJObject;
+import io.setl.json.Canonical;
+import io.setl.json.builder.ObjectBuilder;
 import io.setl.json.exception.IncorrectDigestException;
 import io.setl.json.exception.IncorrectValueException;
 import io.setl.json.patch.PatchOperation;
@@ -58,7 +56,7 @@ public class Test extends PatchOperation {
       throw new JsonException("Invalid digest algorithm: \"" + algorithm + "\"", e);
     }
 
-    String canonical = Primitive.cast(jsonValue).toString();
+    String canonical = Canonical.toCanonicalString(Canonical.cast(jsonValue));
     return hash.digest(canonical.getBytes(UTF_8));
   }
 
@@ -142,7 +140,7 @@ public class Test extends PatchOperation {
    *
    * @param object representation of the test
    */
-  public Test(JObject object) {
+  public Test(CJObject object) {
     super(object);
     this.value = object.optJsonValue("value");
     this.digest = object.optString("digest");
@@ -253,8 +251,8 @@ public class Test extends PatchOperation {
 
 
   @Override
-  public JsonObject toJsonObject() {
-    JsonObjectBuilder builder = new JObjectBuilder()
+  public CJObject toJsonObject() {
+    ObjectBuilder builder = new ObjectBuilder()
         .add("op", getOperation().operationName())
         .add("path", getPath());
 

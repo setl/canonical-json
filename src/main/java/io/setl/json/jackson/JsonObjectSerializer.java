@@ -8,12 +8,12 @@ import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonMapFormatVisitor;
 import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.StringKeySerializer;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
-import io.setl.json.JObject;
+import io.setl.json.CJObject;
 
 /**
  * @author Simon Greatrix on 06/01/2020.
  */
-public class JsonObjectSerializer extends PrimitiveSerializer<JObject> {
+public class JsonObjectSerializer extends CanonicalSerializer<CJObject> {
 
   /** Serialize the string key as strings. Weirdly Jackson defines the String Key Serializer as serializing Objects. */
   private static final JsonSerializer<Object> KEY_SERIALIZER = new StringKeySerializer();
@@ -28,14 +28,14 @@ public class JsonObjectSerializer extends PrimitiveSerializer<JObject> {
     JsonMapFormatVisitor v2 = visitor.expectMapFormat(type);
     if (v2 != null) {
       v2.keyFormat(KEY_SERIALIZER, KEY_TYPE);
-      v2.valueFormat(PBaseSerializer.INSTANCE, PBaseSerializer.TYPE);
+      v2.valueFormat(CJBaseSerializer.INSTANCE, CJBaseSerializer.TYPE);
     }
   }
 
 
   @Override
-  public Class<JObject> handledType() {
-    return JObject.class;
+  public Class<CJObject> handledType() {
+    return CJObject.class;
   }
 
 }

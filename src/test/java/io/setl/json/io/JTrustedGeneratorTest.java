@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import javax.json.JsonValue;
 import javax.json.stream.JsonGenerationException;
+import javax.naming.NoPermissionException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +23,7 @@ import io.setl.json.exception.JsonIOException;
  */
 public class JTrustedGeneratorTest {
 
-  JGenerator generator;
+  TrustedGenerator generator;
 
   StringWriter writer;
 
@@ -30,7 +31,7 @@ public class JTrustedGeneratorTest {
   @Test
   public void close() throws IOException {
     Writer writer = Mockito.mock(Writer.class);
-    generator = new JTrustedGenerator(writer);
+    generator = new TrustedGenerator(new NoOpFormatter(writer));
     generator.close();
     Mockito.verify(writer).close();
   }
@@ -66,7 +67,7 @@ public class JTrustedGeneratorTest {
   @Before
   public void reset() {
     writer = new StringWriter();
-    generator = new JTrustedGenerator(writer);
+    generator = new TrustedGenerator(new NoOpFormatter(writer));
   }
 
 
@@ -294,7 +295,7 @@ public class JTrustedGeneratorTest {
   public void writeIOFailure() throws IOException {
     Writer writer = Mockito.mock(Writer.class);
     Mockito.doThrow(new IOException()).when(writer).append(anyChar());
-    generator = new JTrustedGenerator(writer);
+    generator = new TrustedGenerator(new NoOpFormatter(writer));
     generator.write("fail");
   }
 
@@ -303,7 +304,7 @@ public class JTrustedGeneratorTest {
   public void writeIOFailure2() throws IOException {
     Writer writer = Mockito.mock(Writer.class);
     Mockito.doThrow(new IOException()).when(writer).close();
-    generator = new JTrustedGenerator(writer);
+    generator = new TrustedGenerator(new NoOpFormatter(writer));
     generator.close();
   }
 
@@ -312,7 +313,7 @@ public class JTrustedGeneratorTest {
   public void writeIOFailure3() throws IOException {
     Writer writer = Mockito.mock(Writer.class);
     Mockito.doThrow(new IOException()).when(writer).flush();
-    generator = new JTrustedGenerator(writer);
+    generator = new TrustedGenerator(new NoOpFormatter(writer));
     generator.flush();
   }
 

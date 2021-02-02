@@ -14,14 +14,14 @@ import javax.json.JsonValue;
 
 import org.junit.Test;
 
-import io.setl.json.JArray;
-import io.setl.json.JObject;
-import io.setl.json.Primitive;
-import io.setl.json.primitive.PFalse;
-import io.setl.json.primitive.PNull;
-import io.setl.json.primitive.PString;
-import io.setl.json.primitive.PTrue;
-import io.setl.json.primitive.numbers.PNumber;
+import io.setl.json.CJArray;
+import io.setl.json.CJObject;
+import io.setl.json.Canonical;
+import io.setl.json.primitive.CJFalse;
+import io.setl.json.primitive.CJNull;
+import io.setl.json.primitive.CJString;
+import io.setl.json.primitive.CJTrue;
+import io.setl.json.primitive.numbers.CJNumber;
 
 /**
  * @author Simon Greatrix on 10/02/2020.
@@ -46,7 +46,7 @@ public class PatchFactoryTest {
 
 
   private static JsonArray createArray(int depth) {
-    JsonArray array = new JArray();
+    JsonArray array = new CJArray();
     int size = random.nextInt(16);
     for (int i = 0; i < size; i++) {
       array.add(createValue(depth));
@@ -56,7 +56,7 @@ public class PatchFactoryTest {
 
 
   private static JsonObject createObject(int depth) {
-    JsonObject object = new JObject();
+    JsonObject object = new CJObject();
     int size = random.nextInt(16);
     for (int i = 0; i < size; i++) {
       String key = Character.toString('a' + i);
@@ -83,18 +83,18 @@ public class PatchFactoryTest {
           }
           break;
         case 2:
-          value = PNull.NULL;
+          value = CJNull.NULL;
           break;
         case 3:
         case 4:
-          value = PString.create(Integer.toString(random.nextInt(), 36));
+          value = CJString.create(Integer.toString(random.nextInt(), 36));
           break;
         case 5:
         case 6:
-          value = PNumber.create(random.nextInt());
+          value = CJNumber.create(random.nextInt());
           break;
         default:
-          value = random.nextBoolean() ? PTrue.TRUE : PFalse.FALSE;
+          value = random.nextBoolean() ? CJTrue.TRUE : CJFalse.FALSE;
           break;
       }
     }
@@ -105,7 +105,7 @@ public class PatchFactoryTest {
   static PatchSet<JsonObject> makeObjectSet() {
     PatchSet<JsonObject> set = new PatchSet<>();
     set.before = createObject(0);
-    set.after = Primitive.cast(set.before).copy().asJsonObject();
+    set.after = Canonical.cast(set.before).copy().asJsonObject();
     for (int j = 0; j < 10; j++) {
       mutateObject(0, set.after);
     }
@@ -180,7 +180,7 @@ public class PatchFactoryTest {
   public void testDefaultsOnArrays() {
     for (int i = 0; i < 1000; i++) {
       JsonArray source = createArray(0);
-      JsonArray target = Primitive.cast(source).copy().asJsonArray();
+      JsonArray target = Canonical.cast(source).copy().asJsonArray();
       for (int j = 0; j < 10; j++) {
         mutateArray(0, target);
       }
@@ -197,7 +197,7 @@ public class PatchFactoryTest {
   public void testDefaultsOnObjects() {
     for (int i = 0; i < 1000; i++) {
       JsonObject source = createObject(0);
-      JsonObject target = Primitive.cast(source).copy().asJsonObject();
+      JsonObject target = Canonical.cast(source).copy().asJsonObject();
       for (int j = 0; j < 10; j++) {
         mutateObject(0, target);
       }
@@ -214,7 +214,7 @@ public class PatchFactoryTest {
   public void testWithTestsAndDigests() {
     for (int i = 0; i < 1000; i++) {
       JsonArray source = createArray(0);
-      JsonArray target = Primitive.cast(source).copy().asJsonArray();
+      JsonArray target = Canonical.cast(source).copy().asJsonArray();
       for (int j = 0; j < 10; j++) {
         mutateArray(0, target);
       }

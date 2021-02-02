@@ -12,7 +12,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 import io.setl.json.exception.JsonIOException;
 import io.setl.json.exception.NonFiniteNumberException;
-import io.setl.json.primitive.numbers.PNumber;
+import io.setl.json.primitive.numbers.CJNumber;
 
 /**
  * Write a Json Value out to a Jackson Generator.
@@ -95,24 +95,24 @@ public class JacksonGenerator {
 
 
   private void generateNumber(JsonNumber jsonValue) throws IOException {
-    PNumber pNumber;
+    CJNumber pNumber;
     try {
-      pNumber = PNumber.cast(jsonValue);
+      pNumber = CJNumber.cast(jsonValue);
     } catch (NonFiniteNumberException e) {
       jsonGenerator.writeString(e.getRepresentation().getString());
       return;
     }
     switch (pNumber.getNumberType()) {
-      case PNumber.TYPE_INT:
+      case CJNumber.TYPE_INT:
         jsonGenerator.writeNumber(pNumber.intValue());
         return;
-      case PNumber.TYPE_LONG:
+      case CJNumber.TYPE_LONG:
         jsonGenerator.writeNumber(pNumber.longValue());
         return;
-      case PNumber.TYPE_BIG_INT:
+      case CJNumber.TYPE_BIG_INT:
         jsonGenerator.writeNumber(pNumber.bigIntegerValue());
         return;
-      case PNumber.TYPE_DECIMAL:
+      case CJNumber.TYPE_DECIMAL:
         jsonGenerator.writeNumber(pNumber.bigDecimalValue());
         return;
       default:

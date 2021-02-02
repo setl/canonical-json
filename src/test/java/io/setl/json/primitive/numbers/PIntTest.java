@@ -20,7 +20,7 @@ public class PIntTest {
 
   private int v = 1234567890;
 
-  private PInt pi = new PInt(v);
+  private CJInt pi = new CJInt(v);
 
 
   @Test
@@ -76,7 +76,7 @@ public class PIntTest {
 
   @Test
   public void getNumberType() {
-    assertEquals(PNumber.TYPE_INT, pi.getNumberType());
+    assertEquals(CJNumber.TYPE_INT, pi.getNumberType());
   }
 
 

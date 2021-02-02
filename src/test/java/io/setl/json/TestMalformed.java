@@ -2,7 +2,7 @@ package io.setl.json;
 
 import static org.junit.Assert.fail;
 
-import io.setl.json.io.JReaderFactory;
+import io.setl.json.io.ReaderFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -29,7 +29,7 @@ public class TestMalformed {
         InputStream input = TestMalformed.class.getClassLoader().getResourceAsStream("malformed/" + resource);
         Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8)
     ) {
-      return new JReaderFactory().createReader(reader).readValue();
+      return new ReaderFactory().createReader(reader).readValue();
     }
   }
 

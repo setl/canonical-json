@@ -1,6 +1,5 @@
 package io.setl.json.patch.ops;
 
-import javax.json.JsonObject;
 import javax.json.JsonPatch.Operation;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
@@ -9,11 +8,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import io.setl.json.JObject;
-import io.setl.json.builder.JObjectBuilder;
+import io.setl.json.CJObject;
+import io.setl.json.builder.ObjectBuilder;
 import io.setl.json.patch.PatchOperation;
-import io.setl.json.pointer.JPointerFactory;
 import io.setl.json.pointer.JsonExtendedPointer;
+import io.setl.json.pointer.PointerFactory;
 
 /**
  * @author Simon Greatrix on 06/02/2020.
@@ -38,7 +37,7 @@ public class Move extends PatchOperation {
   ) {
     super(path);
     this.from = from;
-    fromPointer = JPointerFactory.create(from);
+    fromPointer = PointerFactory.create(from);
   }
 
 
@@ -47,10 +46,10 @@ public class Move extends PatchOperation {
    *
    * @param object the representation
    */
-  public Move(JObject object) {
+  public Move(CJObject object) {
     super(object);
     this.from = object.getString("from");
-    fromPointer = JPointerFactory.create(from);
+    fromPointer = PointerFactory.create(from);
   }
 
 
@@ -105,8 +104,8 @@ public class Move extends PatchOperation {
 
 
   @Override
-  public JsonObject toJsonObject() {
-    return new JObjectBuilder()
+  public CJObject toJsonObject() {
+    return new ObjectBuilder()
         .add("op", getOperation().operationName())
         .add("path", getPath())
         .add("from", from)

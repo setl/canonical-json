@@ -11,9 +11,9 @@ import javax.json.JsonValue;
 
 import org.junit.Test;
 
-import io.setl.json.Primitive;
-import io.setl.json.builder.JArrayBuilder;
-import io.setl.json.builder.JObjectBuilder;
+import io.setl.json.Canonical;
+import io.setl.json.builder.ArrayBuilder;
+import io.setl.json.builder.ObjectBuilder;
 import io.setl.json.exception.PointerMismatchException;
 
 /**
@@ -21,11 +21,11 @@ import io.setl.json.exception.PointerMismatchException;
  */
 public class EmptyPointerTest {
 
-  JsonObject object1 = new JObjectBuilder().add("a", "b").build();
+  JsonObject object1 = new ObjectBuilder().add("a", "b").build();
 
-  JsonObject object2 = new JObjectBuilder().add("c", "d").build();
+  JsonObject object2 = new ObjectBuilder().add("c", "d").build();
 
-  JsonExtendedPointer pointer = JPointerFactory.create("");
+  JsonExtendedPointer pointer = PointerFactory.create("");
 
 
   @Test
@@ -37,7 +37,7 @@ public class EmptyPointerTest {
 
   @Test(expected = PointerMismatchException.class)
   public void add2() {
-    JsonObject jo = pointer.add(object1, Primitive.EMPTY_JSON_ARRAY);
+    JsonObject jo = pointer.add(object1, Canonical.EMPTY_JSON_ARRAY);
     assertEquals(object2, jo);
   }
 
@@ -45,7 +45,7 @@ public class EmptyPointerTest {
   @Test
   public void containsPointer() {
     assertTrue(pointer.isParentOf(pointer));
-    JsonExtendedPointer p2 = JPointerFactory.create("/");
+    JsonExtendedPointer p2 = PointerFactory.create("/");
     assertTrue(pointer.isParentOf(p2));
     assertFalse(p2.isParentOf(pointer));
   }
@@ -59,7 +59,7 @@ public class EmptyPointerTest {
 
   @Test
   public void copyArray() {
-    JsonArray array = new JArrayBuilder().add(1).add(2).add(JsonValue.EMPTY_JSON_OBJECT).build();
+    JsonArray array = new ArrayBuilder().add(1).add(2).add(JsonValue.EMPTY_JSON_OBJECT).build();
     JsonArray o = pointer.copy(array, null);
     assertEquals(array, o);
   }

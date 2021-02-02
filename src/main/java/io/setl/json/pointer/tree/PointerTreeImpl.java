@@ -9,7 +9,7 @@ import javax.json.JsonObject;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 
-import io.setl.json.Primitive;
+import io.setl.json.Canonical;
 import io.setl.json.pointer.JsonExtendedPointer;
 
 /**
@@ -51,7 +51,7 @@ public class PointerTreeImpl implements PointerTree {
   @Nullable
   public <T extends JsonStructure> T copy(@Nonnull T value) {
     // Create an appropriate root
-    T result = Primitive.createEmpty(value);
+    T result = Canonical.createEmpty(value);
     for (JsonExtendedPointer p : pointers) {
       result = p.copy(value, result);
     }
@@ -100,7 +100,7 @@ public class PointerTreeImpl implements PointerTree {
   @Override
   public <T extends JsonStructure> T remove(T value) {
     @SuppressWarnings("unchecked")
-    T target = (T) Primitive.cast(value).copy();
+    T target = (T) Canonical.cast(value).copy();
     for (JsonExtendedPointer p : pointers) {
       if (p.containsValue(target)) {
         p.remove(target);

@@ -6,7 +6,7 @@ import javax.json.JsonObject;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 
-import io.setl.json.JObject;
+import io.setl.json.CJObject;
 
 /**
  * @author Simon Greatrix on 28/01/2020.
@@ -21,18 +21,18 @@ public class MergeDiff {
    *
    * @return the patch
    */
-  public static JMerge create(JsonValue input, JsonValue output) {
+  public static Merge create(JsonValue input, JsonValue output) {
     if (input.getValueType() != ValueType.OBJECT || output.getValueType() != ValueType.OBJECT) {
-      return new JMerge(output);
+      return new Merge(output);
     }
 
-    JsonObject merge = new JObject();
+    JsonObject merge = new CJObject();
     JsonObject inObject = (JsonObject) input;
     JsonObject outObject = (JsonObject) output;
 
     doDiff(merge, inObject, outObject);
 
-    return new JMerge(merge);
+    return new Merge(merge);
   }
 
 
@@ -63,7 +63,7 @@ public class MergeDiff {
       JsonValue outValue = outObject.get(s);
 
       if (inValue.getValueType() == ValueType.OBJECT && outValue.getValueType() == ValueType.OBJECT) {
-        JObject childMerge = new JObject();
+        CJObject childMerge = new CJObject();
         doDiff(childMerge, (JsonObject) inValue, (JsonObject) outValue);
         if (!childMerge.isEmpty()) {
           merge.put(s, childMerge);

@@ -82,7 +82,7 @@ public final class PatchFactory {
   private final EnumSet<DiffFeatures> features;
 
   /** The patch operations that make up the derived patch. */
-  private final JPatchBuilder patchBuilder = new JPatchBuilder();
+  private final PatchBuilder patchBuilder = new PatchBuilder();
 
 
   private PatchFactory(Set<DiffFeatures> features) {

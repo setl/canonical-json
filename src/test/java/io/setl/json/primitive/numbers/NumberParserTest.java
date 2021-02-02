@@ -14,20 +14,20 @@ import org.junit.Test;
  */
 public class NumberParserTest {
 
-  private PNumber call(Number n) {
+  private CJNumber call(Number n) {
     return call(n.toString());
   }
 
 
-  private PNumber call(String s) {
+  private CJNumber call(String s) {
     return invoke(new BigDecimal(s));
   }
 
 
-  private PNumber invoke(BigDecimal value) {
+  private CJNumber invoke(BigDecimal value) {
     Input input = new Input(new StringReader(value.toString()));
     NumberParser np = new NumberParser(input);
-    PNumber result = np.parse(input.read());
+    CJNumber result = np.parse(input.read());
     assertTrue(value.compareTo(new BigDecimal(result.toString())) == 0);
     return result;
   }
@@ -35,53 +35,53 @@ public class NumberParserTest {
 
   @Test
   public void test() {
-    PNumber pn = call(0);
-    assertEquals(PNumber.TYPE_INT, pn.getNumberType());
+    CJNumber pn = call(0);
+    assertEquals(CJNumber.TYPE_INT, pn.getNumberType());
     pn = call(1000000);
-    assertEquals(PNumber.TYPE_INT, pn.getNumberType());
+    assertEquals(CJNumber.TYPE_INT, pn.getNumberType());
     pn = call("-1000000.000");
-    assertEquals(PNumber.TYPE_INT, pn.getNumberType());
+    assertEquals(CJNumber.TYPE_INT, pn.getNumberType());
 
     pn = call(Integer.MIN_VALUE);
-    assertEquals(PNumber.TYPE_INT, pn.getNumberType());
+    assertEquals(CJNumber.TYPE_INT, pn.getNumberType());
     pn = call(Integer.MIN_VALUE / 10);
-    assertEquals(PNumber.TYPE_INT, pn.getNumberType());
+    assertEquals(CJNumber.TYPE_INT, pn.getNumberType());
 
     pn = call(Integer.MAX_VALUE);
-    assertEquals(PNumber.TYPE_INT, pn.getNumberType());
+    assertEquals(CJNumber.TYPE_INT, pn.getNumberType());
     pn = call(Integer.MAX_VALUE / 10);
-    assertEquals(PNumber.TYPE_INT, pn.getNumberType());
+    assertEquals(CJNumber.TYPE_INT, pn.getNumberType());
 
     pn = call(-1L + Integer.MIN_VALUE);
-    assertEquals(PNumber.TYPE_LONG, pn.getNumberType());
+    assertEquals(CJNumber.TYPE_LONG, pn.getNumberType());
     pn = call(Long.MIN_VALUE);
-    assertEquals(PNumber.TYPE_LONG, pn.getNumberType());
+    assertEquals(CJNumber.TYPE_LONG, pn.getNumberType());
     pn = call(Long.MIN_VALUE / 10);
-    assertEquals(PNumber.TYPE_LONG, pn.getNumberType());
+    assertEquals(CJNumber.TYPE_LONG, pn.getNumberType());
 
     pn = call(1L + Integer.MAX_VALUE);
-    assertEquals(PNumber.TYPE_LONG, pn.getNumberType());
+    assertEquals(CJNumber.TYPE_LONG, pn.getNumberType());
     pn = call(Long.MAX_VALUE);
-    assertEquals(PNumber.TYPE_LONG, pn.getNumberType());
+    assertEquals(CJNumber.TYPE_LONG, pn.getNumberType());
     pn = call(Long.MAX_VALUE / 10);
-    assertEquals(PNumber.TYPE_LONG, pn.getNumberType());
+    assertEquals(CJNumber.TYPE_LONG, pn.getNumberType());
 
     pn = call(BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.ONE));
-    assertEquals(PNumber.TYPE_BIG_INT, pn.getNumberType());
+    assertEquals(CJNumber.TYPE_BIG_INT, pn.getNumberType());
 
     pn = call(BigInteger.valueOf(Long.MIN_VALUE).subtract(BigInteger.ONE));
-    assertEquals(PNumber.TYPE_BIG_INT, pn.getNumberType());
+    assertEquals(CJNumber.TYPE_BIG_INT, pn.getNumberType());
 
     // 30 zeros
     pn = call("1000000000000000000000000000000");
-    assertEquals(PNumber.TYPE_BIG_INT, pn.getNumberType());
+    assertEquals(CJNumber.TYPE_BIG_INT, pn.getNumberType());
 
     // 31 zeros
     pn = call("10000000000000000000000000000000");
-    assertEquals(PNumber.TYPE_DECIMAL, pn.getNumberType());
+    assertEquals(CJNumber.TYPE_DECIMAL, pn.getNumberType());
 
     pn = call("1000000000000000000000000000000010000000000000000000000000000000");
-    assertEquals(PNumber.TYPE_DECIMAL, pn.getNumberType());
+    assertEquals(CJNumber.TYPE_DECIMAL, pn.getNumberType());
   }
 
 }

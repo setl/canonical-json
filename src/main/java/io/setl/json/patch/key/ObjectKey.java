@@ -1,6 +1,6 @@
 package io.setl.json.patch.key;
 
-import io.setl.json.pointer.JPointer;
+import io.setl.json.pointer.Pointer;
 
 public class ObjectKey extends Key {
 
@@ -9,7 +9,7 @@ public class ObjectKey extends Key {
 
   public ObjectKey(Key parent, String key) {
     super(parent);
-    escaped = JPointer.escapeKey(key);
+    escaped = Pointer.escapeKey(key);
   }
 
 

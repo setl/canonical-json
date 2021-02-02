@@ -16,8 +16,8 @@ import com.fasterxml.jackson.databind.node.BinaryNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Test;
 
-import io.setl.json.builder.JArrayBuilder;
-import io.setl.json.builder.JObjectBuilder;
+import io.setl.json.builder.ArrayBuilder;
+import io.setl.json.builder.ObjectBuilder;
 
 /**
  * @author Simon Greatrix on 28/02/2020.
@@ -26,13 +26,13 @@ public class ConvertTest {
 
   @Test
   public void test() {
-    JObjectBuilder builder = new JObjectBuilder();
-    builder.add("a", new JArrayBuilder()
+    ObjectBuilder builder = new ObjectBuilder();
+    builder.add("a", new ArrayBuilder()
         .add(1).add(2.0).add(1_000_000_000_000L).add(BigInteger.ONE.shiftLeft(100)).add(BigDecimal.valueOf(Math.PI)).add("Hello"))
         .add("b0", true)
         .add("b1", false)
         .addNull("n")
-        .add("o", new JObjectBuilder().add("x", "y").add("a", "b"));
+        .add("o", new ObjectBuilder().add("x", "y").add("a", "b"));
     JsonObject jsonObject = builder.build();
 
     JsonNode jsonNode = Convert.toJackson(jsonObject);
@@ -43,7 +43,7 @@ public class ConvertTest {
 
   @Test
   public void testArray() {
-    JsonArray array = new JArrayBuilder()
+    JsonArray array = new ArrayBuilder()
         .add(1).add(2.0).add(1_000_000_000_000L).add(BigInteger.ONE.shiftLeft(100)).add(BigDecimal.valueOf(Math.PI)).add("Hello").build();
 
     ArrayNode jsonNode = Convert.toJackson(array);
@@ -64,7 +64,7 @@ public class ConvertTest {
 
   @Test
   public void testObject() {
-    JObjectBuilder builder = new JObjectBuilder();
+    ObjectBuilder builder = new ObjectBuilder();
     builder.add("b0", true)
         .add("b1", false)
         .addNull("n");

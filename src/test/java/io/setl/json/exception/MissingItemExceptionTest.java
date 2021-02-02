@@ -10,27 +10,27 @@ import javax.json.JsonValue.ValueType;
 import org.junit.Before;
 import org.junit.Test;
 
-import io.setl.json.JArray;
-import io.setl.json.JObject;
+import io.setl.json.CJArray;
+import io.setl.json.CJObject;
 
 public class MissingItemExceptionTest {
 
-  JArray array;
+  CJArray array;
 
-  JObject object;
+  CJObject object;
 
 
   @Before
   public void setUp() {
-    object = new JObject();
-    object.put("array", new JArray());
+    object = new CJObject();
+    object.put("array", new CJArray());
     object.put("boolean", true);
     object.put("null");
     object.put("string", "text");
     object.put("number", 123);
-    object.put("object", new JObject());
+    object.put("object", new CJObject());
 
-    array = new JArray();
+    array = new CJArray();
     array.addAll(object.values());
   }
 

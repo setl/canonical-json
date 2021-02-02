@@ -25,8 +25,8 @@ import com.fasterxml.jackson.databind.node.IntNode;
 import org.junit.Before;
 import org.junit.Test;
 
-import io.setl.json.JArray;
-import io.setl.json.JObject;
+import io.setl.json.CJArray;
+import io.setl.json.CJObject;
 
 /**
  * @author Simon Greatrix on 06/01/2020.
@@ -163,10 +163,10 @@ public class CanonicalGeneratorTest {
 
   @Test
   public void testWritingJson() throws IOException {
-    JArray array = new JArray();
+    CJArray array = new CJArray();
     array.add("A");
     array.add(1);
-    JObject object = new JObject();
+    CJObject object = new CJObject();
     object.put("A", 1);
     object.put("B", 2);
     array.add(object);

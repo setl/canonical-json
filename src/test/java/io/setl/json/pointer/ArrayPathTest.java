@@ -10,59 +10,59 @@ import javax.json.JsonPointer;
 
 import org.junit.Test;
 
-import io.setl.json.JArray;
-import io.setl.json.builder.JArrayBuilder;
+import io.setl.json.CJArray;
+import io.setl.json.builder.ArrayBuilder;
 import io.setl.json.exception.PointerIndexException;
-import io.setl.json.io.JReaderFactory;
+import io.setl.json.io.ReaderFactory;
 
 /**
  * @author Simon Greatrix on 27/01/2020.
  */
 public class ArrayPathTest {
 
-  JsonArray array = new JArrayBuilder().add(1).add(new JArrayBuilder().add(0).add(1)).build();
+  JsonArray array = new ArrayBuilder().add(1).add(new ArrayBuilder().add(0).add(1)).build();
 
 
   @Test
   public void containsPointer() {
-    JsonExtendedPointer pointer = JPointerFactory.create("/2/1");
-    JsonExtendedPointer pointer2 = JPointerFactory.create("/2/1");
+    JsonExtendedPointer pointer = PointerFactory.create("/2/1");
+    JsonExtendedPointer pointer2 = PointerFactory.create("/2/1");
     assertTrue(pointer.isParentOf(pointer2));
-    pointer2 = JPointerFactory.create("/2/1/a/b");
+    pointer2 = PointerFactory.create("/2/1/a/b");
     assertTrue(pointer.isParentOf(pointer2));
     assertFalse(pointer2.isParentOf(pointer));
-    pointer2 = JPointerFactory.create("/2/a/b");
+    pointer2 = PointerFactory.create("/2/a/b");
     assertFalse(pointer.isParentOf(pointer2));
-    pointer2 = JPointerFactory.create("/2/a");
+    pointer2 = PointerFactory.create("/2/a");
     assertFalse(pointer.isParentOf(pointer2));
-    pointer2 = JPointerFactory.create("");
+    pointer2 = PointerFactory.create("");
     assertFalse(pointer.isParentOf(pointer2));
   }
 
 
   @Test
   public void containsValue() {
-    JsonPointer pointer = JPointerFactory.create("/2/1");
+    JsonPointer pointer = PointerFactory.create("/2/1");
     assertFalse(pointer.containsValue(array));
   }
 
 
   @Test
   public void copy() {
-    JsonArray array = new JReaderFactory().createReader(new StringReader("[1,[0,{\"a\":true}]]")).readArray();
-    JsonExtendedPointer pointer = JPointerFactory.create("/1/1/a");
-    JsonArray out = new JArray();
+    JsonArray array = new ReaderFactory().createReader(new StringReader("[1,[0,{\"a\":true}]]")).readArray();
+    JsonExtendedPointer pointer = PointerFactory.create("/1/1/a");
+    JsonArray out = new CJArray();
     pointer.copy(array, out);
     assertEquals("[null,[null,{\"a\":true}]]", out.toString());
 
-    array = new JReaderFactory().createReader(new StringReader("[1,{\"1\":{\"a\":true}}]")).readArray();
-    pointer = JPointerFactory.create("/1/1/a");
-    out = new JArray();
+    array = new ReaderFactory().createReader(new StringReader("[1,{\"1\":{\"a\":true}}]")).readArray();
+    pointer = PointerFactory.create("/1/1/a");
+    out = new CJArray();
     pointer.copy(array, out);
     assertEquals("[null,{\"1\":{\"a\":true}}]", out.toString());
 
-    pointer = JPointerFactory.create("/4/1/a");
-    out = new JArray();
+    pointer = PointerFactory.create("/4/1/a");
+    out = new CJArray();
     pointer.copy(array, out);
     assertEquals("[null,null,null,null,null]", out.toString());
   }
@@ -70,7 +70,7 @@ public class ArrayPathTest {
 
   @Test(expected = PointerIndexException.class)
   public void getValue() {
-    JsonPointer pointer = JPointerFactory.create("/2/foo");
+    JsonPointer pointer = PointerFactory.create("/2/foo");
     pointer.getValue(array);
   }
 

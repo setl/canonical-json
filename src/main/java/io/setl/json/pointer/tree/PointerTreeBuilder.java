@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import io.setl.json.pointer.JPointerFactory;
+import io.setl.json.pointer.PointerFactory;
 import io.setl.json.pointer.JsonExtendedPointer;
 
 /**
@@ -21,7 +21,7 @@ public class PointerTreeBuilder {
 
 
   public PointerTreeBuilder add(String path) {
-    return add(JPointerFactory.create(path));
+    return add(PointerFactory.create(path));
   }
 
 

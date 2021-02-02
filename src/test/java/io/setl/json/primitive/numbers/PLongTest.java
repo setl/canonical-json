@@ -20,7 +20,7 @@ public class PLongTest {
 
   private long v = 1234567890123456789L;
 
-  private PLong pl = new PLong(v);
+  private CJLong pl = new CJLong(v);
 
 
   @Test
@@ -76,7 +76,7 @@ public class PLongTest {
 
   @Test
   public void getNumberType() {
-    assertEquals(PNumber.TYPE_LONG, pl.getNumberType());
+    assertEquals(CJNumber.TYPE_LONG, pl.getNumberType());
   }
 
 

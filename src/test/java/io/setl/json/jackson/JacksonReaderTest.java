@@ -21,8 +21,8 @@ import com.fasterxml.jackson.dataformat.smile.SmileParser;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import io.setl.json.builder.JArrayBuilder;
-import io.setl.json.builder.JObjectBuilder;
+import io.setl.json.builder.ArrayBuilder;
+import io.setl.json.builder.ObjectBuilder;
 import io.setl.json.exception.JsonIOException;
 
 /**
@@ -38,11 +38,11 @@ public class JacksonReaderTest {
     SmileGenerator smileGenerator = smileFactory.createGenerator(outputStream);
     JacksonGenerator jacksonGenerator = new JacksonGenerator(smileGenerator);
 
-    JsonObject object = new JObjectBuilder()
+    JsonObject object = new ObjectBuilder()
         .add("a", 1)
-        .add("b", new JArrayBuilder().add("x").add("y").add("z"))
+        .add("b", new ArrayBuilder().add("x").add("y").add("z"))
         .addNull("c")
-        .add("d", new JObjectBuilder().add("e", true).add("f", false))
+        .add("d", new ObjectBuilder().add("e", true).add("f", false))
         .add("g", 1000000000000L)
         .add("h", BigInteger.ONE.shiftLeft(70))
         .add("i", new BigDecimal("1.234"))
@@ -131,11 +131,11 @@ public class JacksonReaderTest {
     SmileGenerator smileGenerator = smileFactory.createGenerator(outputStream);
     JacksonGenerator jacksonGenerator = new JacksonGenerator(smileGenerator);
 
-    JsonObject object = new JObjectBuilder()
+    JsonObject object = new ObjectBuilder()
         .add("a", 1)
-        .add("b", new JArrayBuilder().add("x").add("y").add("z"))
+        .add("b", new ArrayBuilder().add("x").add("y").add("z"))
         .addNull("c")
-        .add("d", new JObjectBuilder().add("e", true).add("f", false))
+        .add("d", new ObjectBuilder().add("e", true).add("f", false))
         .add("g", 1000000000000L)
         .add("h", BigInteger.ONE.shiftLeft(70))
         .add("i", new BigDecimal("1.234"))
@@ -212,9 +212,9 @@ public class JacksonReaderTest {
     SmileGenerator smileGenerator = smileFactory.createGenerator(outputStream);
     JacksonGenerator jacksonGenerator = new JacksonGenerator(smileGenerator);
 
-    JsonArray array = new JArrayBuilder().add("x").add("y").add("z")
-        .add(new JObjectBuilder().add("e", true).add("f", false))
-        .add(new JArrayBuilder().add(1).add(1.234).add(true))
+    JsonArray array = new ArrayBuilder().add("x").add("y").add("z")
+        .add(new ObjectBuilder().add("e", true).add("f", false))
+        .add(new ArrayBuilder().add(1).add(1.234).add(true))
         .build();
 
     jacksonGenerator.generate(array);
@@ -237,9 +237,9 @@ public class JacksonReaderTest {
     SmileGenerator smileGenerator = smileFactory.createGenerator(outputStream);
     JacksonGenerator jacksonGenerator = new JacksonGenerator(smileGenerator);
 
-    JsonArray array = new JArrayBuilder().add("x").add("y").add("z")
-        .add(new JObjectBuilder().add("e", true).add("f", false))
-        .add(new JArrayBuilder().add(1).add(1.234).add(true))
+    JsonArray array = new ArrayBuilder().add("x").add("y").add("z")
+        .add(new ObjectBuilder().add("e", true).add("f", false))
+        .add(new ArrayBuilder().add(1).add(1.234).add(true))
         .build();
 
     jacksonGenerator.generate(array);

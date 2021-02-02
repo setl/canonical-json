@@ -3,10 +3,10 @@ package io.setl.json;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
-import io.setl.json.io.JReaderFactory;
+import io.setl.json.io.ReaderFactory;
 import io.setl.json.io.Location;
-import io.setl.json.parser.JParser;
-import io.setl.json.parser.JParserFactory;
+import io.setl.json.parser.Parser;
+import io.setl.json.parser.ParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -38,7 +38,7 @@ public class TestParsing {
 
 
   private JsonValue loadResource(String resource) throws IOException {
-    JReaderFactory readerFactory = new JReaderFactory();
+    ReaderFactory readerFactory = new ReaderFactory();
     try (
         InputStream input = TestParsing.class.getClassLoader().getResourceAsStream(PATH + resource);
         Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8)
@@ -56,7 +56,7 @@ public class TestParsing {
         InputStream input = TestParsing.class.getClassLoader().getResourceAsStream(PATH + resource);
         Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8)
     ) {
-      JParser parser = new JParser(reader);
+      Parser parser = new Parser(reader);
       if (!parser.hasNext()) {
         throw new JsonParsingException("Input was expected", null);
       }
@@ -68,7 +68,7 @@ public class TestParsing {
 
 
   private JsonValue parseResource(String resource) throws IOException {
-    JParserFactory factory = new JParserFactory(null);
+    ParserFactory factory = new ParserFactory(null);
     try (
         InputStream input = TestParsing.class.getClassLoader().getResourceAsStream(PATH + resource);
         Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8)
@@ -88,7 +88,7 @@ public class TestParsing {
   private void test(Exec exec) throws IOException {
     JsonArray array = (JsonArray) loadResource("all_files.json");
     for (JsonValue jv : array) {
-      Primitive p2 = (Primitive) jv;
+      Canonical p2 = (Canonical) jv;
       String f = p2.getValueSafe(String.class);
       JsonParsingException thrown = null;
       try {

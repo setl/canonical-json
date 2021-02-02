@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import io.setl.json.pointer.JPointerFactory;
+import io.setl.json.pointer.PointerFactory;
 
 /**
  * @author Simon Greatrix on 17/02/2020.
@@ -37,11 +37,11 @@ public class PointerTreeBuilderTest {
 
     PointerTreeImpl impl = (PointerTreeImpl) tree;
     assertEquals(4, impl.getPointers().size());
-    assertTrue(impl.getPointers().contains(JPointerFactory.create("/a/b")));
-    assertTrue(impl.getPointers().contains(JPointerFactory.create("/a/c/-/a")));
-    assertTrue(impl.getPointers().contains(JPointerFactory.create("/z")));
-    assertFalse(impl.getPointers().contains(JPointerFactory.create("/z/d")));
-    assertTrue(impl.getPointers().contains(JPointerFactory.create("/a/a")));
+    assertTrue(impl.getPointers().contains(PointerFactory.create("/a/b")));
+    assertTrue(impl.getPointers().contains(PointerFactory.create("/a/c/-/a")));
+    assertTrue(impl.getPointers().contains(PointerFactory.create("/z")));
+    assertFalse(impl.getPointers().contains(PointerFactory.create("/z/d")));
+    assertTrue(impl.getPointers().contains(PointerFactory.create("/a/a")));
   }
 
 }

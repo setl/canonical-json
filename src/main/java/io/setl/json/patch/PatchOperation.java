@@ -1,6 +1,5 @@
 package io.setl.json.patch;
 
-import javax.json.JsonObject;
 import javax.json.JsonPatch.Operation;
 import javax.json.JsonStructure;
 
@@ -12,15 +11,15 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
-import io.setl.json.JObject;
+import io.setl.json.CJObject;
 import io.setl.json.patch.ops.Add;
 import io.setl.json.patch.ops.Copy;
 import io.setl.json.patch.ops.Move;
 import io.setl.json.patch.ops.Remove;
 import io.setl.json.patch.ops.Replace;
 import io.setl.json.patch.ops.Test;
-import io.setl.json.pointer.JPointerFactory;
 import io.setl.json.pointer.JsonExtendedPointer;
+import io.setl.json.pointer.PointerFactory;
 
 /**
  * @author Simon Greatrix on 06/02/2020.
@@ -47,7 +46,7 @@ public abstract class PatchOperation {
 
   protected PatchOperation(String path) {
     this.path = path;
-    pointer = JPointerFactory.create(path);
+    pointer = PointerFactory.create(path);
   }
 
 
@@ -57,7 +56,7 @@ public abstract class PatchOperation {
   }
 
 
-  protected PatchOperation(JObject object) {
+  protected PatchOperation(CJObject object) {
     this(object.getString("path"));
   }
 
@@ -106,7 +105,17 @@ public abstract class PatchOperation {
   }
 
 
-  public abstract JsonObject toJsonObject();
+  public String toCanonicalString() {
+    return toJsonObject().toCanonicalString();
+  }
+
+
+  public abstract CJObject toJsonObject();
+
+
+  public String toPrettyString() {
+    return toJsonObject().toPrettyString();
+  }
 
 
   @Override

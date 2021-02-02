@@ -1,6 +1,6 @@
 package io.setl.json.parser;
 
-import static io.setl.json.parser.JParser.safe;
+import static io.setl.json.parser.Parser.safe;
 
 import javax.json.stream.JsonParsingException;
 

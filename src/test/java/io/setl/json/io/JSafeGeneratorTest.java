@@ -22,7 +22,7 @@ import io.setl.json.exception.JsonIOException;
  */
 public class JSafeGeneratorTest {
 
-  JGenerator generator;
+  Generator generator;
 
   StringWriter writer;
 
@@ -30,7 +30,8 @@ public class JSafeGeneratorTest {
   @Test
   public void close() throws IOException {
     Writer writer = Mockito.mock(Writer.class);
-    generator = new JSafeGenerator(writer);
+    NoOpFormatter formatter = new NoOpFormatter(writer);
+    generator = new SafeGenerator(formatter);
     generator.close();
     Mockito.verify(writer).close();
   }
@@ -58,7 +59,8 @@ public class JSafeGeneratorTest {
   @Before
   public void reset() {
     writer = new StringWriter();
-    generator = new JSafeGenerator(writer);
+    NoOpFormatter formatter = new NoOpFormatter(writer);
+    generator = new SafeGenerator(formatter);
   }
 
 
@@ -298,8 +300,10 @@ public class JSafeGeneratorTest {
   public void writeIOFailure() throws IOException {
     Writer writer = Mockito.mock(Writer.class);
     Mockito.doThrow(new IOException()).when(writer).append(anyChar());
-    generator = new JSafeGenerator(writer);
+    NoOpFormatter formatter = new NoOpFormatter(writer);
+    generator = new SafeGenerator(formatter);
     generator.write("fail");
+    generator.close();
   }
 
 
@@ -307,7 +311,8 @@ public class JSafeGeneratorTest {
   public void writeIOFailure2() throws IOException {
     Writer writer = Mockito.mock(Writer.class);
     Mockito.doThrow(new IOException()).when(writer).close();
-    generator = new JSafeGenerator(writer);
+    NoOpFormatter formatter = new NoOpFormatter(writer);
+    generator = new SafeGenerator(formatter);
     generator.close();
   }
 
@@ -316,7 +321,8 @@ public class JSafeGeneratorTest {
   public void writeIOFailure3() throws IOException {
     Writer writer = Mockito.mock(Writer.class);
     Mockito.doThrow(new IOException()).when(writer).flush();
-    generator = new JSafeGenerator(writer);
+    NoOpFormatter formatter = new NoOpFormatter(writer);
+    generator = new SafeGenerator(formatter);
     generator.flush();
   }
 
@@ -593,13 +599,13 @@ public class JSafeGeneratorTest {
 
   @Test(expected = JsonGenerationException.class)
   public void writeTwoInRoot4() {
-    generator.write(1).writeStartObject();
+    generator.write(1).writeStartObject().writeEnd();
   }
 
 
   @Test(expected = JsonGenerationException.class)
   public void writeTwoInRoot5() {
-    generator.write(1).writeStartArray();
+    generator.write(1).writeStartArray().writeEnd();
   }
 
 

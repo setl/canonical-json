@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 
-import io.setl.json.Primitive;
+import io.setl.json.Canonical;
 import io.setl.json.pointer.JsonExtendedPointer;
 
 /**
@@ -54,7 +54,7 @@ public class PointerEmptyTree implements PointerTree {
   @SuppressWarnings("unchecked")
   public <T extends JsonStructure> T remove(T value) {
     // Nothing will be removed, so just do a copy
-    return (T) Primitive.cast(value).copy();
+    return (T) Canonical.cast(value).copy();
   }
 
 }

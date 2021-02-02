@@ -11,21 +11,21 @@ import javax.json.JsonObject;
 
 import org.junit.Test;
 
-import io.setl.json.builder.JArrayBuilder;
-import io.setl.json.builder.JObjectBuilder;
+import io.setl.json.builder.ArrayBuilder;
+import io.setl.json.builder.ObjectBuilder;
 
 /**
  * @author Simon Greatrix on 17/01/2020.
  */
 public class ArrayWalkerTest {
 
-  ArrayWalker walker = new ArrayWalker(null, new JArrayBuilder()
-      .add(new JArrayBuilder().add(1).add("b"))
+  ArrayWalker walker = new ArrayWalker(null, new ArrayBuilder()
+      .add(new ArrayBuilder().add(1).add("b"))
       .add(BigDecimal.TEN)
       .add(56)
       .add(10_000_000_000L)
       .add(5.68)
-      .add(new JObjectBuilder().add("a", 1).addNull("b"))
+      .add(new ObjectBuilder().add("a", 1).addNull("b"))
       .add("wibble")
       .build());
 

@@ -12,7 +12,7 @@ import org.junit.Test;
  */
 public class PJsonTest {
 
-  PJson pJson = new PJson("wibble");
+  CJJson pJson = new CJJson("wibble");
 
 
   @Test

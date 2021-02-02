@@ -5,8 +5,8 @@ import javax.json.JsonObject;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 
-import io.setl.json.JArray;
-import io.setl.json.JObject;
+import io.setl.json.CJArray;
+import io.setl.json.CJObject;
 import io.setl.json.exception.PointerIndexException;
 import io.setl.json.pointer.JsonExtendedPointer.ResultOfAdd;
 
@@ -68,7 +68,7 @@ public class ArrayPath extends ObjectPath {
     switch (sourceValue.getValueType()) {
       case OBJECT:
         if (targetValue == null || targetValue.getValueType() != ValueType.OBJECT) {
-          targetValue = new JObject();
+          targetValue = new CJObject();
           target.set(index, targetValue);
         }
         child.copy((JsonObject) sourceValue, (JsonObject) targetValue);
@@ -76,7 +76,7 @@ public class ArrayPath extends ObjectPath {
 
       case ARRAY:
         if (targetValue == null || targetValue.getValueType() != ValueType.ARRAY) {
-          targetValue = new JArray();
+          targetValue = new CJArray();
           target.set(index, targetValue);
         }
         child.copy((JsonArray) sourceValue, (JsonArray) targetValue);

@@ -8,8 +8,8 @@ import javax.json.JsonValue;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import io.setl.json.JObject;
-import io.setl.json.builder.JObjectBuilder;
+import io.setl.json.CJObject;
+import io.setl.json.builder.ObjectBuilder;
 import io.setl.json.patch.PatchOperation;
 
 /**
@@ -30,7 +30,7 @@ public class Add extends PatchOperation {
   }
 
 
-  public Add(JObject object) {
+  public Add(CJObject object) {
     super(object);
     this.value = object.getJsonValue("value");
   }
@@ -80,8 +80,8 @@ public class Add extends PatchOperation {
 
 
   @Override
-  public JsonObject toJsonObject() {
-    return new JObjectBuilder()
+  public CJObject toJsonObject() {
+    return new ObjectBuilder()
         .add("op", getOperation().operationName())
         .add("path", getPath())
         .add("value", getValue())

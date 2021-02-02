@@ -3,7 +3,7 @@ package io.setl.json;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.fail;
 
-import io.setl.json.io.JReaderFactory;
+import io.setl.json.io.ReaderFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,7 +38,7 @@ public class TestCanonical {
   }
 
 
-  private Primitive loadJson(String resource, Function<Reader, Primitive> parser) throws IOException {
+  private Canonical loadJson(String resource, Function<Reader, Canonical> parser) throws IOException {
     try (
         InputStream input = TestParsing.class.getClassLoader().getResourceAsStream(resource);
         Reader reader = new InputStreamReader(input, UTF_8)
@@ -48,16 +48,16 @@ public class TestCanonical {
   }
 
 
-  private void testParse(Function<Reader, Primitive> parser) throws IOException {
-    Primitive p = loadJson("expected.json", parser);
-    JArray array = p.getValueSafe(JArray.class);
+  private void testParse(Function<Reader, Canonical> parser) throws IOException {
+    Canonical p = loadJson("expected.json", parser);
+    CJArray array = p.getValueSafe(CJArray.class);
     ByteArrayOutputStream output = new ByteArrayOutputStream();
     for (JsonValue p2 : array) {
-      String f = Primitive.getValue(String.class, p2);
+      String f = Canonical.getValue(String.class, p2);
 
-      Primitive primitive;
+      Canonical canonical;
       try {
-        primitive = loadJson(f + "input.json", parser);
+        canonical = loadJson(f + "input.json", parser);
       } catch (IOException ioe) {
         throw new AssertionError("FAIL processing " + f + " : " + ioe.getMessage(), ioe);
       } catch (Error err) {
@@ -69,7 +69,7 @@ public class TestCanonical {
         throw new AssertionError("ABEND processing " + f, re);
       }
       output.reset();
-      primitive.writeTo(output);
+      canonical.writeTo(output);
 
       // HACK! Every expected.json file has a terminal NL character as that is how they are in the original repository. The NL character is not a correct part
       // of the output.
@@ -94,8 +94,8 @@ public class TestCanonical {
   @Test
   public void testStream() throws IOException {
     testParse(r -> {
-      JsonReader jr = new JReaderFactory().createReader(r);
-      return (Primitive) jr.readValue();
+      JsonReader jr = new ReaderFactory().createReader(r);
+      return (Canonical) jr.readValue();
     });
   }
 

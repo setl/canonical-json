@@ -13,15 +13,15 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.TreeNode;
 
-import io.setl.json.JArray;
-import io.setl.json.JObject;
+import io.setl.json.CJArray;
+import io.setl.json.CJObject;
 import io.setl.json.exception.JsonIOException;
 import io.setl.json.io.Location;
-import io.setl.json.primitive.PFalse;
-import io.setl.json.primitive.PNull;
-import io.setl.json.primitive.PString;
-import io.setl.json.primitive.PTrue;
-import io.setl.json.primitive.numbers.PNumber;
+import io.setl.json.primitive.CJFalse;
+import io.setl.json.primitive.CJNull;
+import io.setl.json.primitive.CJString;
+import io.setl.json.primitive.CJTrue;
+import io.setl.json.primitive.numbers.CJNumber;
 
 /**
  * @author Simon Greatrix on 31/01/2020.
@@ -63,26 +63,26 @@ public class JacksonReader implements JsonReader {
 
   private JsonArray doReadArray() throws IOException {
     // Read the array. The start array token has already been read.
-    JArray jArray = new JArray();
+    CJArray array = new CJArray();
     while (true) {
       JsonToken token = jsonParser.nextToken();
       if (token == JsonToken.END_ARRAY) {
-        return jArray;
+        return array;
       }
-      jArray.add(doReadValue(token));
+      array.add(doReadValue(token));
     }
   }
 
 
   private JsonObject doReadObject(boolean getNext) throws IOException {
     // Read the object. The start object token has already been read.
-    JObject jObject = new JObject();
+    CJObject object = new CJObject();
 
     // Due to weirdness in Jackson, sometimes the START_OBJECT and FIELD_NAME have been read, sometimes just START_OBJECT
     JsonToken token = getNext ? jsonParser.nextToken() : jsonParser.currentToken();
     while (true) {
       if (token == JsonToken.END_OBJECT) {
-        return jObject;
+        return object;
       }
 
       if (token != JsonToken.FIELD_NAME) {
@@ -90,7 +90,7 @@ public class JacksonReader implements JsonReader {
         throw new IllegalStateException("Expected a field name inside object, but saw " + token);
       }
       String fieldName = jsonParser.getText();
-      jObject.put(fieldName, doReadValue(jsonParser.nextToken()));
+      object.put(fieldName, doReadValue(jsonParser.nextToken()));
 
       // Advance to next field
       token = jsonParser.nextToken();
@@ -114,28 +114,28 @@ public class JacksonReader implements JsonReader {
       case END_ARRAY:
         return JsonValue.EMPTY_JSON_ARRAY;
       case VALUE_FALSE:
-        return PFalse.FALSE;
+        return CJFalse.FALSE;
       case VALUE_TRUE:
-        return PTrue.TRUE;
+        return CJTrue.TRUE;
       case VALUE_NULL:
-        return PNull.NULL;
+        return CJNull.NULL;
       case VALUE_STRING:
       case VALUE_EMBEDDED_OBJECT:
-        return PString.create(jsonParser.getText());
+        return CJString.create(jsonParser.getText());
       case VALUE_NUMBER_INT:
         switch (jsonParser.getNumberType()) {
           case INT:
-            return PNumber.create(jsonParser.getIntValue());
+            return CJNumber.create(jsonParser.getIntValue());
           case LONG:
-            return PNumber.create(jsonParser.getLongValue());
+            return CJNumber.create(jsonParser.getLongValue());
           case BIG_INTEGER:
-            return PNumber.cast(jsonParser.getBigIntegerValue());
+            return CJNumber.cast(jsonParser.getBigIntegerValue());
           default:
             // hopefully unreachable
             throw new IllegalStateException("Unexpected integer type: " + jsonParser.getNumberType());
         }
       case VALUE_NUMBER_FLOAT:
-        return PNumber.cast(jsonParser.getDecimalValue());
+        return CJNumber.cast(jsonParser.getDecimalValue());
       default:
         // Reachable if the encoding uses stuff beyond JSON like embedded objects and reference IDs
         throw new IllegalStateException("Unhandled token from Jackson: " + token);

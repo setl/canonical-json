@@ -16,17 +16,17 @@ public class PNumberTest {
 
   @Test
   public void equals() {
-    PNumber pn = PNumber.create(1);
-    PNumber pc = PNumber.create(1);
+    CJNumber pn = CJNumber.create(1);
+    CJNumber pc = CJNumber.create(1);
     assertTrue(pn.equals(pc));
 
-    pc = PNumber.cast(12345678901234L);
+    pc = CJNumber.cast(12345678901234L);
     assertFalse(pn.equals(pc));
 
-    pc = PNumber.cast(1234.5678);
+    pc = CJNumber.cast(1234.5678);
     assertFalse(pn.equals(pc));
 
-    pc = PNumber.cast(BigInteger.ONE.shiftLeft(64));
+    pc = CJNumber.cast(BigInteger.ONE.shiftLeft(64));
     assertFalse(pn.equals(pc));
 
   }
@@ -34,59 +34,59 @@ public class PNumberTest {
 
   @Test
   public void simplifyBigDecimal() {
-    Number n = PNumber.simplify(BigDecimal.TEN);
+    Number n = CJNumber.simplify(BigDecimal.TEN);
     assertTrue(n instanceof Integer);
     assertEquals(10, n.intValue());
 
     BigDecimal bd1 = new BigDecimal("0.100");
     BigDecimal bd2 = new BigDecimal("0.1");
-    n = PNumber.simplify(bd1);
+    n = CJNumber.simplify(bd1);
     assertEquals(bd2, n);
 
     bd1 = new BigDecimal("1e+6");
-    n = PNumber.simplify(bd1);
+    n = CJNumber.simplify(bd1);
     assertEquals(Integer.valueOf(1000000), n);
 
     bd1 = BigDecimal.valueOf(Integer.MAX_VALUE);
-    n = PNumber.simplify(bd1);
+    n = CJNumber.simplify(bd1);
     assertTrue(n instanceof Integer);
     assertEquals(Integer.MAX_VALUE, n);
 
     bd1 = BigDecimal.valueOf(Integer.MIN_VALUE);
-    n = PNumber.simplify(bd1);
+    n = CJNumber.simplify(bd1);
     assertTrue(n instanceof Integer);
     assertEquals(Integer.MIN_VALUE, n);
 
     bd1 = new BigDecimal("1e+12");
-    n = PNumber.simplify(bd1);
+    n = CJNumber.simplify(bd1);
     assertEquals(Long.valueOf(1000000000000L), n);
 
     bd1 = BigDecimal.valueOf(Long.MAX_VALUE);
-    n = PNumber.simplify(bd1);
+    n = CJNumber.simplify(bd1);
     assertTrue(n instanceof Long);
     assertEquals(Long.MAX_VALUE, n);
 
     bd1 = bd1.add(BigDecimal.ONE);
-    n = PNumber.simplify(bd1);
+    n = CJNumber.simplify(bd1);
     assertTrue(n instanceof BigInteger);
     assertEquals(bd1.toBigIntegerExact(), n);
 
     bd1 = BigDecimal.valueOf(Long.MIN_VALUE);
-    n = PNumber.simplify(bd1);
+    n = CJNumber.simplify(bd1);
     assertTrue(n instanceof Long);
     assertEquals(Long.MIN_VALUE, n);
 
     bd1 = bd1.subtract(BigDecimal.ONE);
-    n = PNumber.simplify(bd1);
+    n = CJNumber.simplify(bd1);
     assertTrue(n instanceof BigInteger);
     assertEquals(bd1.toBigIntegerExact(), n);
 
     bd1 = new BigDecimal("1e+30");
-    n = PNumber.simplify(bd1);
+    n = CJNumber.simplify(bd1);
     assertEquals(bd1.toBigIntegerExact(), n);
 
     bd1 = new BigDecimal("1e+31");
-    n = PNumber.simplify(bd1);
+    n = CJNumber.simplify(bd1);
     assertEquals(bd1, n);
   }
 
@@ -94,60 +94,60 @@ public class PNumberTest {
   @Test
   public void simplifyBigInteger() {
     BigInteger bi1 = BigInteger.TEN;
-    Number n = PNumber.simplify(bi1, true);
+    Number n = CJNumber.simplify(bi1, true);
     assertEquals(Integer.valueOf(10), n);
 
     bi1 = BigInteger.valueOf(Integer.MIN_VALUE);
-    n = PNumber.simplify(bi1, true);
+    n = CJNumber.simplify(bi1, true);
     assertEquals(Integer.valueOf(Integer.MIN_VALUE), n);
 
     bi1 = BigInteger.valueOf(Long.MIN_VALUE);
-    n = PNumber.simplify(bi1, true);
+    n = CJNumber.simplify(bi1, true);
     assertEquals(Long.valueOf(Long.MIN_VALUE), n);
 
     BigDecimal bd1 = new BigDecimal("1e+30");
-    n = PNumber.simplify(bd1.toBigIntegerExact(), true);
+    n = CJNumber.simplify(bd1.toBigIntegerExact(), true);
     assertEquals(bd1.toBigIntegerExact(), n);
 
     bd1 = new BigDecimal("1e+31");
-    n = PNumber.simplify(bd1.toBigIntegerExact(), true);
+    n = CJNumber.simplify(bd1.toBigIntegerExact(), true);
     assertEquals(bd1, n);
   }
 
 
   @Test
   public void simplifyDouble() {
-    assertEquals(Integer.valueOf(100), PNumber.simplify(100.0));
+    assertEquals(Integer.valueOf(100), CJNumber.simplify(100.0));
 
-    assertEquals(Long.valueOf(Long.MIN_VALUE), PNumber.simplify((double) Long.MIN_VALUE));
-    assertEquals(Long.valueOf(Long.MAX_VALUE), PNumber.simplify((double) Long.MAX_VALUE));
+    assertEquals(Long.valueOf(Long.MIN_VALUE), CJNumber.simplify((double) Long.MIN_VALUE));
+    assertEquals(Long.valueOf(Long.MAX_VALUE), CJNumber.simplify((double) Long.MAX_VALUE));
 
     long l = Long.MAX_VALUE - (long) Math.ulp((double) Long.MAX_VALUE);
-    assertEquals(Long.valueOf((long) ((double) l)), PNumber.simplify((double) l));
+    assertEquals(Long.valueOf((long) ((double) l)), CJNumber.simplify((double) l));
 
     BigDecimal bd = new BigDecimal("1e+30");
-    Number n = PNumber.simplify(1e+30d);
+    Number n = CJNumber.simplify(1e+30d);
     assertEquals(bd.toBigIntegerExact(), n);
 
     bd = new BigDecimal("1e+31");
-    n = PNumber.simplify(1e+31d);
+    n = CJNumber.simplify(1e+31d);
     assertEquals(bd, n);
   }
 
 
   @Test
   public void simplifyFloat() {
-    assertEquals(Integer.valueOf(100), PNumber.simplify(100.0f));
+    assertEquals(Integer.valueOf(100), CJNumber.simplify(100.0f));
 
     long l = Long.MAX_VALUE - (long) Math.ulp((float) Long.MAX_VALUE);
-    assertEquals(Long.valueOf((long) ((float) l)), PNumber.simplify((float) l));
+    assertEquals(Long.valueOf((long) ((float) l)), CJNumber.simplify((float) l));
 
     BigDecimal bd = new BigDecimal("1e+30");
-    Number n = PNumber.simplify(1e+30f);
+    Number n = CJNumber.simplify(1e+30f);
     assertEquals(bd.toBigIntegerExact(), n);
 
     bd = new BigDecimal("1e+31");
-    n = PNumber.simplify(1e+31f);
+    n = CJNumber.simplify(1e+31f);
     assertEquals(bd, n);
   }
 

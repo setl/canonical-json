@@ -13,10 +13,10 @@ import javax.json.JsonValue;
 import org.junit.Before;
 import org.junit.Test;
 
-import io.setl.json.JArray;
-import io.setl.json.JObject;
-import io.setl.json.pointer.JPointerFactory;
-import io.setl.json.primitive.PString;
+import io.setl.json.CJArray;
+import io.setl.json.CJObject;
+import io.setl.json.pointer.PointerFactory;
+import io.setl.json.primitive.CJString;
 
 /**
  * @author Simon Greatrix on 17/02/2020.
@@ -40,30 +40,30 @@ public class PointerTreeImplTest {
 
   @Test
   public void containsAllArray() {
-    JArray root = new JArray();
+    CJArray root = new CJArray();
     // if we don't ask for anything it is all OK
     assertTrue(tree.containsAll(root));
 
-    root.add(new JObject(Map.of("a", 1)));
+    root.add(new CJObject(Map.of("a", 1)));
     assertTrue(tree.containsAll(root));
   }
 
 
   @Test
   public void containsAllObject() {
-    JObject root = new JObject();
+    CJObject root = new CJObject();
     // if we don't ask for anything it is all OK
     assertTrue(tree.containsAll(root));
 
-    JObject objectA = new JObject();
+    CJObject objectA = new CJObject();
     root.put("a", objectA);
     objectA.put("b", 1);
     assertTrue(tree.containsAll(root));
 
-    objectA.put("b", new JObject(Map.of("x", "y")));
+    objectA.put("b", new CJObject(Map.of("x", "y")));
     assertTrue(tree.containsAll(root));
 
-    objectA.put("b", new JArray(List.of(1, 2, 3)));
+    objectA.put("b", new CJArray(List.of(1, 2, 3)));
     assertTrue(tree.containsAll(root));
 
     // Add something that is not OK
@@ -71,17 +71,17 @@ public class PointerTreeImplTest {
     assertFalse(tree.containsAll(root));
     objectA.remove("z");
 
-    JArray arrayB = new JArray();
+    CJArray arrayB = new CJArray();
     root.put("b", arrayB);
-    arrayB.add(new JObject(Map.of("a", true)));
-    arrayB.add(new JObject(Map.of("b", true)));
+    arrayB.add(new CJObject(Map.of("a", true)));
+    arrayB.add(new CJObject(Map.of("b", true)));
     assertTrue(tree.containsAll(root));
 
     arrayB.add(false);
     assertFalse(tree.containsAll(root));
     arrayB.remove(arrayB.size() - 1);
 
-    arrayB.add(new JArray());
+    arrayB.add(new CJArray());
     assertFalse(tree.containsAll(root));
     arrayB.remove(arrayB.size() - 1);
 
@@ -92,16 +92,16 @@ public class PointerTreeImplTest {
 
   @Test
   public void containsAllString() {
-    assertFalse(tree.containsAll(PString.create("hello")));
+    assertFalse(tree.containsAll(CJString.create("hello")));
   }
 
 
   @Test
   public void copyArray() {
-    JArray root = new JArray();
-    root.add(new JObject(Map.of("a", true, "b", false, "c", 1)));
-    root.add(new JObject(Map.of("c", 2)));
-    root.add(new JObject(Map.of("a", 2)));
+    CJArray root = new CJArray();
+    root.add(new CJObject(Map.of("a", true, "b", false, "c", 1)));
+    root.add(new CJObject(Map.of("c", 2)));
+    root.add(new CJObject(Map.of("a", 2)));
 
     JsonArray copy = tree.copy(root);
     assertEquals("[{\"a\":true,\"b\":false},{},{\"a\":2}]", copy.toString());
@@ -110,9 +110,9 @@ public class PointerTreeImplTest {
 
   @Test
   public void copyObject() {
-    JObject root = new JObject();
-    root.put("a", new JObject(Map.of("a", 1, "b", 2)));
-    root.put("b", new JArray(List.of(
+    CJObject root = new CJObject();
+    root.put("a", new CJObject(Map.of("a", 1, "b", 2)));
+    root.put("b", new CJArray(List.of(
         Map.of("a", 1, "b", 2, "c", 3),
         Map.of("a", 1, "b", 2, "c", 3),
         Map.of("a", 1, "b", 2, "c", 3)
@@ -125,17 +125,17 @@ public class PointerTreeImplTest {
 
   @Test
   public void isParentOf() {
-    assertTrue(tree.isParentOf(JPointerFactory.create("/a/b/c/d")));
-    assertTrue(tree.isParentOf(JPointerFactory.create("/1/a/b")));
-    assertFalse(tree.isParentOf(JPointerFactory.create("/z")));
+    assertTrue(tree.isParentOf(PointerFactory.create("/a/b/c/d")));
+    assertTrue(tree.isParentOf(PointerFactory.create("/1/a/b")));
+    assertFalse(tree.isParentOf(PointerFactory.create("/z")));
   }
 
 
   @Test
   public void remove() {
-    JObject root = new JObject();
-    root.put("a", new JObject(Map.of("a", 1, "b", 2)));
-    root.put("b", new JArray(List.of(
+    CJObject root = new CJObject();
+    root.put("a", new CJObject(Map.of("a", 1, "b", 2)));
+    root.put("b", new CJArray(List.of(
         Map.of("a", 1, "b", 2, "c", 3),
         Map.of("a", 1, "b", 2, "c", 3),
         Map.of("a", 1, "b", 2, "c", 3)

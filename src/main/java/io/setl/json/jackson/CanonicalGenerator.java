@@ -23,13 +23,13 @@ import com.fasterxml.jackson.core.io.IOContext;
 import com.fasterxml.jackson.core.json.DupDetector;
 import com.fasterxml.jackson.core.json.JsonWriteContext;
 
-import io.setl.json.JArray;
-import io.setl.json.JObject;
-import io.setl.json.Primitive;
-import io.setl.json.primitive.PFalse;
-import io.setl.json.primitive.PJson;
-import io.setl.json.primitive.PNull;
-import io.setl.json.primitive.PTrue;
+import io.setl.json.CJArray;
+import io.setl.json.CJObject;
+import io.setl.json.Canonical;
+import io.setl.json.primitive.CJFalse;
+import io.setl.json.primitive.CJJson;
+import io.setl.json.primitive.CJNull;
+import io.setl.json.primitive.CJTrue;
 
 /**
  * Generator for canonical JSON. Note that as the canonical form requires a specific ordering of object properties, no output is created until the root object
@@ -56,9 +56,9 @@ public class CanonicalGenerator extends JsonGenerator {
 
   interface Container {
 
-    void add(String key, Primitive value);
+    void add(String key, Canonical value);
 
-    void set(JsonWriteContext parent, Primitive raw);
+    void set(JsonWriteContext parent, Canonical raw);
 
     /**
      * Write the container.
@@ -73,17 +73,17 @@ public class CanonicalGenerator extends JsonGenerator {
 
   static class ArrayContainer implements Container {
 
-    final JArray array = new JArray();
+    final CJArray array = new CJArray();
 
 
     @Override
-    public void add(String key, Primitive value) {
+    public void add(String key, Canonical value) {
       array.add(value);
     }
 
 
     @Override
-    public void set(JsonWriteContext parent, Primitive raw) {
+    public void set(JsonWriteContext parent, Canonical raw) {
       array.set(parent.getCurrentIndex(), raw);
     }
 
@@ -99,17 +99,17 @@ public class CanonicalGenerator extends JsonGenerator {
 
   static class ObjectContainer implements Container {
 
-    final JObject object = new JObject();
+    final CJObject object = new CJObject();
 
 
     @Override
-    public void add(String key, Primitive value) {
+    public void add(String key, Canonical value) {
       object.put(key, value);
     }
 
 
     @Override
-    public void set(JsonWriteContext parent, Primitive raw) {
+    public void set(JsonWriteContext parent, Canonical raw) {
       object.put(parent.getCurrentName(), raw);
     }
 
@@ -134,13 +134,13 @@ public class CanonicalGenerator extends JsonGenerator {
 
 
     @Override
-    public void add(String key, Primitive value) {
+    public void add(String key, Canonical value) {
       throw new UnsupportedOperationException("Raw containers cannot be added to");
     }
 
 
     @Override
-    public void set(JsonWriteContext parent, Primitive raw) {
+    public void set(JsonWriteContext parent, Canonical raw) {
       throw new UnsupportedOperationException("Raw containers cannot be reset.");
     }
 
@@ -421,14 +421,27 @@ public class CanonicalGenerator extends JsonGenerator {
       bv.encodeBase64Partial(buffer, bits24, extraBytes);
     }
 
-    writePrimitive(Primitive.create(buffer.toString()));
+    writeCanonical(Canonical.create(buffer.toString()));
     return length;
   }
 
 
   @Override
   public void writeBoolean(boolean state) throws IOException {
-    writePrimitive(state ? PTrue.TRUE : PFalse.FALSE);
+    writeCanonical(state ? CJTrue.TRUE : CJFalse.FALSE);
+  }
+
+
+  private void writeCanonical(Canonical canonical) throws IOException {
+    ValueType valueType = canonical.getValueType();
+    String typeMessage = valueType == null ? "RAW" : valueType.name();
+    verifyValueWrite(typeMessage);
+    if (stack.isEmpty()) {
+      canonical.writeTo(writer);
+      return;
+    }
+    Container container = stack.peek();
+    container.add(writeContext.getCurrentName(), canonical);
   }
 
 
@@ -475,50 +488,50 @@ public class CanonicalGenerator extends JsonGenerator {
 
   @Override
   public void writeNull() throws IOException {
-    writePrimitive(PNull.NULL);
+    writeCanonical(CJNull.NULL);
   }
 
 
   @Override
   public void writeNumber(int v) throws IOException {
-    writePrimitive(Primitive.create(v));
+    writeCanonical(Canonical.create(v));
   }
 
 
   @Override
   public void writeNumber(long v) throws IOException {
-    writePrimitive(Primitive.create(v));
+    writeCanonical(Canonical.create(v));
   }
 
 
   @Override
   public void writeNumber(BigInteger v) throws IOException {
-    writePrimitive(Primitive.create(v));
+    writeCanonical(Canonical.create(v));
   }
 
 
   @Override
   public void writeNumber(double v) throws IOException {
-    writePrimitive(Primitive.create(v));
+    writeCanonical(Canonical.create(v));
   }
 
 
   @Override
   public void writeNumber(float v) throws IOException {
-    writePrimitive(Primitive.create(v));
+    writeCanonical(Canonical.create(v));
   }
 
 
   @Override
   public void writeNumber(BigDecimal v) throws IOException {
-    writePrimitive(Primitive.create(v));
+    writeCanonical(Canonical.create(v));
   }
 
 
   @Override
   public void writeNumber(String encodedValue) throws IOException {
     // In keeping with this method's contract, we actually output a String
-    writePrimitive(Primitive.create(encodedValue));
+    writeCanonical(Canonical.create(encodedValue));
   }
 
 
@@ -529,12 +542,12 @@ public class CanonicalGenerator extends JsonGenerator {
       return;
     }
 
-    if (value instanceof Primitive) {
-      writePrimitive((Primitive) value);
+    if (value instanceof Canonical) {
+      writeCanonical((Canonical) value);
       return;
     }
     if (value instanceof JsonValue) {
-      writePrimitive(Primitive.cast((JsonValue) value));
+      writeCanonical(Canonical.cast((JsonValue) value));
       return;
     }
 
@@ -543,19 +556,6 @@ public class CanonicalGenerator extends JsonGenerator {
       return;
     }
     _writeSimpleObject(value);
-  }
-
-
-  private void writePrimitive(Primitive primitive) throws IOException {
-    ValueType valueType = primitive.getValueType();
-    String typeMessage = valueType == null ? "RAW" : valueType.name();
-    verifyValueWrite(typeMessage);
-    if (stack.isEmpty()) {
-      primitive.writeTo(writer);
-      return;
-    }
-    Container container = stack.peek();
-    container.add(writeContext.getCurrentName(), primitive);
   }
 
 
@@ -589,9 +589,9 @@ public class CanonicalGenerator extends JsonGenerator {
    * @param object      the value to write
    * @param isContainer is the value a container? i.e. does it have start and end markers?
    */
-  public void writeRawCanonicalType(Primitive object, boolean isContainer) throws IOException {
-    String json = object.toString();
-    Primitive raw = new PJson(json);
+  public void writeRawCanonicalType(Canonical object, boolean isContainer) throws IOException {
+    String json = Canonical.toCanonicalString(object);
+    Canonical raw = new CJJson(json);
 
     if (isContainer) {
       // The caller has already pushed the start marker, creating the container. We pop the new container off the stack and discard it.
@@ -608,7 +608,7 @@ public class CanonicalGenerator extends JsonGenerator {
     }
 
     // Not a container, so no markers to handle
-    writePrimitive(raw);
+    writeCanonical(raw);
   }
 
 
@@ -617,8 +617,8 @@ public class CanonicalGenerator extends JsonGenerator {
    *
    * @param object the value
    */
-  public void writeRawCanonicalValue(Primitive object) throws IOException {
-    writePrimitive(new PJson(object.toString()));
+  public void writeRawCanonicalValue(Canonical object) throws IOException {
+    writeCanonical(new CJJson(Canonical.toCanonicalString(object)));
   }
 
 
@@ -678,19 +678,19 @@ public class CanonicalGenerator extends JsonGenerator {
 
   @Override
   public void writeString(String text) throws IOException {
-    writePrimitive(Primitive.create(text));
+    writeCanonical(Canonical.create(text));
   }
 
 
   @Override
   public void writeString(char[] text, int offset, int len) throws IOException {
-    writePrimitive(Primitive.create(new String(text, offset, len)));
+    writeCanonical(Canonical.create(new String(text, offset, len)));
   }
 
 
   @Override
   public void writeString(SerializableString text) throws IOException {
-    writePrimitive(Primitive.create(text.getValue()));
+    writeCanonical(Canonical.create(text.getValue()));
   }
 
 
@@ -709,7 +709,7 @@ public class CanonicalGenerator extends JsonGenerator {
 
   @Override
   public void writeUTF8String(byte[] text, int offset, int length) throws IOException {
-    writePrimitive(Primitive.create(new String(text, offset, length, UTF_8)));
+    writeCanonical(Canonical.create(new String(text, offset, length, UTF_8)));
   }
 
 }

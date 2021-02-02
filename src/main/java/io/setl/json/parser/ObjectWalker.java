@@ -5,8 +5,8 @@ import javax.json.JsonObject;
 import javax.json.JsonValue;
 import javax.json.stream.JsonParser.Event;
 
-import io.setl.json.primitive.PNull;
-import io.setl.json.primitive.PString;
+import io.setl.json.primitive.CJNull;
+import io.setl.json.primitive.CJString;
 
 /**
  * @author Simon Greatrix on 15/01/2020.
@@ -58,10 +58,10 @@ class ObjectWalker extends WalkingParser {
       throw new NoSuchElementException();
     }
     if (isKey) {
-      return PString.create(keys[index]);
+      return CJString.create(keys[index]);
     }
     JsonValue jv = object.get(keys[index]);
-    return (jv != null) ? jv : PNull.NULL;
+    return (jv != null) ? jv : CJNull.NULL;
   }
 
 

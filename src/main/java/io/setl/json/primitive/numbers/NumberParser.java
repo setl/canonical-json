@@ -1,7 +1,7 @@
 package io.setl.json.primitive.numbers;
 
-import static io.setl.json.parser.JParser.isWhite;
-import static io.setl.json.parser.JParser.safe;
+import static io.setl.json.parser.Parser.isWhite;
+import static io.setl.json.parser.Parser.safe;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -155,32 +155,32 @@ public class NumberParser {
   }
 
 
-  protected static PNumber doCreate(String txt) {
+  protected static CJNumber doCreate(String txt) {
     int length = txt.length();
     // Integer.MAX_VALUE takes 10 characters
     if (length < 10) {
-      return PNumber.create(Integer.parseInt(txt));
+      return CJNumber.create(Integer.parseInt(txt));
     }
     // Integer.MIN_VALUE takes 11 characters
     if (length < 12) {
       // 10 or 11 characters could be a long or an int
       long l = Long.parseLong(txt);
       if (Integer.MIN_VALUE <= l && l <= Integer.MAX_VALUE) {
-        return PNumber.create((int) l);
+        return CJNumber.create((int) l);
       }
-      return new PLong(l);
+      return new CJLong(l);
     }
     // Long.MAX_VALUE takes 19 characters
     if (length < 19) {
-      return new PLong(Long.parseLong(txt));
+      return new CJLong(Long.parseLong(txt));
     }
     // Long.MIN_VALUE takes 20 characters
     if (length < 21) {
       BigInteger bi = new BigInteger(txt);
       if (bi.bitLength() <= 63) {
-        return new PLong(bi.longValueExact());
+        return new CJLong(bi.longValueExact());
       }
-      return new PBigInteger(bi);
+      return new CJBigInteger(bi);
     }
 
     // Could be a big integer, unless it has too many trailing zeros.
@@ -192,17 +192,17 @@ public class NumberParser {
         break;
       }
     }
-    if (s < PBigInteger.MIN_SCALE) {
-      return new PBigDecimal(new BigDecimal(txt), true);
+    if (s < CJBigInteger.MIN_SCALE) {
+      return new CJBigDecimal(new BigDecimal(txt), true);
     }
 
     // It is a BigInteger after all
-    return new PBigInteger(new BigInteger(txt));
+    return new CJBigInteger(new BigInteger(txt));
   }
 
 
-  protected static PNumber doCreateBigDecimal(String txt) {
-    return PNumber.cast(new BigDecimal(txt));
+  protected static CJNumber doCreateBigDecimal(String txt) {
+    return CJNumber.cast(new BigDecimal(txt));
   }
 
 
@@ -250,7 +250,7 @@ public class NumberParser {
    *
    * @param r the initial character of the number
    */
-  public PNumber parse(int r) {
+  public CJNumber parse(int r) {
     StringBuilder buf = new StringBuilder();
     buf.append((char) r);
 
@@ -270,8 +270,8 @@ public class NumberParser {
 
     String txt = buf.toString();
 
-    ICache<String, PNumber> cache = CacheManager.numberCache();
-    PNumber pNumber;
+    ICache<String, CJNumber> cache = CacheManager.numberCache();
+    CJNumber pNumber;
     try {
       if (needBigDecimal) {
         pNumber = cache.get(txt, NumberParser::doCreateBigDecimal);
@@ -279,7 +279,7 @@ public class NumberParser {
         pNumber = cache.get(txt, NumberParser::doCreate);
       }
     } catch (NumberFormatException | ArithmeticException e) {
-      pNumber = new PBadNumber(new JsonParsingException("Invalid number", e, input.getLocation()));
+      pNumber = new BadNumber(new JsonParsingException("Invalid number", e, input.getLocation()));
     }
     pNumber.check();
     return pNumber;

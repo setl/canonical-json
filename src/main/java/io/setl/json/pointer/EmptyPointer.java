@@ -8,8 +8,8 @@ import javax.json.JsonObject;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 
-import io.setl.json.JArray;
-import io.setl.json.JObject;
+import io.setl.json.CJArray;
+import io.setl.json.CJObject;
 import io.setl.json.exception.PointerMismatchException;
 
 /**
@@ -57,7 +57,7 @@ public class EmptyPointer implements JsonExtendedPointer {
   @Nonnull
   private JsonObject copy(@Nonnull JsonObject source, @Nullable JsonObject target) {
     if (target == null || target == JsonValue.EMPTY_JSON_OBJECT) {
-      target = new JObject();
+      target = new CJObject();
     }
     target.putAll(source);
     return target;
@@ -67,7 +67,7 @@ public class EmptyPointer implements JsonExtendedPointer {
   @Nonnull
   private JsonArray copy(@Nonnull JsonArray source, @Nullable JsonArray target) {
     if (target == null || target == JsonValue.EMPTY_JSON_ARRAY) {
-      target = new JArray();
+      target = new CJArray();
     }
     int s = source.size();
     while (target.size() < s) {

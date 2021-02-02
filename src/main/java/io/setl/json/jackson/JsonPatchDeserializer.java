@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
 import io.setl.json.exception.JsonIOException;
-import io.setl.json.patch.JPatch;
+import io.setl.json.patch.Patch;
 
 /**
  * @author Simon Greatrix on 18/02/2020.
@@ -25,7 +25,7 @@ public class JsonPatchDeserializer extends JsonDeserializer<JsonPatch> {
     try {
       JacksonReader parser = new JacksonReader(p);
       JsonArray jsonArray = parser.readArray();
-      return new JPatch(jsonArray);
+      return new Patch(jsonArray);
     } catch (JsonIOException jsonIOException) {
       throw jsonIOException.cause();
     } catch (JsonParsingException jsonParsingException) {
@@ -38,7 +38,7 @@ public class JsonPatchDeserializer extends JsonDeserializer<JsonPatch> {
 
   @Override
   public JsonPatch getEmptyValue(DeserializationContext context) {
-    return new JPatch(Collections.emptyList());
+    return new Patch(Collections.emptyList());
   }
 
 

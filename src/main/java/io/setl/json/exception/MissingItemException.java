@@ -5,7 +5,7 @@ import java.util.EnumSet;
 import java.util.Set;
 import javax.json.JsonValue.ValueType;
 
-import io.setl.json.primitive.PString;
+import io.setl.json.primitive.CJString;
 
 /**
  * Exception thrown when at attempt to retrieve a required datum from a JObject or JArray fails because the datum is missing. The javax.json API requires that
@@ -43,7 +43,7 @@ public class MissingItemException extends NullPointerException {
    * @param expected the type that was expected
    */
   public MissingItemException(String key, ValueType expected) {
-    super("Item at " + PString.format(key) + " was missing and should have had type " + expected);
+    super("Item at " + CJString.format(key) + " was missing and should have had type " + expected);
     this.index = -1;
     this.key = key;
     this.expected = Collections.unmodifiableSet(EnumSet.of(expected));
@@ -71,7 +71,7 @@ public class MissingItemException extends NullPointerException {
    * @param expected the type that was expected
    */
   public MissingItemException(String key, Set<ValueType> expected) {
-    super("Item at " + PString.format(key) + " was missing and should have had type " + expected);
+    super("Item at " + CJString.format(key) + " was missing and should have had type " + expected);
     this.index = -1;
     this.key = key;
     this.expected = Collections.unmodifiableSet(EnumSet.copyOf(expected));

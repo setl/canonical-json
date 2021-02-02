@@ -7,8 +7,8 @@ import javax.json.JsonObject;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 
-import io.setl.json.JArray;
-import io.setl.json.JObject;
+import io.setl.json.CJArray;
+import io.setl.json.CJObject;
 import io.setl.json.exception.NoSuchValueException;
 import io.setl.json.exception.PointerMismatchException;
 import io.setl.json.pointer.JsonExtendedPointer.ResultOfAdd;
@@ -104,7 +104,7 @@ public class ObjectPath implements PathElement {
       switch (sourceValue.getValueType()) {
         case OBJECT:
           if (targetValue.getValueType() != ValueType.OBJECT) {
-            targetValue = new JObject();
+            targetValue = new CJObject();
             target.set(i, targetValue);
           }
           child.copy((JsonObject) sourceValue, (JsonObject) targetValue);
@@ -112,7 +112,7 @@ public class ObjectPath implements PathElement {
 
         case ARRAY:
           if (targetValue.getValueType() != ValueType.ARRAY) {
-            targetValue = new JArray();
+            targetValue = new CJArray();
             target.set(i, targetValue);
           }
           child.copy((JsonArray) sourceValue, (JsonArray) targetValue);
@@ -137,7 +137,7 @@ public class ObjectPath implements PathElement {
     switch (sourceValue.getValueType()) {
       case OBJECT:
         if (targetValue == null || targetValue.getValueType() != ValueType.OBJECT) {
-          targetValue = new JObject();
+          targetValue = new CJObject();
           target.put(key, targetValue);
         }
         child.copy((JsonObject) sourceValue, (JsonObject) targetValue);
@@ -145,7 +145,7 @@ public class ObjectPath implements PathElement {
 
       case ARRAY:
         if (targetValue == null || targetValue.getValueType() != ValueType.ARRAY) {
-          targetValue = new JArray();
+          targetValue = new CJArray();
           target.put(key, targetValue);
         }
         child.copy((JsonArray) sourceValue, (JsonArray) targetValue);

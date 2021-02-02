@@ -11,9 +11,9 @@ import javax.json.JsonStructure;
 
 import org.junit.Test;
 
-import io.setl.json.builder.JArrayBuilder;
-import io.setl.json.builder.JObjectBuilder;
-import io.setl.json.pointer.JPointerFactory;
+import io.setl.json.builder.ArrayBuilder;
+import io.setl.json.builder.ObjectBuilder;
+import io.setl.json.pointer.PointerFactory;
 
 /**
  * @author Simon Greatrix on 17/02/2020.
@@ -22,14 +22,14 @@ public class PointerEmptyTreeTest {
 
   @Test
   public void containsAll() {
-    JsonObject object = new JObjectBuilder().add("a", "b").add("b", 1).build();
+    JsonObject object = new ObjectBuilder().add("a", "b").add("b", 1).build();
     assertFalse(PointerEmptyTree.INSTANCE.containsAll(object));
   }
 
 
   @Test
   public void copyArray() {
-    JsonArray array = new JArrayBuilder().add("a").add(1).build();
+    JsonArray array = new ArrayBuilder().add("a").add(1).build();
     JsonArray s = PointerEmptyTree.INSTANCE.copy(array);
     assertNull(s);
   }
@@ -37,7 +37,7 @@ public class PointerEmptyTreeTest {
 
   @Test
   public void copyObject() {
-    JsonObject object = new JObjectBuilder().add("a", "b").add("b", 1).build();
+    JsonObject object = new ObjectBuilder().add("a", "b").add("b", 1).build();
     JsonStructure s = PointerEmptyTree.INSTANCE.copy(object);
     assertNull(s);
   }
@@ -51,13 +51,13 @@ public class PointerEmptyTreeTest {
 
   @Test
   public void isParentOf() {
-    assertFalse(PointerEmptyTree.INSTANCE.isParentOf(JPointerFactory.create("/foo")));
+    assertFalse(PointerEmptyTree.INSTANCE.isParentOf(PointerFactory.create("/foo")));
   }
 
 
   @Test
   public void removeArray() {
-    JsonArray array = new JArrayBuilder().add("a").add(1).build();
+    JsonArray array = new ArrayBuilder().add("a").add(1).build();
     JsonArray s = PointerEmptyTree.INSTANCE.remove(array);
     assertEquals(s, array);
   }
@@ -65,7 +65,7 @@ public class PointerEmptyTreeTest {
 
   @Test
   public void removeObject() {
-    JsonObject object = new JObjectBuilder().add("a", "b").add("b", 1).build();
+    JsonObject object = new ObjectBuilder().add("a", "b").add("b", 1).build();
     JsonObject s = PointerEmptyTree.INSTANCE.remove(object);
     assertEquals(object, s);
   }

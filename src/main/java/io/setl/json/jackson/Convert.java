@@ -20,13 +20,13 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
 
-import io.setl.json.JArray;
-import io.setl.json.JObject;
-import io.setl.json.primitive.PFalse;
-import io.setl.json.primitive.PNull;
-import io.setl.json.primitive.PString;
-import io.setl.json.primitive.PTrue;
-import io.setl.json.primitive.numbers.PNumber;
+import io.setl.json.CJArray;
+import io.setl.json.CJObject;
+import io.setl.json.primitive.CJFalse;
+import io.setl.json.primitive.CJNull;
+import io.setl.json.primitive.CJString;
+import io.setl.json.primitive.CJTrue;
+import io.setl.json.primitive.numbers.CJNumber;
 
 /**
  * A utility class to convert between Jackson's JsonNode and javax's JsonValue.
@@ -46,7 +46,7 @@ public class Convert {
 
   private static JsonValue createJsonArray(ArrayNode node) {
     int s = node.size();
-    JArray array = new JArray(s);
+    CJArray array = new CJArray(s);
     for (int i = 0; i < s; i++) {
       array.add(toJson(node.get(i)));
     }
@@ -55,7 +55,7 @@ public class Convert {
 
 
   private static JsonValue createJsonObject(ObjectNode node) {
-    JObject object = new JObject();
+    CJObject object = new CJObject();
     Iterator<Entry<String, JsonNode>> iterator = node.fields();
     while (iterator.hasNext()) {
       Entry<String, JsonNode> entry = iterator.next();
@@ -66,16 +66,16 @@ public class Convert {
 
 
   private static ValueNode createNumberNode(JsonNodeCreator nodeCreator, JsonNumber value) {
-    if (value instanceof PNumber) {
-      PNumber number = (PNumber) value;
+    if (value instanceof CJNumber) {
+      CJNumber number = (CJNumber) value;
       switch (number.getNumberType()) {
-        case PNumber.TYPE_INT:
+        case CJNumber.TYPE_INT:
           return nodeCreator.numberNode(number.intValue());
-        case PNumber.TYPE_LONG:
+        case CJNumber.TYPE_LONG:
           return nodeCreator.numberNode(number.longValue());
-        case PNumber.TYPE_BIG_INT:
+        case CJNumber.TYPE_BIG_INT:
           return nodeCreator.numberNode(number.bigIntegerValue());
-        case PNumber.TYPE_DECIMAL:
+        case CJNumber.TYPE_DECIMAL:
           return nodeCreator.numberNode(number.bigDecimalValue());
         default:
           break;
@@ -228,16 +228,16 @@ public class Convert {
       case ARRAY:
         return createJsonArray((ArrayNode) node);
       case STRING:
-        return PString.create(node.textValue());
+        return CJString.create(node.textValue());
       case BOOLEAN:
-        return node.booleanValue() ? PTrue.TRUE : PFalse.FALSE;
+        return node.booleanValue() ? CJTrue.TRUE : CJFalse.FALSE;
       case NULL:
-        return PNull.NULL;
+        return CJNull.NULL;
       case NUMBER:
-        return PNumber.cast(node.numberValue());
+        return CJNumber.cast(node.numberValue());
       case BINARY:
         try {
-          return PString.create(Base64.getEncoder().encodeToString(node.binaryValue()));
+          return CJString.create(Base64.getEncoder().encodeToString(node.binaryValue()));
         } catch (IOException ioe) {
           throw new JsonException("Jackson failure", ioe);
         }

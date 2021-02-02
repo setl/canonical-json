@@ -1,17 +1,17 @@
 package io.setl.json.exception;
 
-import io.setl.json.primitive.PString;
+import io.setl.json.primitive.CJString;
 
 /**
  * @author Simon Greatrix on 24/01/2020.
  */
 public class NonFiniteNumberException extends ArithmeticException {
 
-  private static final PString REP_INFINITY = PString.create("Infinity");
+  private static final CJString REP_INFINITY = CJString.create("Infinity");
 
-  private static final PString REP_NAN = PString.create("NaN");
+  private static final CJString REP_NAN = CJString.create("NaN");
 
-  private static final PString REP_NEG_INFINITY = PString.create("-Infinity");
+  private static final CJString REP_NEG_INFINITY = CJString.create("-Infinity");
 
   private static final long serialVersionUID = 1L;
 
@@ -66,7 +66,7 @@ public class NonFiniteNumberException extends ArithmeticException {
    *
    * @return the representation
    */
-  public PString getRepresentation() {
+  public CJString getRepresentation() {
     switch (getType()) {
       case NAN:
         return REP_NAN;

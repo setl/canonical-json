@@ -19,7 +19,7 @@ public class PBigIntegerTest {
 
   private BigInteger v = new BigInteger("123456789012345678901234567890");
 
-  private PBigInteger bi1 = new PBigInteger(v);
+  private CJBigInteger bi1 = new CJBigInteger(v);
 
 
   @Test
@@ -73,7 +73,7 @@ public class PBigIntegerTest {
 
   @Test
   public void getNumberType() {
-    assertEquals(PNumber.TYPE_BIG_INT, bi1.getNumberType());
+    assertEquals(CJNumber.TYPE_BIG_INT, bi1.getNumberType());
   }
 
 

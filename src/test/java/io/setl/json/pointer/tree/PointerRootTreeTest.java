@@ -11,9 +11,9 @@ import javax.json.JsonValue;
 
 import org.junit.Test;
 
-import io.setl.json.builder.JArrayBuilder;
+import io.setl.json.builder.ArrayBuilder;
 import io.setl.json.pointer.EmptyPointer;
-import io.setl.json.pointer.JPointerFactory;
+import io.setl.json.pointer.PointerFactory;
 import io.setl.json.pointer.JsonExtendedPointer;
 
 /**
@@ -23,14 +23,14 @@ public class PointerRootTreeTest {
 
   @Test
   public void containsAll() {
-    JsonArray array = new JArrayBuilder().add("a").add(1).build();
+    JsonArray array = new ArrayBuilder().add("a").add(1).build();
     assertTrue(PointerRootTree.INSTANCE.containsAll(array));
   }
 
 
   @Test
   public void copy() {
-    JsonArray array = new JArrayBuilder().add("a").add(1).build();
+    JsonArray array = new ArrayBuilder().add("a").add(1).build();
     JsonArray s = PointerRootTree.INSTANCE.copy(array);
     assertEquals(s, array);
     assertNotSame(s, array);
@@ -47,7 +47,7 @@ public class PointerRootTreeTest {
 
   @Test
   public void isParentOf() {
-    assertTrue(PointerRootTree.INSTANCE.isParentOf(JPointerFactory.create("/a")));
+    assertTrue(PointerRootTree.INSTANCE.isParentOf(PointerFactory.create("/a")));
   }
 
 

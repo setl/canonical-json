@@ -19,7 +19,7 @@ public class PBigDecimalTest {
 
   private BigDecimal v = BigDecimal.valueOf(Math.PI);
 
-  private PBigDecimal bd = new PBigDecimal(v, true);
+  private CJBigDecimal bd = new CJBigDecimal(v, true);
 
 
   @Test
@@ -32,7 +32,7 @@ public class PBigDecimalTest {
   public void bigIntegerValue() {
     BigInteger i2 = BigInteger.ONE.shiftLeft(70);
     BigDecimal v2 = new BigDecimal(i2).add(new BigDecimal("0.3"));
-    PBigDecimal bd = new PBigDecimal(v2, true);
+    CJBigDecimal bd = new CJBigDecimal(v2, true);
     assertEquals(0, i2.compareTo(bd.bigIntegerValue()));
   }
 
@@ -41,7 +41,7 @@ public class PBigDecimalTest {
   public void bigIntegerValueExact() {
     BigInteger i2 = BigInteger.ONE.shiftLeft(70);
     BigDecimal v2 = new BigDecimal(i2);
-    PBigDecimal bd = new PBigDecimal(v2, true);
+    CJBigDecimal bd = new CJBigDecimal(v2, true);
     assertEquals(0, i2.compareTo(bd.bigIntegerValueExact()));
   }
 
@@ -78,7 +78,7 @@ public class PBigDecimalTest {
 
   @Test
   public void getNumberType() {
-    assertEquals(PNumber.TYPE_DECIMAL, bd.getNumberType());
+    assertEquals(CJNumber.TYPE_DECIMAL, bd.getNumberType());
   }
 
 
@@ -112,7 +112,7 @@ public class PBigDecimalTest {
 
     BigInteger i2 = BigInteger.ONE.shiftLeft(70);
     BigDecimal v2 = new BigDecimal(i2);
-    PBigDecimal bd2 = new PBigDecimal(v2, true);
+    CJBigDecimal bd2 = new CJBigDecimal(v2, true);
     assertTrue(bd2.isIntegral());
   }
 
@@ -147,15 +147,15 @@ public class PBigDecimalTest {
     assertNotNull(bd.toString());
 
     BigDecimal bd = new BigDecimal("1e+31");
-    PBigDecimal pbd = new PBigDecimal(bd, true);
+    CJBigDecimal pbd = new CJBigDecimal(bd, true);
     assertEquals(bd.toBigIntegerExact().toString(), pbd.toString());
 
     bd = new BigDecimal("1.234e+40");
-    pbd = new PBigDecimal(bd, true);
+    pbd = new CJBigDecimal(bd, true);
     assertEquals(bd.toBigIntegerExact().toString(), pbd.toString());
 
     bd = new BigDecimal("-1234e+31");
-    pbd = new PBigDecimal(bd, true);
+    pbd = new CJBigDecimal(bd, true);
     assertEquals(bd.toBigIntegerExact().toString(), pbd.toString());
   }
 

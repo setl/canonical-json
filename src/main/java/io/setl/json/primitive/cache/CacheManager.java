@@ -6,8 +6,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
-import io.setl.json.primitive.PString;
-import io.setl.json.primitive.numbers.PNumber;
+import io.setl.json.primitive.CJString;
+import io.setl.json.primitive.numbers.CJNumber;
 
 /**
  * @author Simon Greatrix on 05/02/2020.
@@ -16,11 +16,11 @@ public class CacheManager {
 
   private static ICache<String, String> myKeyCache;
 
-  private static ICache<String, PNumber> myNumberCache;
+  private static ICache<String, CJNumber> myNumberCache;
 
-  private static ICache<String, PString> myStringCache;
+  private static ICache<String, CJString> myStringCache;
 
-  private static ICache<Number, PNumber> myValueCache;
+  private static ICache<Number, CJNumber> myValueCache;
 
 
   private static <K, V> ICache<K, V> createCache(String name) {
@@ -60,11 +60,11 @@ public class CacheManager {
 
 
   /**
-   * Cache of JSON input to the corresponding numeric primitive.
+   * Cache of JSON input to the corresponding numeric canonical.
    *
    * @return the cache.
    */
-  public static ICache<String, PNumber> numberCache() {
+  public static ICache<String, CJNumber> numberCache() {
     return myNumberCache;
   }
 
@@ -84,7 +84,7 @@ public class CacheManager {
    *
    * @param newNumberCache the new cache (or null for no caching)
    */
-  public static void setNumberCache(ICache<String, PNumber> newNumberCache) {
+  public static void setNumberCache(ICache<String, CJNumber> newNumberCache) {
     myNumberCache = Objects.requireNonNullElseGet(newNumberCache, NoCache::new);
   }
 
@@ -94,7 +94,7 @@ public class CacheManager {
    *
    * @param newCache the new cache (or null for no caching)
    */
-  public static void setStringCache(ICache<String, PString> newCache) {
+  public static void setStringCache(ICache<String, CJString> newCache) {
     myStringCache = Objects.requireNonNullElseGet(newCache, NoCache::new);
   }
 
@@ -104,17 +104,17 @@ public class CacheManager {
    *
    * @param newCache the new cache (or null for no caching)
    */
-  public static void setValueCache(ICache<Number, PNumber> newCache) {
+  public static void setValueCache(ICache<Number, CJNumber> newCache) {
     myValueCache = Objects.requireNonNullElseGet(newCache, NoCache::new);
   }
 
 
   /**
-   * Cache of JSON input to the corresponding text primitive.
+   * Cache of JSON input to the corresponding text canonical.
    *
    * @return the cache.
    */
-  public static ICache<String, PString> stringCache() {
+  public static ICache<String, CJString> stringCache() {
     return myStringCache;
   }
 
@@ -124,7 +124,7 @@ public class CacheManager {
    *
    * @return the cache.
    */
-  public static ICache<Number, PNumber> valueCache() {
+  public static ICache<Number, CJNumber> valueCache() {
     return myValueCache;
   }
 

@@ -9,10 +9,10 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import io.setl.json.JObject;
-import io.setl.json.builder.JObjectBuilder;
+import io.setl.json.CJObject;
+import io.setl.json.builder.ObjectBuilder;
 import io.setl.json.patch.PatchOperation;
-import io.setl.json.pointer.JPointerFactory;
+import io.setl.json.pointer.PointerFactory;
 import io.setl.json.pointer.JsonExtendedPointer;
 
 /**
@@ -38,7 +38,7 @@ public class Copy extends PatchOperation {
   ) {
     super(path);
     this.from = from;
-    fromPointer = JPointerFactory.create(from);
+    fromPointer = PointerFactory.create(from);
   }
 
 
@@ -47,10 +47,10 @@ public class Copy extends PatchOperation {
    *
    * @param object the representation of the copy operation
    */
-  public Copy(JObject object) {
+  public Copy(CJObject object) {
     super(object);
     this.from = object.getString("from");
-    fromPointer = JPointerFactory.create(from);
+    fromPointer = PointerFactory.create(from);
   }
 
 
@@ -104,8 +104,8 @@ public class Copy extends PatchOperation {
 
 
   @Override
-  public JsonObject toJsonObject() {
-    return new JObjectBuilder()
+  public CJObject toJsonObject() {
+    return new ObjectBuilder()
         .add("op", getOperation().operationName())
         .add("path", getPath())
         .add("from", from)

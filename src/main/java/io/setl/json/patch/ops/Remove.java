@@ -7,8 +7,8 @@ import javax.json.JsonStructure;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import io.setl.json.JObject;
-import io.setl.json.builder.JObjectBuilder;
+import io.setl.json.CJObject;
+import io.setl.json.builder.ObjectBuilder;
 import io.setl.json.patch.PatchOperation;
 
 /**
@@ -22,7 +22,7 @@ public class Remove extends PatchOperation {
   }
 
 
-  public Remove(JObject object) {
+  public Remove(CJObject object) {
     super(object);
   }
 
@@ -40,8 +40,8 @@ public class Remove extends PatchOperation {
 
 
   @Override
-  public JsonObject toJsonObject() {
-    return new JObjectBuilder()
+  public CJObject toJsonObject() {
+    return new ObjectBuilder()
         .add("op", getOperation().operationName())
         .add("path", getPath())
         .build();

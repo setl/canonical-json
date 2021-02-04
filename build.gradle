@@ -22,7 +22,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'org.sonarqube'
 
 group 'io.setl'
-version '2.0-SNAPSHOT'
+version '2.0'
 sourceCompatibility = 11
 targetCompatibility = 11
 

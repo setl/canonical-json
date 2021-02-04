@@ -9,7 +9,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import static io.setl.json.CJArray.asJArray;
+import static io.setl.json.CJArray.asArray;
 import static io.setl.json.CJArray.fixCollection;
 
 import java.math.BigDecimal;
@@ -346,12 +346,12 @@ public class CJArrayTest {
   @Test
   public void testFixCollection() {
     CJArray ja = new CJArray();
-    assertSame(ja, asJArray(ja));
+    assertSame(ja, asArray(ja));
     ja.add("abc");
     ja.add(123);
     ja.addNull();
     ja.add(true);
-    assertEquals(ja, asJArray(Arrays.asList("abc", CJNumber.create(123), null, JsonValue.TRUE)));
+    assertEquals(ja, asArray(Arrays.asList("abc", CJNumber.create(123), null, JsonValue.TRUE)));
   }
 
 

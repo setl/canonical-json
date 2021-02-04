@@ -59,7 +59,7 @@ public interface Canonical extends JsonValue {
     }
     switch (value.getValueType()) {
       case ARRAY:
-        return CJArray.asJArray(value.asJsonArray());
+        return CJArray.asArray(value.asJsonArray());
       case FALSE:
         return CJFalse.FALSE;
       case NUMBER:
@@ -128,10 +128,13 @@ public interface Canonical extends JsonValue {
       return CJNumber.castUnsafe((Number) value);
     }
     if (value instanceof Collection<?>) {
-      return CJArray.asJArray((Collection<?>) value);
+      return CJArray.asArray((Collection<?>) value);
     }
     if (value instanceof Map<?, ?>) {
       return CJObject.asJObject((Map<?, ?>) value);
+    }
+    if( value.getClass().isArray() ) {
+      return CJArray.asArrayFromArray(value);
     }
     throw new NotJsonException(value);
   }

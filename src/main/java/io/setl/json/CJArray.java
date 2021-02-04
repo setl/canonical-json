@@ -1,6 +1,7 @@
 package io.setl.json;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Objects;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -220,22 +222,32 @@ public class CJArray implements JsonArray, Canonical {
    *
    * @return the JsonArray
    */
-  public static CJArray asJArray(Collection<?> c) {
+  public static CJArray asArray(Collection<?> c) {
     if (c instanceof CJArray) {
       return (CJArray) c;
     }
-    CJArray out = new CJArray();
-    out.ensureCapacity(c.size());
+    CJArray out = new CJArray(c.size());
     for (Object o : c) {
-      Canonical p;
-      if (o instanceof Canonical) {
-        p = (Canonical) o;
-      } else if (o instanceof JsonValue) {
-        p = Canonical.cast((JsonValue) o);
-      } else {
-        p = Canonical.create(o);
-      }
-      out.add(p);
+      out.add(Canonical.cast(o));
+    }
+    return out;
+  }
+
+
+  /**
+   * Create an object, that must be some kind of array, into a canonical JSON array.
+   * @param value the object, that must be an array
+   * @return the
+   */
+  public static CJArray asArrayFromArray(Object value) {
+    Objects.requireNonNull(value);
+    if( ! value.getClass().isArray() ) {
+      throw new IllegalArgumentException("Value "+value.getClass()+" is not an array");
+    }
+    int length = Array.getLength(value);
+    CJArray out = new CJArray(length);
+    for(int i=0;i<length;i++) {
+      out.add(Canonical.cast(Array.get(value,i)));
     }
     return out;
   }
@@ -276,7 +288,7 @@ public class CJArray implements JsonArray, Canonical {
 
 
   public CJArray(Collection<?> c) {
-    myList = new ArrayList<>(asJArray(c).myList);
+    myList = new ArrayList<>(asArray(c).myList);
   }
 
 

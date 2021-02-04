@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.Random;
 
 import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonGenerator.Feature;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonpCharacterEscapes;
@@ -52,8 +53,14 @@ public class CanonicalFactoryTest {
 
   @Test
   public void createGeneratorUtf8_2() throws IOException {
+    File file = File.createTempFile("delete_me.", ".json");
+    JsonGenerator jsonGenerator = instance.createGenerator(file, JsonEncoding.UTF8);
+
     // We just assume the generator works
-    assertNotNull(instance.createGenerator(new File("test"), JsonEncoding.UTF8));
+    assertNotNull(jsonGenerator);
+
+    jsonGenerator.close();
+    file.delete();
   }
 
 

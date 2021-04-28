@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 /**
+ * A BigDecimal number.
+ *
  * @author Simon Greatrix on 24/01/2020.
  */
 public class CJBigDecimal extends CJNumber {

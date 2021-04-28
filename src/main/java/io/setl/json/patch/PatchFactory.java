@@ -18,6 +18,9 @@ import io.setl.json.patch.key.ArrayKey;
 import io.setl.json.patch.key.Key;
 import io.setl.json.patch.key.ObjectKey;
 
+/**
+ * Factory for creating patches using a Diff algorithm.
+ */
 public final class PatchFactory {
 
   /**

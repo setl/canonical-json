@@ -9,6 +9,8 @@ import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
 
 /**
+ * Iterator over a JSON Object.
+ *
  * @author Simon Greatrix on 24/01/2020.
  */
 class ObjectIterator extends BaseIterator<Entry<String, JsonValue>> {

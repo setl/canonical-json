@@ -4,6 +4,8 @@ import java.io.IOException;
 import javax.json.JsonValue;
 
 /**
+ * Representation of "false".
+ *
  * @author Simon Greatrix on 08/01/2020.
  */
 public class CJFalse extends CJBase implements CJBoolean {

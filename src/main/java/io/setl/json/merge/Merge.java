@@ -10,6 +10,8 @@ import io.setl.json.CJObject;
 import io.setl.json.Canonical;
 
 /**
+ * Implementation of a JSON merge patch. Merge patches only operate on JSON objects.
+ *
  * @author Simon Greatrix on 28/01/2020.
  */
 public class Merge implements JsonMergePatch {

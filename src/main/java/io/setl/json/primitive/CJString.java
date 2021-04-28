@@ -9,6 +9,8 @@ import io.setl.json.primitive.cache.CacheManager;
 import io.setl.json.primitive.cache.ICache;
 
 /**
+ * Representation of JSON strings.
+ *
  * @author Simon Greatrix on 08/01/2020.
  */
 public class CJString extends CJBase implements JsonString {

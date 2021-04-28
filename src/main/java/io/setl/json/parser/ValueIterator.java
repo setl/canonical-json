@@ -7,6 +7,8 @@ import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
 
 /**
+ * Iterate over JSON values as they are parsed.
+ *
  * @author Simon Greatrix on 24/01/2020.
  */
 class ValueIterator extends BaseIterator<JsonValue> {

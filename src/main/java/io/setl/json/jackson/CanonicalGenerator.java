@@ -374,7 +374,7 @@ public class CanonicalGenerator extends JsonGenerator {
 
   @Override
   public int writeBinary(Base64Variant bv, InputStream data, int dataLength) throws IOException {
-    // Jacksons's Base64Variant class forces callers to do most of the encoding themselves.
+    // Jackson's Base64Variant class forces callers to do most of the encoding themselves.
     int length = 0;
     StringBuilder buffer = new StringBuilder();
     if (dataLength > 0) {

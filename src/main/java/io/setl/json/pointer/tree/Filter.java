@@ -6,6 +6,8 @@ import javax.json.JsonObject;
 import io.setl.json.pointer.PathElement;
 
 /**
+ * Filter for producing views on JSON structures.
+ *
  * @author Simon Greatrix on 17/02/2020.
  */
 interface Filter {

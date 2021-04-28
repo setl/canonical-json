@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import io.setl.json.exception.JsonIOException;
 
 /**
+ * A deserializer for JSON objects.
+ *
  * @author Simon Greatrix on 12/02/2020.
  */
 public class JsonObjectDeserializer extends JsonDeserializer<JsonObject> {

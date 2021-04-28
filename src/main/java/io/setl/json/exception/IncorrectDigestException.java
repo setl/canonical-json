@@ -3,6 +3,8 @@ package io.setl.json.exception;
 import javax.json.JsonException;
 
 /**
+ * Exception thrown when a digest test in a patch fails.
+ *
  * @author Simon Greatrix on 27/02/2020.
  */
 public class IncorrectDigestException extends JsonException {

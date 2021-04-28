@@ -16,6 +16,8 @@ import io.setl.json.exception.JsonIOException;
 import io.setl.json.patch.Patch;
 
 /**
+ * A deserializer for JsonPatch instances.
+ *
  * @author Simon Greatrix on 18/02/2020.
  */
 public class JsonPatchDeserializer extends JsonDeserializer<JsonPatch> {

@@ -14,6 +14,8 @@ import javax.json.stream.JsonParser.Event;
 import io.setl.json.io.Location;
 
 /**
+ * Parse a JSON structure.
+ *
  * @author Simon Greatrix on 15/01/2020.
  */
 public class StructureParser extends BaseIterator<Event> implements JsonParser {

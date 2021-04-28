@@ -24,6 +24,8 @@ import io.setl.json.primitive.CJTrue;
 import io.setl.json.primitive.numbers.CJNumber;
 
 /**
+ * Read JSON using Jackson's parser.
+ *
  * @author Simon Greatrix on 31/01/2020.
  */
 public class JacksonReader implements JsonReader {

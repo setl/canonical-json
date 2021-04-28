@@ -26,6 +26,8 @@ import io.setl.json.pointer.JsonExtendedPointer;
 import io.setl.json.pointer.PointerFactory;
 
 /**
+ * An operation in a patch.
+ *
  * @author Simon Greatrix on 06/02/2020.
  */
 @JsonTypeInfo(

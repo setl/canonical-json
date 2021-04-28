@@ -10,6 +10,8 @@ import io.setl.json.primitive.CJString;
 import io.setl.json.primitive.numbers.CJNumber;
 
 /**
+ * Caching of common immutable values. This limits the number of objects created as similar JSON documents are parsed as shared keys and values are reused.
+ *
  * @author Simon Greatrix on 05/02/2020.
  */
 public class CacheManager {

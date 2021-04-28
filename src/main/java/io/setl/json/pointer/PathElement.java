@@ -7,6 +7,8 @@ import javax.json.JsonValue;
 import io.setl.json.pointer.JsonExtendedPointer.ResultOfAdd;
 
 /**
+ * An element of a pointer's path.
+ *
  * @author Simon Greatrix on 27/01/2020.
  */
 public interface PathElement {

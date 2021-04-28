@@ -9,6 +9,8 @@ import io.setl.json.Canonical;
 import io.setl.json.primitive.CJNull;
 
 /**
+ * A JSON generator implementation.
+ *
  * @author Simon Greatrix on 27/01/2020.
  */
 public abstract class Generator implements JsonGenerator {

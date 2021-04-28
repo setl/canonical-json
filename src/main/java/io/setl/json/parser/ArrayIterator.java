@@ -6,6 +6,8 @@ import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
 
 /**
+ * Iterator over the parsed elements of a JSON array.
+ *
  * @author Simon Greatrix on 24/01/2020.
  */
 class ArrayIterator extends BaseIterator<JsonValue> {

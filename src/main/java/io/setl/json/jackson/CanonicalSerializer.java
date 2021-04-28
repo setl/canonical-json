@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import io.setl.json.Canonical;
 
 /**
+ * A serializer of JSON values.
+ *
  * @author Simon Greatrix on 2020-01-07.
  */
 public class CanonicalSerializer<T extends Canonical> extends JsonSerializer<T> {

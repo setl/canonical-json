@@ -11,6 +11,8 @@ import java.util.Map;
 import javax.json.JsonReaderFactory;
 
 /**
+ * A factory for creating JSON readers.
+ *
  * @author Simon Greatrix on 10/01/2020.
  */
 public class ReaderFactory implements JsonReaderFactory {

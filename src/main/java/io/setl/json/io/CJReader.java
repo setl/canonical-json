@@ -13,6 +13,8 @@ import javax.json.stream.JsonParsingException;
 import io.setl.json.parser.Parser;
 
 /**
+ * A JSON reader implementation.
+ *
  * @author Simon Greatrix on 10/01/2020.
  */
 public class CJReader implements JsonReader {

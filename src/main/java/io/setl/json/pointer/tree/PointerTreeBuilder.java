@@ -9,6 +9,8 @@ import io.setl.json.pointer.JsonExtendedPointer;
 import io.setl.json.pointer.PointerFactory;
 
 /**
+ * Builder of pointer trees.
+ *
  * @author Simon Greatrix on 17/02/2020.
  */
 public class PointerTreeBuilder {

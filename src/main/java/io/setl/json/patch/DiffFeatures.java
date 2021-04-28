@@ -1,5 +1,8 @@
 package io.setl.json.patch;
 
+/**
+ * Feature specification for the Diff engine.
+ */
 public enum DiffFeatures {
 
   /**

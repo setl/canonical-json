@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrappe
 import io.setl.json.CJArray;
 
 /**
+ * Serializer for JSON arrays.
+ *
  * @author Simon Greatrix on 06/01/2020.
  */
 public class JsonArraySerializer extends CanonicalSerializer<CJArray> {

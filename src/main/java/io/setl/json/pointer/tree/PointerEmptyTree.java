@@ -11,6 +11,8 @@ import io.setl.json.Canonical;
 import io.setl.json.pointer.JsonExtendedPointer;
 
 /**
+ * An empty tree of pointers.
+ *
  * @author Simon Greatrix on 17/02/2020.
  */
 public class PointerEmptyTree implements PointerTree {

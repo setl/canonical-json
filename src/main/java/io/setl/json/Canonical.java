@@ -27,6 +27,8 @@ import io.setl.json.primitive.CJTrue;
 import io.setl.json.primitive.numbers.CJNumber;
 
 /**
+ * JSON values in canonical form.
+ *
  * @author Simon Greatrix on 08/01/2020.
  */
 @SuppressWarnings("OverloadMethodsDeclarationOrder")

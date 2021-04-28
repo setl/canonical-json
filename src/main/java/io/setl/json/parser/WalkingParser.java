@@ -10,6 +10,8 @@ import javax.json.JsonValue.ValueType;
 import javax.json.stream.JsonParser.Event;
 
 /**
+ * Walk through a parse returning the events.
+ *
  * @author Simon Greatrix on 15/01/2020.
  */
 abstract class WalkingParser extends BaseIterator<Event> {

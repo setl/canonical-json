@@ -14,6 +14,9 @@ import com.fasterxml.jackson.core.io.IOContext;
 
 import io.setl.json.io.Utf8Writer;
 
+/**
+ * A Jackson JSON output factory that writes canonical JSON.
+ */
 public class CanonicalFactory extends JsonFactory {
 
   public CanonicalFactory() {

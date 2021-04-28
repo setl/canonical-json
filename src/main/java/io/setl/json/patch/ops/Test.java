@@ -26,6 +26,8 @@ import io.setl.json.pointer.JsonExtendedPointer;
 import io.setl.json.pointer.JsonExtendedPointer.ResultOfAdd;
 
 /**
+ * A "test" operation. The standard test is extended to allow verification of cryptographic digests.
+ *
  * @author Simon Greatrix on 06/02/2020.
  */
 @JsonInclude(Include.NON_NULL)

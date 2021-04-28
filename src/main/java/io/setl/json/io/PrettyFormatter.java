@@ -7,6 +7,8 @@ import io.setl.json.primitive.CJBase;
 import io.setl.json.primitive.CJString;
 
 /**
+ * A JSON formatter which does pretty printing.
+ *
  * @author Simon Greatrix on 18/11/2020.
  */
 public class PrettyFormatter implements Formatter, Appendable {

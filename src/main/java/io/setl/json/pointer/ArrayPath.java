@@ -11,6 +11,8 @@ import io.setl.json.exception.PointerIndexException;
 import io.setl.json.pointer.JsonExtendedPointer.ResultOfAdd;
 
 /**
+ * Part of a pointer path that goes through an array.
+ *
  * @author Simon Greatrix on 27/01/2020.
  */
 public class ArrayPath extends ObjectPath {

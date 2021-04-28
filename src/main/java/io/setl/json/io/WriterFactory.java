@@ -13,6 +13,8 @@ import javax.json.JsonWriterFactory;
 import javax.json.stream.JsonGeneratorFactory;
 
 /**
+ * A factory for JSON writers.
+ *
  * @author Simon Greatrix on 10/01/2020.
  */
 public class WriterFactory implements JsonWriterFactory {

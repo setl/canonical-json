@@ -6,6 +6,8 @@ import java.io.Writer;
 import javax.annotation.Nonnull;
 
 /**
+ * An OutputStream writer which uses UTF-8 encoding.
+ *
  * @author Simon Greatrix on 03/01/2020.
  */
 public class Utf8Writer extends Writer implements Appendable {

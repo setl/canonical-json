@@ -4,6 +4,8 @@ import javax.json.JsonException;
 import javax.json.JsonValue.ValueType;
 
 /**
+ * A pointer cannot be used on the specified JSON structure.
+ *
  * @author Simon Greatrix on 27/01/2020.
  */
 public class PointerMismatchException extends JsonException {

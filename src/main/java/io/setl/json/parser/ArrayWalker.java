@@ -6,6 +6,8 @@ import javax.json.JsonValue;
 import javax.json.stream.JsonParser.Event;
 
 /**
+ * Walk through the elements of an array.
+ *
  * @author Simon Greatrix on 15/01/2020.
  */
 class ArrayWalker extends WalkingParser {

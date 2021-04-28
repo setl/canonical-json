@@ -1,6 +1,8 @@
 package io.setl.json.pointer;
 
 /**
+ * Factory for creating pointers.
+ *
  * @author Simon Greatrix on 27/01/2020.
  */
 public class PointerFactory {

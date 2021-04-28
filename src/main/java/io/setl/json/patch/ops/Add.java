@@ -12,6 +12,8 @@ import io.setl.json.builder.ObjectBuilder;
 import io.setl.json.patch.PatchOperation;
 
 /**
+ * An "add" operation.
+ *
  * @author Simon Greatrix on 06/02/2020.
  */
 public class Add extends PatchOperation {

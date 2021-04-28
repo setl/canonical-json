@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 /**
+ * A number which is a Java int.
+ *
  * @author Simon Greatrix on 24/01/2020.
  */
 public class CJInt extends CJNumber {

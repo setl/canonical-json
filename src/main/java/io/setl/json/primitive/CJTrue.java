@@ -6,6 +6,8 @@ import javax.json.JsonValue;
 import io.setl.json.Canonical;
 
 /**
+ * Representation of "true".
+ *
  * @author Simon Greatrix on 08/01/2020.
  */
 public class CJTrue extends CJBase implements CJBoolean {

@@ -47,6 +47,8 @@ import io.setl.json.primitive.CJString;
 import io.setl.json.primitive.numbers.CJNumber;
 
 /**
+ * The provider.
+ *
  * @author Simon Greatrix on 15/01/2020.
  */
 public class CanonicalJsonProvider extends JsonProvider {

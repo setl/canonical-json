@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.setl.json.primitive.CJBase;
 
 /**
+ * A writer of JSON values.
+ *
  * @author Simon Greatrix on 06/01/2020.
  */
 public class CJBaseSerializer extends CanonicalSerializer<CJBase> {

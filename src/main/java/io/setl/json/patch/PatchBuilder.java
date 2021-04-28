@@ -22,6 +22,8 @@ import io.setl.json.primitive.CJTrue;
 import io.setl.json.primitive.numbers.CJNumber;
 
 /**
+ * Builder for JSON patches.
+ *
  * @author Simon Greatrix on 28/01/2020.
  */
 public class PatchBuilder implements JsonPatchBuilder, Iterable<PatchOperation> {

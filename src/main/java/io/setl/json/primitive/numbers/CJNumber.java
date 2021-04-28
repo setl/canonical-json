@@ -19,6 +19,8 @@ import io.setl.json.primitive.cache.CacheManager;
 import io.setl.json.primitive.cache.ICache;
 
 /**
+ * A number.
+ *
  * @author Simon Greatrix on 08/01/2020.
  */
 public abstract class CJNumber extends CJBase implements JsonNumber {
@@ -280,7 +282,9 @@ public abstract class CJNumber extends CJBase implements JsonNumber {
     if (!(o instanceof JsonNumber)) {
       return false;
     }
-
+    if (!(o instanceof CJNumber)) {
+      o = cast(((JsonNumber) o).bigDecimalValue());
+    }
     // API requires comparison as BigDecimals.
     CJNumber pNumber = (CJNumber) o;
     switch (pNumber.getNumberType()) {

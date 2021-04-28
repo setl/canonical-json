@@ -12,6 +12,8 @@ import javax.json.JsonObjectBuilder;
 import io.setl.json.Canonical;
 
 /**
+ * Factory for creating array and object builders.
+ *
  * @author Simon Greatrix on 10/01/2020.
  */
 public class BuilderFactory implements JsonBuilderFactory {

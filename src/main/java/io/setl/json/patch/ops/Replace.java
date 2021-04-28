@@ -13,6 +13,8 @@ import io.setl.json.builder.ObjectBuilder;
 import io.setl.json.patch.PatchOperation;
 
 /**
+ * A "replace" operation.
+ *
  * @author Simon Greatrix on 06/02/2020.
  */
 public class Replace extends PatchOperation {

@@ -13,6 +13,8 @@ import io.setl.json.Canonical;
 import io.setl.json.pointer.JsonExtendedPointer;
 
 /**
+ * A implementation of a Pointer Tree.
+ *
  * @author Simon Greatrix on 17/02/2020.
  */
 public class PointerTreeImpl implements PointerTree {

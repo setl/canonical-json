@@ -12,6 +12,8 @@ import io.setl.json.primitive.cache.CacheManager;
 import io.setl.json.primitive.cache.ICache;
 
 /**
+ * Parser for JSON numeric values.
+ *
  * @author Simon Greatrix on 13/01/2020.
  */
 public class NumberParser {

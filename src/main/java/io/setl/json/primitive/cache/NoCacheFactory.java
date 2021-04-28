@@ -1,6 +1,8 @@
 package io.setl.json.primitive.cache;
 
 /**
+ * A factory that creates "no cache" instances.
+ *
  * @author Simon Greatrix on 05/02/2020.
  */
 public class NoCacheFactory implements ICacheFactory {

@@ -11,6 +11,7 @@ buildscript {
 
 plugins {
   id "com.github.spotbugs" version "2.0.0"
+  id 'com.palantir.git-version' version '0.12.3'
 }
 
 apply plugin: 'java'
@@ -22,7 +23,12 @@ apply plugin: 'maven-publish'
 apply plugin: 'org.sonarqube'
 
 group 'io.setl'
-version '2.0-SNAPSHOT'
+if ( (versionDetails().branchName ==~ /^(master)|(release.*)|(patch.*)$/) && versionDetails().isCleanTag ) {
+  project.version = gitVersion()
+} else {
+  project.version = '100-SNAPSHOT'
+}
+
 sourceCompatibility = 11
 targetCompatibility = 11
 
@@ -31,12 +37,16 @@ tasks.withType(JavaCompile) {
 }
 
 checkstyle {
-  toolVersion = "7.8.2"
-  configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+    toolVersion = "8.41.1"
+    configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+}
+
+checkstyleTest {
+    enabled = false
 }
 
 spotbugs {
-  toolVersion = '3.1.12'
+  toolVersion = '4.2.3'
   sourceSets = [sourceSets.main]
   ignoreFailures = true
   reportsDir = file("$project.buildDir/findbugsReports")

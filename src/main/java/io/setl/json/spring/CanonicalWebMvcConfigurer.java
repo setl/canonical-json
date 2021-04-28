@@ -8,6 +8,8 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
+ * Enable JSON input and output.
+ *
  * @author Simon Greatrix on 12/02/2020.
  */
 class CanonicalWebMvcConfigurer implements WebMvcConfigurer {

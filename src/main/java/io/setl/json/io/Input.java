@@ -6,6 +6,8 @@ import javax.json.stream.JsonLocation;
 import javax.json.stream.JsonParsingException;
 
 /**
+ * Input for parsing.
+ *
  * @author Simon Greatrix on 10/01/2020.
  */
 public class Input {

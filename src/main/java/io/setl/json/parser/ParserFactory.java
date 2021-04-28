@@ -15,6 +15,8 @@ import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParserFactory;
 
 /**
+ * Factory for generating parsers.
+ *
  * @author Simon Greatrix on 13/01/2020.
  */
 public class ParserFactory implements JsonParserFactory {

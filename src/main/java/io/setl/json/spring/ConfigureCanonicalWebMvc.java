@@ -14,6 +14,8 @@ import io.setl.json.jackson.JsonModule;
 
 
 /**
+ * Configure handling of JSON via this library.
+ *
  * @author Simon Greatrix on 12/02/2020.
  */
 @Configuration

@@ -8,6 +8,8 @@ import javax.json.JsonWriter;
 import javax.json.stream.JsonGenerator;
 
 /**
+ * A JSON writer implementation. The format of the output is controlled by a specified generator.
+ *
  * @author Simon Greatrix on 10/01/2020.
  */
 public class CJWriter implements JsonWriter {

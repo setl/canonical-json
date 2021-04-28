@@ -7,6 +7,8 @@ import javax.json.stream.JsonParsingException;
 import io.setl.json.io.Input;
 
 /**
+ * Parse a JSON String.
+ *
  * @author Simon Greatrix on 13/01/2020.
  */
 class StringParser {

@@ -3,6 +3,8 @@ package io.setl.json.exception;
 import io.setl.json.primitive.CJString;
 
 /**
+ * Exception thrown when trying to represent positive infinity, negative infinity or Not-a-number values as JSON numbers.
+ *
  * @author Simon Greatrix on 24/01/2020.
  */
 public class NonFiniteNumberException extends ArithmeticException {

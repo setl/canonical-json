@@ -6,6 +6,8 @@ import java.math.BigInteger;
 import javax.json.stream.JsonParsingException;
 
 /**
+ * An invalid number parsed in the JSON.
+ *
  * @author Simon Greatrix on 05/02/2020.
  */
 class BadNumber extends CJNumber {

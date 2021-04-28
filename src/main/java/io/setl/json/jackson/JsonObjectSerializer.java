@@ -11,6 +11,8 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.setl.json.CJObject;
 
 /**
+ * A serializer for JSON objects.
+ *
  * @author Simon Greatrix on 06/01/2020.
  */
 public class JsonObjectSerializer extends CanonicalSerializer<CJObject> {

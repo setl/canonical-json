@@ -9,6 +9,8 @@ import javax.json.JsonValue;
 import io.setl.json.CJArray;
 
 /**
+ * Builder for JSON arrays.
+ *
  * @author Simon Greatrix on 10/01/2020.
  */
 public class ArrayBuilder implements JsonArrayBuilder {

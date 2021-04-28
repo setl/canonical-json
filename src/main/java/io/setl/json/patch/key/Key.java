@@ -1,5 +1,8 @@
 package io.setl.json.patch.key;
 
+/**
+ * Parts of a pointer for a patch.
+ */
 public abstract class Key {
 
   protected final Key parent;

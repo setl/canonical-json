@@ -9,6 +9,8 @@ import io.setl.json.primitive.CJNull;
 import io.setl.json.primitive.CJString;
 
 /**
+ * Walk through a JSON Object structure.
+ *
  * @author Simon Greatrix on 15/01/2020.
  */
 class ObjectWalker extends WalkingParser {

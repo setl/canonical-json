@@ -9,6 +9,8 @@ import javax.json.JsonValue.ValueType;
 import io.setl.json.CJObject;
 
 /**
+ * Generator of merge patches.
+ *
  * @author Simon Greatrix on 28/01/2020.
  */
 public class MergeDiff {

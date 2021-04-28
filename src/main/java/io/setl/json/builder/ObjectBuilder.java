@@ -9,6 +9,8 @@ import javax.json.JsonValue;
 import io.setl.json.CJObject;
 
 /**
+ * A builder for JSON Objects.
+ *
  * @author Simon Greatrix on 10/01/2020.
  */
 public class ObjectBuilder implements JsonObjectBuilder {

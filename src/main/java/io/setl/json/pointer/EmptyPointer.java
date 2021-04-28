@@ -13,6 +13,8 @@ import io.setl.json.CJObject;
 import io.setl.json.exception.PointerMismatchException;
 
 /**
+ * A pointer to the document root.
+ *
  * @author Simon Greatrix on 27/01/2020.
  */
 public class EmptyPointer implements JsonExtendedPointer {

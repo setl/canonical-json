@@ -15,6 +15,8 @@ import io.setl.json.pointer.JsonExtendedPointer;
 import io.setl.json.pointer.PointerFactory;
 
 /**
+ * A "move" operation.
+ *
  * @author Simon Greatrix on 06/02/2020.
  */
 public class Move extends PatchOperation {

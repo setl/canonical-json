@@ -3,6 +3,8 @@ package io.setl.json.exception;
 import javax.json.JsonException;
 
 /**
+ * A JSON Structure did not contain the item required by a pointer.
+ *
  * @author Simon Greatrix on 27/01/2020.
  */
 public class NoSuchValueException extends JsonException {

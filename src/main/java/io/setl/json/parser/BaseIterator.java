@@ -7,6 +7,8 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
+ * Common iterator functionality.
+ *
  * @author Simon Greatrix on 15/01/2020.
  */
 abstract class BaseIterator<T> implements Iterator<T> {

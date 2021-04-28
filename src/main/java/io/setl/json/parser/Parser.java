@@ -22,6 +22,8 @@ import io.setl.json.primitive.numbers.CJNumber;
 import io.setl.json.primitive.numbers.NumberParser;
 
 /**
+ * Parser of JSON.
+ *
  * @author Simon Greatrix on 10/01/2020.
  */
 public class Parser extends BaseIterator<JsonParser.Event> implements JsonParser {
@@ -656,8 +658,7 @@ public class Parser extends BaseIterator<JsonParser.Event> implements JsonParser
     int r;
     do {
       r = input.read();
-    }
-    while (isWhite(r));
+    } while (isWhite(r));
     return r;
   }
 

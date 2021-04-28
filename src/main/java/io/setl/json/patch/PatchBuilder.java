@@ -5,6 +5,7 @@ import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 import javax.annotation.Nonnull;
+import javax.json.JsonArray;
 import javax.json.JsonPatch;
 import javax.json.JsonPatchBuilder;
 import javax.json.JsonValue;
@@ -26,6 +27,16 @@ import io.setl.json.primitive.numbers.CJNumber;
 public class PatchBuilder implements JsonPatchBuilder, Iterable<PatchOperation> {
 
   private final List<PatchOperation> operationList = new ArrayList<>();
+
+
+  public PatchBuilder() {
+    // do nothing
+  }
+
+
+  public PatchBuilder(JsonArray operations) {
+    operationList.addAll(PatchOperation.convert(operations));
+  }
 
 
   @Override

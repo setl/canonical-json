@@ -1,6 +1,5 @@
 package io.setl.json.patch.ops;
 
-import javax.json.JsonObject;
 import javax.json.JsonPatch.Operation;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
@@ -12,8 +11,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.setl.json.CJObject;
 import io.setl.json.builder.ObjectBuilder;
 import io.setl.json.patch.PatchOperation;
-import io.setl.json.pointer.PointerFactory;
 import io.setl.json.pointer.JsonExtendedPointer;
+import io.setl.json.pointer.PointerFactory;
 
 /**
  * @author Simon Greatrix on 06/02/2020.
@@ -49,7 +48,7 @@ public class Copy extends PatchOperation {
    */
   public Copy(CJObject object) {
     super(object);
-    this.from = object.getString("from");
+    from = object.getString("from");
     fromPointer = PointerFactory.create(from);
   }
 

@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import io.setl.json.pointer.PointerFactory;
 import io.setl.json.pointer.JsonExtendedPointer;
+import io.setl.json.pointer.PointerFactory;
 
 /**
  * @author Simon Greatrix on 17/02/2020.

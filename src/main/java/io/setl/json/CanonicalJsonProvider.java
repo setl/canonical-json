@@ -51,6 +51,19 @@ import io.setl.json.primitive.numbers.CJNumber;
  */
 public class CanonicalJsonProvider extends JsonProvider {
 
+  static final GeneratorFactory CANONICAL_GENERATOR_FACTORY = new GeneratorFactory(Map.of(
+      GeneratorFactory.TRUST_KEY_ORDER, true
+  ));
+
+  static final GeneratorFactory PRETTY_GENERATOR_FACTORY = new GeneratorFactory(Map.of(
+      JsonGenerator.PRETTY_PRINTING, true,
+      GeneratorFactory.TRUST_KEY_ORDER, true,
+      GeneratorFactory.SMALL_STRUCTURE_LIMIT, 20
+  ));
+
+  static boolean isToStringPretty = false;
+
+
   public static boolean isToStringPretty() {
     return isToStringPretty;
   }
@@ -59,19 +72,6 @@ public class CanonicalJsonProvider extends JsonProvider {
   public static void setIsToStringPretty(boolean isToStringPretty) {
     CanonicalJsonProvider.isToStringPretty = isToStringPretty;
   }
-
-
-  static boolean isToStringPretty = false;
-
-  static final GeneratorFactory PRETTY_GENERATOR_FACTORY = new GeneratorFactory(Map.of(
-      JsonGenerator.PRETTY_PRINTING, true,
-      GeneratorFactory.TRUST_KEY_ORDER, true,
-      GeneratorFactory.SMALL_STRUCTURE_LIMIT, 20
-  ));
-
-  static final GeneratorFactory CANONICAL_GENERATOR_FACTORY = new GeneratorFactory(Map.of(
-      GeneratorFactory.TRUST_KEY_ORDER, true
-  ));
 
 
   @Override
@@ -94,6 +94,7 @@ public class CanonicalJsonProvider extends JsonProvider {
 
   @Override
   public JsonBuilderFactory createBuilderFactory(Map<String, ?> config) {
+    // Our ArrayBuilder and ObjectBuilder do not take any configuration, so we discard what was specified.
     return new BuilderFactory();
   }
 
@@ -184,7 +185,7 @@ public class CanonicalJsonProvider extends JsonProvider {
 
   @Override
   public JsonPatchBuilder createPatchBuilder(JsonArray array) {
-    return new PatchBuilder();
+    return new PatchBuilder(array);
   }
 
 
@@ -208,6 +209,7 @@ public class CanonicalJsonProvider extends JsonProvider {
 
   @Override
   public JsonReaderFactory createReaderFactory(Map<String, ?> config) {
+    // Configuration is ignored
     return new ReaderFactory();
   }
 
@@ -262,7 +264,7 @@ public class CanonicalJsonProvider extends JsonProvider {
 
   @Override
   public JsonWriterFactory createWriterFactory(Map<String, ?> config) {
-    return new WriterFactory();
+    return new WriterFactory(createGeneratorFactory(config));
   }
 
 }

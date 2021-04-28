@@ -37,7 +37,7 @@ public class IncorrectTypeException extends ClassCastException {
   public IncorrectTypeException(int index, Set<ValueType> required, ValueType actual) {
     super(String.format(TEMPLATE_AT, index, actual, required));
     this.index = index;
-    this.key = null;
+    key = null;
     this.required = Collections.unmodifiableSet(EnumSet.copyOf(required));
     this.actual = actual;
   }
@@ -52,7 +52,7 @@ public class IncorrectTypeException extends ClassCastException {
    */
   public IncorrectTypeException(String key, Set<ValueType> required, ValueType actual) {
     super(String.format(TEMPLATE_AT, key, actual, required));
-    this.index = -1;
+    index = -1;
     this.key = key;
     this.required = Collections.unmodifiableSet(EnumSet.copyOf(required));
     this.actual = actual;
@@ -69,7 +69,7 @@ public class IncorrectTypeException extends ClassCastException {
   public IncorrectTypeException(int index, ValueType required, ValueType actual) {
     super(String.format(TEMPLATE_AT, index, actual, required));
     this.index = index;
-    this.key = null;
+    key = null;
     this.required = Collections.unmodifiableSet(EnumSet.of(required));
     this.actual = actual;
   }
@@ -84,7 +84,7 @@ public class IncorrectTypeException extends ClassCastException {
    */
   public IncorrectTypeException(String key, ValueType required, ValueType actual) {
     super(String.format(TEMPLATE_AT, key, actual, required));
-    this.index = -1;
+    index = -1;
     this.key = key;
     this.required = Collections.unmodifiableSet(EnumSet.of(required));
     this.actual = actual;
@@ -99,8 +99,8 @@ public class IncorrectTypeException extends ClassCastException {
    */
   public IncorrectTypeException(Set<ValueType> required, ValueType actual) {
     super(String.format(TEMPLATE_SIMPLE, actual, required));
-    this.index = -1;
-    this.key = null;
+    index = -1;
+    key = null;
     this.required = Collections.unmodifiableSet(EnumSet.copyOf(required));
     this.actual = actual;
   }
@@ -114,8 +114,8 @@ public class IncorrectTypeException extends ClassCastException {
    */
   public IncorrectTypeException(ValueType required, ValueType actual) {
     super(String.format(TEMPLATE_SIMPLE, actual, required));
-    this.index = -1;
-    this.key = null;
+    index = -1;
+    key = null;
     this.required = Collections.unmodifiableSet(EnumSet.of(required));
     this.actual = actual;
   }

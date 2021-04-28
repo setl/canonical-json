@@ -39,7 +39,7 @@ public class JacksonReader implements JsonReader {
 
 
   public JacksonReader(TreeNode treeNode) {
-    this.jsonParser = treeNode.traverse();
+    jsonParser = treeNode.traverse();
   }
 
 

@@ -178,7 +178,7 @@ public class CanonicalGenerator extends JsonGenerator {
    * @param writer      the output's writer
    */
   public CanonicalGenerator(IOContext ioContext, int features, ObjectCodec objectCodec, Writer writer) {
-    this.isResourceManaged = ioContext.isResourceManaged();
+    isResourceManaged = ioContext.isResourceManaged();
     this.objectCodec = objectCodec;
     this.writer = writer;
 
@@ -203,7 +203,7 @@ public class CanonicalGenerator extends JsonGenerator {
    */
   public CanonicalGenerator(Writer writer, boolean isResourceManaged) {
     this.isResourceManaged = isResourceManaged;
-    this.objectCodec = null;
+    objectCodec = null;
     this.writer = writer;
     writeContext = JsonWriteContext.createRootContext(null);
   }

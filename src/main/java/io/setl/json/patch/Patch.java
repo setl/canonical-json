@@ -10,14 +10,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import io.setl.json.CJArray;
-import io.setl.json.CJObject;
 import io.setl.json.Canonical;
-import io.setl.json.patch.ops.Add;
-import io.setl.json.patch.ops.Copy;
-import io.setl.json.patch.ops.Move;
-import io.setl.json.patch.ops.Remove;
-import io.setl.json.patch.ops.Replace;
-import io.setl.json.patch.ops.Test;
 
 /**
  * Implementation of JSON Patch as defined in RFC-6902.
@@ -41,34 +34,7 @@ public class Patch implements JsonPatch {
    * @param array the representation
    */
   public Patch(JsonArray array) {
-    int s = array.size();
-    operations = new ArrayList<>(s);
-    for (int i = 0; i < s; i++) {
-      CJObject jsonObject = CJObject.asJObject(array.getJsonObject(i));
-      String op = jsonObject.getString("op");
-      switch (op) {
-        case "add":
-          operations.add(new Add(jsonObject));
-          break;
-        case "copy":
-          operations.add(new Copy(jsonObject));
-          break;
-        case "move":
-          operations.add(new Move(jsonObject));
-          break;
-        case "remove":
-          operations.add(new Remove(jsonObject));
-          break;
-        case "replace":
-          operations.add(new Replace(jsonObject));
-          break;
-        case "test":
-          operations.add(new Test(jsonObject));
-          break;
-        default:
-          throw new IllegalArgumentException("Unknown operation: \"" + op + "\"");
-      }
-    }
+    operations = PatchOperation.convert(array);
   }
 
 
@@ -113,6 +79,11 @@ public class Patch implements JsonPatch {
   }
 
 
+  public String toCanonicalString() {
+    return toJsonArray().toCanonicalString();
+  }
+
+
   @Override
   public CJArray toJsonArray() {
     CJArray jsonArray = new CJArray();
@@ -127,9 +98,6 @@ public class Patch implements JsonPatch {
     return toJsonArray().toPrettyString();
   }
 
-  public String toCanonicalString() {
-    return toJsonArray().toCanonicalString();
-  }
 
   @Override
   public String toString() {

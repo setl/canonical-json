@@ -31,7 +31,7 @@ public class MissingItemException extends NullPointerException {
   public MissingItemException(int index, ValueType expected) {
     super("Item at " + index + " was missing and should have had type " + expected);
     this.index = index;
-    this.key = null;
+    key = null;
     this.expected = Collections.unmodifiableSet(EnumSet.of(expected));
   }
 
@@ -44,7 +44,7 @@ public class MissingItemException extends NullPointerException {
    */
   public MissingItemException(String key, ValueType expected) {
     super("Item at " + CJString.format(key) + " was missing and should have had type " + expected);
-    this.index = -1;
+    index = -1;
     this.key = key;
     this.expected = Collections.unmodifiableSet(EnumSet.of(expected));
   }
@@ -59,7 +59,7 @@ public class MissingItemException extends NullPointerException {
   public MissingItemException(int index, Set<ValueType> expected) {
     super("Item at " + index + " was missing and should have had type " + expected);
     this.index = index;
-    this.key = null;
+    key = null;
     this.expected = Collections.unmodifiableSet(EnumSet.copyOf(expected));
   }
 
@@ -72,7 +72,7 @@ public class MissingItemException extends NullPointerException {
    */
   public MissingItemException(String key, Set<ValueType> expected) {
     super("Item at " + CJString.format(key) + " was missing and should have had type " + expected);
-    this.index = -1;
+    index = -1;
     this.key = key;
     this.expected = Collections.unmodifiableSet(EnumSet.copyOf(expected));
   }

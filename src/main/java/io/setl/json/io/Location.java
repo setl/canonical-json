@@ -91,7 +91,7 @@ public class Location implements JsonLocation {
   public String toString() {
     return String.format(
         "Location(columnNumber=%s, lineNumber=%s, streamOffset=%s)",
-        this.columnNumber, this.lineNumber, this.streamOffset
+        columnNumber, lineNumber, streamOffset
     );
   }
 

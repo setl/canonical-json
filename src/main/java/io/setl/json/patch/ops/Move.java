@@ -48,7 +48,7 @@ public class Move extends PatchOperation {
    */
   public Move(CJObject object) {
     super(object);
-    this.from = object.getString("from");
+    from = object.getString("from");
     fromPointer = PointerFactory.create(from);
   }
 

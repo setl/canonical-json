@@ -236,18 +236,20 @@ public class CJArray implements JsonArray, Canonical {
 
   /**
    * Create an object, that must be some kind of array, into a canonical JSON array.
+   *
    * @param value the object, that must be an array
+   *
    * @return the
    */
   public static CJArray asArrayFromArray(Object value) {
     Objects.requireNonNull(value);
-    if( ! value.getClass().isArray() ) {
-      throw new IllegalArgumentException("Value "+value.getClass()+" is not an array");
+    if (!value.getClass().isArray()) {
+      throw new IllegalArgumentException("Value " + value.getClass() + " is not an array");
     }
     int length = Array.getLength(value);
     CJArray out = new CJArray(length);
-    for(int i=0;i<length;i++) {
-      out.add(Canonical.cast(Array.get(value,i)));
+    for (int i = 0; i < length; i++) {
+      out.add(Canonical.cast(Array.get(value, i)));
     }
     return out;
   }

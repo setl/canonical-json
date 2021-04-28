@@ -24,7 +24,7 @@ class PrettyBuffer implements PrettyOutput {
     this.parent = parent;
     this.size = size;
     this.endsWith = endsWith;
-    this.pos = 0;
+    pos = 0;
     chars = new char[size];
   }
 

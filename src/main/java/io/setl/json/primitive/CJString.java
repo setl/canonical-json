@@ -16,7 +16,7 @@ public class CJString extends CJBase implements JsonString {
   private static final byte[] ESCAPES;
 
   /** Canonical form uses upper-case hexadecimal. */
-  private static final char[] HEX = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+  private static final char[] HEX = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
 
   /**

@@ -1,6 +1,5 @@
 package io.setl.json.patch.ops;
 
-import javax.json.JsonObject;
 import javax.json.JsonPatch.Operation;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
@@ -32,7 +31,7 @@ public class Add extends PatchOperation {
 
   public Add(CJObject object) {
     super(object);
-    this.value = object.getJsonValue("value");
+    value = object.getJsonValue("value");
   }
 
 

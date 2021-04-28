@@ -34,7 +34,7 @@ class ObjectIterator extends BaseIterator<Entry<String, JsonValue>> {
   public ObjectIterator(Supplier<StructureTag> tags, JsonParser parser) {
     this.tags = tags;
     this.parser = parser;
-    this.myTag = tags.get();
+    myTag = tags.get();
   }
 
 

@@ -22,7 +22,7 @@ class ArrayIterator extends BaseIterator<JsonValue> {
   public ArrayIterator(Supplier<StructureTag> tags, JsonParser parser) {
     this.tags = tags;
     this.parser = parser;
-    this.myTag = tags.get();
+    myTag = tags.get();
   }
 
 

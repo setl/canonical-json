@@ -133,7 +133,7 @@ public interface Canonical extends JsonValue {
     if (value instanceof Map<?, ?>) {
       return CJObject.asJObject((Map<?, ?>) value);
     }
-    if( value.getClass().isArray() ) {
+    if (value.getClass().isArray()) {
       return CJArray.asArrayFromArray(value);
     }
     throw new NotJsonException(value);

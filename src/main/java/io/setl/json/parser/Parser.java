@@ -18,8 +18,8 @@ import io.setl.json.primitive.CJFalse;
 import io.setl.json.primitive.CJNull;
 import io.setl.json.primitive.CJString;
 import io.setl.json.primitive.CJTrue;
-import io.setl.json.primitive.numbers.NumberParser;
 import io.setl.json.primitive.numbers.CJNumber;
+import io.setl.json.primitive.numbers.NumberParser;
 
 /**
  * @author Simon Greatrix on 10/01/2020.
@@ -29,17 +29,17 @@ public class Parser extends BaseIterator<JsonParser.Event> implements JsonParser
   /**
    * Letters for the "false" literal.
    */
-  private static final char[] LITERAL_FALSE = new char[]{'a', 'l', 's', 'e'};
+  private static final char[] LITERAL_FALSE = {'a', 'l', 's', 'e'};
 
   /**
    * Letters for the "null" literal.
    */
-  private static final char[] LITERAL_NULL = new char[]{'u', 'l', 'l'};
+  private static final char[] LITERAL_NULL = {'u', 'l', 'l'};
 
   /**
    * Letters for the "true" literal.
    */
-  private static final char[] LITERAL_TRUE = new char[]{'r', 'u', 'e'};
+  private static final char[] LITERAL_TRUE = {'r', 'u', 'e'};
 
   private static final int MAX_RECURSION_DEPTH = Integer.getInteger(Parser.class.getPackageName() + ".maxRecursion", 1_000);
 

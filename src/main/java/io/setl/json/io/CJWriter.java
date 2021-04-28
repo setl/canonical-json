@@ -1,28 +1,24 @@
 package io.setl.json.io;
 
-import java.io.IOException;
-import java.io.Writer;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 import javax.json.JsonWriter;
-
-import io.setl.json.Canonical;
-import io.setl.json.exception.JsonIOException;
+import javax.json.stream.JsonGenerator;
 
 /**
  * @author Simon Greatrix on 10/01/2020.
  */
 public class CJWriter implements JsonWriter {
 
-  private final Writer writer;
+  private final JsonGenerator generator;
 
   private boolean isUsed = false;
 
 
-  CJWriter(Writer writer) {
-    this.writer = writer;
+  CJWriter(JsonGenerator generator) {
+    this.generator = generator;
   }
 
 
@@ -37,23 +33,14 @@ public class CJWriter implements JsonWriter {
   @Override
   public void close() {
     isUsed = true;
-    try {
-      writer.close();
-    } catch (IOException e) {
-      throw new JsonIOException(e);
-    }
+    generator.close();
   }
 
 
   @Override
   public void write(JsonValue value) {
     checkUsed();
-    Canonical p = Canonical.cast(value);
-    try {
-      p.writeTo(writer);
-    } catch (IOException e) {
-      throw new JsonIOException(e);
-    }
+    generator.write(value);
   }
 
 

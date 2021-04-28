@@ -101,8 +101,8 @@ public class Test extends PatchOperation {
     super(pointer);
     Objects.requireNonNull(value, "Test value must not be null");
     this.value = value;
-    this.digest = null;
-    this.resultOfAdd = null;
+    digest = null;
+    resultOfAdd = null;
   }
 
 
@@ -115,9 +115,9 @@ public class Test extends PatchOperation {
   public Test(JsonExtendedPointer pointer, String digest) {
     super(pointer);
     Objects.requireNonNull(digest, "Test value must not be null");
-    this.value = null;
+    value = null;
     this.digest = digest;
-    this.resultOfAdd = null;
+    resultOfAdd = null;
   }
 
 
@@ -129,8 +129,8 @@ public class Test extends PatchOperation {
    */
   public Test(JsonExtendedPointer pointer, ResultOfAdd resultOfAdd) {
     super(pointer);
-    this.value = null;
-    this.digest = null;
+    value = null;
+    digest = null;
     this.resultOfAdd = resultOfAdd;
   }
 
@@ -142,13 +142,13 @@ public class Test extends PatchOperation {
    */
   public Test(CJObject object) {
     super(object);
-    this.value = object.optJsonValue("value");
-    this.digest = object.optString("digest");
+    value = object.optJsonValue("value");
+    digest = object.optString("digest");
     String name = object.optString("resultOfAdd");
     if (name != null) {
-      this.resultOfAdd = ResultOfAdd.valueOf(name);
+      resultOfAdd = ResultOfAdd.valueOf(name);
     } else {
-      this.resultOfAdd = null;
+      resultOfAdd = null;
     }
     checkConfig();
   }

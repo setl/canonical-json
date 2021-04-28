@@ -1,5 +1,8 @@
 package io.setl.json.patch;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.json.JsonArray;
 import javax.json.JsonPatch.Operation;
 import javax.json.JsonStructure;
 
@@ -12,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 import io.setl.json.CJObject;
+import io.setl.json.exception.InvalidPatchException;
 import io.setl.json.patch.ops.Add;
 import io.setl.json.patch.ops.Copy;
 import io.setl.json.patch.ops.Move;
@@ -39,6 +43,49 @@ import io.setl.json.pointer.PointerFactory;
 })
 public abstract class PatchOperation {
 
+  /**
+   * Convert a JsonArray specifying patch operations to the actual operations.
+   *
+   * @param array array
+   *
+   * @return the operations
+   */
+  static List<PatchOperation> convert(JsonArray array) {
+    if (array == null) {
+      return List.of();
+    }
+    int s = array.size();
+    List<PatchOperation> operations = new ArrayList<>(s);
+    for (int i = 0; i < s; i++) {
+      CJObject jsonObject = CJObject.asJObject(array.getJsonObject(i));
+      String op = jsonObject.getString("op");
+      switch (op) {
+        case "add":
+          operations.add(new Add(jsonObject));
+          break;
+        case "copy":
+          operations.add(new Copy(jsonObject));
+          break;
+        case "move":
+          operations.add(new Move(jsonObject));
+          break;
+        case "remove":
+          operations.add(new Remove(jsonObject));
+          break;
+        case "replace":
+          operations.add(new Replace(jsonObject));
+          break;
+        case "test":
+          operations.add(new Test(jsonObject));
+          break;
+        default:
+          throw new InvalidPatchException("Unknown operation: \"" + op + "\"");
+      }
+    }
+    return operations;
+  }
+
+
   protected final JsonExtendedPointer pointer;
 
   private final String path;
@@ -51,7 +98,7 @@ public abstract class PatchOperation {
 
 
   protected PatchOperation(JsonExtendedPointer pointer) {
-    this.path = pointer.getPath();
+    path = pointer.getPath();
     this.pointer = pointer;
   }
 

@@ -30,7 +30,7 @@ class ValueIterator extends BaseIterator<JsonValue> {
   public ValueIterator(Supplier<StructureTag> tags, JsonParser parser) {
     this.tags = tags;
     this.parser = parser;
-    this.myTag = tags.get();
+    myTag = tags.get();
   }
 
 

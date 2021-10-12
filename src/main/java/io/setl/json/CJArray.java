@@ -80,15 +80,15 @@ import io.setl.json.primitive.numbers.CJNumber;
  * <dt><code>get<i>Type</i>(index)</code></dt>
  * <dd>
  * <ul>
- * <li>If the index is less than zero, or greater than or equal to the size of this array, throws a <code>MissingItemException</code>.
- * <li>If the entry is not the required type, throws an <code>IncorrectTypeException</code>.
+ * <li>If the index is less than zero, or greater than or equal to the size of this array, throws a {@link MissingItemException}.
+ * <li>If the entry is not the required type, throws an {@link IncorrectTypeException}.
  * <li>Otherwise returns the entry
  * </ul>
  * </dd>
  * </dl>
  *
  * <p>The numeric accessors follow the normal Java rules for primitive type conversions and consider any number to be the correct type. For example, if you
- * call <code>getIntSafe(0)</code> and element 0 contains the Long value 1L<<50, then the call returns the value of Integer.MAX_VALUE, as would be expected
+ * call {@link #getInt(int)} and the element contains the Long value 1L<<50, then the call returns the value of Integer.MAX_VALUE, as would be expected
  * for a narrowing primitive conversion, rather than throwing a <code>IncorrectTypeException</code>.
  */
 @JsonSerialize(using = JsonArraySerializer.class)

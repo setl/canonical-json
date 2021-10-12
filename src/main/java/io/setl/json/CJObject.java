@@ -54,8 +54,8 @@ import io.setl.json.primitive.numbers.CJNumber;
  *
  * <p>No value in the object can be null. If you try to add one, it will be replaced by a Canonical instance holding a null.
  *
- * <p>As JSON objects can contain mixed content, this class provides type-checking accessors to the array members. There are multiple varieties of each accessor
- * which obey these contracts:
+ * <p>As JSON objects can contain mixed content, this class provides type-checking accessors to the object members. There are multiple varieties of each
+ * accessor which obey these contracts:
  *
  * <dl>
  * <dt><code>opt<i>Type</i>(key)</code></dt>
@@ -67,7 +67,7 @@ import io.setl.json.primitive.numbers.CJNumber;
  * </ul>
  * </dd>
  *
- * <dt><code>get<i>Type</i>(index, default)</code></dt>
+ * <dt><code>get<i>Type</i>(key, default)</code></dt>
  * <dd>
  * <ul>
  * <li>If the key is not present, returns the default.
@@ -75,7 +75,7 @@ import io.setl.json.primitive.numbers.CJNumber;
  * <li>Otherwise returns the entry
  * </ul>
  * </dd>
- * <dt><code>get<i>Type</i>(index, function)</code></dt>
+ * <dt><code>get<i>Type</i>(key, function)</code></dt>
  * <dd>
  * <ul>
  * <li>If the key is not present, invokes the function to derive a suitable value.
@@ -83,19 +83,19 @@ import io.setl.json.primitive.numbers.CJNumber;
  * <li>Otherwise returns the entry
  * </ul>
  * </dd>
- * <dt><code>get<i>Type</i>(index)</code></dt>
+ * <dt><code>get<i>Type</i>(key)</code></dt>
  * <dd>
  * <ul>
- * <li>If the key is not present, throws a <code>MissingItemException</code>.
- * <li>If the entry is not the required type, throws an <code>IncorrectTypeException</code>.
+ * <li>If the key is not present, throws a {@link MissingItemException}.
+ * <li>If the entry is not the required type, throws an {@link IncorrectTypeException}.
  * <li>Otherwise returns the entry
  * </ul>
  * </dd>
  * </dl>
  *
  * <p>The numeric accessors follow the normal Java rules for primitive type conversions and consider any number to be the correct type. For example, if you
- * call <code>getIntSafe(key)</code> and element 0 contains the Long value 1L<<50, then the call returns the value of Integer.MAX_VALUE, as would be expected
- * for a narrowing primitive conversion, rather than throwing a <code>IncorrectTypeException</code>.
+ * call {@link #getInt(String)} and the value is the Long value 1L<<50, then the call returns the value of Integer.MAX_VALUE, as would be expected
+ * for a narrowing primitive conversion, rather than throwing a {@link IncorrectTypeException}.
  */
 
 @JsonSerialize(using = JsonObjectSerializer.class)

@@ -35,7 +35,7 @@ import io.setl.json.primitive.numbers.CJNumber;
 public interface Canonical extends JsonValue {
 
   /**
-   * Test for whether a value is a boolean. The ValueType enumeration distinguishes between true and false, but there are times we want either.
+   * Test for whether a value is a Boolean. The ValueType enumeration distinguishes between true and false, but there are times we want either.
    */
   Set<ValueType> IS_BOOLEAN = Collections.unmodifiableSet(EnumSet.of(ValueType.TRUE, ValueType.FALSE));
 
@@ -100,7 +100,7 @@ public interface Canonical extends JsonValue {
   }
 
   /**
-   * Do a best effort conversion of any object to a Canonical, creating a new Primitive to represent the values where appropriate.
+   * Do the best effort conversion of any object to a Canonical, creating a new Primitive to represent the values where appropriate.
    *
    * @param value the value
    *
@@ -228,7 +228,7 @@ public interface Canonical extends JsonValue {
   }
 
   /**
-   * Test if the value is a boolean.
+   * Test if the value is a Boolean.
    *
    * @param jv the value
    *
@@ -378,7 +378,7 @@ public interface Canonical extends JsonValue {
   }
 
   /**
-   * Get a copy of this. If this is immutable, then returns this. Otherwise returns a deep copy.
+   * Get a copy of this. If this is immutable, then returns this. Otherwise, returns a deep copy.
    *
    * @return a copy of this
    */

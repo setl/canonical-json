@@ -132,6 +132,7 @@ public class CanonicalFactoryTest {
   }
 
 
+  @Test
   public void requiresPropertyOrdering() {
     assertTrue(instance.requiresPropertyOrdering());
   }

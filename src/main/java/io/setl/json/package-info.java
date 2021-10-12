@@ -18,10 +18,16 @@
  *   </li>
  *   <li>MUST represent all integer numbers (those with a zero-valued fractional part)
  *     <ol>
- *       <li>without a leading minus sign when the value is zero, and</li>
- *       <li>without a decimal point, and</li>
- *       <li>without an exponent, and</li>
- *       <li>without insignificant leading zeroes (as already required of all JSON numbers)</li>
+ *       <li>If the integer number has thirty or less trailing zeros:
+ *         <ol>
+ *           <li>without a leading minus sign when the value is zero, and</li>
+ *           <li>without a decimal point, and</li>
+ *           <li>without an exponent, and</li>
+ *           <li>without insignificant leading zeroes (as already required of all JSON numbers)</li>
+ *         </ol>
+ *       </li>
+ *       <li>If the integer number has more than thirty trailing zeroes, use the rules for non-integer numbers. This prevents attacks by using values such as
+ *       "1e+1000000", which would otherwise require a million zeros.</li>
  *     </ol>
  *   </li>
  *   <li>MUST represent all non-integer numbers in exponential notation

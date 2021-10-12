@@ -53,6 +53,8 @@ public class Utf8Appendable implements Appendable {
    * @param buffer the array
    * @param offset the offset into the array
    * @param length the number of characters to write
+   *
+   * @throws IOException if the wrapped output stream fails
    */
   public void append(char[] buffer, int offset, int length) throws IOException {
     int e = offset + length;
@@ -64,6 +66,8 @@ public class Utf8Appendable implements Appendable {
 
   /**
    * Close the output.
+   *
+   * @throws IOException if the wrapped output stream fails to close
    */
   public void close() throws IOException {
     finish();
@@ -73,6 +77,8 @@ public class Utf8Appendable implements Appendable {
 
   /**
    * Close this writer, but DO NOT close the contained output stream.
+   *
+   * @throws IOException if the final character was an isolated high surrogate
    */
   public void finish() throws IOException {
     if (highSurrogate != 0) {

@@ -88,7 +88,7 @@ import io.setl.json.primitive.numbers.CJNumber;
  * </dl>
  *
  * <p>The numeric accessors follow the normal Java rules for primitive type conversions and consider any number to be the correct type. For example, if you
- * call {@link #getInt(int)} and the element contains the Long value 1L<<50, then the call returns the value of Integer.MAX_VALUE, as would be expected
+ * call {@link #getInt(int)} and the element contains the Long value 1L&lt;&lt;50, then the call returns the value of Integer.MAX_VALUE, as would be expected
  * for a narrowing primitive conversion, rather than throwing a <code>IncorrectTypeException</code>.
  */
 @JsonSerialize(using = JsonArraySerializer.class)
@@ -479,6 +479,8 @@ public class CJArray implements JsonArray, Canonical {
   /**
    * Get an array from the array.
    *
+   * @param index the values index in the array
+   *
    * @return the array
    */
   @Nonnull
@@ -523,6 +525,8 @@ public class CJArray implements JsonArray, Canonical {
 
   /**
    * Get a big decimal from the array.
+   *
+   * @param index the values index in the array
    *
    * @return the big decimal
    */
@@ -570,6 +574,8 @@ public class CJArray implements JsonArray, Canonical {
   /**
    * Get a big integer from the array.
    *
+   * @param index the values index in the array
+   *
    * @return the big integer
    */
   @Nonnull
@@ -608,6 +614,8 @@ public class CJArray implements JsonArray, Canonical {
 
   /**
    * Get a Boolean from the array.
+   *
+   * @param index the values index in the array
    *
    * @return the Boolean
    */
@@ -659,6 +667,8 @@ public class CJArray implements JsonArray, Canonical {
 
   /**
    * Get a double from the array.
+   *
+   * @param index the values index in the array
    *
    * @return the double
    */
@@ -769,6 +779,8 @@ public class CJArray implements JsonArray, Canonical {
   /**
    * Get a long from the array.
    *
+   * @param index the values index in the array
+   *
    * @return the long
    */
   public long getLong(int index) {
@@ -805,6 +817,8 @@ public class CJArray implements JsonArray, Canonical {
 
   /**
    * Get an object from the array.
+   *
+   * @param index the values index in the array
    *
    * @return the object
    */
@@ -877,6 +891,8 @@ public class CJArray implements JsonArray, Canonical {
 
   /**
    * Get a String from the array.
+   *
+   * @param index the values index in the array
    *
    * @return the String
    */
@@ -986,6 +1002,8 @@ public class CJArray implements JsonArray, Canonical {
   /**
    * Get an array from the array.
    *
+   * @param index the values index in the array
+   *
    * @return the array, or null
    */
   @Nullable
@@ -996,6 +1014,8 @@ public class CJArray implements JsonArray, Canonical {
 
   /**
    * Get a big decimal from the array.
+   *
+   * @param index the values index in the array
    *
    * @return the big decimal, or null
    */
@@ -1009,6 +1029,8 @@ public class CJArray implements JsonArray, Canonical {
   /**
    * Get a big integer from the array.
    *
+   * @param index the values index in the array
+   *
    * @return the big integer, or null
    */
   @Nonnull
@@ -1021,6 +1043,8 @@ public class CJArray implements JsonArray, Canonical {
   /**
    * Get a Boolean from the array.
    *
+   * @param index the values index in the array
+   *
    * @return the Boolean, or null
    */
   @Nullable
@@ -1031,6 +1055,8 @@ public class CJArray implements JsonArray, Canonical {
 
   /**
    * Get a double from the array.
+   *
+   * @param index the values index in the array
    *
    * @return the double, or null
    */
@@ -1047,6 +1073,8 @@ public class CJArray implements JsonArray, Canonical {
   /**
    * Get an integer from the array.
    *
+   * @param index the values index in the array
+   *
    * @return the integer, or null
    */
   @Nullable
@@ -1058,6 +1086,8 @@ public class CJArray implements JsonArray, Canonical {
 
   /**
    * Get a long from the array.
+   *
+   * @param index the values index in the array
    *
    * @return the long, or null
    */
@@ -1071,6 +1101,8 @@ public class CJArray implements JsonArray, Canonical {
   /**
    * Get an object from the array.
    *
+   * @param index the values index in the array
+   *
    * @return the object, or null
    */
   @Nullable
@@ -1081,6 +1113,8 @@ public class CJArray implements JsonArray, Canonical {
 
   /**
    * Get a String from the array.
+   *
+   * @param index the values index in the array
    *
    * @return the String, or null
    */

@@ -94,7 +94,7 @@ import io.setl.json.primitive.numbers.CJNumber;
  * </dl>
  *
  * <p>The numeric accessors follow the normal Java rules for primitive type conversions and consider any number to be the correct type. For example, if you
- * call {@link #getInt(String)} and the value is the Long value 1L<<50, then the call returns the value of Integer.MAX_VALUE, as would be expected
+ * call {@link #getInt(String)} and the value is the Long value 1L&lt;&lt;50, then the call returns the value of Integer.MAX_VALUE, as would be expected
  * for a narrowing primitive conversion, rather than throwing a {@link IncorrectTypeException}.
  */
 
@@ -784,6 +784,8 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
   /**
    * Get an array from the object.
    *
+   * @param key the entry's key
+   *
    * @return the array
    */
   @Nonnull
@@ -829,6 +831,8 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
 
   /**
    * Get a big decimal from the object.
+   *
+   * @param key the entry's key
    *
    * @return the big decimal
    */
@@ -876,6 +880,8 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
 
   /**
    * Get a big integer from the object.
+   *
+   * @param key the entry's key
    *
    * @return the big integer
    */
@@ -966,6 +972,8 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
 
   /**
    * Get a double from the object.
+   *
+   * @param key the entry's key
    *
    * @return the double
    */
@@ -1128,6 +1136,8 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
   /**
    * Get a long from the object.
    *
+   * @param key the entry's key
+   *
    * @return the long
    */
   public long getLong(String key) {
@@ -1164,6 +1174,8 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
 
   /**
    * Get an object from the object.
+   *
+   * @param key the entry's key
    *
    * @return the object
    */
@@ -1393,6 +1405,8 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
   /**
    * Get an array from the object.
    *
+   * @param key the entry's key
+   *
    * @return the array, or null
    */
   @Nullable
@@ -1403,6 +1417,8 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
 
   /**
    * Get a big decimal from the object.
+   *
+   * @param key the entry's key
    *
    * @return the big decimal, or null
    */
@@ -1416,6 +1432,8 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
   /**
    * Get a big integer from the object.
    *
+   * @param key the entry's key
+   *
    * @return the big integer, or null
    */
   @Nullable
@@ -1428,6 +1446,8 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
   /**
    * Get a Boolean from the object.
    *
+   * @param key the entry's key
+   *
    * @return the Boolean, or null
    */
   @Nullable
@@ -1438,6 +1458,8 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
 
   /**
    * Get a double from the object.
+   *
+   * @param key the entry's key
    *
    * @return the double, or null
    */
@@ -1453,6 +1475,8 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
 
   /**
    * Get an integer from the object.
+   *
+   * @param key the entry's key
    *
    * @return the integer, or null
    */
@@ -1478,6 +1502,8 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
   /**
    * Get a long from the object.
    *
+   * @param key the entry's key
+   *
    * @return the long, or null
    */
   @Nullable
@@ -1490,6 +1516,8 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
   /**
    * Get an object from the object.
    *
+   * @param key the entry's key
+   *
    * @return the object, or null
    */
   @Nullable
@@ -1500,6 +1528,8 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
 
   /**
    * Get a String from the object.
+   *
+   * @param key the entry's key
    *
    * @return the String, or null
    */
@@ -1583,6 +1613,8 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
    *
    * @param key   the key
    * @param value the value
+   *
+   * @return the old value
    */
   public JsonValue put(String key, Boolean value) {
     if (value != null) {

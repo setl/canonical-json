@@ -251,6 +251,10 @@ public class NumberParser {
    * Parse a number from the input.
    *
    * @param r the initial character of the number
+   *
+   * @return the parsed number
+   *
+   * @throws JsonParsingException if the input is invalid
    */
   public CJNumber parse(int r) {
     StringBuilder buf = new StringBuilder();

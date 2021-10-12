@@ -12,18 +12,17 @@ package io.setl.json.io;
  * <p>JSON strings can contain many special Unicode characters, including zero-width characters, characters that combine with other characters, and characters
  * that cause the text direction to be reversed. The special meaning of these characters is ignored when calculating the column number.</p>
  *
- * <p>
- *   <table>
- *     <tr>
- *       <th>String</th>
- *       <th>Location of the 'X' (0058)</th>
- *       <th>UTF-16</th>
- *     </tr>
- *     <tr><td>"abcXf"</td><td>5</td><td>0022 0061 0062 0063 0058 0066 0022</td></tr>
- *     <tr><td>"​​cXf"</td><td>5</td><td>0022 200b 200b 0063 0058 0066 0022<br>The 'a' and 'b' have been replaced by zero-width spaces</td></tr>
- *     <tr><td>"àcXf"</td><td>5</td><td>0022 0061 0300 0063 0058 0066 0022<br>The accent on the 'a' is a separate character.</td></tr>
- *   </table>
- * </p>
+ * <table>
+ *   <caption>Examples of confusing locations</caption>
+ *   <tr>
+ *     <th>String</th>
+ *     <th>Location of the 'X' (0058)</th>
+ *     <th>UTF-16</th>
+ *   </tr>
+ *   <tr><td>"abcXf"</td><td>5</td><td>0022 0061 0062 0063 0058 0066 0022</td></tr>
+ *   <tr><td>"​​cXf"</td><td>5</td><td>0022 200b 200b 0063 0058 0066 0022<br>The 'a' and 'b' have been replaced by zero-width spaces</td></tr>
+ *   <tr><td>"àcXf"</td><td>5</td><td>0022 0061 0300 0063 0058 0066 0022<br>The accent on the 'a' is a separate character.</td></tr>
+ * </table>
  *
  * @author Simon Greatrix on 10/01/2020.
  */

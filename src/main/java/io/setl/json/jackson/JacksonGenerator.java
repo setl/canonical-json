@@ -50,6 +50,8 @@ public class JacksonGenerator {
    * Pass the JSON value to the Jackson Generator.
    *
    * @param jsonValue the value
+   *
+   * @throws IOException if the write fails
    */
   public void generate(JsonValue jsonValue) throws IOException {
     if (jsonValue == null) {

@@ -72,6 +72,7 @@
     <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
   </module>
 
+  <module name="SuppressWarningsFilter"/>
   <module name="TreeWalker">
     <!-- SETL : Added Suppress Warnings Holder -->
     <module name="SuppressWarningsHolder"/>

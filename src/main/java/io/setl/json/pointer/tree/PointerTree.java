@@ -29,11 +29,13 @@ public interface PointerTree {
    * Copy as much of the provided value as this tree of pointers can access.
    *
    * @param source the value to copy
+   * @param <T>    the type of the structure to copy
    *
    * @return the copy
    */
   @Nullable
   <T extends JsonStructure> T copy(@Nonnull T source);
+
 
   /**
    * Get the pointers that were incorporated into this tree.
@@ -41,6 +43,7 @@ public interface PointerTree {
    * @return the pointers
    */
   List<JsonExtendedPointer> getPointers();
+
 
   /**
    * Check if this tree contains a parent of the specified pointer.
@@ -51,10 +54,12 @@ public interface PointerTree {
    */
   boolean isParentOf(JsonExtendedPointer pointer);
 
+
   /**
    * Create a copy of the value with everything this tree can access removed.
    *
    * @param value the value to copy and filter
+   * @param <T>   the structure type
    *
    * @return the filtered copy, or null if the root was removed.
    */

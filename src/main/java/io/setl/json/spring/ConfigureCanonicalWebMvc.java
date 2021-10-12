@@ -25,6 +25,8 @@ public class ConfigureCanonicalWebMvc {
   /**
    * Configure the Web MVC to generate JSON responses in canonical form.
    *
+   * @param mapperBuilder the Jackson object mapper builder
+   *
    * @return the configurer
    */
   @Bean

@@ -31,7 +31,7 @@ import io.setl.json.primitive.numbers.CJNumber;
  *
  * @author Simon Greatrix on 08/01/2020.
  */
-@SuppressWarnings("OverloadMethodsDeclarationOrder")
+@SuppressWarnings("checkstyle:OverloadMethodsDeclarationOrder")
 public interface Canonical extends JsonValue {
 
   /**
@@ -79,6 +79,7 @@ public interface Canonical extends JsonValue {
     }
   }
 
+
   /**
    * Create a Canonical from a JsonValue. If at all possible, the original object is returned.
    *
@@ -98,6 +99,7 @@ public interface Canonical extends JsonValue {
     }
     return create(value);
   }
+
 
   /**
    * Do the best effort conversion of any object to a Canonical, creating a new Primitive to represent the values where appropriate.
@@ -141,6 +143,7 @@ public interface Canonical extends JsonValue {
     throw new NotJsonException(value);
   }
 
+
   /**
    * Return an empty structure of the same type is the example.
    *
@@ -163,6 +166,7 @@ public interface Canonical extends JsonValue {
         throw new IncorrectTypeException(IS_STRUCTURE, example.getValueType());
     }
   }
+
 
   /**
    * Extract the contained value from a JsonValue.
@@ -194,6 +198,7 @@ public interface Canonical extends JsonValue {
     }
   }
 
+
   /**
    * Get the value enclosed in a JSON value.
    *
@@ -212,9 +217,11 @@ public interface Canonical extends JsonValue {
     return defaultValue;
   }
 
+
   static <T> T getValue(Class<T> reqType, JsonValue jv) {
     return reqType.cast(getValue(jv));
   }
+
 
   /**
    * Test if the value is an array.
@@ -227,6 +234,7 @@ public interface Canonical extends JsonValue {
     return jv != null && jv.getValueType() == ValueType.ARRAY;
   }
 
+
   /**
    * Test if the value is a Boolean.
    *
@@ -237,6 +245,7 @@ public interface Canonical extends JsonValue {
   static boolean isBoolean(JsonValue jv) {
     return (jv != null) && (jv.getValueType() == ValueType.TRUE || jv.getValueType() == ValueType.FALSE);
   }
+
 
   /**
    * Test if the value is a JSON null.
@@ -249,6 +258,7 @@ public interface Canonical extends JsonValue {
     return jv != null && jv.getValueType() == ValueType.NULL;
   }
 
+
   /**
    * Test if the value is a number.
    *
@@ -259,6 +269,7 @@ public interface Canonical extends JsonValue {
   static boolean isNumber(JsonValue jv) {
     return jv != null && jv.getValueType() == ValueType.NUMBER;
   }
+
 
   /**
    * Test if the value is a JSON object.
@@ -271,6 +282,7 @@ public interface Canonical extends JsonValue {
     return jv != null && jv.getValueType() == ValueType.OBJECT;
   }
 
+
   /**
    * Test if the value is a string.
    *
@@ -281,6 +293,7 @@ public interface Canonical extends JsonValue {
   static boolean isString(JsonValue jv) {
     return jv != null && jv.getValueType() == ValueType.STRING;
   }
+
 
   /**
    * Convert any number to a BigDecimal.
@@ -310,6 +323,7 @@ public interface Canonical extends JsonValue {
     return new BigDecimal(n.toString());
   }
 
+
   /**
    * Convert any number to a BigInteger, possibly losing precision in the conversion.
    *
@@ -333,6 +347,7 @@ public interface Canonical extends JsonValue {
     return new BigDecimal(n.toString()).toBigInteger();
   }
 
+
   /**
    * Get the canonical JSON representation of the specified value.
    *
@@ -343,6 +358,7 @@ public interface Canonical extends JsonValue {
   static String toCanonicalString(Canonical value) {
     return (value != null) ? value.toCanonicalString() : CJNull.NULL.toCanonicalString();
   }
+
 
   /**
    * Get a pretty JSON representation of the specified value.
@@ -355,6 +371,7 @@ public interface Canonical extends JsonValue {
     return (value != null) ? value.toPrettyString() : CJNull.NULL.toPrettyString();
   }
 
+
   @Override
   default CJArray asJsonArray() {
     try {
@@ -365,6 +382,7 @@ public interface Canonical extends JsonValue {
       throw e;
     }
   }
+
 
   @Override
   default CJObject asJsonObject() {
@@ -377,12 +395,14 @@ public interface Canonical extends JsonValue {
     }
   }
 
+
   /**
    * Get a copy of this. If this is immutable, then returns this. Otherwise, returns a deep copy.
    *
    * @return a copy of this
    */
   Canonical copy();
+
 
   /**
    * Get the value encapsulated by this instance.
@@ -391,6 +411,7 @@ public interface Canonical extends JsonValue {
    */
   @SuppressWarnings("checkstyle:OverloadMethodsDeclarationOrder")
   Object getValue();
+
 
   /**
    * Get the value encapsulated by this instance.
@@ -401,7 +422,9 @@ public interface Canonical extends JsonValue {
    *
    * @return the value
    */
+  @SuppressWarnings("checkstyle:OverloadMethodsDeclarationOrder")
   <T> T getValue(Class<T> reqType, T defaultValue);
+
 
   /**
    * Get the value encapsulated by this primitive. Throws a ClassCastException if the type is incorrect.
@@ -413,6 +436,7 @@ public interface Canonical extends JsonValue {
    */
   <T> T getValueSafe(Class<T> reqType);
 
+
   /**
    * Create the canonical textual JSON representation of this.
    *
@@ -421,6 +445,7 @@ public interface Canonical extends JsonValue {
   default String toCanonicalString() {
     return toString();
   }
+
 
   /**
    * Create the pretty JSON representation of this.
@@ -431,16 +456,20 @@ public interface Canonical extends JsonValue {
     return toString();
   }
 
+
   /**
    * Write this to the specified stream in UTF-8.
    *
    * @param out the stream
+   *
+   * @throws IOException if the write fails
    */
   default void writeTo(OutputStream out) throws IOException {
     Utf8Appendable utf8Appendable = new Utf8Appendable(out);
     writeTo(utf8Appendable);
     utf8Appendable.finish();
   }
+
 
   /**
    * Write this to the specified writer.

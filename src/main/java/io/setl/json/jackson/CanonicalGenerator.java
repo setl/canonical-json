@@ -58,7 +58,9 @@ public class CanonicalGenerator extends JsonGenerator {
 
     void add(String key, Canonical value);
 
+
     void set(JsonWriteContext parent, Canonical raw);
+
 
     /**
      * Write the container.
@@ -588,6 +590,8 @@ public class CanonicalGenerator extends JsonGenerator {
    *
    * @param object      the value to write
    * @param isContainer is the value a container? i.e. does it have start and end markers?
+   *
+   * @throws IOException if the write fails
    */
   public void writeRawCanonicalType(Canonical object, boolean isContainer) throws IOException {
     String json = Canonical.toCanonicalString(object);
@@ -616,6 +620,8 @@ public class CanonicalGenerator extends JsonGenerator {
    * Write a Json Value as a value.
    *
    * @param object the value
+   *
+   * @throws IOException if the write fails
    */
   public void writeRawCanonicalValue(Canonical object) throws IOException {
     writeCanonical(new CJJson(Canonical.toCanonicalString(object)));

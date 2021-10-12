@@ -28,6 +28,8 @@ public class Utf8Writer extends Writer implements Appendable {
 
   /**
    * Close this writer, but DO NOT close the contained output stream.
+   *
+   * @throws IOException if the final character was an isolated high surrogate
    */
   public void finish() throws IOException {
     appendable.finish();

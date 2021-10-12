@@ -59,6 +59,10 @@ public abstract class CJNumber extends CJBase implements JsonNumber {
   /**
    * Convert a number into a JsonValue. IEEE floating point numbers may specify "Not A Number", "Positive Infinity", or "Negative Infinity". These three special
    * cases cannot be represented as numbers in JSON and so will result in a NonFiniteNumberException.
+   *
+   * @param value the numeric value to convert to a canonical JSON value
+   *
+   * @return the canonical JSON representation
    */
   public static CJNumber cast(Number value) {
     ICache<Number, CJNumber> cache = CacheManager.valueCache();
@@ -86,6 +90,10 @@ public abstract class CJNumber extends CJBase implements JsonNumber {
   /**
    * Convert a number into a JsonValue. IEEE floating point numbers may specify "Not A Number", "Positive Infinity", or "Negative Infinity". These three special
    * cases cannot be represented as numbers in JSON and so are rendered as Strings.
+   *
+   * @param value the numeric value to convert to a canonical JSON value
+   *
+   * @return the canonical JSON representation
    */
   public static Canonical castUnsafe(Number value) {
     ICache<Number, CJNumber> cache = CacheManager.valueCache();
@@ -302,9 +310,12 @@ public abstract class CJNumber extends CJBase implements JsonNumber {
 
   protected abstract boolean equalsValue(long other);
 
+
   protected abstract boolean equalsValue(BigInteger other);
 
+
   protected abstract boolean equalsValue(BigDecimal other);
+
 
   public abstract int getNumberType();
 

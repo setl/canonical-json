@@ -1,5 +1,3 @@
-import com.github.spotbugs.SpotBugsTask
-
 buildscript {
   repositories {
     maven { url "http://si-nexus01.dev.setl.io:8081/repository/maven-public/" }
@@ -10,16 +8,17 @@ buildscript {
 }
 
 plugins {
-  id "com.github.spotbugs" version "2.0.0"
+  id 'checkstyle'
+  id "com.github.spotbugs" version "4.0.2"
   id 'com.palantir.git-version' version '0.12.3'
+  id 'signing'
+  id 'java'
+  id 'maven-publish'
 }
 
-apply plugin: 'java'
-
 apply plugin: 'com.github.spotbugs'
-apply plugin: 'checkstyle'
 apply plugin: 'jacoco'
-apply plugin: 'maven-publish'
+apply plugin: 'maven'
 apply plugin: 'org.sonarqube'
 
 group 'io.setl'
@@ -28,6 +27,7 @@ if ( (versionDetails().branchName ==~ /^(master)|(release.*)|(patch.*)$/) && ver
 } else {
   project.version = '100-SNAPSHOT'
 }
+project.version = '2.1'
 
 sourceCompatibility = 11
 targetCompatibility = 11
@@ -45,19 +45,10 @@ checkstyleTest {
     enabled = false
 }
 
-spotbugs {
-  toolVersion = '4.2.3'
-  sourceSets = [sourceSets.main]
-  ignoreFailures = true
-  reportsDir = file("$project.buildDir/findbugsReports")
+spotbugsTest {
+    enabled = false
 }
 
-task findSecurityBugs(type: SpotBugsTask) {
-  classes = fileTree(project.rootDir.absolutePath).include("**/*.class")
-  source = fileTree(project.rootDir.absolutePath).include("**/*.java")
-  classpath = files()
-  pluginClasspath = project.configurations.spotbugsPlugins
-}
 
 jacoco {
   toolVersion = "0.8.5"
@@ -70,10 +61,6 @@ repositories {
   }
   maven { url "http://si-nexus01.dev.setl.io:8081/repository/maven-public/" }
   mavenCentral()
-}
-
-task sourceJar(type: Jar) {
-  from sourceSets.main.allJava
 }
 
 dependencies {
@@ -98,21 +85,43 @@ dependencies {
   spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.10.0'
 }
 
+java {
+  withSourcesJar()
+}
+
+javadoc {
+    source = sourceSets.main.allJava
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourceJar(type: Jar) {
+  from sourceSets.main.allJava
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+  useGpgCmd()
+  sign configurations.archives
+}
+
 publishing {
   publications {
     mavenJava(MavenPublication) {
       from components.java
-
-      artifact sourceJar {
-        classifier "sources"
-      }
     }
   }
   repositories {
     maven {
       credentials {
-        username = 'publisher'
-        password = 'publish'
+        username = "$mavenUser"
+        password = "$mavenPassword"
       }
       if (version.endsWith("SNAPSHOT")) {
         url 'http://si-nexus01.dev.setl.io:8081/repository/setl-snaps'
@@ -123,3 +132,50 @@ publishing {
   }
 }
 
+// Upload to Maven Central
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      pom.project {
+        name 'Canonical JSON'
+        packaging 'jar'
+        // optionally artifactId can be defined here
+        description 'An implementation of the Canonical JSON format with support for javax.json and Jackson'
+        url 'https://github.com/setl/canonical-json'
+
+        scm {
+          connection 'scm:git:https://github.com/setl/canonical-json.git'
+          developerConnection 'scm:git:https://github.com/setl/canonical-json.git'
+          url 'https://github.com/setl/canonical-json'
+        }
+
+        licenses {
+          license {
+            name 'The Apache License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          }
+        }
+
+        developers {
+          developer {
+            id 'simon-greatrix'
+            name 'Simon Greatrix'
+            email 'simon.greatrix@setl.io'
+            organization 'SETL'
+            organizationUrl 'https://setl.io'
+          }
+        }
+      }
+    }
+  }
+}

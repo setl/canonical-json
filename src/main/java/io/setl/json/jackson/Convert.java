@@ -169,6 +169,7 @@ public class Convert {
    * Convert a javax JsonStructure to a Jackson ContainerNode.
    *
    * @param value the value to convert
+   * @param <T>   the Jackson structural node type
    *
    * @return the Jackson equivalent
    */

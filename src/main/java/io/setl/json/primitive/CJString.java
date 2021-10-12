@@ -81,6 +81,8 @@ public class CJString extends CJBase implements JsonString {
    *
    * @param buf   the output buffer
    * @param input the text to format
+   *
+   * @throws IOException if the write fails
    */
   public static void format(Appendable buf, String input) throws IOException {
     // opening quote

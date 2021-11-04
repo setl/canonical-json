@@ -42,7 +42,7 @@ public class CJReader implements JsonReader {
   @Override
   public void close() {
     if (isUsed && jParser.hasNext()) {
-      // Currently JParser.hasNext fails if there is more than one root, so this line is unnecessary
+      // Currently, JParser.hasNext fails if there is more than one root, so this line is unnecessary
       throw new JsonParsingException("Additional data found after first value", jParser.getLocation());
     }
     isUsed = true;

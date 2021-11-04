@@ -151,6 +151,7 @@ class SafeGenerator extends Generator {
     Canonical canonical = ((RootContext) context).output;
     if (canonical != null) {
       target.write(canonical);
+      ((RootContext) context).output = null;
     }
     target.close();
   }

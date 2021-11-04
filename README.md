@@ -1,9 +1,10 @@
 # Canonical JSON
 
-Implementation of the [Canonical JSON format](https://web.archive.org/web/20191120120802/http://gibson042.github.io/canonicaljson-spec/).
+Implementation of the [Canonical JSON format](https://web.archive.org/web/20191120120802/http://gibson042.github.io/canonicaljson-spec/), amended according 
+to the Security Addendum.
 
 The implementation conforms
-to [JSR 374: Java API for JSON Processing 1.1](https://javadoc.io/static/javax.json/javax.json-api/1.1.4/index.html?overview-summary.html).
+to [JSR 374: Java API for JSON Processing 1.1](https://javadoc.io/static/javax.json/javax.json-api/1.1.4/index.html?overview-summary.html), amended 
 
 The implementation can be used with
 [Jackson](https://github.com/FasterXML/jackson). It exports a Jackson Module which adds serializers and deserializers for the java.json.JsonValue types.
@@ -124,3 +125,20 @@ The `CJObject` and `CJArray` classes can be created directly and offer an extend
       .add("species","cat")
       .build()
 ```
+
+
+## Security Addendum
+
+### Asymmetric attack via integer expansion
+The canonical JSON format specifies that integer values be expressed in full without use of the exponential form. This opens a vulnerability for an 
+asynchronous attack. A JSON of the form:
+
+```java
+{
+  "bad number" : 1E+10000000
+}
+```
+
+would require to be expanded to specify all ten million zeros individually. This allows very small messages to place very large load on a server which is 
+therefore an opening for an asymmetric attack. To avoid this, an integer value with 30 or more trailing zeros will be expressed according to the rules for 
+a floating point number.

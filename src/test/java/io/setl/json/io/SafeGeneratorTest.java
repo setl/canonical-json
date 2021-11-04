@@ -20,7 +20,7 @@ import io.setl.json.exception.JsonIOException;
 /**
  * @author Simon Greatrix on 27/01/2020.
  */
-public class JSafeGeneratorTest {
+public class SafeGeneratorTest {
 
   Generator generator;
 
@@ -28,12 +28,34 @@ public class JSafeGeneratorTest {
 
 
   @Test
-  public void close() throws IOException {
+  public void closeOnEmpty() throws IOException {
     Writer writer = Mockito.mock(Writer.class);
     NoOpFormatter formatter = new NoOpFormatter(writer);
     generator = new SafeGenerator(formatter);
     generator.close();
     Mockito.verify(writer).close();
+  }
+
+  @Test
+  public void close() throws IOException {
+    Writer writer = Mockito.mock(Writer.class);
+    NoOpFormatter formatter = new NoOpFormatter(writer);
+    generator = new SafeGenerator(formatter);
+    generator.write(JsonValue.EMPTY_JSON_ARRAY);
+    generator.close();
+    Mockito.verify(writer).close();
+  }
+
+
+  @Test
+  public void doubleClose() throws IOException {
+    Writer writer = Mockito.mock(Writer.class);
+    NoOpFormatter formatter = new NoOpFormatter(writer);
+    generator = new SafeGenerator(formatter);
+    generator.write(JsonValue.EMPTY_JSON_ARRAY);
+    generator.close();
+    generator.close();
+    Mockito.verify(writer,Mockito.times(2)).close();
   }
 
 

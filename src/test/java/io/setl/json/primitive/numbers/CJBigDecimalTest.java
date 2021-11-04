@@ -15,7 +15,7 @@ import org.junit.Test;
 /**
  * @author Simon Greatrix on 25/01/2020.
  */
-public class PBigDecimalTest {
+public class CJBigDecimalTest {
 
   private BigDecimal v = BigDecimal.valueOf(Math.PI);
 

@@ -23,7 +23,12 @@ public enum CacheType {
   /** A cache that maps a {@link Number} value to a standard representation {@link io.setl.json.primitive.numbers.CJNumber}. */
   VALUES;
 
-  /** Get the name used as part of a configuration property. */
+
+  /**
+   * Get the name used as part of a configuration property.
+   *
+   * @return the configuration property element
+   */
   public String getPropertyName() {
     return name().toLowerCase(Locale.ROOT);
   }

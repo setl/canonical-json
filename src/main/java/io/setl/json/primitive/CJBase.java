@@ -1,5 +1,7 @@
 package io.setl.json.primitive;
 
+import java.util.Objects;
+
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import io.setl.json.Canonical;
@@ -19,6 +21,18 @@ public abstract class CJBase implements Canonical {
   @Override
   public Canonical copy() {
     return this;
+  }
+
+
+  @Override
+  public boolean equals(Object other) {
+    if (other == this) {
+      return true;
+    }
+    if (other instanceof Canonical) {
+      return Objects.equals(getValue(), ((Canonical) other).getValue());
+    }
+    return false;
   }
 
 

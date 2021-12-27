@@ -37,8 +37,7 @@ public class EmptyPointerTest {
 
   @Test(expected = PointerMismatchException.class)
   public void add2() {
-    JsonObject jo = pointer.add(object1, Canonical.EMPTY_JSON_ARRAY);
-    assertEquals(object2, jo);
+    pointer.add(object1, Canonical.EMPTY_JSON_ARRAY);
   }
 
 

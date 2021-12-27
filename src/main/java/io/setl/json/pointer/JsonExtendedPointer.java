@@ -54,7 +54,7 @@ public interface JsonExtendedPointer extends JsonPointer {
 
   /**
    * Checks if this pointer points at a parent structure of whatever the other pointer points at. The '-' end-of-array marker is treated as a wildcard in this
-   * which matches any array index. Hence "/a/-/b" contains "/a/5/b".
+   * which matches any array index. Hence, "/a/-/b" contains "/a/5/b".
    *
    * @param other the other pointer to compare to this
    *

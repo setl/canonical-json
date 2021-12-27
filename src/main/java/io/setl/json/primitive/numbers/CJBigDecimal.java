@@ -48,6 +48,12 @@ public class CJBigDecimal extends CJNumber {
 
 
   @Override
+  public boolean equals(Object o) {
+    return super.equals(o);
+  }
+
+
+  @Override
   protected boolean equalsValue(long other) {
     try {
       return other == value.longValueExact();
@@ -78,6 +84,12 @@ public class CJBigDecimal extends CJNumber {
   @Override
   public Object getValue() {
     return value;
+  }
+
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
 
@@ -161,7 +173,7 @@ public class CJBigDecimal extends CJNumber {
       myValue = value.negate();
     }
 
-    // Get the digits and we will insert the decimal separator and append the exponent.
+    // Get the digits, insert the decimal separator, and append the exponent.
     String unscaled = myValue.unscaledValue().toString(10);
     String unscaledInt;
     String unscaledFraction;

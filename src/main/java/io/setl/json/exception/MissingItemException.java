@@ -9,9 +9,11 @@ import io.setl.json.primitive.CJString;
 
 /**
  * Exception thrown when at attempt to retrieve a required datum from a JObject or JArray fails because the datum is missing. The javax.json API requires that
- * this extend from NullPointerException.
+ * this extends from NullPointerException.
  */
 public class MissingItemException extends NullPointerException {
+
+  private static final String MESSAGE = "Item at %s was missing and should have had type %s";
 
   private static final long serialVersionUID = 1L;
 
@@ -29,7 +31,7 @@ public class MissingItemException extends NullPointerException {
    * @param expected the expected type
    */
   public MissingItemException(int index, ValueType expected) {
-    super("Item at " + index + " was missing and should have had type " + expected);
+    super(String.format(MESSAGE, index, expected));
     this.index = index;
     key = null;
     this.expected = Collections.unmodifiableSet(EnumSet.of(expected));
@@ -43,7 +45,7 @@ public class MissingItemException extends NullPointerException {
    * @param expected the type that was expected
    */
   public MissingItemException(String key, ValueType expected) {
-    super("Item at " + CJString.format(key) + " was missing and should have had type " + expected);
+    super(String.format(MESSAGE, key, expected));
     index = -1;
     this.key = key;
     this.expected = Collections.unmodifiableSet(EnumSet.of(expected));
@@ -57,7 +59,7 @@ public class MissingItemException extends NullPointerException {
    * @param expected the expected type
    */
   public MissingItemException(int index, Set<ValueType> expected) {
-    super("Item at " + index + " was missing and should have had type " + expected);
+    super(String.format(MESSAGE, index, expected));
     this.index = index;
     key = null;
     this.expected = Collections.unmodifiableSet(EnumSet.copyOf(expected));
@@ -71,7 +73,7 @@ public class MissingItemException extends NullPointerException {
    * @param expected the type that was expected
    */
   public MissingItemException(String key, Set<ValueType> expected) {
-    super("Item at " + CJString.format(key) + " was missing and should have had type " + expected);
+    super(String.format(MESSAGE, CJString.format(key), expected));
     index = -1;
     this.key = key;
     this.expected = Collections.unmodifiableSet(EnumSet.copyOf(expected));
@@ -91,7 +93,7 @@ public class MissingItemException extends NullPointerException {
   /**
    * Get the index where item ought to have been encountered.
    *
-   * @return the index the index (or -1 if the item was in a JSON Object)
+   * @return the index (or -1 if the item was in a JSON Object)
    */
   public int getIndex() {
     return index;

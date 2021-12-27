@@ -81,13 +81,12 @@ class FilterTree implements Filter {
     for (JsonValue v : array) {
       index++;
 
-      // the wildcard first
+      // test the wildcard first
       boolean f = descend(wildcard, v);
-      if (!f) {
-        // try element specific filter
-        if (!descend(descendants.get(Integer.toString(index)), v)) {
-          return false;
-        }
+
+      // next try element specific filter
+      if (!f && !descend(descendants.get(Integer.toString(index)), v)) {
+        return false;
       }
     }
 

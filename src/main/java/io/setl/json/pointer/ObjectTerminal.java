@@ -19,7 +19,7 @@ public class ObjectTerminal implements PathElement {
 
   protected final String key;
 
-  protected String path;
+  protected final String path;
 
 
   public ObjectTerminal(String path, String key) {

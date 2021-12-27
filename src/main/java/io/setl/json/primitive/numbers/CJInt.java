@@ -43,6 +43,12 @@ public class CJInt extends CJNumber {
 
 
   @Override
+  public boolean equals(Object o) {
+    return super.equals(o);
+  }
+
+
+  @Override
   protected boolean equalsValue(long other) {
     return other == value;
   }
@@ -77,6 +83,12 @@ public class CJInt extends CJNumber {
   @Override
   public Object getValue() {
     return value;
+  }
+
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
 

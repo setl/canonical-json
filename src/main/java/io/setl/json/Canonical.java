@@ -120,7 +120,7 @@ public interface Canonical extends JsonValue {
       return cast((JsonValue) value);
     }
     if (value instanceof Boolean) {
-      return ((Boolean) value) ? CJTrue.TRUE : CJFalse.FALSE;
+      return ((Boolean) value).booleanValue() ? CJTrue.TRUE : CJFalse.FALSE;
     }
     if (value instanceof AtomicBoolean) {
       return ((AtomicBoolean) value).get() ? CJTrue.TRUE : CJFalse.FALSE;

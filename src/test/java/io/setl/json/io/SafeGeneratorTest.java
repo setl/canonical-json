@@ -2,6 +2,8 @@ package io.setl.json.io;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyChar;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -28,34 +30,13 @@ public class SafeGeneratorTest {
 
 
   @Test
-  public void closeOnEmpty() throws IOException {
-    Writer writer = Mockito.mock(Writer.class);
-    NoOpFormatter formatter = new NoOpFormatter(writer);
-    generator = new SafeGenerator(formatter);
-    generator.close();
-    Mockito.verify(writer).close();
-  }
-
-  @Test
   public void close() throws IOException {
     Writer writer = Mockito.mock(Writer.class);
     NoOpFormatter formatter = new NoOpFormatter(writer);
     generator = new SafeGenerator(formatter);
     generator.write(JsonValue.EMPTY_JSON_ARRAY);
     generator.close();
-    Mockito.verify(writer).close();
-  }
-
-
-  @Test
-  public void doubleClose() throws IOException {
-    Writer writer = Mockito.mock(Writer.class);
-    NoOpFormatter formatter = new NoOpFormatter(writer);
-    generator = new SafeGenerator(formatter);
-    generator.write(JsonValue.EMPTY_JSON_ARRAY);
-    generator.close();
-    generator.close();
-    Mockito.verify(writer,Mockito.times(2)).close();
+    verify(writer).close();
   }
 
 
@@ -74,7 +55,50 @@ public class SafeGeneratorTest {
 
 
   @Test
-  public void flush() {
+  public void closeOnEmpty() throws IOException {
+    Writer writer = Mockito.mock(Writer.class);
+    NoOpFormatter formatter = new NoOpFormatter(writer);
+    generator = new SafeGenerator(formatter);
+    generator.close();
+    verify(writer).close();
+  }
+
+
+  @Test
+  public void doubleClose() throws IOException {
+    Writer writer = Mockito.mock(Writer.class);
+    NoOpFormatter formatter = new NoOpFormatter(writer);
+    generator = new SafeGenerator(formatter);
+    generator.write(JsonValue.EMPTY_JSON_ARRAY);
+    generator.close();
+    generator.close();
+    verify(writer, times(2)).close();
+  }
+
+
+  @Test
+  public void flush() throws IOException {
+    Writer writer = Mockito.mock(Writer.class);
+    NoOpFormatter formatter = new NoOpFormatter(writer);
+    generator = new SafeGenerator(formatter);
+    generator.writeStartObject();
+    generator.write("a", 1);
+    generator.flush();
+    // Not flushed because not in root context.
+    verify(writer, times(0)).flush();
+  }
+
+
+  @Test
+  public void flush2() throws IOException {
+    Writer writer = Mockito.mock(Writer.class);
+    NoOpFormatter formatter = new NoOpFormatter(writer);
+    generator = new SafeGenerator(formatter);
+    generator.writeStartObject();
+    generator.write("a", 1);
+    generator.writeEnd();
+    generator.flush();
+    verify(writer).flush();
   }
 
 

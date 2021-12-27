@@ -16,7 +16,7 @@ public enum DiffFeatures {
   CREATE_COPIES,
 
   /**
-   * This flag instructs the diff generator to emit "test" operations that check a value before removing or replacing it. In principal, this allows the patch to
+   * This flag instructs the diff generator to emit "test" operations that check a value before removing or replacing it. In principle, this allows the patch to
    * be reversed.
    *
    * <p>The resulting patches are standard per RFC 6902 and should be processed correctly by any compliant library; due to the associated space and performance

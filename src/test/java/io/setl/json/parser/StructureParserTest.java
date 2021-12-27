@@ -146,7 +146,7 @@ public class StructureParserTest {
     parser.next();
     assertEquals(Event.VALUE_NUMBER, parser.next());
     int i = parser.getInt();
-    assertEquals(i, 4);
+    assertEquals(4, i);
   }
 
 
@@ -178,7 +178,7 @@ public class StructureParserTest {
     parser.next();
     assertEquals(Event.VALUE_NUMBER, parser.next());
     long i = parser.getLong();
-    assertEquals(i, 4);
+    assertEquals(4, i);
   }
 
 

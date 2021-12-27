@@ -1,5 +1,10 @@
 package io.setl.json.primitive.cache;
 
+import static io.setl.json.primitive.cache.CacheType.KEYS;
+import static io.setl.json.primitive.cache.CacheType.NUMBERS;
+import static io.setl.json.primitive.cache.CacheType.STRINGS;
+import static io.setl.json.primitive.cache.CacheType.VALUES;
+
 import java.lang.System.Logger;
 import java.lang.System.Logger.Level;
 import java.lang.reflect.Constructor;
@@ -25,8 +30,8 @@ public class CacheManager {
   private static ICache<Number, CJNumber> myValueCache;
 
 
-  private static <K, V> ICache<K, V> createCache(String name) {
-    int maxSize = Integer.getInteger(CacheManager.class.getPackageName() + "." + name + ".maxSize", 1_000);
+  private static <K, V> ICache<K, V> createCache(CacheType name) {
+    int maxSize = Integer.getInteger(CacheManager.class.getPackageName() + "." + name.getPropertyName() + ".maxSize", 1_000);
     String cacheFactory = System.getProperty(
         CacheManager.class.getPackageName() + "." + name + ".factory",
         SimpleLruCacheFactory.class.getName()
@@ -47,7 +52,8 @@ public class CacheManager {
       Logger logger = System.getLogger(CacheManager.class.getName());
       logger.log(Level.ERROR, "Cannot create a cache factory from " + cacheFactory, e);
     }
-    return factory.create(maxSize);
+    ICache<K, V> cache = factory.create(name, maxSize);
+    return (cache != null) ? cache : new NoCache<>();
   }
 
 
@@ -122,7 +128,8 @@ public class CacheManager {
 
 
   /**
-   * Cache of numbers to their encapsulated JSON representation. A representation is almost always a PNumber, but it could be a PString for a non-finite value.
+   * Cache of numbers to their encapsulated JSON representation. A representation is almost always a CJNumber, but it could be a CJString for a non-finite
+   * value.
    *
    * @return the cache.
    */
@@ -130,11 +137,15 @@ public class CacheManager {
     return myValueCache;
   }
 
-
   static {
-    myNumberCache = createCache("numbers");
-    myKeyCache = createCache("keys");
-    myStringCache = createCache("strings");
-    myValueCache = createCache("values");
+    myNumberCache = createCache(NUMBERS);
+    myKeyCache = createCache(KEYS);
+    myStringCache = createCache(STRINGS);
+    myValueCache = createCache(VALUES);
+  }
+
+
+  private CacheManager() {
+    // do nothing
   }
 }

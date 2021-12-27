@@ -1,11 +1,9 @@
 package io.setl.json;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
@@ -43,7 +41,10 @@ public class CanonicalTest {
   }
 
 
-
+  @Test(expected = NotJsonException.class)
+  public void testCannotCreate() {
+    Canonical.create(this.getClass());
+  }
 
 
   @Test
@@ -61,13 +62,6 @@ public class CanonicalTest {
     testCreate(ValueType.OBJECT, new CJObject(), new CJObject());
     testCreate(ValueType.ARRAY, new CJArray(), new ArrayList<>());
     testCreate(ValueType.OBJECT, new CJObject(), new HashMap<>());
-
-    try {
-      Canonical.create(this.getClass());
-      fail();
-    } catch (NotJsonException e) {
-      // correct
-    }
   }
 
 

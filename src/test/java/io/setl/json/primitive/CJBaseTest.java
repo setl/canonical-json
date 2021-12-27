@@ -11,6 +11,7 @@ import org.junit.Test;
 public class CJBaseTest {
 
   // shameless coverage tests
+  @SuppressWarnings("java:S5785") // Allow use of equals in tests, as we are testing equals.
   @Test
   public void testEquals() {
     CJString string = CJString.create("Wibble");

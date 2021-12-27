@@ -38,6 +38,7 @@ class BadNumber extends CJNumber {
   }
 
 
+  @Override
   protected void check() {
     throw new JsonParsingException("Numeric value could not be created", failure, failure.getLocation());
   }
@@ -46,6 +47,12 @@ class BadNumber extends CJNumber {
   @Override
   public double doubleValue() {
     throw unsupported();
+  }
+
+
+  @Override
+  public boolean equals(Object o) {
+    return this == o;
   }
 
 
@@ -76,6 +83,12 @@ class BadNumber extends CJNumber {
   @Override
   public Object getValue() {
     throw unsupported();
+  }
+
+
+  @Override
+  public int hashCode() {
+    return System.identityHashCode(this);
   }
 
 

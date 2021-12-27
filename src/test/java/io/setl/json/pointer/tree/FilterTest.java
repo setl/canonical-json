@@ -17,6 +17,7 @@ public class FilterTest {
   @Test
   public void add1() {
     FilterAccept.ACCEPT_ALL.add(new ObjectTerminal("boo", "boo"));
+    assertTrue(FilterAccept.ACCEPT_ALL.containsAll(JsonValue.EMPTY_JSON_OBJECT));
   }
 
 

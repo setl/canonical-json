@@ -42,14 +42,18 @@ public class MergeDiff {
     HashSet<String> inKeys = new HashSet<>(inObject.keySet());
     HashSet<String> outKeys = new HashSet<>(outObject.keySet());
 
-    // do removes
-    for (String s : inKeys) {
-      if (!outKeys.contains(s)) {
-        merge.put(s, JsonValue.NULL);
-      }
-    }
+    // do "removes"
+    doDiffRemoves(merge, inKeys, outKeys);
 
-    // do adds, and trim outKeys so it is just the common keys.
+    // do "adds", and trim "outKeys" so that it is just the common keys.
+    doDiffAdds(merge, inKeys, outKeys, outObject);
+
+    // do "replaces"
+    doDiffReplaces(outKeys, merge, inObject, outObject);
+  }
+
+
+  private static void doDiffAdds(JsonObject merge, HashSet<String> inKeys, HashSet<String> outKeys, JsonObject outObject) {
     Iterator<String> iterator = outKeys.iterator();
     while (iterator.hasNext()) {
       String s = iterator.next();
@@ -58,8 +62,19 @@ public class MergeDiff {
         iterator.remove();
       }
     }
+  }
 
-    // do replaces
+
+  private static void doDiffRemoves(JsonObject merge, HashSet<String> inKeys, HashSet<String> outKeys) {
+    for (String s : inKeys) {
+      if (!outKeys.contains(s)) {
+        merge.put(s, JsonValue.NULL);
+      }
+    }
+  }
+
+
+  private static void doDiffReplaces(HashSet<String> outKeys, JsonObject merge, JsonObject inObject, JsonObject outObject) {
     for (String s : outKeys) {
       JsonValue inValue = inObject.get(s);
       JsonValue outValue = outObject.get(s);
@@ -77,6 +92,11 @@ public class MergeDiff {
         merge.put(s, outValue);
       }
     }
+  }
+
+
+  private MergeDiff() {
+    // do nothing
   }
 
 }

@@ -57,6 +57,12 @@ public class CJBigInteger extends CJNumber {
 
 
   @Override
+  public boolean equals(Object o) {
+    return super.equals(o);
+  }
+
+
+  @Override
   protected boolean equalsValue(long other) {
     try {
       return other == value.longValueExact();
@@ -87,6 +93,12 @@ public class CJBigInteger extends CJNumber {
   @Override
   public Object getValue() {
     return value;
+  }
+
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
 

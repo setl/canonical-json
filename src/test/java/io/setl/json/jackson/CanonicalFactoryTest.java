@@ -67,6 +67,7 @@ public class CanonicalFactoryTest {
   @Test
   public void disable() {
     instance.disable(Feature.AUTO_CLOSE_TARGET);
+    assertFalse(instance.isEnabled(Feature.AUTO_CLOSE_TARGET));
   }
 
 
@@ -123,6 +124,8 @@ public class CanonicalFactoryTest {
   @Test
   public void enable_4() {
     instance.enable(Feature.AUTO_CLOSE_TARGET);
+    assertTrue(instance.isEnabled(Feature.AUTO_CLOSE_TARGET));
+
   }
 
 

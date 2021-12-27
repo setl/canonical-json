@@ -15,6 +15,7 @@ import org.junit.Test;
 public class PNumberTest {
 
   @Test
+  @SuppressWarnings("java:S5785") // Testing 'equals', so don't use assertEquals and assertNotEquals.
   public void equals() {
     CJNumber pn = CJNumber.create(1);
     CJNumber pc = CJNumber.create(1);

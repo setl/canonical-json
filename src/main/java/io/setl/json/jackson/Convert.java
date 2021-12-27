@@ -252,4 +252,9 @@ public class Convert {
     }
   }
 
+
+  private Convert() {
+    // do nothing
+  }
+
 }

@@ -34,7 +34,7 @@ public class ParserFactory implements JsonParserFactory {
    */
   public ParserFactory(Map<String, ?> config) {
     if (config != null && config.containsKey(REQUIRE_SINGLE_ROOT)) {
-      singleRoot = Boolean.valueOf(String.valueOf(config.get(REQUIRE_SINGLE_ROOT)));
+      singleRoot = Boolean.parseBoolean(String.valueOf(config.get(REQUIRE_SINGLE_ROOT)));
     }
   }
 

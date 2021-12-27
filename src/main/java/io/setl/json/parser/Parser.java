@@ -431,8 +431,8 @@ public class Parser extends BaseIterator<JsonParser.Event> implements JsonParser
   @Override
   public Stream<JsonValue> getArrayStream() {
     checkState(Event.START_ARRAY);
-    BaseIterator<JsonValue> iter = new ArrayIterator(this::getTag, this);
-    return iter.asStream();
+    BaseIterator<JsonValue> iterator = new ArrayIterator(this::getTag, this);
+    return iterator.asStream();
   }
 
 
@@ -482,8 +482,8 @@ public class Parser extends BaseIterator<JsonParser.Event> implements JsonParser
   @Override
   public Stream<Entry<String, JsonValue>> getObjectStream() {
     checkState(Event.START_OBJECT);
-    BaseIterator<Entry<String, JsonValue>> iter = new ObjectIterator(this::getTag, this);
-    return iter.asStream();
+    BaseIterator<Entry<String, JsonValue>> iterator = new ObjectIterator(this::getTag, this);
+    return iterator.asStream();
   }
 
 

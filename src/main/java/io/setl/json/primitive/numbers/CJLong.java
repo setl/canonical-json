@@ -38,7 +38,13 @@ public class CJLong extends CJNumber {
 
   @Override
   public double doubleValue() {
-    return (double) value;
+    return value;
+  }
+
+
+  @Override
+  public boolean equals(Object o) {
+    return super.equals(o);
   }
 
 
@@ -77,6 +83,12 @@ public class CJLong extends CJNumber {
   @Override
   public Object getValue() {
     return value;
+  }
+
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
 

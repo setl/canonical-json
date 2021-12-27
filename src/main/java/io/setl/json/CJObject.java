@@ -104,6 +104,7 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
   /**
    * Sort object keys into Unicode code point order.
    */
+  @SuppressWarnings("java:S127") // Allow incrementing loop counter inside loop as code points can be one or two characters.
   public static final Comparator<String> CODE_POINT_ORDER = (s1, s2) -> {
     int len1 = s1.length();
     int len2 = s2.length();
@@ -354,6 +355,12 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
     @Override
     public JsonValue setValue(JsonValue value) {
       return me.setValue(Canonical.cast(value));
+    }
+
+
+    @Override
+    public String toString() {
+      return String.valueOf(me);
     }
 
   }

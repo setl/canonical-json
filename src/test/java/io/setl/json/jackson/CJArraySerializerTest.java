@@ -1,11 +1,14 @@
 package io.setl.json.jackson;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
 import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper.Base;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import io.setl.json.CJArray;
 
@@ -17,7 +20,9 @@ public class CJArraySerializerTest {
   @Test
   public void acceptVisitor() throws JsonMappingException {
     JsonArraySerializer instance = new JsonArraySerializer();
-    instance.acceptJsonFormatVisitor(new Base(), TypeFactory.defaultInstance().constructType(CJArray.class));
+    JsonFormatVisitorWrapper visitorWrapper = Mockito.mock(JsonFormatVisitorWrapper.class);
+    instance.acceptJsonFormatVisitor(visitorWrapper, TypeFactory.defaultInstance().constructType(CJArray.class));
+    Mockito.verify(visitorWrapper).expectArrayFormat(any());
   }
 
 

@@ -10,6 +10,14 @@ import javax.annotation.Nonnull;
  */
 public interface ICache<K, V> {
 
+  /**
+   * Get or create a value.
+   *
+   * @param key     the key
+   * @param creator the function to create the value from the key
+   *
+   * @return the value
+   */
   @Nonnull
   V get(K key, Function<K, V> creator);
 

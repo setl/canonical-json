@@ -2,6 +2,8 @@ package io.setl.json.io;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyChar;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -10,7 +12,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import javax.json.JsonValue;
 import javax.json.stream.JsonGenerationException;
-import javax.naming.NoPermissionException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -52,7 +53,15 @@ public class TrustedGeneratorTest {
 
 
   @Test
-  public void flush() {
+  public void flush() throws IOException {
+    Writer writer = Mockito.mock(Writer.class);
+    NoOpFormatter formatter = new NoOpFormatter(writer);
+    generator = new TrustedGenerator(formatter);
+    generator.writeStartObject();
+    generator.write("a", 1);
+    generator.flush();
+    // In the middle of an object, but we flush because we trust the caller.
+    verify(writer, times(1)).flush();
   }
 
 

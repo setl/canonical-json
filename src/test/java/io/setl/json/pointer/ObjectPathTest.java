@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonPointer;
+import javax.json.JsonStructure;
 import javax.json.JsonValue;
 
 import org.junit.Test;
@@ -55,18 +56,20 @@ public class ObjectPathTest {
     assertTrue(pointer.isParentOf(PointerFactory.create("/-/1/a")));
   }
 
+  private void testNotContains(String path, JsonStructure structure) {
+      JsonPointer pointer = PointerFactory.create(path);
+      assertFalse(pointer.containsValue(structure));
+  }
 
   @Test
   public void containsValue() {
-    JsonPointer pointer = PointerFactory.create("/waldo/1/-");
-    assertFalse(pointer.containsValue(jsonObject));
+    testNotContains("/waldo/1/-",jsonObject);
   }
 
 
   @Test
   public void containsValue2() {
-    JsonPointer pointer = PointerFactory.create("/waldo/1/-");
-    assertFalse(pointer.containsValue(jsonArray));
+    testNotContains("/waldo/1/-",jsonArray);
   }
 
 
@@ -117,15 +120,13 @@ public class ObjectPathTest {
 
   @Test
   public void doContains() {
-    JsonPointer pointer = PointerFactory.create("/boo/1/-");
-    assertFalse(pointer.containsValue(jsonObject));
+    testNotContains("/boo/1/-",jsonObject);
   }
 
 
   @Test
   public void doContains2() {
-    JsonPointer pointer = PointerFactory.create("/waldo/1/a");
-    assertFalse(pointer.containsValue(jsonObject));
+    testNotContains("/waldo/1/a",jsonObject);
   }
 
 

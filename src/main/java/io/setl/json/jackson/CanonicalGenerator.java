@@ -375,8 +375,10 @@ public class CanonicalGenerator extends JsonGenerator {
 
 
   @Override
+  // Allow labels, and ignore cognitive complexity. Code is copied from Jackson and refactoring to address these issues is a higher risk than leaving them be.
+  @SuppressWarnings({"java:S1119", "java:S3776"})
   public int writeBinary(Base64Variant bv, InputStream data, int dataLength) throws IOException {
-    // Jackson's Base64Variant class forces callers to do most of the encoding themselves.
+    // Jackson's Base64Variant class forces callers to do most of the encoding themselves. This code is copied from the Jackson implementation.
     int length = 0;
     StringBuilder buffer = new StringBuilder();
     if (dataLength > 0) {
@@ -388,15 +390,17 @@ public class CanonicalGenerator extends JsonGenerator {
     int chunksLeft = chunksBeforeLF;
     int bits24;
     int extraBytes;
-    outer:
+
+    encodingLoop:
     while (true) {
       // attempt to read 3 bytes
       bits24 = 0;
       for (int i = 2; i >= 0; i--) {
         int r = data.read();
         if (r == -1) {
+          // We have read all the bytes, so we just need to note how much padding we need and break out of the encoding loop.
           extraBytes = 2 - i;
-          break outer;
+          break encodingLoop;
         }
         length++;
         bits24 |= r << (i << 3);

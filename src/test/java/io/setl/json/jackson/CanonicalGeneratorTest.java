@@ -5,6 +5,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -105,8 +106,8 @@ public class CanonicalGeneratorTest {
   @Test
   public void getFeatureMask() {
     int m = instance.getFeatureMask();
-    assertTrue((m & Feature.QUOTE_FIELD_NAMES.getMask()) != 0);
-    assertTrue((m & Feature.QUOTE_NON_NUMERIC_NUMBERS.getMask()) != 0);
+    assertNotEquals(0, m & Feature.QUOTE_FIELD_NAMES.getMask());
+    assertNotEquals(0, m & Feature.QUOTE_NON_NUMERIC_NUMBERS.getMask());
   }
 
 
@@ -151,7 +152,9 @@ public class CanonicalGeneratorTest {
   @Deprecated
   @Test
   public void setFeatureMask3() {
-    instance.setFeatureMask(Feature.QUOTE_FIELD_NAMES.getMask() + Feature.QUOTE_NON_NUMERIC_NUMBERS.getMask());
+    int mask = Feature.QUOTE_FIELD_NAMES.getMask() + Feature.QUOTE_NON_NUMERIC_NUMBERS.getMask();
+    instance.setFeatureMask(mask);
+    assertEquals(mask, instance.getFeatureMask());
   }
 
 

@@ -10,10 +10,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import io.setl.json.exception.IncorrectTypeException;
-import io.setl.json.exception.MissingItemException;
-import io.setl.json.primitive.CJString;
-import io.setl.json.primitive.numbers.CJNumber;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.AbstractMap.SimpleEntry;
@@ -21,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -30,8 +27,16 @@ import java.util.Set;
 import java.util.Spliterator;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
+
 import org.junit.Before;
 import org.junit.Test;
+
+import io.setl.json.exception.IncorrectTypeException;
+import io.setl.json.exception.MissingItemException;
+import io.setl.json.primitive.CJString;
+import io.setl.json.primitive.cache.CacheManager;
+import io.setl.json.primitive.cache.ICache;
+import io.setl.json.primitive.numbers.CJNumber;
 
 @SuppressWarnings("checkstyle:AvoidEscapedUnicodeCharacters")
 public class CJObjectTest {
@@ -102,7 +107,7 @@ public class CJObjectTest {
   @Test
   public void entryEquals() {
     Entry<String, JsonValue> entry = json.firstEntry();
-    assertTrue(entry.equals(new SimpleEntry<>("\07", CJString.create("bell"))));
+    assertEquals(entry, new SimpleEntry<>("\07", CJString.create("bell")));
   }
 
 
@@ -160,7 +165,7 @@ public class CJObjectTest {
   public void entrySetEquals() {
     Set<Entry<String, JsonValue>> entrySet = json.entrySet();
     HashSet<Entry<String, JsonValue>> copy = new HashSet<>(entrySet);
-    assertTrue(entrySet.equals(copy));
+    assertEquals(entrySet, copy);
   }
 
 
@@ -350,9 +355,14 @@ public class CJObjectTest {
 
   @Test
   public void lastEntry() {
-    String k = json.lastKey();
     Entry<String, JsonValue> e = json.lastEntry();
+    assertEquals(new SimpleEntry("\uD83D\uDE2A", CJString.create("sleepy")), e);
+  }
 
+
+  @Test
+  public void lastKey() {
+    assertEquals("\uD83D\uDE2A", json.lastKey());
   }
 
 
@@ -381,8 +391,31 @@ public class CJObjectTest {
 
   @Test
   public void optimiseStorage() {
-    // how to test this?
-    json.optimiseStorage();
+    ICache<String, CJString> stringCache = CacheManager.stringCache();
+    ICache<Number, CJNumber> valueCache = CacheManager.valueCache();
+    CacheManager.setStringCache(null);
+    CacheManager.setValueCache(null);
+    json.clear();
+    try {
+      json.put("a1", "xyz");
+      json.put("a2", "xyz");
+      json.put("a3", "xyz");
+      json.put("b1", 1);
+      json.put("b2", 1);
+      json.put("b3", 1);
+
+      IdentityHashMap<JsonValue, Boolean> counter = new IdentityHashMap<>();
+      json.forEach((k, v) -> counter.put(v, true));
+      assertEquals(String.valueOf(counter), 6, counter.size());
+
+      json.optimiseStorage();
+      counter.clear();
+      json.forEach((k, v) -> counter.put(v, true));
+      assertEquals(2, counter.size());
+    } finally {
+      CacheManager.setStringCache(stringCache);
+      CacheManager.setValueCache(valueCache);
+    }
   }
 
 
@@ -1157,7 +1190,7 @@ public class CJObjectTest {
     assertNull(json.removeNumber(k2));
     Number n = json.removeNumber(k1);
     assertTrue(n instanceof Integer);
-    assertEquals(100_000,n);
+    assertEquals(100_000, n);
     assertFalse(json.containsKey(k1));
     assertTrue(json.containsKey(k2));
   }
@@ -1182,7 +1215,7 @@ public class CJObjectTest {
     String k2 = "big number";
     assertTrue(json.containsKey(k1));
     assertTrue(json.containsKey(k2));
-    assertEquals("string",json.removeString(k1));
+    assertEquals("string", json.removeString(k1));
     assertNull(json.removeString(k2));
     assertFalse(json.containsKey(k1));
     assertTrue(json.containsKey(k2));
@@ -1234,7 +1267,7 @@ public class CJObjectTest {
 
   @Test
   public void valuesEquals() {
-    assertFalse(json.values().equals(new CJArray()));
+    assertNotEquals(json.values(), new CJArray());
   }
 
 
@@ -1295,4 +1328,5 @@ public class CJObjectTest {
   public void valuesStream() {
     assertEquals(11, json.values().stream().count());
   }
+
 }

@@ -13,7 +13,7 @@ public class NoCacheTest {
 
   @Test
   public void test() {
-    ICache<String, String> cache = new NoCacheFactory().create(3);
+    ICache<String, String> cache = new NoCacheFactory().create(CacheType.KEYS, 3);
     assertEquals("a", cache.get("a", Function.identity()));
     // "a" was not cached
     assertEquals("", cache.get("a", a -> ""));

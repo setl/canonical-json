@@ -38,27 +38,29 @@ public class GeneratorFactory implements JsonGeneratorFactory {
    * @param config the configuration
    */
   public GeneratorFactory(Map<String, ?> config) {
-    if (config != null) {
-      if (config.containsKey(TRUST_KEY_ORDER)) {
-        String val = String.valueOf(config.get(TRUST_KEY_ORDER));
-        trustKeyOrder = Boolean.valueOf(val);
+    if (config == null) {
+      return;
+    }
+
+    if (config.containsKey(TRUST_KEY_ORDER)) {
+      String val = String.valueOf(config.get(TRUST_KEY_ORDER));
+      trustKeyOrder = Boolean.parseBoolean(val);
+    }
+    if (config.containsKey(JsonGenerator.PRETTY_PRINTING)) {
+      // The specification says that the value can be anything without saying what any value should mean. For us, anything other than "false" turns it on.
+      String val = String.valueOf(config.get(TRUST_KEY_ORDER));
+      prettyPrinting = !val.equalsIgnoreCase("false");
+    }
+    if (config.containsKey(SMALL_STRUCTURE_LIMIT)) {
+      Object o = config.get(SMALL_STRUCTURE_LIMIT);
+      if (o instanceof Number) {
+        smallStructureLimit = Math.max(0, ((Number) o).intValue());
       }
-      if (config.containsKey(JsonGenerator.PRETTY_PRINTING)) {
-        // The specification says that the value can be anything without saying what any value should mean. For us, anything other than "false" turns it on.
-        String val = String.valueOf(config.get(TRUST_KEY_ORDER));
-        prettyPrinting = !val.equalsIgnoreCase("false");
-      }
-      if (config.containsKey(SMALL_STRUCTURE_LIMIT)) {
-        Object o = config.get(SMALL_STRUCTURE_LIMIT);
-        if (o instanceof Number) {
-          smallStructureLimit = Math.max(0, ((Number) o).intValue());
-        }
-        if (o instanceof String) {
-          try {
-            smallStructureLimit = Integer.parseInt((String) o);
-          } catch (NumberFormatException e) {
-            smallStructureLimit = ((String) o).length();
-          }
+      if (o instanceof String) {
+        try {
+          smallStructureLimit = Integer.parseInt((String) o);
+        } catch (NumberFormatException e) {
+          smallStructureLimit = ((String) o).length();
         }
       }
     }

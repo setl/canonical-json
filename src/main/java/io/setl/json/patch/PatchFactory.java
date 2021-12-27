@@ -105,6 +105,7 @@ public final class PatchFactory {
   }
 
 
+  @SuppressWarnings("java:S3776") // Ignore cognitive complexity of LCS algorithm.
   private void compareArray(Key path, JsonArray source, JsonArray target) {
     List<Item> sourceItems = new ArrayList<>(source.size());
     for (JsonValue jsonValue : source) {
@@ -192,7 +193,7 @@ public final class PatchFactory {
           patchBuilder.remove(childPath);
         }
       } else {
-        // Not in source so must be in target. Hence this is an add
+        // Not in source so must be in target. Hence, this is an add
         patchBuilder.add(child.toString(), target.get(name));
       }
     }

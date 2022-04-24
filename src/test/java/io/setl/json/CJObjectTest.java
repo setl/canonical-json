@@ -1,14 +1,15 @@
 package io.setl.json;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -28,8 +29,8 @@ import java.util.Spliterator;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import io.setl.json.exception.IncorrectTypeException;
 import io.setl.json.exception.MissingItemException;
@@ -111,20 +112,22 @@ public class CJObjectTest {
   }
 
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void entrySetAdd() {
     Set<Entry<String, JsonValue>> entrySet = json.entrySet();
-    entrySet.add(new SimpleEntry<>("a", JsonValue.EMPTY_JSON_ARRAY));
+    UnsupportedOperationException e = assertThrows(UnsupportedOperationException.class, () -> entrySet.add(new SimpleEntry<>("a", JsonValue.EMPTY_JSON_ARRAY)));
+    assertEquals("Cannot add to the entry set of a Java Map.", e.getMessage());
   }
 
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void entrySetAddAll() {
     Set<Entry<String, JsonValue>> entrySet = json.entrySet();
-    entrySet.addAll(Arrays.asList(
+    UnsupportedOperationException e = assertThrows(UnsupportedOperationException.class, () -> entrySet.addAll(Arrays.asList(
         new SimpleEntry<>("a", JsonValue.EMPTY_JSON_ARRAY),
         new SimpleEntry<>("\0", Canonical.create(3))
-    ));
+    )));
+    assertEquals("Cannot add to the entry set of a Java Map.", e.getMessage());
   }
 
 
@@ -347,9 +350,10 @@ public class CJObjectTest {
   }
 
 
-  @Test(expected = MissingItemException.class)
+  @Test
   public void isNull2() {
-    json.isNull("zzz");
+    MissingItemException e = assertThrows(MissingItemException.class, () -> json.isNull("zzz"));
+    assertEquals("Item at zzz was missing and should have had type NULL", e.getMessage());
   }
 
 
@@ -406,7 +410,7 @@ public class CJObjectTest {
 
       IdentityHashMap<JsonValue, Boolean> counter = new IdentityHashMap<>();
       json.forEach((k, v) -> counter.put(v, true));
-      assertEquals(String.valueOf(counter), 6, counter.size());
+      assertEquals(6, counter.size(), String.valueOf(counter));
 
       json.optimiseStorage();
       counter.clear();
@@ -470,7 +474,7 @@ public class CJObjectTest {
   }
 
 
-  @Before
+  @BeforeEach
   public void setUp() {
     json.put("string", "string");
     json.put("\07", "bell");
@@ -929,9 +933,10 @@ public class CJObjectTest {
   }
 
 
-  @Test(expected = MissingItemException.class)
+  @Test
   public void testIsType2() {
-    json.isType("n/a", ValueType.NUMBER);
+    MissingItemException e = assertThrows(MissingItemException.class, () -> json.isType("n/a", ValueType.NUMBER));
+    assertEquals("Item at n/a was missing and should have had type NUMBER", e.getMessage());
   }
 
 
@@ -1230,15 +1235,17 @@ public class CJObjectTest {
   }
 
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void valuesAdd() {
-    json.values().add(JsonValue.NULL);
+    UnsupportedOperationException e = assertThrows(UnsupportedOperationException.class, () -> json.values().add(JsonValue.NULL));
+    assertEquals("Add is not supported on a Java Map's values collection", e.getMessage());
   }
 
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void valuesAddAll() {
-    json.values().addAll(Set.of(JsonValue.NULL, JsonValue.TRUE));
+    UnsupportedOperationException e = assertThrows(UnsupportedOperationException.class, () -> json.values().addAll(Set.of(JsonValue.NULL, JsonValue.TRUE)));
+    assertEquals("Add is not supported on a Java Map's values collection", e.getMessage());
   }
 
 

@@ -1,17 +1,18 @@
 package io.setl.json.primitive.numbers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import javax.json.JsonValue.ValueType;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Simon Greatrix on 25/01/2020.
@@ -98,9 +99,9 @@ public class PLongTest {
   }
 
 
-  @Test(expected = ArithmeticException.class)
+  @Test
   public void intValueExact() {
-    pl.intValueExact();
+    assertThrows(ArithmeticException.class, () -> pl.intValueExact());
   }
 
 

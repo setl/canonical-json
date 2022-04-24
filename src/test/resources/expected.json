@@ -3,6 +3,7 @@
 "tokens/4.integer/1.no-negative-zero/",
 "tokens/4.integer/2.no-decimal-point/",
 "tokens/4.integer/3.no-exponent/",
+"tokens/4.integer/4.allow-big-exponent/",
 "tokens/5.non-integer/1.single-digit-nonzero-significand-integer/",
 "tokens/5.non-integer/2.nonempty-significand-fraction/",
 "tokens/5.non-integer/3.no-significand-fraction-trailing-zeroes/",

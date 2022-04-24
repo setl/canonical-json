@@ -1,8 +1,8 @@
 package io.setl.json.io;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Simon Greatrix on 15/01/2020.

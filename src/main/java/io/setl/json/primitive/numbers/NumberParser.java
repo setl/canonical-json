@@ -195,7 +195,7 @@ public class NumberParser {
       }
     }
     if (s < CJBigInteger.MIN_SCALE) {
-      return new CJBigDecimal(new BigDecimal(txt), true);
+      return new CJBigDecimal(new BigDecimal(txt));
     }
 
     // It is a BigInteger after all

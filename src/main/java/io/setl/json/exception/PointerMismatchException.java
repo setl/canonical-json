@@ -1,5 +1,6 @@
 package io.setl.json.exception;
 
+import javax.annotation.Nullable;
 import javax.json.JsonException;
 import javax.json.JsonValue.ValueType;
 
@@ -12,17 +13,26 @@ public class PointerMismatchException extends JsonException {
 
   private static final long serialVersionUID = 1L;
 
+  private final ValueType actual;
+
+  private final ValueType expected;
+
+  private final String path;
+
 
   /**
    * New exception.
    *
    * @param message  associated message
-   * @param pointer  the pointer that failed
+   * @param path     the pointer that failed
    * @param expected the expected value type in the structure
    * @param actual   the actual value type in the structure.
    */
-  public PointerMismatchException(String message, String pointer, ValueType expected, ValueType actual) {
-    super(String.format("%s [path=%s, expected=%s, actual=%s]", message, pointer, expected, actual));
+  public PointerMismatchException(String message, String path, ValueType expected, ValueType actual) {
+    super(String.format("%s [path=%s, expected=%s, actual=%s]", message, path, expected, actual));
+    this.path = path;
+    this.expected = expected;
+    this.actual = actual;
   }
 
 
@@ -30,11 +40,35 @@ public class PointerMismatchException extends JsonException {
    * New exception for when the expected type could be an Object or an Array.
    *
    * @param message associated message
-   * @param pointer the pointer that failed
+   * @param path    the pointer that failed
    * @param actual  the actual value type in the structure.
    */
-  public PointerMismatchException(String message, String pointer, ValueType actual) {
-    super(String.format("%s [path=%s, expected=STRUCTURE, actual=%s]", message, pointer, actual));
+  public PointerMismatchException(String message, String path, ValueType actual) {
+    super(String.format("%s [path=%s, expected=STRUCTURE, actual=%s]", message, path, actual));
+    this.path = path;
+    expected = null;
+    this.actual = actual;
+  }
+
+
+  public ValueType getActual() {
+    return actual;
+  }
+
+
+  /**
+   * Get the expected type. If null, implies it could be either an OBJECT or an ARRAY.
+   *
+   * @return the expected type (may be null if the expected type was only known to be a structure)
+   */
+  @Nullable
+  public ValueType getExpected() {
+    return expected;
+  }
+
+
+  public String getPath() {
+    return path;
   }
 
 }

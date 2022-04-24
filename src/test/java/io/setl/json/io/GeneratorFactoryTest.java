@@ -3,8 +3,10 @@ package io.setl.json.io;
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import static io.setl.json.io.GeneratorFactory.TRUST_KEY_ORDER;
 
@@ -14,7 +16,7 @@ import java.util.Map;
 import javax.json.JsonException;
 import javax.json.stream.JsonGenerator;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Simon Greatrix on 28/01/2020.
@@ -68,9 +70,10 @@ public class GeneratorFactoryTest {
   }
 
 
-  @Test(expected = JsonException.class)
+  @Test
   public void testCreateGenerator2() {
-    factory.createGenerator(OutputStream.nullOutputStream(), ISO_8859_1);
+    JsonException exception = assertThrows(JsonException.class, () -> factory.createGenerator(OutputStream.nullOutputStream(), ISO_8859_1));
+    assertEquals("Canonical JSON must be in UTF-8", exception.getMessage());
   }
 
 }

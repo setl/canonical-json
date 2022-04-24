@@ -1,9 +1,9 @@
 package io.setl.json.primitive;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Simon Greatrix on 15/01/2020.
@@ -22,4 +22,5 @@ public class CJBaseTest {
     assertFalse(string.equals(other));
     assertTrue(string.equals(same));
   }
+
 }

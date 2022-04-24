@@ -54,7 +54,7 @@ public class StructureParser extends BaseIterator<Event> implements JsonParser {
 
   private void checkState(Event required) {
     if (required != lastEvent) {
-      throw new IllegalStateException("State must be " + required + ", not: " + lastEvent);
+      throw new IllegalStateException("State must be " + required + ", not " + lastEvent);
     }
   }
 

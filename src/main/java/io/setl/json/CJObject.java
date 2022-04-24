@@ -142,13 +142,13 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
 
     @Override
     public boolean add(Entry<String, JsonValue> entry) {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException("Cannot add to the entry set of a Java Map.");
     }
 
 
     @Override
     public boolean addAll(@Nonnull Collection<? extends Entry<String, JsonValue>> c) {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationException("Cannot add to the entry set of a Java Map.");
     }
 
 
@@ -429,12 +429,12 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
 
 
     public boolean add(JsonValue value) {
-      throw new UnsupportedOperationException("Add is not supported on a map's values");
+      throw new UnsupportedOperationException("Add is not supported on a Java Map's values collection");
     }
 
 
     public boolean addAll(@Nonnull Collection<? extends JsonValue> c) {
-      throw new UnsupportedOperationException("Add is not supported on a map's values");
+      throw new UnsupportedOperationException("Add is not supported on a Java Map's values collection");
     }
 
 

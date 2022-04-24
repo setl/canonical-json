@@ -1,9 +1,10 @@
 package io.setl.json;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.Assert.fail;
 
-import io.setl.json.io.ReaderFactory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +15,10 @@ import java.util.function.Function;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
 import javax.json.stream.JsonParsingException;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
+
+import io.setl.json.io.ReaderFactory;
 
 /**
  * Test the expected output from unit tests defined at https://github.com/gibson042/canonicaljson-spec
@@ -85,6 +89,7 @@ public class TestCanonical {
         System.out.println(f);
         System.out.println(new String(expected, UTF_8));
         System.out.println(new String(output.toByteArray(), UTF_8));
+        assertEquals(new String(expected, UTF_8), new String(output.toByteArray(), UTF_8));
         fail(f);
       }
     }

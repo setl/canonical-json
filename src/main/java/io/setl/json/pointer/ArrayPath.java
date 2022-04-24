@@ -96,7 +96,7 @@ public class ArrayPath extends ObjectPath {
     try {
       return target.get(index);
     } catch (IndexOutOfBoundsException e) {
-      throw new PointerIndexException("No such item", path, target.size());
+      throw new PointerIndexException("No such item.", path, target.size());
     }
   }
 

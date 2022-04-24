@@ -1,8 +1,8 @@
 package io.setl.json.pointer.tree;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Map;
@@ -10,8 +10,8 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import io.setl.json.CJArray;
 import io.setl.json.CJObject;
@@ -26,7 +26,7 @@ public class PointerTreeImplTest {
   PointerTree tree;
 
 
-  @Before
+  @BeforeEach
   public void before() {
     tree = new PointerTreeBuilder()
         .add("/a/b")

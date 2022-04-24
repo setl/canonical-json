@@ -1,20 +1,20 @@
 package io.setl.json.pointer.tree;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import javax.json.JsonArray;
 import javax.json.JsonValue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.setl.json.builder.ArrayBuilder;
 import io.setl.json.pointer.EmptyPointer;
-import io.setl.json.pointer.PointerFactory;
 import io.setl.json.pointer.JsonExtendedPointer;
+import io.setl.json.pointer.PointerFactory;
 
 /**
  * @author Simon Greatrix on 17/02/2020.

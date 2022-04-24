@@ -1,10 +1,11 @@
 package io.setl.json;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -14,7 +15,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import javax.json.JsonValue.ValueType;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.setl.json.exception.NotJsonException;
 import io.setl.json.primitive.CJNull;
@@ -41,9 +42,10 @@ public class CanonicalTest {
   }
 
 
-  @Test(expected = NotJsonException.class)
+  @Test
   public void testCannotCreate() {
-    Canonical.create(this.getClass());
+    Throwable t = assertThrows(NotJsonException.class, () -> Canonical.create(this.getClass()));
+    assertEquals("Cannot represent instances of class java.lang.Class as JSON directly", t.getMessage());
   }
 
 

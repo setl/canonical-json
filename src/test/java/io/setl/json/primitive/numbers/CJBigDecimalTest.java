@@ -1,16 +1,17 @@
 package io.setl.json.primitive.numbers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import javax.json.JsonValue.ValueType;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Simon Greatrix on 25/01/2020.
@@ -19,7 +20,7 @@ public class CJBigDecimalTest {
 
   private BigDecimal v = BigDecimal.valueOf(Math.PI);
 
-  private CJBigDecimal bd = new CJBigDecimal(v, true);
+  private CJBigDecimal bd = new CJBigDecimal(v);
 
 
   @Test
@@ -32,7 +33,7 @@ public class CJBigDecimalTest {
   public void bigIntegerValue() {
     BigInteger i2 = BigInteger.ONE.shiftLeft(70);
     BigDecimal v2 = new BigDecimal(i2).add(new BigDecimal("0.3"));
-    CJBigDecimal bd = new CJBigDecimal(v2, true);
+    CJBigDecimal bd = new CJBigDecimal(v2);
     assertEquals(0, i2.compareTo(bd.bigIntegerValue()));
   }
 
@@ -41,7 +42,7 @@ public class CJBigDecimalTest {
   public void bigIntegerValueExact() {
     BigInteger i2 = BigInteger.ONE.shiftLeft(70);
     BigDecimal v2 = new BigDecimal(i2);
-    CJBigDecimal bd = new CJBigDecimal(v2, true);
+    CJBigDecimal bd = new CJBigDecimal(v2);
     assertEquals(0, i2.compareTo(bd.bigIntegerValueExact()));
   }
 
@@ -100,9 +101,9 @@ public class CJBigDecimalTest {
   }
 
 
-  @Test(expected = ArithmeticException.class)
+  @Test
   public void intValueExact() {
-    bd.intValueExact();
+    assertThrows(ArithmeticException.class, () -> bd.intValueExact());
   }
 
 
@@ -112,7 +113,7 @@ public class CJBigDecimalTest {
 
     BigInteger i2 = BigInteger.ONE.shiftLeft(70);
     BigDecimal v2 = new BigDecimal(i2);
-    CJBigDecimal bd2 = new CJBigDecimal(v2, true);
+    CJBigDecimal bd2 = new CJBigDecimal(v2);
     assertTrue(bd2.isIntegral());
   }
 
@@ -123,9 +124,9 @@ public class CJBigDecimalTest {
   }
 
 
-  @Test(expected = ArithmeticException.class)
+  @Test
   public void longValueExact() {
-    bd.longValueExact();
+    assertThrows(ArithmeticException.class, () -> bd.intValueExact());
   }
 
 
@@ -147,16 +148,16 @@ public class CJBigDecimalTest {
     assertNotNull(bd.toString());
 
     BigDecimal bd = new BigDecimal("1e+31");
-    CJBigDecimal pbd = new CJBigDecimal(bd, true);
-    assertEquals(bd.toBigIntegerExact().toString(), pbd.toString());
+    CJBigDecimal pbd = new CJBigDecimal(bd);
+    assertEquals("1.0E31", pbd.toString());
 
     bd = new BigDecimal("1.234e+40");
-    pbd = new CJBigDecimal(bd, true);
-    assertEquals(bd.toBigIntegerExact().toString(), pbd.toString());
+    pbd = new CJBigDecimal(bd);
+    assertEquals("1.234E40", pbd.toString());
 
     bd = new BigDecimal("-1234e+31");
-    pbd = new CJBigDecimal(bd, true);
-    assertEquals(bd.toBigIntegerExact().toString(), pbd.toString());
+    pbd = new CJBigDecimal(bd);
+    assertEquals("-1.234E34", pbd.toString());
   }
 
 }

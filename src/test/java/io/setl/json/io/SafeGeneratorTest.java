@@ -1,6 +1,7 @@
 package io.setl.json.io;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyChar;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -13,8 +14,9 @@ import java.math.BigInteger;
 import javax.json.JsonValue;
 import javax.json.stream.JsonGenerationException;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mockito;
 
 import io.setl.json.exception.JsonIOException;
@@ -40,17 +42,17 @@ public class SafeGeneratorTest {
   }
 
 
-  @Test(expected = JsonGenerationException.class)
+  @Test
   public void closeInArray() {
     generator.writeStartArray();
-    generator.close();
+    jge(() -> generator.close(), "Close attempted with unfinished structures");
   }
 
 
-  @Test(expected = JsonGenerationException.class)
+  @Test
   public void closeInObject() {
     generator.writeStartObject();
-    generator.close();
+    jge(() -> generator.close(), "Close attempted with unfinished structures");
   }
 
 
@@ -102,7 +104,19 @@ public class SafeGeneratorTest {
   }
 
 
-  @Before
+  private void jge(Executable ex, String m) {
+    JsonGenerationException e = assertThrows(JsonGenerationException.class, ex);
+    assertEquals(m, e.getMessage());
+  }
+
+
+  private void jioe(Executable ex) {
+    JsonIOException e = assertThrows(JsonIOException.class, ex);
+    assertEquals("test", e.getCause().getMessage());
+  }
+
+
+  @BeforeEach
   public void reset() {
     writer = new StringWriter();
     NoOpFormatter formatter = new NoOpFormatter(writer);
@@ -336,40 +350,40 @@ public class SafeGeneratorTest {
   }
 
 
-  @Test(expected = JsonGenerationException.class)
+  @Test
   public void writeEnd() {
-    generator.writeEnd();
+    jge(() -> generator.writeEnd(), "Cannot write end in root context");
   }
 
 
-  @Test(expected = JsonIOException.class)
+  @Test
   public void writeIOFailure() throws IOException {
     Writer writer = Mockito.mock(Writer.class);
-    Mockito.doThrow(new IOException()).when(writer).append(anyChar());
+    Mockito.doThrow(new IOException("test")).when(writer).append(anyChar());
     NoOpFormatter formatter = new NoOpFormatter(writer);
     generator = new SafeGenerator(formatter);
     generator.write("fail");
-    generator.close();
+    jioe(() -> generator.close());
   }
 
 
-  @Test(expected = JsonIOException.class)
+  @Test
   public void writeIOFailure2() throws IOException {
     Writer writer = Mockito.mock(Writer.class);
-    Mockito.doThrow(new IOException()).when(writer).close();
+    Mockito.doThrow(new IOException("test")).when(writer).close();
     NoOpFormatter formatter = new NoOpFormatter(writer);
     generator = new SafeGenerator(formatter);
-    generator.close();
+    jioe(() -> generator.close());
   }
 
 
-  @Test(expected = JsonIOException.class)
+  @Test
   public void writeIOFailure3() throws IOException {
     Writer writer = Mockito.mock(Writer.class);
-    Mockito.doThrow(new IOException()).when(writer).flush();
+    Mockito.doThrow(new IOException("test")).when(writer).flush();
     NoOpFormatter formatter = new NoOpFormatter(writer);
     generator = new SafeGenerator(formatter);
-    generator.flush();
+    jioe(() -> generator.flush());
   }
 
 
@@ -396,16 +410,16 @@ public class SafeGeneratorTest {
   }
 
 
-  @Test(expected = JsonGenerationException.class)
+  @Test
   public void writeKey() {
-    generator.writeKey("fail");
+    jge(() -> generator.writeKey("fail"), "Cannot write key in root context");
   }
 
 
-  @Test(expected = JsonGenerationException.class)
+  @Test
   public void writeKeyInArray() {
     generator.writeStartArray();
-    generator.writeKey("a");
+    jge(() -> generator.writeKey("a"), "Cannot write key in array context");
   }
 
 
@@ -618,48 +632,53 @@ public class SafeGeneratorTest {
   }
 
 
-  @Test(expected = JsonGenerationException.class)
+  @Test
   public void writeTwice() {
     generator.write("fail");
-    generator.write("fail");
+    jge(() -> generator.write("fail"), "Cannot write multiple values to root context");
   }
 
 
-  @Test(expected = JsonGenerationException.class)
+  @Test
   public void writeTwoInRoot() {
-    generator.write(1).write(2);
+    generator.write(1);
+    jge(() -> generator.write(2), "Cannot write multiple values to root context");
   }
 
 
-  @Test(expected = JsonGenerationException.class)
+  @Test
   public void writeTwoInRoot2() {
-    generator.writeStartObject().writeEnd().write(2);
+    generator.writeStartObject().writeEnd();
+    jge(() -> generator.write(2), "Cannot write multiple values to root context");
   }
 
 
-  @Test(expected = JsonGenerationException.class)
+  @Test
   public void writeTwoInRoot3() {
-    generator.writeStartArray().writeEnd().write(2);
+    generator.writeStartArray().writeEnd();
+    jge(() -> generator.write(2), "Cannot write multiple values to root context");
   }
 
 
-  @Test(expected = JsonGenerationException.class)
+  @Test
   public void writeTwoInRoot4() {
-    generator.write(1).writeStartObject().writeEnd();
+    generator.write(1).writeStartObject();
+    jge(() -> generator.writeEnd(), "Cannot write multiple values to root context");
   }
 
 
-  @Test(expected = JsonGenerationException.class)
+  @Test
   public void writeTwoInRoot5() {
-    generator.write(1).writeStartArray().writeEnd();
+    generator.write(1).writeStartArray();
+    jge(() -> generator.writeEnd(), "Cannot write multiple values to root context");
   }
 
 
-  @Test(expected = JsonGenerationException.class)
+  @Test
   public void writeTwoKeysInObject() {
     generator.writeStartObject();
     generator.writeKey("a");
-    generator.writeKey("b");
+    jge(() -> generator.writeKey("b"), "Cannot write key twice in object context");
   }
 
 
@@ -671,10 +690,10 @@ public class SafeGeneratorTest {
   }
 
 
-  @Test(expected = JsonGenerationException.class)
+  @Test
   public void writeValueWithoutKey() {
     generator.writeStartObject();
-    generator.write(true);
+    jge(() -> generator.write(true), "Cannot write value in object context without key");
   }
 
 }

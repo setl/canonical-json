@@ -1,14 +1,15 @@
 package io.setl.json.pointer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.StringReader;
 import javax.json.JsonArray;
 import javax.json.JsonPointer;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.setl.json.CJArray;
 import io.setl.json.builder.ArrayBuilder;
@@ -68,10 +69,13 @@ public class ArrayPathTest {
   }
 
 
-  @Test(expected = PointerIndexException.class)
+  @Test
   public void getValue() {
     JsonPointer pointer = PointerFactory.create("/2/foo");
-    pointer.getValue(array);
+    PointerIndexException e = assertThrows(PointerIndexException.class, () -> pointer.getValue(array));
+    assertEquals("No such item. Path is /2, but array size is 2.", e.getMessage());
+    assertEquals("/2", e.getPath());
+    assertEquals(2, e.getSize());
   }
 
 }

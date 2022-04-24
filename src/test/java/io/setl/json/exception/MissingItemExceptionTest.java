@@ -1,14 +1,14 @@
 package io.setl.json.exception;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.EnumSet;
 import javax.json.JsonValue.ValueType;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import io.setl.json.CJArray;
 import io.setl.json.CJObject;
@@ -20,7 +20,7 @@ public class MissingItemExceptionTest {
   CJObject object;
 
 
-  @Before
+  @BeforeEach
   public void setUp() {
     object = new CJObject();
     object.put("array", new CJArray());

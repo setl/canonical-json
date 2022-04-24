@@ -1,14 +1,16 @@
 package io.setl.json.pointer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonPointer;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import io.setl.json.Canonical;
 import io.setl.json.builder.ArrayBuilder;
@@ -76,6 +78,18 @@ public class ObjectTerminalTest {
   }
 
 
+  private void nsve(Executable e, String m) {
+    NoSuchValueException ex = assertThrows(NoSuchValueException.class, e);
+    assertEquals(m, ex.getMessage());
+  }
+
+
+  private void pme(Executable e, String m) {
+    PointerMismatchException ex = assertThrows(PointerMismatchException.class, e);
+    assertEquals(m, ex.getMessage());
+  }
+
+
   @Test
   public void remove() {
     JsonObject jsonObject = new ObjectBuilder()
@@ -100,91 +114,92 @@ public class ObjectTerminalTest {
   }
 
 
-  @Test(expected = PointerMismatchException.class)
+  @Test
   public void testAdd() {
     JsonObject jsonObject = new ObjectBuilder()
         .add("bim", new ArrayBuilder()
             .add("baz")
         ).build();
     JsonPointer pointer = PointerFactory.create("/bim/waldo");
-    pointer.add(jsonObject, Canonical.create(1));
+    pme(() -> pointer.add(jsonObject, Canonical.create(1)), "JSON object required [path=/bim/waldo, expected=OBJECT, actual=ARRAY]");
   }
 
 
-  @Test(expected = PointerMismatchException.class)
+  @Test
   public void testContainsValue() {
     JsonObject jsonObject = new ObjectBuilder()
         .add("bim", new ArrayBuilder()
             .add("baz")
         ).build();
     JsonPointer pointer = PointerFactory.create("/bim/waldo");
-    pointer.containsValue(jsonObject);
+    pme(() -> pointer.containsValue(jsonObject), "JSON object required [path=/bim/waldo, expected=OBJECT, actual=ARRAY]");
   }
 
 
-  @Test(expected = NoSuchValueException.class)
+  @Test
   public void testGetValue() {
     JsonObject jsonObject = new ObjectBuilder()
         .add("bim", new ObjectBuilder()
             .add("baz", "boo")
         ).build();
     JsonPointer pointer = PointerFactory.create("/bim/waldo");
-    pointer.getValue(jsonObject);
+    nsve(() -> pointer.getValue(jsonObject), "JSON Structure did not contain item at: /bim/waldo");
   }
 
 
-  @Test(expected = PointerMismatchException.class)
+  @Test
   public void testGetValue2() {
     JsonObject jsonObject = new ObjectBuilder()
         .add("bim", new ArrayBuilder()
             .add("baz")
         ).build();
     JsonPointer pointer = PointerFactory.create("/bim/baz");
-    pointer.getValue(jsonObject);
+    pme(() -> pointer.getValue(jsonObject), "JSON object required [path=/bim/baz, expected=OBJECT, actual=ARRAY]");
   }
 
 
-  @Test(expected = PointerMismatchException.class)
+  @Test
   public void testRemove() {
     JsonObject jsonObject = new ObjectBuilder()
         .add("bim", new ArrayBuilder()
             .add("baz")
         ).build();
     JsonPointer pointer = PointerFactory.create("/bim/baz");
-    pointer.remove(jsonObject);
+    pme(() -> pointer.remove(jsonObject), "JSON object required [path=/bim/baz, expected=OBJECT, actual=ARRAY]");
   }
 
 
-  @Test(expected = NoSuchValueException.class)
+  @Test
   public void testRemove2() {
     JsonObject jsonObject = new ObjectBuilder()
         .add("bim", new ObjectBuilder()
             .add("baz", "boo")
         ).build();
     JsonPointer pointer = PointerFactory.create("/bim/waldo");
-    pointer.remove(jsonObject);
+    nsve(() -> pointer.remove(jsonObject), "JSON Structure did not contain item at: /bim/waldo");
   }
 
 
-  @Test(expected = PointerMismatchException.class)
+  @Test
   public void testReplace() {
     JsonObject jsonObject = new ObjectBuilder()
         .add("bim", new ArrayBuilder()
             .add("baz")
         ).build();
     JsonPointer pointer = PointerFactory.create("/bim/baz");
-    pointer.replace(jsonObject, Canonical.create(1));
+    pme(() -> pointer.replace(jsonObject, Canonical.create(1)), "JSON object required [path=/bim/baz, expected=OBJECT, actual=ARRAY]");
   }
 
 
-  @Test(expected = NoSuchValueException.class)
+  @Test
   public void testReplace2() {
     JsonObject jsonObject = new ObjectBuilder()
         .add("bim", new ObjectBuilder()
             .add("baz", "boo")
         ).build();
     JsonPointer pointer = PointerFactory.create("/bim/waldo");
-    pointer.replace(jsonObject, Canonical.create(1));
+    nsve(() -> pointer.replace(jsonObject, Canonical.create(1)), "JSON Structure did not contain item at: /bim/waldo");
   }
+
 
 }

@@ -1,8 +1,7 @@
 package io.setl.json;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import io.setl.json.io.ReaderFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,7 +11,10 @@ import javax.json.JsonArray;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 import javax.json.stream.JsonParsingException;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
+
+import io.setl.json.io.ReaderFactory;
 
 /**
  * Apply the malformed JSON tests defined at: https://github.com/gibson042/canonicaljson-spec
@@ -63,4 +65,5 @@ public class TestMalformed {
       }
     }
   }
+
 }

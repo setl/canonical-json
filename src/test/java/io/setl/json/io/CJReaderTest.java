@@ -3,8 +3,9 @@ package io.setl.json.io;
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -16,7 +17,7 @@ import javax.json.JsonStructure;
 import javax.json.JsonValue;
 import javax.json.stream.JsonParsingException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import io.setl.json.primitive.CJTrue;
@@ -35,20 +36,20 @@ public class CJReaderTest {
   }
 
 
-  @Test(expected = JsonParsingException.class)
+  @Test
   public void close2() {
     CJReader reader = new ReaderFactory().createReader(new StringReader("   true   false"));
     reader.readValue();
-    reader.close();
+    assertThrows(JsonParsingException.class, () -> reader.close());
   }
 
 
-  @Test(expected = JsonParsingException.class)
+  @Test
   public void close3() throws IOException {
     Reader reader = Mockito.mock(Reader.class);
     Mockito.doThrow(new IOException()).when(reader).close();
     CJReader jReader = new ReaderFactory().createReader(reader);
-    jReader.close();
+    assertThrows(JsonParsingException.class, () -> jReader.close());
   }
 
 
@@ -68,10 +69,10 @@ public class CJReaderTest {
   }
 
 
-  @Test(expected = JsonParsingException.class)
+  @Test
   public void read2() {
     CJReader reader = new ReaderFactory().createReader(new ByteArrayInputStream("true".getBytes(UTF_8)));
-    reader.read();
+    assertThrows(JsonParsingException.class, () -> reader.read());
   }
 
 
@@ -85,10 +86,10 @@ public class CJReaderTest {
   }
 
 
-  @Test(expected = JsonParsingException.class)
+  @Test
   public void readArray2() {
     CJReader reader = new ReaderFactory().createReader(new ByteArrayInputStream("true".getBytes(UTF_8)));
-    reader.readArray();
+    assertThrows(JsonParsingException.class, () -> reader.readArray());
   }
 
 
@@ -103,10 +104,10 @@ public class CJReaderTest {
   }
 
 
-  @Test(expected = JsonParsingException.class)
+  @Test
   public void readObject2() {
     CJReader reader = new ReaderFactory().createReader(new ByteArrayInputStream("true".getBytes(UTF_8)));
-    reader.readObject();
+    assertThrows(JsonParsingException.class, () -> reader.readObject());
   }
 
 
@@ -120,19 +121,20 @@ public class CJReaderTest {
   }
 
 
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void readValue2() {
     CJReader reader = new ReaderFactory().createReader(new StringReader("   true   "));
     reader.readValue();
-    reader.readValue();
+    assertThrows(IllegalStateException.class, () -> reader.readValue());
   }
 
 
-  @Test(expected = JsonParsingException.class)
+  @Test
   public void readValue3() {
     CJReader reader = new ReaderFactory().createReader(new StringReader("   true   false"));
     JsonValue value = reader.readValue();
-    reader.close();
+    JsonParsingException e = assertThrows(JsonParsingException.class, () -> reader.close());
+    assertEquals("Saw 'f' after root value.",e.getMessage());
   }
 
 }

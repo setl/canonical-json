@@ -25,7 +25,7 @@ public class ExtraTerminal extends ObjectTerminal {
 
 
   private PointerIndexException bad(int size) {
-    return new PointerIndexException("Array index not yet created", path, size);
+    return new PointerIndexException("Array index not yet created.", path, size);
   }
 
 

@@ -2,9 +2,9 @@ package io.setl.json.parser;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.StringReader;
@@ -13,7 +13,7 @@ import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
 import javax.json.stream.JsonParsingException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Simon Greatrix on 24/01/2020.

@@ -1,8 +1,9 @@
 package io.setl.json.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -10,8 +11,8 @@ import java.util.NoSuchElementException;
 import javax.json.JsonValue;
 import javax.json.stream.JsonParser.Event;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import io.setl.json.CJArray;
 import io.setl.json.CJObject;
@@ -100,19 +101,20 @@ public class ObjectWalkerTest {
   }
 
 
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void getValue2() {
-    walker.getValue();
+    IllegalStateException e = assertThrows(IllegalStateException.class, () -> walker.getValue());
+    assertEquals("Next has not been called", e.getMessage());
   }
 
 
-  @Test(expected = NoSuchElementException.class)
+  @Test
   public void getValue3() {
     while (walker.hasNext()) {
       walker.next();
     }
 
-    walker.getValue();
+    assertThrows(NoSuchElementException.class, () -> walker.getValue());
   }
 
 
@@ -146,7 +148,7 @@ public class ObjectWalkerTest {
   }
 
 
-  @Before
+  @BeforeEach
   public void setUp() {
     CJArray array = new CJArray();
     array.add("x");

@@ -1,7 +1,8 @@
 package io.setl.json.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.StringReader;
 import java.math.BigDecimal;
@@ -11,7 +12,7 @@ import java.util.stream.Stream;
 import javax.json.JsonValue;
 import javax.json.stream.JsonParser.Event;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.setl.json.CJArray;
 import io.setl.json.CJObject;
@@ -28,11 +29,12 @@ public class ParserTest {
   }
 
 
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void testBadState() {
     Parser parser = create("[[12");
     parser.next();
-    parser.getLong();
+    IllegalStateException e = assertThrows(IllegalStateException.class, () ->parser.getLong());
+    assertEquals("State must be VALUE_NUMBER, not START_ARRAY",e.getMessage());
   }
 
 

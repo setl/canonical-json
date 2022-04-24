@@ -1,6 +1,6 @@
 package io.setl.json.patch;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -12,7 +12,7 @@ import javax.json.JsonPatch;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.setl.json.CJArray;
 import io.setl.json.CJObject;

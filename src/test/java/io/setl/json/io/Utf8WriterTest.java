@@ -1,8 +1,9 @@
 package io.setl.json.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -13,8 +14,9 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 /**
  * @author Simon Greatrix on 06/01/2020.
@@ -68,7 +70,13 @@ public class Utf8WriterTest {
   }
 
 
-  @Before
+  private void ioe(Executable ex, String m) {
+    IOException e = assertThrows(IOException.class, ex);
+    assertEquals(m, e.getMessage());
+  }
+
+
+  @BeforeEach
   public void setUp() {
     output = new MockOutputStream();
     writer = new Utf8Writer(output);
@@ -76,35 +84,34 @@ public class Utf8WriterTest {
   }
 
 
-  @Test(expected = IOException.class)
+  @Test
   public void testBadSurrogates1() throws IOException {
     char[] pair = Character.toChars(0x14444);
     appendable.append(pair[0]);
-    appendable.close();
+    ioe(() -> appendable.close(), "Isolated high surrogate");
   }
 
 
-  @Test(expected = IOException.class)
+  @Test
   public void testBadSurrogates2() throws IOException {
     char[] pair = Character.toChars(0x14444);
     appendable.append(pair[0]);
-    appendable.append('A');
-    appendable.close();
+    ioe(() -> appendable.append('A'), "Isolated high surrogate");
   }
 
 
-  @Test(expected = IOException.class)
+  @Test
   public void testBadSurrogates3() throws IOException {
     char[] pair = Character.toChars(0x14444);
-    appendable.append(pair[1]);
+    ioe(() -> appendable.append(pair[1]), "Isolated low surrogate");
   }
 
 
-  @Test(expected = IOException.class)
+  @Test
   public void testBadSurrogates4() throws IOException {
     char[] pair = Character.toChars(0x14444);
     appendable.append(pair[0]);
-    appendable.append(pair[0]);
+    ioe(() -> appendable.append(pair[0]), "Repeated high surrogate");
   }
 
 

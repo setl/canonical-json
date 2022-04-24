@@ -2,13 +2,14 @@ package io.setl.json.jackson;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -18,13 +19,14 @@ import java.util.Base64;
 import java.util.List;
 
 import com.fasterxml.jackson.core.Base64Variants;
+import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator.Feature;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.core.io.SerializedString;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.IntNode;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import io.setl.json.CJArray;
 import io.setl.json.CJObject;
@@ -39,17 +41,19 @@ public class CanonicalGeneratorTest {
   StringWriter writer = new StringWriter();
 
 
-  @Test(expected = IOException.class)
+  @Test
   public void badEndArray() throws IOException {
     instance.writeStartObject();
-    instance.writeEndArray();
+    JsonGenerationException e = assertThrows(JsonGenerationException.class, () -> instance.writeEndArray());
+    assertEquals("Current context not Array but Object", e.getMessage());
   }
 
 
-  @Test(expected = IOException.class)
+  @Test
   public void badEndObject() throws IOException {
     instance.writeStartArray();
-    instance.writeEndObject();
+    JsonGenerationException e = assertThrows(JsonGenerationException.class, () -> instance.writeEndObject());
+    assertEquals("Current context not Object but Array", e.getMessage());
   }
 
 
@@ -73,15 +77,17 @@ public class CanonicalGeneratorTest {
   }
 
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void disable_bad() {
-    instance.disable(Feature.QUOTE_FIELD_NAMES);
+    UnsupportedOperationException e = assertThrows(UnsupportedOperationException.class, () -> instance.disable(Feature.QUOTE_FIELD_NAMES));
+    assertEquals("Feature QUOTE_FIELD_NAMES may not be disabled for Canonical JSON", e.getMessage());
   }
 
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void enable_bad() {
-    instance.enable(Feature.ESCAPE_NON_ASCII);
+    UnsupportedOperationException e = assertThrows(UnsupportedOperationException.class, () -> instance.enable(Feature.ESCAPE_NON_ASCII));
+    assertEquals("Feature ESCAPE_NON_ASCII may not be enabled for Canonical JSON", e.getMessage());
   }
 
 
@@ -136,16 +142,21 @@ public class CanonicalGeneratorTest {
 
 
   @Deprecated
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void setFeatureMask1() {
-    instance.setFeatureMask(Feature.QUOTE_FIELD_NAMES.getMask());
+    UnsupportedOperationException e = assertThrows(UnsupportedOperationException.class, () -> instance.setFeatureMask(Feature.QUOTE_FIELD_NAMES.getMask()));
+    assertEquals("Does not contain required features: 8", e.getMessage());
   }
 
 
   @Deprecated
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void setFeatureMask2() {
-    instance.setFeatureMask(Feature.QUOTE_FIELD_NAMES.getMask() + Feature.QUOTE_NON_NUMERIC_NUMBERS.getMask() + Feature.ESCAPE_NON_ASCII.getMask());
+    UnsupportedOperationException e = assertThrows(
+        UnsupportedOperationException.class,
+        () -> instance.setFeatureMask(Feature.QUOTE_FIELD_NAMES.getMask() + Feature.QUOTE_NON_NUMERIC_NUMBERS.getMask() + Feature.ESCAPE_NON_ASCII.getMask())
+    );
+    assertEquals("Contains disallowed features: 56", e.getMessage());
   }
 
 
@@ -158,7 +169,7 @@ public class CanonicalGeneratorTest {
   }
 
 
-  @Before
+  @BeforeEach
   public void setUp() throws IOException {
     instance = (CanonicalGenerator) new CanonicalFactory(new ObjectMapper()).createGenerator(writer);
   }
@@ -180,9 +191,10 @@ public class CanonicalGeneratorTest {
   }
 
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void useDefaultPrettyPrinter() {
-    instance.useDefaultPrettyPrinter();
+    UnsupportedOperationException e = assertThrows(UnsupportedOperationException.class, () -> instance.useDefaultPrettyPrinter());
+    assertEquals("Pretty printing is not allowed for canonical form", e.getMessage());
   }
 
 
@@ -245,11 +257,12 @@ public class CanonicalGeneratorTest {
   }
 
 
-  @Test(expected = IOException.class)
+  @Test
   public void writeField_Bad() throws IOException {
     instance.writeStartObject();
     instance.writeFieldName("chalk");
-    instance.writeFieldName(new SerializedString("cheese"));
+    JsonGenerationException e = assertThrows(JsonGenerationException.class, () -> instance.writeFieldName(new SerializedString("cheese")));
+    assertEquals("Can not write a field name, expecting a value", e.getMessage());
   }
 
 
@@ -273,10 +286,11 @@ public class CanonicalGeneratorTest {
   }
 
 
-  @Test(expected = IOException.class)
+  @Test
   public void writeNull_Bad() throws IOException {
     instance.writeStartObject();
-    instance.writeNull();
+    JsonGenerationException e = assertThrows(JsonGenerationException.class, () -> instance.writeNull());
+    assertEquals("Can not write NULL, expecting field name (context: Object)",e.getMessage());
   }
 
 
@@ -304,51 +318,59 @@ public class CanonicalGeneratorTest {
   }
 
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void writeRawChar() {
-    instance.writeRaw('x');
+    UnsupportedOperationException e = assertThrows(UnsupportedOperationException.class, () -> instance.writeRaw('x'));
+    assertEquals("Canonical JSON does not support raw content", e.getMessage());
   }
 
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void writeRawCharArray() {
-    instance.writeRaw(new char[10], 3, 3);
+    UnsupportedOperationException e = assertThrows(UnsupportedOperationException.class, () -> instance.writeRaw(new char[10], 3, 3));
+    assertEquals("Canonical JSON does not support raw content", e.getMessage());
   }
 
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void writeRawString1() {
-    instance.writeRaw("xxxxxxxxxxxxx", 3, 3);
+    UnsupportedOperationException e = assertThrows(UnsupportedOperationException.class, () -> instance.writeRaw("xxxxxxxxxxxxx", 3, 3));
+    assertEquals("Canonical JSON does not support raw content", e.getMessage());
   }
 
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void writeRawString2() {
-    instance.writeRaw("xxxx");
+    UnsupportedOperationException e = assertThrows(UnsupportedOperationException.class, () -> instance.writeRaw("xxxx"));
+    assertEquals("Canonical JSON does not support raw content", e.getMessage());
   }
 
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void writeRawUTF8String() {
-    instance.writeRawUTF8String(new byte[10], 0, 8);
+    UnsupportedOperationException e = assertThrows(UnsupportedOperationException.class, () -> instance.writeRawUTF8String(new byte[10], 0, 8));
+    assertEquals("Canonical JSON does not support raw content", e.getMessage());
   }
 
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void writeRawValue() {
-    instance.writeRawValue("yyyy");
+    UnsupportedOperationException e = assertThrows(UnsupportedOperationException.class, () -> instance.writeRawValue("yyyy"));
+    assertEquals("Canonical JSON does not support raw content", e.getMessage());
   }
 
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void writeRawValue2() {
-    instance.writeRawValue("xxxxxxxxxxxxx", 3, 3);
+    UnsupportedOperationException e = assertThrows(UnsupportedOperationException.class, () -> instance.writeRawValue("xxxxxxxxxxxxx", 3, 3));
+    assertEquals("Canonical JSON does not support raw content", e.getMessage());
   }
 
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void writeRawValueCharArray() {
-    instance.writeRawValue(new char[10], 3, 3);
+    UnsupportedOperationException e = assertThrows(UnsupportedOperationException.class, () -> instance.writeRawValue(new char[10], 3, 3));
+    assertEquals("Canonical JSON does not support raw content", e.getMessage());
   }
 
 

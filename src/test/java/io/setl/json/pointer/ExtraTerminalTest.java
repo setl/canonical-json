@@ -1,14 +1,15 @@
 package io.setl.json.pointer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonPointer;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.setl.json.Canonical;
 import io.setl.json.builder.ArrayBuilder;
@@ -81,24 +82,30 @@ public class ExtraTerminalTest {
   }
 
 
-  @Test(expected = PointerIndexException.class)
+  @Test
   public void getValue() {
     JsonPointer pointer = PointerFactory.create("/1/-");
-    pointer.getValue(array);
+    PointerIndexException e = assertThrows(PointerIndexException.class, () -> pointer.getValue(array));
+    assertEquals("/1/-", e.getPath());
+    assertEquals(2, e.getSize());
   }
 
 
-  @Test(expected = PointerIndexException.class)
+  @Test
   public void remove() {
     JsonPointer pointer = PointerFactory.create("/1/-");
-    pointer.remove(array);
+    PointerIndexException e = assertThrows(PointerIndexException.class, () -> pointer.remove(array));
+    assertEquals("/1/-", e.getPath());
+    assertEquals(2, e.getSize());
   }
 
 
-  @Test(expected = PointerIndexException.class)
+  @Test
   public void replace() {
     JsonPointer pointer = PointerFactory.create("/1/-");
-    pointer.replace(array, CJNull.NULL);
+    PointerIndexException e = assertThrows(PointerIndexException.class, () -> pointer.replace(array, CJNull.NULL));
+    assertEquals("/1/-", e.getPath());
+    assertEquals(2, e.getSize());
   }
 
 }

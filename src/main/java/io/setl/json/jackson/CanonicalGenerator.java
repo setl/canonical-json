@@ -441,7 +441,7 @@ public class CanonicalGenerator extends JsonGenerator {
   private void writeCanonical(Canonical canonical) throws IOException {
     ValueType valueType = canonical.getValueType();
     String typeMessage = valueType == null ? "RAW" : valueType.name();
-    verifyValueWrite(typeMessage);
+    verifyValueWrite("write " + typeMessage);
     if (stack.isEmpty()) {
       canonical.writeTo(writer);
       return;

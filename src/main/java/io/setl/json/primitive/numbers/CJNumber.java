@@ -34,7 +34,7 @@ public abstract class CJNumber extends CJBase implements JsonNumber {
   public static final int TYPE_LONG = 1;
 
   private static final Map<Class<? extends Number>, Function<Number, CJNumber>> CREATORS = Map.of(
-      BigDecimal.class, n -> new CJBigDecimal((BigDecimal) n, false),
+      BigDecimal.class, n -> new CJBigDecimal((BigDecimal) n),
       BigInteger.class, n -> new CJBigInteger((BigInteger) n),
       Integer.class, n -> create(n.intValue()),
       Long.class, n -> new CJLong(n.longValue())

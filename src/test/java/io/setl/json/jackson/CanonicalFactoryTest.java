@@ -1,9 +1,10 @@
 package io.setl.json.jackson;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -16,7 +17,7 @@ import com.fasterxml.jackson.core.JsonGenerator.Feature;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonpCharacterEscapes;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Simon Greatrix on 03/01/2020.
@@ -32,15 +33,19 @@ public class CanonicalFactoryTest {
   }
 
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void createGeneratorNotUtf8() throws IOException {
-    instance.createGenerator(new File("test"), JsonEncoding.UTF16_BE);
+    UnsupportedOperationException e =
+        assertThrows(UnsupportedOperationException.class, () -> instance.createGenerator(new File("test"), JsonEncoding.UTF16_BE));
+    assertEquals("Canonical encoding must be UTF-8, not UTF16_BE", e.getMessage());
   }
 
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void createGeneratorNotUtf8_2() throws IOException {
-    instance.createGenerator(new ByteArrayOutputStream(), JsonEncoding.UTF16_BE);
+    UnsupportedOperationException e =
+        assertThrows(UnsupportedOperationException.class, () -> instance.createGenerator(new ByteArrayOutputStream(), JsonEncoding.UTF16_BE));
+    assertEquals("Canonical encoding must be UTF-8, not UTF16_BE", e.getMessage());
   }
 
 
@@ -72,16 +77,18 @@ public class CanonicalFactoryTest {
 
 
   @SuppressWarnings("deprecation")
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void disable_1() {
-    instance.disable(Feature.QUOTE_FIELD_NAMES);
+    UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class, () -> instance.disable(Feature.QUOTE_FIELD_NAMES));
+    assertEquals("Feature QUOTE_FIELD_NAMES may not be disabled for Canonical JSON", exception.getMessage());
   }
 
 
   @SuppressWarnings("deprecation")
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void disable_2() {
-    instance.disable(Feature.QUOTE_NON_NUMERIC_NUMBERS);
+    UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class, () -> instance.disable(Feature.QUOTE_NON_NUMERIC_NUMBERS));
+    assertEquals("Feature QUOTE_NON_NUMERIC_NUMBERS may not be disabled for Canonical JSON", exception.getMessage());
   }
 
 
@@ -102,22 +109,26 @@ public class CanonicalFactoryTest {
 
 
   @SuppressWarnings("deprecation")
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void enable_1() {
-    instance.enable(Feature.ESCAPE_NON_ASCII);
+    UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class, () ->
+        instance.enable(Feature.ESCAPE_NON_ASCII));
+    assertEquals("Feature ESCAPE_NON_ASCII may not be enabled for Canonical JSON", exception.getMessage());
   }
 
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void enable_2() {
-    instance.enable(Feature.WRITE_BIGDECIMAL_AS_PLAIN);
+    UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class, () -> instance.enable(Feature.WRITE_BIGDECIMAL_AS_PLAIN));
+    assertEquals("Feature WRITE_BIGDECIMAL_AS_PLAIN may not be enabled for Canonical JSON", exception.getMessage());
   }
 
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   @SuppressWarnings("deprecation")
   public void enable_3() {
-    instance.enable(Feature.WRITE_NUMBERS_AS_STRINGS);
+    UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class, () -> instance.enable(Feature.WRITE_NUMBERS_AS_STRINGS));
+    assertEquals("Feature WRITE_NUMBERS_AS_STRINGS may not be enabled for Canonical JSON", exception.getMessage());
   }
 
 
@@ -141,9 +152,13 @@ public class CanonicalFactoryTest {
   }
 
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void setCharacterEscapes() {
-    instance.setCharacterEscapes(new JsonpCharacterEscapes());
+    UnsupportedOperationException exception = assertThrows(
+        UnsupportedOperationException.class,
+        () -> instance.setCharacterEscapes(new JsonpCharacterEscapes())
+    );
+    assertEquals("Canonical JSON must use standard escapes", exception.getMessage());
   }
 
 }

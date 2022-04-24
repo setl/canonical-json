@@ -1,15 +1,29 @@
 package io.setl.json;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.Map;
+import javax.json.Json;
+import javax.json.JsonValue;
+import javax.json.spi.JsonProvider;
+
+import org.junit.jupiter.api.Test;
 
 import io.setl.json.builder.ArrayBuilder;
 import io.setl.json.builder.BuilderFactory;
 import io.setl.json.builder.ObjectBuilder;
+import io.setl.json.io.CJReader;
+import io.setl.json.io.CJWriter;
 import io.setl.json.io.Generator;
 import io.setl.json.io.GeneratorFactory;
-import io.setl.json.io.CJReader;
 import io.setl.json.io.ReaderFactory;
-import io.setl.json.io.CJWriter;
 import io.setl.json.io.WriterFactory;
 import io.setl.json.merge.Merge;
 import io.setl.json.parser.Parser;
@@ -22,18 +36,6 @@ import io.setl.json.primitive.numbers.CJBigDecimal;
 import io.setl.json.primitive.numbers.CJBigInteger;
 import io.setl.json.primitive.numbers.CJInt;
 import io.setl.json.primitive.numbers.CJLong;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Map;
-import javax.json.Json;
-import javax.json.JsonValue;
-import javax.json.spi.JsonProvider;
-import org.junit.Test;
 
 /**
  * @author Simon Greatrix on 28/01/2020.
@@ -239,4 +241,5 @@ public class CanonicalJsonProviderTest {
     JsonProvider provider = JsonProvider.provider();
     assertTrue(provider instanceof CanonicalJsonProvider);
   }
+
 }

@@ -1,7 +1,7 @@
 package io.setl.json.jackson;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BinaryNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.setl.json.builder.ArrayBuilder;
 import io.setl.json.builder.ObjectBuilder;
@@ -28,7 +28,7 @@ public class ConvertTest {
   public void test() {
     ObjectBuilder builder = new ObjectBuilder();
     builder.add("a", new ArrayBuilder()
-        .add(1).add(2.0).add(1_000_000_000_000L).add(BigInteger.ONE.shiftLeft(100)).add(BigDecimal.valueOf(Math.PI)).add("Hello"))
+            .add(1).add(2.0).add(1_000_000_000_000L).add(BigInteger.ONE.shiftLeft(100)).add(BigDecimal.valueOf(Math.PI)).add("Hello"))
         .add("b0", true)
         .add("b1", false)
         .addNull("n")

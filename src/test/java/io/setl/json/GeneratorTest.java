@@ -1,12 +1,14 @@
 package io.setl.json;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import io.setl.json.primitive.numbers.CJNumber;
-import io.setl.json.primitive.CJString;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
+
+import io.setl.json.primitive.CJString;
+import io.setl.json.primitive.numbers.CJNumber;
 
 public class GeneratorTest {
 
@@ -117,4 +119,5 @@ public class GeneratorTest {
     assertEquals("\"\\uD801..\\uD805\"", CJString.create(new String(chars)).toString());
 
   }
+
 }

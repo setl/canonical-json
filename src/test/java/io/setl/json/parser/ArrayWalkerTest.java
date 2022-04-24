@@ -1,15 +1,16 @@
 package io.setl.json.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.setl.json.builder.ArrayBuilder;
 import io.setl.json.builder.ObjectBuilder;
@@ -115,10 +116,11 @@ public class ArrayWalkerTest {
   }
 
 
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void isIntegralNumber2() {
     walker.next();
-    walker.isIntegralNumber();
+    IllegalStateException e = assertThrows(IllegalStateException.class, () -> walker.isIntegralNumber());
+    assertEquals("Value is of type ARRAY not NUMBER", e.getMessage());
   }
 
 

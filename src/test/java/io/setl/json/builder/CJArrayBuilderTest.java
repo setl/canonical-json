@@ -1,8 +1,8 @@
 package io.setl.json.builder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -12,7 +12,7 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Simon Greatrix on 10/01/2020.

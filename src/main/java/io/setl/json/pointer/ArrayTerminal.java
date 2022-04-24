@@ -33,7 +33,7 @@ public class ArrayTerminal extends ObjectTerminal {
 
 
   private PointerIndexException badIndex(int size) {
-    return new PointerIndexException("Array index too large", path, size);
+    return new PointerIndexException("Array index too large.", path, size);
   }
 
 

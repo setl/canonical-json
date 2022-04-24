@@ -3,14 +3,13 @@ package io.setl.json.io;
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.Writer;
 import javax.json.JsonArray;
 import javax.json.JsonException;
 import javax.json.JsonObject;
@@ -18,7 +17,7 @@ import javax.json.JsonValue;
 import javax.json.JsonWriter;
 import javax.json.stream.JsonGenerator;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import io.setl.json.CanonicalJsonProvider;
@@ -43,36 +42,41 @@ public class CJWriterTest {
   }
 
 
-  @Test(expected = JsonException.class)
+  @Test
   public void close2() throws IOException {
     JsonGenerator writer = Mockito.mock(JsonGenerator.class);
     Mockito.doThrow(new JsonException("test")).when(writer).close();
     CJWriter jWriter = new CJWriter(writer);
-    jWriter.close();
+    JsonException e = assertThrows(JsonException.class, () -> jWriter.close());
+    assertEquals("test", e.getMessage());
   }
 
 
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void close3() {
     JsonGenerator writer = Mockito.mock(JsonGenerator.class);
     CJWriter jWriter = new CJWriter(writer);
     jWriter.close();
-    jWriter.write(CJNull.NULL);
+    IllegalStateException e = assertThrows(IllegalStateException.class, () -> jWriter.write(CJNull.NULL));
+    assertEquals("This JsonWriter has already been used", e.getMessage());
   }
 
 
-  @Test(expected = JsonException.class)
+  @Test
   public void failedWrite() throws IOException {
     JsonGenerator writer = Mockito.mock(JsonGenerator.class);
     Mockito.doThrow(new JsonException("test")).when(writer).write(any(JsonValue.class));
     CJWriter jWriter = new CJWriter(writer);
-    jWriter.write(CJFalse.FALSE);
+    JsonException e = assertThrows(JsonException.class, () -> jWriter.write(CJFalse.FALSE));
+    assertEquals("test", e.getMessage());
   }
 
 
-  @Test(expected = JsonException.class)
+  @Test
   public void utf8Only() {
-    new WriterFactory(CanonicalJsonProvider.provider().createGeneratorFactory(null)).createWriter(new ByteArrayOutputStream(), ISO_8859_1);
+    WriterFactory factory = new WriterFactory(CanonicalJsonProvider.provider().createGeneratorFactory(null));
+    JsonException e = assertThrows(JsonException.class, () -> factory.createWriter(new ByteArrayOutputStream(), ISO_8859_1));
+    assertEquals("Canonical JSON must be in UTF-8", e.getMessage());
   }
 
 

@@ -14,7 +14,7 @@ import io.setl.json.primitive.CJNull;
  *
  * @author Simon Greatrix on 27/01/2020.
  */
-class TrustedGenerator extends Generator {
+class TrustedGenerator implements Generator<TrustedGenerator> {
 
   interface Context {
 
@@ -210,7 +210,7 @@ class TrustedGenerator extends Generator {
 
 
   @Override
-  public Generator write(Canonical value) {
+  public TrustedGenerator write(Canonical value) {
     if (value == null) {
       context.writeValue(CJNull.NULL);
     } else if (value instanceof CJBase) {
@@ -231,21 +231,21 @@ class TrustedGenerator extends Generator {
 
 
   @Override
-  public Generator writeEnd() {
+  public TrustedGenerator writeEnd() {
     context = context.writeEnd();
     return this;
   }
 
 
   @Override
-  public Generator writeKey(String name) {
+  public TrustedGenerator writeKey(String name) {
     context.writeKey(name);
     return this;
   }
 
 
   @Override
-  public Generator writeStartArray() {
+  public TrustedGenerator writeStartArray() {
     context.writeStructure();
     context = new ArrayContext(context);
     return this;
@@ -253,7 +253,7 @@ class TrustedGenerator extends Generator {
 
 
   @Override
-  public Generator writeStartObject() {
+  public TrustedGenerator writeStartObject() {
     context.writeStructure();
     context = new ObjectContext(context);
     return this;

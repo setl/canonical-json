@@ -1,13 +1,14 @@
 package io.setl.json.pointer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.json.JsonArray;
 import javax.json.JsonPointer;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.setl.json.CJArray;
 import io.setl.json.Canonical;
@@ -30,10 +31,11 @@ public class ArrayTerminalTest {
   }
 
 
-  @Test(expected = PointerIndexException.class)
+  @Test
   public void add2() {
     JsonPointer pointer = PointerFactory.create("/1/3");
-    pointer.add(array, Canonical.create(true));
+    PointerIndexException e = assertThrows(PointerIndexException.class, () -> pointer.add(array, Canonical.create(true)));
+    assertEquals("Array index too large. Path is /1/3, but array size is 2.", e.getMessage());
   }
 
 
@@ -90,10 +92,11 @@ public class ArrayTerminalTest {
   }
 
 
-  @Test(expected = PointerIndexException.class)
+  @Test
   public void getValue2() {
     JsonPointer pointer = PointerFactory.create("/1/3");
-    pointer.getValue(array);
+    PointerIndexException e = assertThrows(PointerIndexException.class, () -> pointer.getValue(array));
+    assertEquals("Array index too large. Path is /1/3, but array size is 2.", e.getMessage());
   }
 
 
@@ -105,10 +108,11 @@ public class ArrayTerminalTest {
   }
 
 
-  @Test(expected = PointerIndexException.class)
+  @Test
   public void remove2() {
     JsonPointer pointer = PointerFactory.create("/1/3");
-    pointer.remove(array);
+    PointerIndexException e = assertThrows(PointerIndexException.class, () -> pointer.remove(array));
+    assertEquals("Array index too large. Path is /1/3, but array size is 2.", e.getMessage());
   }
 
 
@@ -120,10 +124,11 @@ public class ArrayTerminalTest {
   }
 
 
-  @Test(expected = PointerIndexException.class)
+  @Test
   public void replace2() {
     JsonPointer pointer = PointerFactory.create("/1/3");
-    pointer.replace(array, Canonical.create(false));
+    PointerIndexException e = assertThrows(PointerIndexException.class, () -> pointer.replace(array, Canonical.create(false)));
+    assertEquals("Array index too large. Path is /1/3, but array size is 2.", e.getMessage());
   }
 
 }

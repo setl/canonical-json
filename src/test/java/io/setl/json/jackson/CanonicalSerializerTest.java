@@ -1,12 +1,12 @@
 package io.setl.json.jackson;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import io.setl.json.CJArray;
 import io.setl.json.CJObject;
@@ -23,7 +23,7 @@ public class CanonicalSerializerTest {
   Fleet fleet = new Fleet();
 
 
-  @Before
+  @BeforeEach
   public void before() {
     Car car1 = new Car("Ford", "Mondeo", 5, 120);
     car1.setMetadata(Canonical.create("META"));

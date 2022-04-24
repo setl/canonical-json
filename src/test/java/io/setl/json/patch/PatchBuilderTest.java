@@ -1,10 +1,10 @@
 package io.setl.json.patch;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javax.json.JsonValue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.setl.json.patch.ops.Add;
 import io.setl.json.primitive.CJString;

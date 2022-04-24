@@ -12,14 +12,11 @@ import java.math.BigInteger;
  */
 public class CJBigDecimal extends CJNumber {
 
-  /** Some zeros for batching the output of zeros in very big integers. */
-  private static final String SOME_ZEROS = "00000000000000000000000000000000";
-
   private final BigDecimal value;
 
 
-  CJBigDecimal(BigDecimal value, boolean doStrip) {
-    this.value = doStrip ? value.stripTrailingZeros() : value;
+  CJBigDecimal(BigDecimal value) {
+    this.value = value.stripTrailingZeros();
   }
 
 
@@ -145,20 +142,6 @@ public class CJBigDecimal extends CJNumber {
     // Handle zero
     if (value.signum() == 0) {
       writer.append("0");
-      return;
-    }
-
-    // Strip trailing zeros and see if we have an integer
-    if (value.scale() <= 0) {
-      // This is an integer. We do not convert it
-      writer.append(value.unscaledValue().toString());
-      int s = -value.scale();
-      int b = SOME_ZEROS.length();
-      while (s > b) {
-        writer.append(SOME_ZEROS);
-        s -= b;
-      }
-      writer.append(SOME_ZEROS, 0, s);
       return;
     }
 

@@ -22,7 +22,7 @@ public class FilterDeny implements Filter {
 
   @Override
   public void add(PathElement element) {
-    throw new UnsupportedOperationException();
+    throw new UnsupportedOperationException("The DENY filter is immutable.");
   }
 
 

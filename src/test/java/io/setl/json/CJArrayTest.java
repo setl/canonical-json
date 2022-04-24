@@ -1,13 +1,14 @@
 package io.setl.json;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import static io.setl.json.CJArray.asArray;
 import static io.setl.json.CJArray.fixCollection;
@@ -26,7 +27,7 @@ import javax.json.JsonString;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.setl.json.exception.IncorrectTypeException;
 import io.setl.json.exception.MissingItemException;
@@ -319,10 +320,11 @@ public class CJArrayTest {
   }
 
 
-  @Test(expected = ClassCastException.class)
+  @Test
   public void testAsJsonObject() {
     CJArray ja = new CJArray();
-    ja.asJsonObject();
+    IncorrectTypeException e = assertThrows(IncorrectTypeException.class, () -> ja.asJsonObject());
+    assertEquals("Item has type ARRAY. Required OBJECT.", e.getMessage());
   }
 
 
@@ -744,10 +746,11 @@ public class CJArrayTest {
   }
 
 
-  @Test(expected = ClassCastException.class)
+  @Test
   public void testGetValueAs() {
     CJArray ja = new CJArray(Arrays.asList(0, 1, 2));
-    ja.getValuesAs(JsonString.class);
+    ClassCastException e = assertThrows(ClassCastException.class, () -> ja.getValuesAs(JsonString.class));
+    assertEquals("Cannot cast io.setl.json.primitive.numbers.CJInt to javax.json.JsonString", e.getMessage());
   }
 
 

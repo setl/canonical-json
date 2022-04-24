@@ -152,15 +152,13 @@ public class Parser extends BaseIterator<JsonParser.Event> implements JsonParser
 
 
   private void checkNumber() {
-    if (value.getValueType() != ValueType.NUMBER) {
-      throw new IllegalStateException("Current value is a " + value.getValueType() + " not a number.");
-    }
+    checkState(Event.VALUE_NUMBER);
   }
 
 
   private void checkState(Event required) {
     if (required != lastEvent) {
-      throw new IllegalStateException("State must be " + required + ", not: " + lastEvent);
+      throw new IllegalStateException("State must be " + required + ", not " + lastEvent);
     }
   }
 

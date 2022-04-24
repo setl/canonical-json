@@ -1,16 +1,18 @@
 package io.setl.json.pointer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonPointer;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
+import javax.json.JsonValue.ValueType;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.setl.json.builder.ArrayBuilder;
 import io.setl.json.builder.ObjectBuilder;
@@ -30,17 +32,22 @@ public class ObjectPathTest {
       .add("boo", "bat").build();
 
 
-  @Test(expected = NoSuchValueException.class)
+  @Test
   public void add() {
     JsonPointer pointer = PointerFactory.create("/waldo/1/-");
-    pointer.add(jsonObject, CJNull.NULL);
+    NoSuchValueException e = assertThrows(NoSuchValueException.class, () -> pointer.add(jsonObject, CJNull.NULL));
+    assertEquals("JSON Structure did not contain item at: /waldo", e.getMessage());
+    assertEquals("/waldo", e.getPath());
   }
 
 
-  @Test(expected = PointerMismatchException.class)
+  @Test
   public void add2() {
     JsonPointer pointer = PointerFactory.create("/waldo/1/-");
-    pointer.add(jsonArray, CJNull.NULL);
+    PointerMismatchException e = assertThrows(PointerMismatchException.class, () -> pointer.add(jsonArray, CJNull.NULL));
+    assertEquals("/waldo", e.getPath());
+    assertEquals(ValueType.OBJECT, e.getExpected());
+    assertEquals(ValueType.ARRAY, e.getActual());
   }
 
 
@@ -56,20 +63,16 @@ public class ObjectPathTest {
     assertTrue(pointer.isParentOf(PointerFactory.create("/-/1/a")));
   }
 
-  private void testNotContains(String path, JsonStructure structure) {
-      JsonPointer pointer = PointerFactory.create(path);
-      assertFalse(pointer.containsValue(structure));
-  }
 
   @Test
   public void containsValue() {
-    testNotContains("/waldo/1/-",jsonObject);
+    testNotContains("/waldo/1/-", jsonObject);
   }
 
 
   @Test
   public void containsValue2() {
-    testNotContains("/waldo/1/-",jsonArray);
+    testNotContains("/waldo/1/-", jsonArray);
   }
 
 
@@ -111,64 +114,84 @@ public class ObjectPathTest {
   }
 
 
-  @Test(expected = PointerMismatchException.class)
+  @Test
   public void doAdd() {
     JsonPointer pointer = PointerFactory.create("/boo/1/-");
-    pointer.add(jsonObject, CJNull.NULL);
+
+    PointerMismatchException e = assertThrows(PointerMismatchException.class, () -> pointer.add(jsonObject, CJNull.NULL));
+    assertEquals("Path does not exist [path=/boo, expected=STRUCTURE, actual=STRING]", e.getMessage());
   }
 
 
   @Test
   public void doContains() {
-    testNotContains("/boo/1/-",jsonObject);
+    testNotContains("/boo/1/-", jsonObject);
   }
 
 
   @Test
   public void doContains2() {
-    testNotContains("/waldo/1/a",jsonObject);
+    testNotContains("/waldo/1/a", jsonObject);
   }
 
 
-  @Test(expected = PointerMismatchException.class)
+  @Test
   public void doGetValue() {
     JsonPointer pointer = PointerFactory.create("/boo/1/-");
-    pointer.getValue(jsonObject);
+
+    PointerMismatchException e = assertThrows(PointerMismatchException.class, () -> pointer.getValue(jsonObject));
+    assertEquals("Path does not exist [path=/boo, expected=STRUCTURE, actual=STRING]", e.getMessage());
   }
 
 
-  @Test(expected = PointerMismatchException.class)
+  @Test
   public void doRemove() {
     JsonPointer pointer = PointerFactory.create("/boo/1/-");
-    pointer.remove(jsonObject);
+
+    PointerMismatchException e = assertThrows(PointerMismatchException.class, () -> pointer.remove(jsonObject));
+    assertEquals("Path does not exist [path=/boo, expected=STRUCTURE, actual=STRING]", e.getMessage());
   }
 
 
-  @Test(expected = PointerMismatchException.class)
+  @Test
   public void doReplace() {
     JsonPointer pointer = PointerFactory.create("/boo/1/-");
-    pointer.replace(jsonObject, CJNull.NULL);
+
+    PointerMismatchException e = assertThrows(PointerMismatchException.class, () -> pointer.replace(jsonObject, CJNull.NULL));
+    assertEquals("Path does not exist [path=/boo, expected=STRUCTURE, actual=STRING]", e.getMessage());
   }
 
 
-  @Test(expected = PointerMismatchException.class)
+  @Test
   public void getValue() {
     JsonPointer pointer = PointerFactory.create("/boo/1/-");
-    pointer.getValue(jsonArray);
+
+    PointerMismatchException e = assertThrows(PointerMismatchException.class, () -> pointer.getValue(jsonArray));
+    assertEquals("JSON object required [path=/boo, expected=OBJECT, actual=ARRAY]", e.getMessage());
   }
 
 
-  @Test(expected = PointerMismatchException.class)
+  @Test
   public void remove() {
     JsonPointer pointer = PointerFactory.create("/boo/1/-");
-    pointer.remove(jsonArray);
+
+    PointerMismatchException e = assertThrows(PointerMismatchException.class, () -> pointer.remove(jsonArray));
+    assertEquals("JSON object required [path=/boo, expected=OBJECT, actual=ARRAY]", e.getMessage());
   }
 
 
-  @Test(expected = PointerMismatchException.class)
+  @Test
   public void replace() {
     JsonPointer pointer = PointerFactory.create("/boo/1/-");
-    pointer.replace(jsonArray, CJNull.NULL);
+
+    PointerMismatchException e = assertThrows(PointerMismatchException.class, () -> pointer.replace(jsonArray, CJNull.NULL));
+    assertEquals("JSON object required [path=/boo, expected=OBJECT, actual=ARRAY]", e.getMessage());
+  }
+
+
+  private void testNotContains(String path, JsonStructure structure) {
+    JsonPointer pointer = PointerFactory.create(path);
+    assertFalse(pointer.containsValue(structure));
   }
 
 }

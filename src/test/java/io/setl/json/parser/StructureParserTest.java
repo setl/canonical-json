@@ -1,9 +1,10 @@
 package io.setl.json.parser;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -18,7 +19,7 @@ import javax.json.JsonValue.ValueType;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.setl.json.CJObject;
 import io.setl.json.builder.ArrayBuilder;
@@ -83,7 +84,7 @@ public class StructureParserTest {
   }
 
 
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void getArrayStream2() {
     JsonArray array = new ArrayBuilder()
         .add(new ObjectBuilder().add("a", 1))
@@ -92,7 +93,9 @@ public class StructureParserTest {
     JsonParser parser = new ParserFactory(null).createParser(array);
     assertEquals(Event.START_ARRAY, parser.next());
     assertEquals(Event.START_OBJECT, parser.next());
-    parser.getArrayStream();
+
+    IllegalStateException e = assertThrows(IllegalStateException.class, () -> parser.getArrayStream());
+    assertEquals("State must be START_ARRAY, not START_OBJECT", e.getMessage());
   }
 
 
@@ -220,7 +223,7 @@ public class StructureParserTest {
   }
 
 
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void getObject2() {
     JsonObject value = new ObjectBuilder().add("b", 4.3).build();
     JsonObject object = new ObjectBuilder().add("a", value).add("c", true).build();
@@ -229,7 +232,8 @@ public class StructureParserTest {
     parser.next();
     assertEquals(Event.START_OBJECT, parser.next());
     assertEquals(Event.KEY_NAME, parser.next());
-    parser.getObject();
+    IllegalStateException e = assertThrows(IllegalStateException.class, () -> parser.getObject());
+    assertEquals("State must be START_OBJECT, not KEY_NAME", e.getMessage());
   }
 
 
@@ -270,14 +274,15 @@ public class StructureParserTest {
   }
 
 
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void getValueStream() {
     JsonObject object = new ObjectBuilder().add("a", "b").build();
     JsonParser parser = new ParserFactory(null).createParser(object);
     parser.next();
 
     // not in root
-    parser.getValueStream();
+    IllegalStateException e = assertThrows(IllegalStateException.class, () -> parser.getValueStream());
+    assertEquals("Not in root context", e.getMessage());
   }
 
 

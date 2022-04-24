@@ -1,7 +1,8 @@
 package io.setl.json.jackson;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -18,7 +19,7 @@ import com.fasterxml.jackson.dataformat.smile.SmileFactory;
 import com.fasterxml.jackson.dataformat.smile.SmileGenerator;
 import com.fasterxml.jackson.dataformat.smile.SmileGenerator.Feature;
 import com.fasterxml.jackson.dataformat.smile.SmileParser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import io.setl.json.builder.ArrayBuilder;
@@ -60,40 +61,48 @@ public class JacksonReaderTest {
   }
 
 
-  @Test(expected = JsonIOException.class)
+  @Test
   public void test10() throws IOException {
     JsonParser mock = Mockito.mock(JsonParser.class);
-    Mockito.doThrow(new IOException()).when(mock).nextToken();
+    Mockito.doThrow(new IOException("test")).when(mock).nextToken();
     JacksonReader parser = new JacksonReader(mock);
-    parser.read();
+
+    JsonIOException e = assertThrows(JsonIOException.class, () -> parser.read());
+    assertEquals("test", e.getCause().getMessage());
   }
 
 
-  @Test(expected = JsonIOException.class)
+  @Test
   public void test11() throws IOException {
     JsonParser mock = Mockito.mock(JsonParser.class);
-    Mockito.doThrow(new IOException()).when(mock).nextToken();
+    Mockito.doThrow(new IOException("test")).when(mock).nextToken();
     JacksonReader parser = new JacksonReader(mock);
-    parser.readArray();
+
+    JsonIOException e = assertThrows(JsonIOException.class, () -> parser.readArray());
+    assertEquals("test", e.getCause().getMessage());
   }
 
 
-  @Test(expected = JsonIOException.class)
+  @Test
   public void test12() throws IOException {
     JsonParser mock = Mockito.mock(JsonParser.class);
-    Mockito.doThrow(new IOException()).when(mock).nextToken();
+    Mockito.doThrow(new IOException("test")).when(mock).nextToken();
     JacksonReader parser = new JacksonReader(mock);
-    parser.readObject();
+
+    JsonIOException e = assertThrows(JsonIOException.class, () -> parser.readObject());
+    assertEquals("test", e.getCause().getMessage());
   }
 
 
-  @Test(expected = JsonParsingException.class)
+  @Test
   public void test14() throws IOException {
     SmileFactory smileFactory = new SmileFactory();
     smileFactory.enable(Feature.CHECK_SHARED_STRING_VALUES);
     SmileParser smileParser = smileFactory.createParser(new byte[0]);
     JacksonReader jacksonReader = new JacksonReader(smileParser);
-    jacksonReader.readValue();
+
+    JsonParsingException e = assertThrows(JsonParsingException.class, () -> jacksonReader.readValue());
+    assertEquals("Value not found", e.getMessage());
   }
 
 
@@ -153,7 +162,7 @@ public class JacksonReaderTest {
   }
 
 
-  @Test(expected = JsonParsingException.class)
+  @Test
   public void test4() throws IOException {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     SmileFactory smileFactory = new SmileFactory();
@@ -166,11 +175,13 @@ public class JacksonReaderTest {
 
     SmileParser smileParser = smileFactory.createParser(outputStream.toByteArray());
     JacksonReader jacksonReader = new JacksonReader(smileParser);
-    jacksonReader.readObject();
+
+    JsonParsingException e = assertThrows(JsonParsingException.class, () -> jacksonReader.readObject());
+    assertEquals("Cannot create object when next item in JSON stream is VALUE_TRUE", e.getMessage());
   }
 
 
-  @Test(expected = JsonParsingException.class)
+  @Test
   public void test5() throws IOException {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     SmileFactory smileFactory = new SmileFactory();
@@ -183,11 +194,13 @@ public class JacksonReaderTest {
 
     SmileParser smileParser = smileFactory.createParser(outputStream.toByteArray());
     JacksonReader jacksonReader = new JacksonReader(smileParser);
-    jacksonReader.readArray();
+
+    JsonParsingException e = assertThrows(JsonParsingException.class, () -> jacksonReader.readArray());
+    assertEquals("Cannot create array when next item in JSON stream is VALUE_TRUE", e.getMessage());
   }
 
 
-  @Test(expected = JsonParsingException.class)
+  @Test
   public void test6() throws IOException {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     SmileFactory smileFactory = new SmileFactory();
@@ -200,7 +213,9 @@ public class JacksonReaderTest {
 
     SmileParser smileParser = smileFactory.createParser(outputStream.toByteArray());
     JacksonReader jacksonReader = new JacksonReader(smileParser);
-    jacksonReader.read();
+
+    JsonParsingException e = assertThrows(JsonParsingException.class, () -> jacksonReader.read());
+    assertEquals("Cannot create structure when next item in JSON stream is VALUE_TRUE", e.getMessage());
   }
 
 
@@ -254,12 +269,13 @@ public class JacksonReaderTest {
   }
 
 
-  @Test(expected = JsonIOException.class)
+  @Test
   public void test9() throws IOException {
     JsonParser mock = Mockito.mock(JsonParser.class);
-    Mockito.doThrow(new IOException()).when(mock).nextToken();
+    Mockito.doThrow(new IOException("test")).when(mock).nextToken();
     JacksonReader parser = new JacksonReader(mock);
-    parser.readValue();
+    JsonIOException e = assertThrows(JsonIOException.class, () -> parser.readValue());
+    assertEquals("test", e.getCause().getMessage());
   }
 
 }

@@ -1,10 +1,11 @@
 package io.setl.json.pointer;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import javax.json.JsonObject;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.setl.json.Canonical;
 import io.setl.json.builder.ArrayBuilder;
@@ -15,9 +16,10 @@ import io.setl.json.builder.ObjectBuilder;
  */
 public class PointerTest {
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void badPath() {
-    PointerFactory.create("bad-path-without-leading-slash");
+    IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> PointerFactory.create("bad-path-without-leading-slash"));
+    assertEquals("Pointer must start with '/'", e.getMessage());
   }
 
 

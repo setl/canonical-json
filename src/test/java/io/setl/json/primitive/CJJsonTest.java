@@ -1,11 +1,12 @@
 package io.setl.json.primitive;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Simon Greatrix on 15/01/2020.
@@ -40,4 +41,5 @@ public class CJJsonTest {
     writer.flush();
     assertEquals("wibble", writer.toString());
   }
+
 }

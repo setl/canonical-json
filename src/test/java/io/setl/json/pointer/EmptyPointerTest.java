@@ -1,15 +1,17 @@
 package io.setl.json.pointer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.json.JsonArray;
 import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
+import javax.json.JsonValue.ValueType;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import io.setl.json.Canonical;
 import io.setl.json.builder.ArrayBuilder;
@@ -35,9 +37,12 @@ public class EmptyPointerTest {
   }
 
 
-  @Test(expected = PointerMismatchException.class)
+  @Test
   public void add2() {
-    pointer.add(object1, Canonical.EMPTY_JSON_ARRAY);
+    PointerMismatchException e = assertThrows(PointerMismatchException.class, () -> pointer.add(object1, Canonical.EMPTY_JSON_ARRAY));
+    assertEquals("", e.getPath());
+    assertEquals(ValueType.OBJECT, e.getExpected());
+    assertEquals(ValueType.ARRAY, e.getActual());
   }
 
 
@@ -83,15 +88,17 @@ public class EmptyPointerTest {
   }
 
 
-  @Test(expected = JsonException.class)
+  @Test
   public void remove() {
-    pointer.remove(object1);
+    JsonException e = assertThrows(JsonException.class, () -> pointer.remove(object1));
+    assertEquals("Cannot remove root structure", e.getMessage());
   }
 
 
-  @Test(expected = JsonException.class)
+  @Test
   public void replace() {
-    pointer.replace(object1, object2);
+    JsonException e = assertThrows(JsonException.class, () -> pointer.replace(object1, object2));
+    assertEquals("Cannot replace root structure", e.getMessage());
   }
 
 }

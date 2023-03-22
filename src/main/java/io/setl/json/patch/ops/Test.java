@@ -71,7 +71,7 @@ public class Test extends PatchOperation {
 
 
   /**
-   * New instance. Exactly one of <code>value</code>, <code>digest</code>, or <code>isPresent</code> must be specified.
+   * New instance. Exactly one of <code>value</code>, <code>digest</code>, or <code>resultOfAdd</code> must be specified.
    *
    * @param path        the path to test
    * @param value       the value to check against

@@ -17,6 +17,12 @@ import javax.json.JsonReaderFactory;
  */
 public class ReaderFactory implements JsonReaderFactory {
 
+  /** New instance. */
+  public ReaderFactory() {
+    // nothing to do
+  }
+
+
   @Override
   public CJReader createReader(Reader reader) {
     return new CJReader(reader);

@@ -20,6 +20,11 @@ import io.setl.json.exception.JsonIOException;
  */
 public class JsonObjectDeserializer extends JsonDeserializer<JsonObject> {
 
+  /** New instance. */
+  public JsonObjectDeserializer() {
+    // nothing to do
+  }
+
 
   @Override
   public JsonObject deserialize(JsonParser p, DeserializationContext context) throws IOException {

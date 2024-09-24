@@ -13,10 +13,13 @@ public class PointerMismatchException extends JsonException {
 
   private static final long serialVersionUID = 1L;
 
+  /** The actual type. */
   private final ValueType actual;
 
+  /** The expected type. */
   private final ValueType expected;
 
+  /** The path that failed. */
   private final String path;
 
 
@@ -51,6 +54,11 @@ public class PointerMismatchException extends JsonException {
   }
 
 
+  /**
+   * Get the actual type.
+   *
+   * @return the actual type
+   */
   public ValueType getActual() {
     return actual;
   }
@@ -59,7 +67,7 @@ public class PointerMismatchException extends JsonException {
   /**
    * Get the expected type. If null, implies it could be either an OBJECT or an ARRAY.
    *
-   * @return the expected type (may be null if the expected type was only known to be a structure)
+   * @return the expected type (can be null if the expected type was only known to be a structure)
    */
   @Nullable
   public ValueType getExpected() {
@@ -67,6 +75,11 @@ public class PointerMismatchException extends JsonException {
   }
 
 
+  /**
+   * Get the JSON path that failed.
+   *
+   * @return the path that failed
+   */
   public String getPath() {
     return path;
   }

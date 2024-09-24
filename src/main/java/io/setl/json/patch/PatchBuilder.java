@@ -31,11 +31,17 @@ public class PatchBuilder implements JsonPatchBuilder, Iterable<PatchOperation> 
   private final List<PatchOperation> operationList = new ArrayList<>();
 
 
+  /** New instance. */
   public PatchBuilder() {
     // do nothing
   }
 
 
+  /**
+   * New instance.
+   *
+   * @param operations the JSON representation of the patch operations
+   */
   public PatchBuilder(JsonArray operations) {
     operationList.addAll(PatchOperation.convert(operations));
   }
@@ -69,6 +75,12 @@ public class PatchBuilder implements JsonPatchBuilder, Iterable<PatchOperation> 
   }
 
 
+  /**
+   * Add an operation to this patch.
+   *
+   * @param index     where to add the operation
+   * @param operation the operation to add
+   */
   public void addOperation(int index, PatchOperation operation) {
     operationList.add(index, operation);
   }
@@ -116,6 +128,13 @@ public class PatchBuilder implements JsonPatchBuilder, Iterable<PatchOperation> 
   }
 
 
+  /**
+   * Get the operation at the specified index.
+   *
+   * @param index the index
+   *
+   * @return the operation
+   */
   public PatchOperation getOperation(int index) {
     return operationList.get(index);
   }
@@ -142,6 +161,11 @@ public class PatchBuilder implements JsonPatchBuilder, Iterable<PatchOperation> 
   }
 
 
+  /**
+   * Remove the operation at the specified index.
+   *
+   * @param index the index
+   */
   public void removeOperation(int index) {
     operationList.remove(index);
   }
@@ -175,11 +199,22 @@ public class PatchBuilder implements JsonPatchBuilder, Iterable<PatchOperation> 
   }
 
 
+  /**
+   * Set the operation at the specified index.
+   *
+   * @param index     the index
+   * @param operation the operation
+   */
   public void setOperation(int index, PatchOperation operation) {
     operationList.set(index, operation);
   }
 
 
+  /**
+   * Get the number of operations in this patch.
+   *
+   * @return the number of operations
+   */
   public int size() {
     return operationList.size();
   }

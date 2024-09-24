@@ -14,6 +14,12 @@ import io.setl.json.CJArray;
  */
 public class JsonArraySerializer extends CanonicalSerializer<CJArray> {
 
+  /** New instance. */
+  public JsonArraySerializer() {
+    // nothing to do
+  }
+
+
   @Override
   public void acceptJsonFormatVisitor(
       JsonFormatVisitorWrapper visitor, JavaType type

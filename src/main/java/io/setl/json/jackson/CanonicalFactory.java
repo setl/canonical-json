@@ -19,11 +19,16 @@ import io.setl.json.io.Utf8Writer;
  */
 public class CanonicalFactory extends JsonFactory {
 
+  /** New instance using standard settings. */
   public CanonicalFactory() {
     // as super-class
   }
 
 
+  /** New instance using the provided code.
+   *
+   * @param objectCodec the codec to use
+   */
   public CanonicalFactory(ObjectCodec objectCodec) {
     super(objectCodec);
   }
@@ -96,7 +101,7 @@ public class CanonicalFactory extends JsonFactory {
 
   @Override
   public String getFormatName() {
-    return JsonFactory.FORMAT_NAME_JSON;
+    return FORMAT_NAME_JSON;
   }
 
 

@@ -5,18 +5,16 @@ buildscript {
 }
 
 plugins {
-  id 'checkstyle'
-  id "com.github.spotbugs" version "4.0.2"
-  id 'com.palantir.git-version' version '0.12.3'
-  id 'signing'
   id 'java'
   id 'java-library'
   id 'maven-publish'
+  id 'checkstyle'
+  id "com.github.spotbugs"
+  id 'com.palantir.git-version'
+  id 'signing'
+  id 'org.owasp.dependencycheck'
 }
 
-apply plugin: 'com.github.spotbugs'
-apply plugin: 'jacoco'
-apply plugin: 'org.sonarqube'
 
 group 'io.setl'
 if ((versionDetails().branchName ==~ /^(master)|(release.*)|(patch.*)$/) && versionDetails().isCleanTag) {
@@ -30,7 +28,7 @@ tasks.withType(JavaCompile) {
 }
 
 checkstyle {
-  toolVersion = "8.41.1"
+  toolVersion = "10.13.0"
   configFile = rootProject.file('config/checkstyle/checkstyle.xml')
 }
 
@@ -38,13 +36,33 @@ checkstyleTest {
   enabled = false
 }
 
+// Guava conflict with checkstyle plugin.
+configurations.checkstyle {
+  resolutionStrategy.capabilitiesResolution.withCapability("com.google.collections:google-collections") {
+    select("com.google.guava:guava:0")
+  }
+}
+
+spotbugs {
+  excludeFilter = rootProject.file('config/spotbugs/spotbugs-exclude.xml')
+}
+
+spotbugsMain {
+  reports {
+    html {
+      required = true
+    }
+    xml {
+      required = false
+    }
+  }
+}
+
+// Do not perform spotbugs analysis on test code
 spotbugsTest {
   enabled = false
 }
 
-jacoco {
-  toolVersion = "0.8.5"
-}
 
 repositories {
   mavenCentral()
@@ -81,6 +99,10 @@ java {
   targetCompatibility = JavaVersion.VERSION_11
 }
 
+javadoc {
+  options.addStringOption('Xmaxwarns', '65536')
+}
+
 test {
   useJUnitPlatform()
 }
@@ -110,7 +132,7 @@ publishing {
         licenses {
           license {
             name = 'The Apache License, Version 2.0'
-            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
           }
         }
 

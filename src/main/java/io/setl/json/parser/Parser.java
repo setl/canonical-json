@@ -46,6 +46,11 @@ public class Parser extends BaseIterator<JsonParser.Event> implements JsonParser
   private static final int MAX_RECURSION_DEPTH = Integer.getInteger(Parser.class.getPackageName() + ".maxRecursion", 1_000);
 
 
+  private static boolean isNumberStart(int r) {
+    return r == '-' || ('0' <= r && r <= '9');
+  }
+
+
   /**
    * Check if input represents whitespace.
    *
@@ -80,7 +85,6 @@ public class Parser extends BaseIterator<JsonParser.Event> implements JsonParser
    * The input.
    */
   private final Input input;
-
 
   /**
    * Depth of nesting containers from document root.
@@ -125,6 +129,11 @@ public class Parser extends BaseIterator<JsonParser.Event> implements JsonParser
   private Canonical value = CJNull.NULL;
 
 
+  /**
+   * New instance reading from the specified character reader.
+   *
+   * @param reader the reader
+   */
   public Parser(Reader reader) {
     input = new Input(reader);
   }
@@ -148,6 +157,13 @@ public class Parser extends BaseIterator<JsonParser.Event> implements JsonParser
       doNextInArray();
     }
     return nextEvent != null;
+  }
+
+
+  private void checkNotSeenRoot(int r) {
+    if (singleRoot && seenFirstRoot && r != -1) {
+      throw new JsonParsingException(String.format("Saw %s after root value.", safe(r)), input.getLocation());
+    }
   }
 
 
@@ -261,9 +277,7 @@ public class Parser extends BaseIterator<JsonParser.Event> implements JsonParser
 
   private void doNextInRoot() {
     int r = skipWhite();
-    if (singleRoot && seenFirstRoot && r != -1) {
-      throw new JsonParsingException(String.format("Saw %s after root value.", safe(r)), input.getLocation());
-    }
+    checkNotSeenRoot(r);
 
     switch (r) {
       case -1:
@@ -299,7 +313,7 @@ public class Parser extends BaseIterator<JsonParser.Event> implements JsonParser
         return;
 
       default:
-        if (r == '-' || ('0' <= r && r <= '9')) {
+        if (isNumberStart(r)) {
           parseNumber(r);
           seenFirstRoot = true;
           return;
@@ -494,7 +508,7 @@ public class Parser extends BaseIterator<JsonParser.Event> implements JsonParser
   }
 
 
-  protected StructureTag getTag() {
+  StructureTag getTag() {
     return structureTag;
   }
 
@@ -603,6 +617,11 @@ public class Parser extends BaseIterator<JsonParser.Event> implements JsonParser
   }
 
 
+  /**
+   * Set whether a single root value is required. If true, the parser will throw an exception if it encounters a second root value.
+   *
+   * @param singleRoot if true, require a single root.
+   */
   public void setRequireSingleRoot(boolean singleRoot) {
     this.singleRoot = singleRoot;
   }

@@ -83,20 +83,7 @@ class PrettyBuffer implements PrettyOutput {
   @Override
   public PrettyOutput append(Special special) {
     if (special == endsWith) {
-      char endSymbol = endsWith == Special.END_ARRAY ? ']' : '}';
-
-      if (pos == 2) {
-        // special rule for empty structures
-        return parent.append(chars[0]).append(endSymbol);
-      }
-
-      for (int i = 0; i < pos; i++) {
-        if (chars[i] < 3) {
-          chars[i] = ' ';
-        }
-      }
-
-      return parent.append(chars, 0, pos).append(' ').append(endSymbol);
+      return appendCloser();
     }
 
     PrettyBuffer buffer;
@@ -117,6 +104,24 @@ class PrettyBuffer implements PrettyOutput {
       default:
         throw new InternalError("Unrecognised enumeration: " + special);
     }
+  }
+
+
+  private PrettyOutput appendCloser() {
+    char endSymbol = endsWith == Special.END_ARRAY ? ']' : '}';
+
+    if (pos == 2) {
+      // special rule for empty structures
+      return parent.append(chars[0]).append(endSymbol);
+    }
+
+    for (int i = 0; i < pos; i++) {
+      if (chars[i] < 3) {
+        chars[i] = ' ';
+      }
+    }
+
+    return parent.append(chars, 0, pos).append(' ').append(endSymbol);
   }
 
 

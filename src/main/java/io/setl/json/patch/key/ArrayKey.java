@@ -8,6 +8,12 @@ public class ArrayKey extends Key {
   private final int index;
 
 
+  /**
+   * New instance.
+   *
+   * @param parent the parent key
+   * @param index  the index in an array
+   */
   public ArrayKey(Key parent, int index) {
     super(parent);
     this.index = index;

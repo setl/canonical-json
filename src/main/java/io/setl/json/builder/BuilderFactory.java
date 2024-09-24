@@ -18,6 +18,11 @@ import io.setl.json.Canonical;
  */
 public class BuilderFactory implements JsonBuilderFactory {
 
+  /** New instance. */
+  public BuilderFactory() {
+    // nothing to do
+  }
+
 
   @Override
   public JsonArrayBuilder createArrayBuilder() {

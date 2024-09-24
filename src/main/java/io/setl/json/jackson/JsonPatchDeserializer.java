@@ -22,6 +22,12 @@ import io.setl.json.patch.Patch;
  */
 public class JsonPatchDeserializer extends JsonDeserializer<JsonPatch> {
 
+  /** New instance. */
+  public JsonPatchDeserializer() {
+    // nothing to do
+  }
+
+
   @Override
   public JsonPatch deserialize(JsonParser p, DeserializationContext context) throws IOException {
     try {

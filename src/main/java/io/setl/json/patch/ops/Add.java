@@ -21,6 +21,12 @@ public class Add extends PatchOperation {
   private final JsonValue value;
 
 
+  /**
+   * New instance.
+   *
+   * @param path  the path to add the value to
+   * @param value the value to add
+   */
   @JsonCreator
   public Add(
       @JsonProperty("path") String path,
@@ -31,6 +37,11 @@ public class Add extends PatchOperation {
   }
 
 
+  /**
+   * New instance.
+   *
+   * @param object the definition
+   */
   public Add(CJObject object) {
     super(object);
     value = object.getJsonValue("value");
@@ -67,6 +78,11 @@ public class Add extends PatchOperation {
   }
 
 
+  /**
+   * Get the value which is added.
+   *
+   * @return the value
+   */
   public JsonValue getValue() {
     return value;
   }

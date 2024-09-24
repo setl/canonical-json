@@ -1,1 +1,19 @@
+pluginManagement {
+  repositories {
+    gradlePluginPortal()
+    mavenCentral()
+  }
+
+  plugins {
+    id 'com.github.spotbugs' version '5.2.3'
+    id 'com.intershop.gradle.jaxb' version '6.1.0'
+    id 'com.palantir.git-version' version '3.1.0'
+    id 'io.freefair.lombok' version '8.4'
+    id 'org.owasp.dependencycheck' version '8.4.2'
+    id 'org.springframework.boot' version '3.3.1'
+  }
+}
+
+
+
 rootProject.name = 'canonical-json'

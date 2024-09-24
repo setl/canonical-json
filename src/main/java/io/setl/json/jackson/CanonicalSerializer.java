@@ -18,6 +18,12 @@ import io.setl.json.Canonical;
  */
 public class CanonicalSerializer<T extends Canonical> extends JsonSerializer<T> {
 
+  /** New instance. */
+  public CanonicalSerializer() {
+    // default constructor
+  }
+
+
   @Override
   public void serialize(Canonical value, JsonGenerator gen, SerializerProvider serializerProvider) throws IOException {
     if (gen instanceof CanonicalGenerator) {

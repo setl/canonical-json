@@ -45,6 +45,11 @@ public class Input {
   }
 
 
+  /**
+   * Get the location in the input.
+   *
+   * @return the location
+   */
   public JsonLocation getLocation() {
     return new Location(location);
   }

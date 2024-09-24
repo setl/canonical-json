@@ -213,6 +213,10 @@ public class NumberParser {
   }
 
 
+  private static boolean isEndChar(int r) {
+    return r == ',' || r == ']' || r == '}';
+  }
+
   final Input input;
 
   boolean needBigDecimal;
@@ -231,7 +235,7 @@ public class NumberParser {
    * @return true if no longer in the number
    */
   private boolean isEnd(int r, Step step) {
-    if (r == -1 || isWhite(r) || r == ',' || r == ']' || r == '}') {
+    if (r == -1 || isWhite(r) || isEndChar(r)) {
       input.unread(r);
       // Check for an invalid final state
       if (step.isFinal()) {

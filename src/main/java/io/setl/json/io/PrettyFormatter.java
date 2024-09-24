@@ -13,9 +13,15 @@ import io.setl.json.primitive.CJString;
  */
 public class PrettyFormatter implements Formatter, Appendable {
 
+  /** Pretty output destination. */
   private PrettyOutput prettyOutput;
 
 
+  /** Create a new instance.
+   *
+   * @param appendable the appendable to write to
+   * @param smallStructureLimit the limit at which small structures are expanded
+   */
   public PrettyFormatter(Appendable appendable, int smallStructureLimit) {
     prettyOutput = new AppendableOutput(appendable, smallStructureLimit);
   }

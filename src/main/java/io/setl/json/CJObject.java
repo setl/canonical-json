@@ -122,9 +122,6 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
     return len1 - len2;
   };
 
-  /** serial version UID. */
-  private static final long serialVersionUID = 1L;
-
 
 
   /**
@@ -289,7 +286,6 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
     }
 
 
-    @SuppressWarnings("SuspiciousToArrayCall")
     @Override
     @Nonnull
     public <T> T[] toArray(@Nonnull T[] a) {
@@ -297,7 +293,6 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
     }
 
 
-    @SuppressWarnings("SuspiciousToArrayCall")
     @Override
     @Nonnull
     public <T> T[] toArray(@Nonnull IntFunction<T[]> generator) {
@@ -542,7 +537,6 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
     }
 
 
-    @SuppressWarnings("SuspiciousToArrayCall")
     @Override
     @Nonnull
     public <T> T[] toArray(@Nonnull T[] a) {
@@ -550,7 +544,6 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
     }
 
 
-    @SuppressWarnings("SuspiciousToArrayCall")
     @Override
     public <T> T[] toArray(IntFunction<T[]> generator) {
       return me.toArray(generator);
@@ -592,6 +585,7 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
   private final NavigableMap<String, Canonical> myMap;
 
 
+  /** New instance. */
   public CJObject() {
     myMap = new TreeMap<>(CODE_POINT_ORDER);
   }
@@ -628,6 +622,11 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
   }
 
 
+  /**
+   * Offer every mapping in this JSON object to the consumer.
+   *
+   * @param action the consumer
+   */
   public void canonicalForEach(BiConsumer<? super String, ? super Canonical> action) {
     myMap.forEach(action);
   }
@@ -934,7 +933,7 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
   public boolean getBoolean(String key) {
     Canonical canonical = getCanonical(key);
     if (canonical == null) {
-      throw new MissingItemException(key, Canonical.IS_BOOLEAN);
+      throw new MissingItemException(key, IS_BOOLEAN);
     }
     Object value = canonical.getValue();
     if (value instanceof Boolean) {
@@ -944,6 +943,13 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
   }
 
 
+  /**
+   * Get the canonical JSON value stored under the specified key.
+   *
+   * @param name the key
+   *
+   * @return the canonical JSON value
+   */
   public Canonical getCanonical(String name) {
     return get(name);
   }
@@ -1600,6 +1606,14 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
   }
 
 
+  /**
+   * Put a canonical JSON value into this at the specified key, replacing any existing value.
+   *
+   * @param key   the key
+   * @param value the value
+   *
+   * @return the old value
+   */
   public Canonical put(String key, Canonical value) {
     return myMap.put(key, value);
   }
@@ -1882,7 +1896,7 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
   @Override
   public String toCanonicalString() {
     StringBuilder buf = new StringBuilder();
-    Generator generator = CanonicalJsonProvider.CANONICAL_GENERATOR_FACTORY.createGenerator(buf);
+    Generator<?> generator = CanonicalJsonProvider.CANONICAL_GENERATOR_FACTORY.createGenerator(buf);
     generator.writeStartObject();
     for (Map.Entry<String, Canonical> e : myMap.entrySet()) {
       generator.write(e.getKey(), e.getValue());
@@ -1896,7 +1910,7 @@ public class CJObject implements NavigableMap<String, JsonValue>, JsonObject, Ca
   @Override
   public String toPrettyString() {
     StringBuilder buf = new StringBuilder();
-    Generator generator = CanonicalJsonProvider.PRETTY_GENERATOR_FACTORY.createGenerator(buf);
+    Generator<?> generator = CanonicalJsonProvider.PRETTY_GENERATOR_FACTORY.createGenerator(buf);
     generator.writeStartObject();
     for (Map.Entry<String, Canonical> e : myMap.entrySet()) {
       generator.write(e.getKey(), e.getValue());

@@ -11,12 +11,11 @@ import io.setl.json.pointer.JsonExtendedPointer.ResultOfAdd;
  *
  * @author Simon Greatrix on 27/01/2020.
  */
-public class ArrayTerminal extends ObjectTerminal {
+class ArrayTerminal extends ObjectTerminal {
 
   private final int index;
 
-
-  public ArrayTerminal(String path, String key) {
+  ArrayTerminal(String path, String key) {
     super(path, key);
     index = Integer.parseInt(key);
   }

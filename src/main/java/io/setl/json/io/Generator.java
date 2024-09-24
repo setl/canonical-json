@@ -15,131 +15,297 @@ import io.setl.json.primitive.CJNull;
  */
 public interface Generator<GeneratorType extends Generator<GeneratorType>> extends JsonGenerator {
 
+  /**
+   * Write the end of a JSON structure.
+   *
+   * @return this generator
+   */
   default GeneratorType end() {
     return writeEnd();
   }
 
-
+  /**
+   * Write a JSON name/value pair in the current object context.
+   *
+   * @param name  the key
+   * @param value the value
+   *
+   * @return this generator
+   */
   default GeneratorType entry(String name, String value) {
     return write(name, value);
   }
 
-
+  /**
+   * Write a JSON name/value pair in the current object context.
+   *
+   * @param name  the key
+   * @param value the value
+   *
+   * @return this generator
+   */
   default GeneratorType entry(String name, BigInteger value) {
     return write(name, value);
   }
 
-
+  /**
+   * Write a JSON name/value pair in the current object context.
+   *
+   * @param name  the key
+   * @param value the value
+   *
+   * @return this generator
+   */
   default GeneratorType entry(String name, BigDecimal value) {
     return write(name, value);
   }
 
-
+  /**
+   * Write a JSON name/value pair in the current object context.
+   *
+   * @param name  the key
+   * @param value the value
+   *
+   * @return this generator
+   */
   default GeneratorType entry(String name, int value) {
     return write(name, value);
   }
 
-
+  /**
+   * Write a JSON name/value pair in the current object context.
+   *
+   * @param name  the key
+   * @param value the value
+   *
+   * @return this generator
+   */
   default GeneratorType entry(String name, long value) {
     return write(name, value);
   }
 
-
+  /**
+   * Write a JSON name/value pair in the current object context.
+   *
+   * @param name  the key
+   * @param value the value
+   *
+   * @return this generator
+   */
   default GeneratorType entry(String name, double value) {
     return write(name, value);
   }
 
-
+  /**
+   * Write a JSON name/value pair in the current object context.
+   *
+   * @param name  the key
+   * @param value the value
+   *
+   * @return this generator
+   */
   default GeneratorType entry(String name, boolean value) {
     return write(name, value);
   }
 
-
+  /**
+   * Write a JSON name/value pair in the current object context.
+   *
+   * @param name  the key
+   * @param value the value
+   *
+   * @return this generator
+   */
   default GeneratorType entry(String name, JsonValue value) {
     return write(name, value);
   }
 
 
+  /**
+   * Write a JSON name/value pair in the current object context.
+   *
+   * @param name  the key
+   * @param value the value
+   *
+   * @return this generator
+   */
   default GeneratorType entry(String name, Canonical value) {
     return write(name, value);
   }
 
 
+  /**
+   * Write a null entry with the given key.
+   *
+   * @param name the key
+   *
+   * @return this generator
+   */
   default GeneratorType entryNull(String name) {
     return writeNull(name);
   }
 
 
+  /**
+   * Write an object key.
+   *
+   * @param name the key
+   *
+   * @return this generator
+   */
   default GeneratorType key(String name) {
     return writeKey(name);
   }
 
 
+  /**
+   * Write the start of an array with the given key.
+   *
+   * @param name the key
+   *
+   * @return this generator
+   */
   default GeneratorType startArray(String name) {
     return writeStartArray(name);
   }
 
 
+  /**
+   * Write the start of an array.
+   *
+   * @return this generator
+   */
   default GeneratorType startArray() {
     return writeStartArray();
   }
 
 
+  /**
+   * Write the start of an object with the give key.
+   *
+   * @param name the key
+   *
+   * @return this generator
+   */
   default GeneratorType startObject(String name) {
     return writeStartObject(name);
   }
 
 
+  /**
+   * Write the start of an object.
+   *
+   * @return this generator
+   */
   default GeneratorType startObject() {
     return writeStartObject();
   }
 
-
+  /**
+   * Write a value.
+   *
+   * @param value the value to write
+   *
+   * @return this generator
+   */
   default GeneratorType value(JsonValue value) {
     return write(value);
   }
 
-
+  /**
+   * Write a value.
+   *
+   * @param value the value to write
+   *
+   * @return this generator
+   */
   default GeneratorType value(String value) {
     return write(value);
   }
 
-
+  /**
+   * Write a value.
+   *
+   * @param value the value to write
+   *
+   * @return this generator
+   */
   default GeneratorType value(BigDecimal value) {
     return write(value);
   }
 
-
+  /**
+   * Write a value.
+   *
+   * @param value the value to write
+   *
+   * @return this generator
+   */
   default GeneratorType value(BigInteger value) {
     return write(value);
   }
 
-
+  /**
+   * Write a value.
+   *
+   * @param value the value to write
+   *
+   * @return this generator
+   */
   default GeneratorType value(int value) {
     return write(value);
   }
 
-
+  /**
+   * Write a value.
+   *
+   * @param value the value to write
+   *
+   * @return this generator
+   */
   default GeneratorType value(long value) {
     return write(value);
   }
 
-
+  /**
+   * Write a value.
+   *
+   * @param value the value to write
+   *
+   * @return this generator
+   */
   default GeneratorType value(double value) {
     return write(value);
   }
 
-
+  /**
+   * Write a value.
+   *
+   * @param value the value to write
+   *
+   * @return this generator
+   */
   default GeneratorType value(boolean value) {
     return write(value);
   }
 
-
+  /**
+   * Write a value.
+   *
+   * @param value the value to write
+   *
+   * @return this generator
+   */
   default GeneratorType value(Canonical value) {
     return write(value);
   }
 
 
+  /**
+   * Write a null value.
+   *
+   * @return this generator
+   */
   default GeneratorType valueNull() {
     return writeNull();
   }
@@ -151,7 +317,14 @@ public interface Generator<GeneratorType extends Generator<GeneratorType>> exten
   }
 
 
-  public abstract GeneratorType write(Canonical value);
+  /**
+   * Write the specified JSON value in the current context.
+   *
+   * @param value the value to write
+   *
+   * @return this generator
+   */
+  GeneratorType write(Canonical value);
 
 
   @Override
@@ -238,6 +411,14 @@ public interface Generator<GeneratorType extends Generator<GeneratorType>> exten
   }
 
 
+  /**
+   * Write a JSON name/value pair in the current object context.
+   *
+   * @param name  the name
+   * @param value the value
+   *
+   * @return this generator
+   */
   default GeneratorType write(String name, Canonical value) {
     return writeKey(name).write(value);
   }

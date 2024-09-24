@@ -11,17 +11,23 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import io.setl.json.CJArray;
 import io.setl.json.Canonical;
+import io.setl.json.FormattedJson;
 
 /**
  * Implementation of JSON Patch as defined in RFC-6902.
  *
  * @author Simon Greatrix on 28/01/2020.
  */
-public class Patch implements JsonPatch {
+public class Patch implements JsonPatch, FormattedJson {
 
   private final List<PatchOperation> operations;
 
 
+  /**
+   * New instance.
+   *
+   * @param operationList the list of patch operations that constitute this patch
+   */
   @JsonCreator
   public Patch(List<PatchOperation> operationList) {
     operations = new ArrayList<>(operationList);

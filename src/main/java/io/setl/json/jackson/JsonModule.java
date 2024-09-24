@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
  */
 public class JsonModule extends SimpleModule {
 
+  /** The version of the library. */
   public static final Version LIBRARY_VERSION = VersionUtil.parseVersion("1.0", "io.setl", "canonical-json");
 
 

@@ -32,7 +32,7 @@ import io.setl.json.primitive.numbers.CJNumber;
  * @author Simon Greatrix on 08/01/2020.
  */
 @SuppressWarnings("checkstyle:OverloadMethodsDeclarationOrder")
-public interface Canonical extends JsonValue {
+public interface Canonical extends JsonValue, FormattedJson {
 
   /**
    * Test for whether a value is a Boolean. The ValueType enumeration distinguishes between true and false, but there are times we want either.
@@ -159,9 +159,9 @@ public interface Canonical extends JsonValue {
     }
     switch (example.getValueType()) {
       case ARRAY:
-        return (T) JsonValue.EMPTY_JSON_ARRAY;
+        return (T) EMPTY_JSON_ARRAY;
       case OBJECT:
-        return (T) JsonValue.EMPTY_JSON_OBJECT;
+        return (T) EMPTY_JSON_OBJECT;
       default:
         throw new IncorrectTypeException(IS_STRUCTURE, example.getValueType());
     }
@@ -218,6 +218,17 @@ public interface Canonical extends JsonValue {
   }
 
 
+  /**
+   * Get the value enclosed in a JSON value.
+   *
+   * @param reqType the required type
+   * @param jv      the JSON value
+   * @param <T>     the required type
+   *
+   * @return the value if possible
+   *
+   * @throws ClassCastException if the value is not of the required type
+   */
   static <T> T getValue(Class<T> reqType, JsonValue jv) {
     return reqType.cast(getValue(jv));
   }
@@ -246,6 +257,9 @@ public interface Canonical extends JsonValue {
     return (jv != null) && (jv.getValueType() == ValueType.TRUE || jv.getValueType() == ValueType.FALSE);
   }
 
+  private static boolean isIntegerType(Number n) {
+    return (n instanceof Long || n instanceof Integer || n instanceof Short || n instanceof Byte || n instanceof AtomicInteger || n instanceof AtomicLong);
+  }
 
   /**
    * Test if the value is a JSON null.
@@ -258,7 +272,6 @@ public interface Canonical extends JsonValue {
     return jv != null && jv.getValueType() == ValueType.NULL;
   }
 
-
   /**
    * Test if the value is a number.
    *
@@ -269,7 +282,6 @@ public interface Canonical extends JsonValue {
   static boolean isNumber(JsonValue jv) {
     return jv != null && jv.getValueType() == ValueType.NUMBER;
   }
-
 
   /**
    * Test if the value is a JSON object.
@@ -282,7 +294,6 @@ public interface Canonical extends JsonValue {
     return jv != null && jv.getValueType() == ValueType.OBJECT;
   }
 
-
   /**
    * Test if the value is a string.
    *
@@ -293,7 +304,6 @@ public interface Canonical extends JsonValue {
   static boolean isString(JsonValue jv) {
     return jv != null && jv.getValueType() == ValueType.STRING;
   }
-
 
   /**
    * Convert any number to a BigDecimal.
@@ -312,7 +322,7 @@ public interface Canonical extends JsonValue {
     if (n instanceof BigInteger) {
       return new BigDecimal((BigInteger) n);
     }
-    if (n instanceof Long || n instanceof Integer || n instanceof Short || n instanceof Byte || n instanceof AtomicInteger || n instanceof AtomicLong) {
+    if (isIntegerType(n)) {
       return BigDecimal.valueOf(n.longValue());
     }
     if (n instanceof Double || n instanceof Float) {
@@ -341,7 +351,7 @@ public interface Canonical extends JsonValue {
     if (n instanceof BigDecimal) {
       return ((BigDecimal) n).toBigInteger();
     }
-    if (n instanceof Long || n instanceof Integer || n instanceof Short || n instanceof Byte) {
+    if (isIntegerType(n)) {
       return BigInteger.valueOf(n.longValue());
     }
     return new BigDecimal(n.toString()).toBigInteger();

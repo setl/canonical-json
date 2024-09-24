@@ -23,13 +23,17 @@ public class NonFiniteNumberException extends ArithmeticException {
    * Possible types of non-finite number.
    */
   public enum Type {
+    /** Not-a-number. */
     NAN,
+    /** Negative infinity. */
     NEGATIVE_INFINITY,
+    /** Positive infinity. */
     POSITIVE_INFINITY
   }
 
 
 
+  /** The type of non-finite number. */
   private final Type type;
 
 
@@ -83,6 +87,11 @@ public class NonFiniteNumberException extends ArithmeticException {
   }
 
 
+  /**
+   * Get the type of non-finite number.
+   *
+   * @return the type
+   */
   public Type getType() {
     return type;
   }

@@ -11,6 +11,7 @@ import io.setl.json.Canonical;
  */
 public class DelegatingGenerator<GeneratorType extends DelegatingGenerator<GeneratorType>> implements Generator<GeneratorType> {
 
+  /** The delegate generator. */
   protected JsonGenerator delegate;
 
 
@@ -44,6 +45,11 @@ public class DelegatingGenerator<GeneratorType extends DelegatingGenerator<Gener
   }
 
 
+  /**
+   * Get this instance as the correct type.
+   *
+   * @return this as the correct type
+   */
   @SuppressWarnings("unchecked")
   protected GeneratorType me() {
     return (GeneratorType) this;

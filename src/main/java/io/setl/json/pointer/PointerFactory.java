@@ -15,7 +15,7 @@ public class PointerFactory {
    * @return the pointer
    */
   public static JsonExtendedPointer create(String path) {
-    if (path.equals("")) {
+    if (path.isEmpty()) {
       return EmptyPointer.INSTANCE;
     }
     if (path.charAt(0) != '/') {

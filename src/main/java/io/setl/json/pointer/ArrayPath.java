@@ -15,12 +15,13 @@ import io.setl.json.pointer.JsonExtendedPointer.ResultOfAdd;
  *
  * @author Simon Greatrix on 27/01/2020.
  */
-public class ArrayPath extends ObjectPath {
+class ArrayPath extends ObjectPath {
 
+  /** Index in an array. */
   protected final int index;
 
 
-  public ArrayPath(String path, String key, PathElement next) {
+  ArrayPath(String path, String key, PathElement next) {
     super(path, key, next);
     index = Integer.parseInt(key);
   }

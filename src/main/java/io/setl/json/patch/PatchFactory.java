@@ -60,6 +60,14 @@ public final class PatchFactory {
   }
 
 
+  /**
+   * Create a JSON Patch that transforms the source into the target.
+   *
+   * @param source the source JSON
+   * @param target the target JSON
+   *
+   * @return the patch
+   */
   public static JsonPatch create(JsonValue source, JsonValue target) {
     return create(source, target, Collections.emptySet());
   }
@@ -105,7 +113,7 @@ public final class PatchFactory {
   }
 
 
-  @SuppressWarnings("java:S3776") // Ignore cognitive complexity of LCS algorithm.
+  @SuppressWarnings({"java:S3776", "JavaNCSS", "CyclomaticComplexity"}) // Ignore cognitive complexity of LCS algorithm.
   private void compareArray(Key path, JsonArray source, JsonArray target) {
     List<Item> sourceItems = new ArrayList<>(source.size());
     for (JsonValue jsonValue : source) {

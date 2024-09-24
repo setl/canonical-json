@@ -19,6 +19,12 @@ import io.setl.json.exception.JsonIOException;
  */
 public class JsonStructureDeserializer extends JsonDeserializer<JsonStructure> {
 
+  /** New instance. */
+  public JsonStructureDeserializer() {
+    // nothing to do
+  }
+
+
   @Override
   public JsonStructure deserialize(JsonParser p, DeserializationContext context) throws IOException {
     try {

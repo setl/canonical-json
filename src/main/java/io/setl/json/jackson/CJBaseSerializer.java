@@ -19,6 +19,12 @@ public class CJBaseSerializer extends CanonicalSerializer<CJBase> {
   static final JavaType TYPE = TypeFactory.defaultInstance().constructType(CJBase.class);
 
 
+  /** New instance. */
+  public CJBaseSerializer() {
+    // nothing to do
+  }
+
+
   @Override
   public void acceptJsonFormatVisitor(JsonFormatVisitorWrapper visitor, JavaType type) throws JsonMappingException {
     // Cannot narrow the format down as a json value could be anything.

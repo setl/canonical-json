@@ -7,6 +7,11 @@ package io.setl.json.exception;
  */
 public class NotJsonException extends IllegalArgumentException {
 
+  /**
+   * New instance.
+   *
+   * @param value the value that cannot be represented as JSON
+   */
   public NotJsonException(Object value) {
     super("Cannot represent instances of " + value.getClass() + " as JSON directly");
   }

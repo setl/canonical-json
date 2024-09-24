@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 import io.setl.json.CJObject;
+import io.setl.json.FormattedJson;
 import io.setl.json.exception.InvalidPatchException;
 import io.setl.json.patch.ops.Add;
 import io.setl.json.patch.ops.Copy;
@@ -43,7 +44,7 @@ import io.setl.json.pointer.PointerFactory;
     @Type(name = "replace", value = Replace.class),
     @Type(name = "test", value = Test.class)
 })
-public abstract class PatchOperation {
+public abstract class PatchOperation implements FormattedJson {
 
   /**
    * Convert a JsonArray specifying patch operations to the actual operations.
@@ -88,28 +89,52 @@ public abstract class PatchOperation {
   }
 
 
+  /** The pointer to the target. */
   protected final JsonExtendedPointer pointer;
 
   private final String path;
 
 
+  /**
+   * New instance.
+   *
+   * @param path the path
+   */
   protected PatchOperation(String path) {
     this.path = path;
     pointer = PointerFactory.create(path);
   }
 
 
+  /**
+   * New instance.
+   *
+   * @param pointer the pointer
+   */
   protected PatchOperation(JsonExtendedPointer pointer) {
     path = pointer.getPath();
     this.pointer = pointer;
   }
 
 
+  /**
+   * New instance.
+   *
+   * @param object the JSON object that specifies the operation
+   */
   protected PatchOperation(CJObject object) {
     this(object.getString("path"));
   }
 
 
+  /**
+   * Apply this operation to the target.
+   *
+   * @param <T>    the type of the target
+   * @param target the target
+   *
+   * @return the modified target
+   */
   public abstract <T extends JsonStructure> T apply(T target);
 
 
@@ -127,21 +152,41 @@ public abstract class PatchOperation {
   }
 
 
+  /**
+   * Get the operation name.
+   *
+   * @return the operation name
+   */
   @JsonProperty("op")
   public String getOp() {
     return getOperation().operationName();
   }
 
 
+  /**
+   * Get the operation this patch operation represents.
+   *
+   * @return the operation.
+   */
   @JsonIgnore
   public abstract Operation getOperation();
 
 
+  /**
+   * Get the path of this operation.
+   *
+   * @return the path
+   */
   public String getPath() {
     return path;
   }
 
 
+  /**
+   * Get the pointer used in the operation.
+   *
+   * @return the pointer
+   */
   @JsonIgnore
   public JsonExtendedPointer getPathPointer() {
     return pointer;
@@ -154,14 +199,29 @@ public abstract class PatchOperation {
   }
 
 
+  /**
+   * Output this operation as a JSON object in canonical form.
+   *
+   * @return the JSON object that specifies this operation
+   */
   public String toCanonicalString() {
     return toJsonObject().toCanonicalString();
   }
 
 
+  /**
+   * Output this operation as a JSON object.
+   *
+   * @return the JSON object that specifies this operation
+   */
   public abstract CJObject toJsonObject();
 
 
+  /**
+   * Output this operation as a JSON object in pretty form.
+   *
+   * @return the JSON object that specifies this operation
+   */
   public String toPrettyString() {
     return toJsonObject().toPrettyString();
   }

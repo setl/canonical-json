@@ -7,7 +7,7 @@ import javax.json.stream.JsonLocation;
  *
  * <p>The column and line numbers are provided as a best effort and may not match a visual representation of the data.</p>
  *
- * <p>Tabs are allowed as whitespace between JSON elements. Tabs increment the column count as if there were an 8 character tab-stop.</p>
+ * <p>Tabs are allowed as whitespace between JSON elements. Tabs increment the column count as if they were an 8 character tab-stop.</p>
  *
  * <p>JSON strings can contain many special Unicode characters, including zero-width characters, characters that combine with other characters, and characters
  * that cause the text direction to be reversed. The special meaning of these characters is ignored when calculating the column number.</p>
@@ -28,15 +28,20 @@ import javax.json.stream.JsonLocation;
  */
 public class Location implements JsonLocation {
 
+  /** Constant for an unset location. */
   public static final Location UNSET = new Location(-1, -1, -1);
 
+  /** Column number in input. */
   protected long columnNumber = 0L;
 
+  /** Line number in input. */
   protected long lineNumber = 1L;
 
+  /** Number of characters read in stream. */
   protected long streamOffset = 0L;
 
 
+  /** New instance. */
   protected Location() {
     // do nothing
   }

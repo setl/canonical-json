@@ -10,7 +10,7 @@ import io.setl.json.pointer.PathElement;
  *
  * @author Simon Greatrix on 17/02/2020.
  */
-interface Filter {
+public interface Filter {
 
   /**
    * Add a new path element to this filter.

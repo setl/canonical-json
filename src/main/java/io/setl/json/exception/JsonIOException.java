@@ -13,11 +13,21 @@ public class JsonIOException extends JsonException {
   private static final long serialVersionUID = 1L;
 
 
+  /**
+   * New instance with cause.
+   *
+   * @param e the cause
+   */
   public JsonIOException(IOException e) {
     super("I/O failure", e);
   }
 
 
+  /**
+   * Get the cause.
+   *
+   * @return the cause
+   */
   public IOException cause() {
     return (IOException) getCause();
   }

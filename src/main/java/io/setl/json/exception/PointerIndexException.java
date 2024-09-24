@@ -9,8 +9,10 @@ import javax.json.JsonException;
  */
 public class PointerIndexException extends JsonException {
 
+  /** The path through the array. */
   private final String path;
 
+  /** The array size. */
   private final int size;
 
 
@@ -28,11 +30,21 @@ public class PointerIndexException extends JsonException {
   }
 
 
+  /**
+   * Get the JSON path through the array.
+   *
+   * @return the path to the array
+   */
   public String getPath() {
     return path;
   }
 
 
+  /**
+   * Get the size of the array.
+   *
+   * @return the array size
+   */
   public int getSize() {
     return size;
   }

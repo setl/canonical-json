@@ -9,6 +9,11 @@ import javax.json.JsonException;
  */
 public class InvalidPatchException extends JsonException {
 
+  /**
+   * New instance with message.
+   *
+   * @param message the message
+   */
   public InvalidPatchException(String message) {
     super(message);
   }

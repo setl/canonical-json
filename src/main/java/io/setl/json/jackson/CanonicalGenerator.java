@@ -341,7 +341,7 @@ public class CanonicalGenerator extends JsonGenerator {
   }
 
 
-  protected final void verifyValueWrite(String typeMsg) throws IOException {
+  private final void verifyValueWrite(String typeMsg) throws IOException {
     final int status = writeContext.writeValue();
     switch (status) {
       case JsonWriteContext.STATUS_OK_AFTER_SPACE: // root-value separator

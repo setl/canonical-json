@@ -109,6 +109,7 @@ public abstract class InMemoryGenerator<GeneratorType extends InMemoryGenerator<
     }
 
 
+    @Override
     public Context getParent() {
       return parent;
     }
@@ -148,13 +149,21 @@ public abstract class InMemoryGenerator<GeneratorType extends InMemoryGenerator<
 
 
   /**
-   * Context for the root, outside of any structure.
+   * Context for the root, outside any structure.
    */
   protected static class RootContext implements Context {
 
+    /** The output. */
     protected Canonical output = null;
 
 
+    /** New instance. */
+    protected RootContext() {
+      // do nothing
+    }
+
+
+    @Override
     public Context getParent() {
       return null;
     }
@@ -188,9 +197,14 @@ public abstract class InMemoryGenerator<GeneratorType extends InMemoryGenerator<
    */
   protected final RootContext root = new RootContext();
 
-
   /** The current context. */
   protected Context context = root;
+
+
+  /** New instance. */
+  public InMemoryGenerator() {
+    // do nothing
+  }
 
 
   @Override
@@ -203,14 +217,29 @@ public abstract class InMemoryGenerator<GeneratorType extends InMemoryGenerator<
   }
 
 
+  /**
+   * Close the generator, which has generated the specified value.
+   *
+   * @param canonical the value generated
+   */
   protected abstract void closeWith(Canonical canonical);
 
 
+  /**
+   * Test if the current context is the root.
+   *
+   * @return true if in the root context
+   */
   protected boolean isInRoot() {
     return context.getParent() == null;
   }
 
 
+  /**
+   * Get this instance as the correct type.
+   *
+   * @return this as the correct type
+   */
   @SuppressWarnings("unchecked")
   protected GeneratorType me() {
     return (GeneratorType) this;

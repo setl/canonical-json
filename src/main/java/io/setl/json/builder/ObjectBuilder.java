@@ -7,15 +7,22 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
 import io.setl.json.CJObject;
+import io.setl.json.FormattedJson;
 
 /**
  * A builder for JSON Objects.
  *
  * @author Simon Greatrix on 10/01/2020.
  */
-public class ObjectBuilder implements JsonObjectBuilder {
+public class ObjectBuilder implements JsonObjectBuilder, FormattedJson {
 
   private final CJObject object = new CJObject();
+
+
+  /** New instance. */
+  public ObjectBuilder() {
+    // default constructor
+  }
 
 
   @Override
@@ -115,11 +122,13 @@ public class ObjectBuilder implements JsonObjectBuilder {
   }
 
 
+  @Override
   public String toCanonicalString() {
     return object.toCanonicalString();
   }
 
 
+  @Override
   public String toPrettyString() {
     return object.toPrettyString();
   }

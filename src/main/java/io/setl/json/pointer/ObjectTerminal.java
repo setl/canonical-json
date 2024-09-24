@@ -15,14 +15,14 @@ import io.setl.json.pointer.JsonExtendedPointer.ResultOfAdd;
  *
  * @author Simon Greatrix on 27/01/2020.
  */
-public class ObjectTerminal implements PathElement {
+class ObjectTerminal implements PathElement {
 
   protected final String key;
 
   protected final String path;
 
 
-  public ObjectTerminal(String path, String key) {
+  ObjectTerminal(String path, String key) {
     this.path = path;
     this.key = key;
   }

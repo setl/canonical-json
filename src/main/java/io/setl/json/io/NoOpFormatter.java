@@ -15,9 +15,15 @@ import io.setl.json.primitive.CJString;
  */
 public class NoOpFormatter implements Formatter {
 
+  /** The appendable to output to. */
   protected final Appendable appendable;
 
 
+  /**
+   * New instance using the specified appendable.
+   *
+   * @param appendable the appendable
+   */
   public NoOpFormatter(Appendable appendable) {
     this.appendable = appendable;
   }

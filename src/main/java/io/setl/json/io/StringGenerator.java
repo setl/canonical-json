@@ -10,6 +10,7 @@ import java.util.Map;
  */
 public class StringGenerator extends DelegatingGenerator<StringGenerator> {
 
+  /** The buffer used to store the output. */
   protected final StringWriter writer = new StringWriter();
 
 

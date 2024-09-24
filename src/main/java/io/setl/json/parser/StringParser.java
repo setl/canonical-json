@@ -86,7 +86,7 @@ class StringParser {
   }
 
 
-  /** Read a unicode escape, which must be four hexadecimal digits. */
+  /** Read a Unicode escape, which must be four hexadecimal digits. */
   private void parseUnicode() {
     int u = 0;
     for (int i = 0; i < 4; i++) {

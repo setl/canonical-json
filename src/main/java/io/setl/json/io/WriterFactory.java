@@ -22,6 +22,11 @@ public class WriterFactory implements JsonWriterFactory {
   private final JsonGeneratorFactory generatorFactory;
 
 
+  /**
+   * New instance.
+   *
+   * @param generatorFactory the factory used to create writers.
+   */
   public WriterFactory(JsonGeneratorFactory generatorFactory) {
     this.generatorFactory = generatorFactory;
   }

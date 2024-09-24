@@ -35,11 +35,21 @@ public class JacksonReader implements JsonReader {
   private boolean isUsed = false;
 
 
+  /**
+   * New instance.
+   *
+   * @param jsonParser Jackson parser to read from
+   */
   public JacksonReader(JsonParser jsonParser) {
     this.jsonParser = jsonParser;
   }
 
 
+  /**
+   * New instance.
+   *
+   * @param treeNode Jackson Tree Node to read from
+   */
   public JacksonReader(TreeNode treeNode) {
     jsonParser = treeNode.traverse();
   }
@@ -125,17 +135,7 @@ public class JacksonReader implements JsonReader {
       case VALUE_EMBEDDED_OBJECT:
         return CJString.create(jsonParser.getText());
       case VALUE_NUMBER_INT:
-        switch (jsonParser.getNumberType()) {
-          case INT:
-            return CJNumber.create(jsonParser.getIntValue());
-          case LONG:
-            return CJNumber.create(jsonParser.getLongValue());
-          case BIG_INTEGER:
-            return CJNumber.cast(jsonParser.getBigIntegerValue());
-          default:
-            // hopefully unreachable
-            throw new IllegalStateException("Unexpected integer type: " + jsonParser.getNumberType());
-        }
+        return parseNumber();
       case VALUE_NUMBER_FLOAT:
         return CJNumber.cast(jsonParser.getDecimalValue());
       default:
@@ -148,6 +148,21 @@ public class JacksonReader implements JsonReader {
   private Location getLocation() {
     JsonLocation l = jsonParser.getTokenLocation();
     return new Location(l.getColumnNr(), l.getLineNr(), l.getByteOffset());
+  }
+
+
+  private JsonValue parseNumber() throws IOException {
+    switch (jsonParser.getNumberType()) {
+      case INT:
+        return CJNumber.create(jsonParser.getIntValue());
+      case LONG:
+        return CJNumber.create(jsonParser.getLongValue());
+      case BIG_INTEGER:
+        return CJNumber.cast(jsonParser.getBigIntegerValue());
+      default:
+        // hopefully unreachable
+        throw new IllegalStateException("Unexpected integer type: " + jsonParser.getNumberType());
+    }
   }
 
 

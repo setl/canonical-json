@@ -5,13 +5,19 @@ package io.setl.json.io;
  *
  * @author Simon Greatrix on 20/11/2020.
  */
-interface PrettyOutput extends Appendable {
+public interface PrettyOutput extends Appendable {
 
+  /** Special symbols that can be appended. */
   enum Special {
+    /** The ',' that separates a values in an array or key-value pairs in an object. */
     SEPARATOR,
+    /** The '[' that starts an array. */
     START_ARRAY,
+    /** The '{' that starts an object. */
     START_OBJECT,
+    /** The ']' that ends an array. */
     END_ARRAY,
+    /** The '}' that ends an object. */
     END_OBJECT
   }
 

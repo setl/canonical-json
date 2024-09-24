@@ -23,6 +23,12 @@ public class JsonObjectSerializer extends CanonicalSerializer<CJObject> {
   private static final JavaType KEY_TYPE = TypeFactory.defaultInstance().constructType(String.class);
 
 
+  /** New instance. */
+  public JsonObjectSerializer() {
+    // nothing to do
+  }
+
+
   @Override
   public void acceptJsonFormatVisitor(
       JsonFormatVisitorWrapper visitor, JavaType type

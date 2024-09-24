@@ -12,6 +12,11 @@ public class IncorrectDigestException extends JsonException {
   private static final long serialVersionUID = 1L;
 
 
+  /**
+   * New instance with message.
+   *
+   * @param message the message
+   */
   public IncorrectDigestException(String message) {
     super(message);
   }

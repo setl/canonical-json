@@ -12,9 +12,15 @@ import javax.annotation.Nonnull;
  */
 public class Utf8Writer extends Writer implements Appendable {
 
+  /** The appendable. */
   private final Utf8Appendable appendable;
 
 
+  /**
+   * New instance writing to the output stream.
+   *
+   * @param output the output stream
+   */
   public Utf8Writer(OutputStream output) {
     appendable = new Utf8Appendable(output);
   }

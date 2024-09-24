@@ -18,12 +18,16 @@ public class IncorrectTypeException extends ClassCastException {
 
   private static final long serialVersionUID = 1L;
 
+  /** The actual data type. */
   private final ValueType actual;
 
+  /** The array index that was accessed. */
   private final int index;
 
+  /** The object key that was accessed. */
   private final String key;
 
+  /** The required data type. */
   private final Set<ValueType> required;
 
 

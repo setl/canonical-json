@@ -11,9 +11,9 @@ import io.setl.json.pointer.JsonExtendedPointer.ResultOfAdd;
  *
  * @author Simon Greatrix on 27/01/2020.
  */
-public class ExtraTerminal extends ObjectTerminal {
+class ExtraTerminal extends ObjectTerminal {
 
-  public ExtraTerminal(String path) {
+  ExtraTerminal(String path) {
     super(path, "-");
   }
 

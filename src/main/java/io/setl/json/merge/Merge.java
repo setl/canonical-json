@@ -34,8 +34,7 @@ public class Merge implements JsonMergePatch {
         output.remove(entry.getKey());
       } else {
         String key = entry.getKey();
-        JsonValue current = output.get(key);
-        output.put(key, mergePatch(current, entry.getValue()));
+        output.compute(key, (k, current) -> mergePatch(current, entry.getValue()));
       }
     }
     return output;
@@ -45,6 +44,11 @@ public class Merge implements JsonMergePatch {
   private final Canonical patch;
 
 
+  /**
+   * New instance.
+   *
+   * @param patch the specification of the patch
+   */
   public Merge(JsonValue patch) {
     this.patch = Canonical.cast(patch).copy();
   }

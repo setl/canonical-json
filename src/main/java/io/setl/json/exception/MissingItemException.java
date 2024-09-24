@@ -17,10 +17,13 @@ public class MissingItemException extends NullPointerException {
 
   private static final long serialVersionUID = 1L;
 
+  /** The expected types. */
   private final Set<ValueType> expected;
 
+  /** The array index that was accessed. */
   private final int index;
 
+  /** The object key that was accessed. */
   private final String key;
 
 

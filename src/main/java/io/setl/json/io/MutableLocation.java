@@ -33,21 +33,37 @@ public class MutableLocation extends Location {
   private boolean lastWasCR = false;
 
 
+  /** New instance. */
   public MutableLocation() {
     // do nothing
   }
 
 
+  /**
+   * Set the column number.
+   *
+   * @param columnNumber the column number
+   */
   public void setColumnNumber(long columnNumber) {
     this.columnNumber = columnNumber;
   }
 
 
+  /**
+   * Set the line number.
+   *
+   * @param lineNumber the line number
+   */
   public void setLineNumber(long lineNumber) {
     this.lineNumber = lineNumber;
   }
 
 
+  /**
+   * Set the stream  offset.
+   *
+   * @param streamOffset the stream offset
+   */
   public void setStreamOffset(long streamOffset) {
     this.streamOffset = streamOffset;
   }

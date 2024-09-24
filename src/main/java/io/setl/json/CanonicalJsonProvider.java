@@ -66,13 +66,29 @@ public class CanonicalJsonProvider extends JsonProvider {
   static boolean isToStringPretty = false;
 
 
+  /**
+   * Do "toString()" methods generate canonical or pretty JSON?.
+   *
+   * @return true if the output will be pretty.
+   */
   public static boolean isToStringPretty() {
     return isToStringPretty;
   }
 
 
+  /**
+   * Set the "toString()" method to generate pretty JSON.
+   *
+   * @param isToStringPretty true if the output should be pretty.
+   */
   public static void setIsToStringPretty(boolean isToStringPretty) {
     CanonicalJsonProvider.isToStringPretty = isToStringPretty;
+  }
+
+
+  /** New instance. */
+  public CanonicalJsonProvider() {
+    // default constructor
   }
 
 

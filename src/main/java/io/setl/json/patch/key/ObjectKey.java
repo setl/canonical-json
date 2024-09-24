@@ -10,6 +10,12 @@ public class ObjectKey extends Key {
   private final String escaped;
 
 
+  /**
+   * New instance.
+   *
+   * @param parent the parent key
+   * @param key    the object key
+   */
   public ObjectKey(Key parent, String key) {
     super(parent);
     escaped = Pointer.escapeKey(key);

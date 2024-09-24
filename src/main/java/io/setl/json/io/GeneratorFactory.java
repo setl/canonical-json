@@ -82,7 +82,7 @@ public class GeneratorFactory implements JsonGeneratorFactory {
    *
    * @return the generator
    */
-  public Generator createGenerator(Appendable appendable) {
+  public Generator<?> createGenerator(Appendable appendable) {
     if (trustKeyOrder) {
       return new TrustedGenerator(createFormatter(appendable));
     }
@@ -91,13 +91,13 @@ public class GeneratorFactory implements JsonGeneratorFactory {
 
 
   @Override
-  public Generator createGenerator(OutputStream out) {
+  public Generator<?> createGenerator(OutputStream out) {
     return createGenerator((Appendable) new OutputStreamWriter(out, UTF_8));
   }
 
 
   @Override
-  public Generator createGenerator(OutputStream out, Charset charset) {
+  public Generator<?> createGenerator(OutputStream out, Charset charset) {
     if (!UTF_8.equals(charset)) {
       throw new JsonException("Canonical JSON must be in UTF-8");
     }
@@ -106,7 +106,7 @@ public class GeneratorFactory implements JsonGeneratorFactory {
 
 
   @Override
-  public Generator createGenerator(Writer writer) {
+  public Generator<?> createGenerator(Writer writer) {
     return createGenerator((Appendable) writer);
   }
 
@@ -114,9 +114,9 @@ public class GeneratorFactory implements JsonGeneratorFactory {
   @Override
   public Map<String, ?> getConfigInUse() {
     if (prettyPrinting) {
-      return Map.of(TRUST_KEY_ORDER, trustKeyOrder, JsonGenerator.PRETTY_PRINTING, prettyPrinting, SMALL_STRUCTURE_LIMIT, smallStructureLimit);
+      return Map.of(TRUST_KEY_ORDER, trustKeyOrder, JsonGenerator.PRETTY_PRINTING, true, SMALL_STRUCTURE_LIMIT, smallStructureLimit);
     }
-    return Map.of(TRUST_KEY_ORDER, trustKeyOrder, JsonGenerator.PRETTY_PRINTING, prettyPrinting);
+    return Map.of(TRUST_KEY_ORDER, trustKeyOrder, JsonGenerator.PRETTY_PRINTING, false);
   }
 
 }

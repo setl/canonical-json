@@ -94,11 +94,6 @@ import io.setl.json.primitive.numbers.CJNumber;
 @JsonSerialize(using = JsonArraySerializer.class)
 public class CJArray implements JsonArray, Canonical {
 
-  /** serial version UID. */
-  private static final long serialVersionUID = 2L;
-
-
-
   static class MyIterator implements ListIterator<JsonValue> {
 
     private final ListIterator<Canonical> me;
@@ -279,16 +274,27 @@ public class CJArray implements JsonArray, Canonical {
   private final List<Canonical> myList;
 
 
+  /** New instance. */
   public CJArray() {
     myList = new ArrayList<>();
   }
 
 
+  /**
+   * New instance.
+   *
+   * @param size the initial capacity
+   */
   public CJArray(int size) {
     myList = new ArrayList<>(size);
   }
 
 
+  /**
+   * New instance containing the JSON representation of the collection's elements.
+   *
+   * @param c the collection of values
+   */
   public CJArray(Collection<?> c) {
     myList = new ArrayList<>(asArray(c).myList);
   }
@@ -299,16 +305,35 @@ public class CJArray implements JsonArray, Canonical {
   }
 
 
+  /**
+   * Add a boolean to the end of this array.
+   *
+   * @param value the value
+   *
+   * @return true
+   */
   public boolean add(Boolean value) {
     return add(CJTrue.valueOf(value));
   }
 
 
+  /**
+   * Add a boolean at the specified index in this array.
+   *
+   * @param index the index
+   * @param value the value
+   */
   public void add(int index, Boolean value) {
     add(index, CJTrue.valueOf(value));
   }
 
 
+  /**
+   * Add a number at the specified index in this array.
+   *
+   * @param index  the index
+   * @param number the number
+   */
   public void add(int index, Number number) {
     add(index, number != null ? CJNumber.cast(number) : CJNull.NULL);
   }
@@ -320,11 +345,24 @@ public class CJArray implements JsonArray, Canonical {
   }
 
 
+  /**
+   * Add a string at the specified index in this array.
+   *
+   * @param index  the index
+   * @param string the string
+   */
   public void add(int index, String string) {
     add(index, string != null ? CJString.create(string) : CJNull.NULL);
   }
 
 
+  /**
+   * Addd a number to the end of this array.
+   *
+   * @param number the number
+   *
+   * @return true
+   */
   public boolean add(Number number) {
     return add(number != null ? CJNumber.cast(number) : CJNull.NULL);
   }
@@ -336,6 +374,13 @@ public class CJArray implements JsonArray, Canonical {
   }
 
 
+  /**
+   * Add a string to the end of this array.
+   *
+   * @param string the string
+   *
+   * @return true
+   */
   public boolean add(String string) {
     return add(string != null ? CJString.create(string) : CJNull.NULL);
   }
@@ -353,11 +398,21 @@ public class CJArray implements JsonArray, Canonical {
   }
 
 
+  /**
+   * Add a null to the end of this array.
+   *
+   * @return true
+   */
   public boolean addNull() {
     return add(CJNull.NULL);
   }
 
 
+  /**
+   * Add a null to the array at the given index.
+   *
+   * @param index the index
+   */
   public void addNull(int index) {
     add(index, CJNull.NULL);
   }
@@ -369,16 +424,33 @@ public class CJArray implements JsonArray, Canonical {
   }
 
 
+  /**
+   * Offer every element of the collection to the provided consumer as a canonical JSON value.
+   *
+   * @param action the consumer
+   */
   public void canonicalForEach(Consumer<? super Canonical> action) {
     myList.forEach(action);
   }
 
 
+  /**
+   * A list iterator across the canonical representation of the values in this.
+   *
+   * @return the list iterator
+   */
   public ListIterator<Canonical> canonicalListIterator() {
     return myList.listIterator();
   }
 
 
+  /**
+   * A list iterator across the canonical representation of the values in this.
+   *
+   * @param index the index to start at
+   *
+   * @return the list iterator
+   */
   public ListIterator<Canonical> canonicalListIterator(int index) {
     return myList.listIterator(index);
   }
@@ -621,17 +693,24 @@ public class CJArray implements JsonArray, Canonical {
    */
   public boolean getBoolean(int index) {
     if (index < 0 || size() <= index) {
-      throw new MissingItemException(index, Canonical.IS_BOOLEAN);
+      throw new MissingItemException(index, IS_BOOLEAN);
     }
     JsonValue canonical = get(index);
     Object value = Canonical.getValue(canonical);
     if (value instanceof Boolean) {
       return (Boolean) value;
     }
-    throw new IncorrectTypeException(index, Canonical.IS_BOOLEAN, canonical.getValueType());
+    throw new IncorrectTypeException(index, IS_BOOLEAN, canonical.getValueType());
   }
 
 
+  /**
+   * Get the canonical JSON value at index <code>i</code>.
+   *
+   * @param i the index
+   *
+   * @return the canonical JSON value
+   */
   public Canonical getCanonical(int i) {
     return myList.get(i);
   }
@@ -1235,12 +1314,28 @@ public class CJArray implements JsonArray, Canonical {
   }
 
 
+  /**
+   * Set the value at the given index to the specified boolean, returning the old value.
+   *
+   * @param index the index to set
+   * @param value the boolean to set
+   *
+   * @return the old value
+   */
   @Nonnull
   public JsonValue set(int index, Boolean value) {
     return myList.set(index, CJTrue.valueOf(value));
   }
 
 
+  /**
+   * Set the value at the given index to the specified number, returning the old value.
+   *
+   * @param index  the index to set
+   * @param number the number to set
+   *
+   * @return the old value
+   */
   @Nonnull
   public JsonValue set(int index, Number number) {
     Canonical p = (number != null) ? CJNumber.cast(number) : CJNull.NULL;
@@ -1248,6 +1343,14 @@ public class CJArray implements JsonArray, Canonical {
   }
 
 
+  /**
+   * Set the value at the given index to the specified string, returning the old value.
+   *
+   * @param index  the index to set
+   * @param string the string to set
+   *
+   * @return the old value
+   */
   @Nonnull
   public JsonValue set(int index, String string) {
     Canonical p = (string != null) ? CJString.create(string) : CJNull.NULL;
@@ -1255,6 +1358,13 @@ public class CJArray implements JsonArray, Canonical {
   }
 
 
+  /**
+   * Set the value at the given index to null, returning the old value.
+   *
+   * @param index the index
+   *
+   * @return the old value
+   */
   @Nonnull
   public JsonValue setNull(int index) {
     return myList.set(index, CJNull.NULL);
@@ -1299,7 +1409,6 @@ public class CJArray implements JsonArray, Canonical {
   }
 
 
-  @SuppressWarnings("SuspiciousToArrayCall")
   @Override
   @Nonnull
   public <T> T[] toArray(@Nonnull T[] a) {
@@ -1307,7 +1416,6 @@ public class CJArray implements JsonArray, Canonical {
   }
 
 
-  @SuppressWarnings("SuspiciousToArrayCall")
   @Override
   public <T> T[] toArray(IntFunction<T[]> generator) {
     return myList.toArray(generator);
@@ -1317,7 +1425,7 @@ public class CJArray implements JsonArray, Canonical {
   @Override
   public String toCanonicalString() {
     StringBuilder buf = new StringBuilder();
-    Generator generator = CanonicalJsonProvider.CANONICAL_GENERATOR_FACTORY.createGenerator(buf);
+    Generator<?> generator = CanonicalJsonProvider.CANONICAL_GENERATOR_FACTORY.createGenerator(buf);
     generator.writeStartArray();
     for (Canonical c : myList) {
       generator.write(c);
@@ -1331,7 +1439,7 @@ public class CJArray implements JsonArray, Canonical {
   @Override
   public String toPrettyString() {
     StringBuilder buf = new StringBuilder();
-    Generator generator = CanonicalJsonProvider.PRETTY_GENERATOR_FACTORY.createGenerator(buf);
+    Generator<?> generator = CanonicalJsonProvider.PRETTY_GENERATOR_FACTORY.createGenerator(buf);
     generator.writeStartArray();
     for (Canonical c : myList) {
       generator.write(c);

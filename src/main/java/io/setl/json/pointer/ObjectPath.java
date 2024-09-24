@@ -18,7 +18,7 @@ import io.setl.json.pointer.JsonExtendedPointer.ResultOfAdd;
  *
  * @author Simon Greatrix on 27/01/2020.
  */
-public class ObjectPath implements PathElement {
+class ObjectPath implements PathElement {
 
   protected final PathElement child;
 
@@ -26,15 +26,7 @@ public class ObjectPath implements PathElement {
 
   protected final String path;
 
-
-  /**
-   * New path element that steps down through an object.
-   *
-   * @param path  the path for logging
-   * @param key   the key in the object to select
-   * @param child the descendants of this element
-   */
-  public ObjectPath(String path, String key, PathElement child) {
+  ObjectPath(String path, String key, PathElement child) {
     this.path = path;
     this.key = key;
     this.child = child;

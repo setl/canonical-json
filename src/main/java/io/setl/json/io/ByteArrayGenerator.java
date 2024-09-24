@@ -11,6 +11,7 @@ import java.util.Map;
  */
 public class ByteArrayGenerator extends DelegatingGenerator<ByteArrayGenerator> {
 
+  /** The buffer used to store the output. */
   protected final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
 
@@ -47,11 +48,17 @@ public class ByteArrayGenerator extends DelegatingGenerator<ByteArrayGenerator> 
   }
 
 
+  /**
+   * Get the byte array that has been generated.
+   *
+   * @return the byte array
+   */
   public byte[] toByteArray() {
     return buffer.toByteArray();
   }
 
 
+  @Override
   public String toString() {
     return new String(toByteArray(), StandardCharsets.UTF_8);
   }

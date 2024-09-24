@@ -10,8 +10,10 @@ import java.io.OutputStream;
  */
 public class Utf8Appendable implements Appendable {
 
+  /** The output stream. */
   private final OutputStream output;
 
+  /** The high surrogate if the last character written was such. Used to detect isolated surrogates. */
   private char highSurrogate = 0;
 
 
@@ -87,6 +89,11 @@ public class Utf8Appendable implements Appendable {
   }
 
 
+  /**
+   * Flush the output.
+   *
+   * @throws IOException if the attempt to flush the output fails
+   */
   public void flush() throws IOException {
     output.flush();
   }

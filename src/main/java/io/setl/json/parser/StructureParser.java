@@ -31,12 +31,22 @@ public class StructureParser extends BaseIterator<Event> implements JsonParser {
   private StructureTag structureTag = new StructureTag(null);
 
 
+  /**
+   * New instance generating events from walking a JSON object.
+   *
+   * @param obj the object to walk
+   */
   public StructureParser(JsonObject obj) {
     delegate = new ObjectWalker(null, obj);
     firstEvent = Event.START_OBJECT;
   }
 
 
+  /**
+   * New instance generating events from walking a JSON array.
+   *
+   * @param array the array to walk
+   */
   public StructureParser(JsonArray array) {
     delegate = new ArrayWalker(null, array);
     firstEvent = Event.START_ARRAY;
@@ -159,7 +169,7 @@ public class StructureParser extends BaseIterator<Event> implements JsonParser {
   }
 
 
-  protected StructureTag getTag() {
+  StructureTag getTag() {
     return structureTag;
   }
 

@@ -7,16 +7,23 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
 import io.setl.json.CJArray;
+import io.setl.json.FormattedJson;
 
 /**
  * Builder for JSON arrays.
  *
  * @author Simon Greatrix on 10/01/2020.
  */
-public class ArrayBuilder implements JsonArrayBuilder {
+public class ArrayBuilder implements JsonArrayBuilder, FormattedJson {
 
   /** The array being built. */
   private final CJArray array = new CJArray();
+
+
+  /** New instance. */
+  public ArrayBuilder() {
+    // nothing to do
+  }
 
 
   @Override
@@ -270,11 +277,13 @@ public class ArrayBuilder implements JsonArrayBuilder {
   }
 
 
+  @Override
   public String toCanonicalString() {
     return array.toCanonicalString();
   }
 
 
+  @Override
   public String toPrettyString() {
     return array.toPrettyString();
   }

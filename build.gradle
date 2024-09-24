@@ -1,7 +1,4 @@
 buildscript {
-  repositories {
-    maven { url "http://si-nexus01.dev.setl.io:8081/repository/maven-public/" }
-  }
   dependencies {
     classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.7"
   }
@@ -13,16 +10,16 @@ plugins {
   id 'com.palantir.git-version' version '0.12.3'
   id 'signing'
   id 'java'
+  id 'java-library'
   id 'maven-publish'
 }
 
 apply plugin: 'com.github.spotbugs'
 apply plugin: 'jacoco'
-apply plugin: 'maven'
 apply plugin: 'org.sonarqube'
 
 group 'io.setl'
-if ( (versionDetails().branchName ==~ /^(master)|(release.*)|(patch.*)$/) && versionDetails().isCleanTag ) {
+if ((versionDetails().branchName ==~ /^(master)|(release.*)|(patch.*)$/) && versionDetails().isCleanTag) {
   project.version = gitVersion()
 } else {
   project.version = '100-SNAPSHOT'
@@ -33,37 +30,31 @@ tasks.withType(JavaCompile) {
 }
 
 checkstyle {
-    toolVersion = "8.41.1"
-    configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+  toolVersion = "8.41.1"
+  configFile = rootProject.file('config/checkstyle/checkstyle.xml')
 }
 
 checkstyleTest {
-    enabled = false
+  enabled = false
 }
 
 spotbugsTest {
-    enabled = false
+  enabled = false
 }
-
 
 jacoco {
   toolVersion = "0.8.5"
 }
 
 repositories {
-  //Allow local repository for snapshot builds
-  if (version.endsWith("SNAPSHOT")) {
-    mavenLocal()
-  }
-  maven { url "http://si-nexus01.dev.setl.io:8081/repository/maven-public/" }
   mavenCentral()
 }
 
 dependencies {
-  compile group: 'javax.json', name: 'javax.json-api', version: '1.1.4'
+  api group: 'javax.json', name: 'javax.json-api', version: '1.1.4'
 
   // We need this library for the Longest Common Subsequence solver which is needed for creating patches
-  compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
+  implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
 
   compileOnly group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
   compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.9'
@@ -72,19 +63,20 @@ dependencies {
   compileOnly group: 'org.springframework', name: 'spring-webmvc', version: '5.2.3.RELEASE'
   compileOnly group: 'com.github.spotbugs', name: 'spotbugs-annotations', version: '4.2.0'
 
-  testCompile group: 'org.mockito', name: 'mockito-core', version: '3.2.4'
-  testCompile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-smile', version: '2.10.2'
-  testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.9'
-  testCompile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.9'
+  testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.2.4'
+  testImplementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-smile', version: '2.10.2'
+  testImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.9'
+  testImplementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.9'
 
-  testImplementation group: 'org.junit.jupiter', name:'junit-jupiter-api', version: '5.8.2'
-  testRuntimeOnly group: 'org.junit.jupiter', name:'junit-jupiter-engine', version: '5.8.2'
+  testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.8.2'
+  testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.8.2'
 
   spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.10.0'
 }
 
 java {
   withSourcesJar()
+  withJavadocJar()
   sourceCompatibility = JavaVersion.VERSION_11
   targetCompatibility = JavaVersion.VERSION_11
 }
@@ -93,93 +85,68 @@ test {
   useJUnitPlatform()
 }
 
-javadoc {
-    source = sourceSets.main.allJava
-}
-
-task javadocJar(type: Jar) {
-    classifier = 'javadoc'
-    from javadoc
-}
-
-task sourceJar(type: Jar) {
-  from sourceSets.main.allJava
-}
 
 artifacts {
-    archives javadocJar, sourcesJar
-}
-
-signing {
-  useGpgCmd()
-  sign configurations.archives
+  archives javadocJar, sourcesJar
 }
 
 publishing {
   publications {
     mavenJava(MavenPublication) {
       from components.java
-    }
-  }
-  repositories {
-    maven {
-      credentials {
-        username = "$mavenUser"
-        password = "$mavenPassword"
-      }
-      if (version.endsWith("SNAPSHOT")) {
-        url 'http://si-nexus01.dev.setl.io:8081/repository/setl-snaps'
-      } else {
-        url 'http://si-nexus01.dev.setl.io:8081/repository/setl-libs'
-      }
-    }
-  }
-}
-
-// Upload to Maven Central
-uploadArchives {
-  repositories {
-    mavenDeployer {
-      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-        authentication(userName: ossrhUsername, password: ossrhPassword)
-      }
-
-      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-        authentication(userName: ossrhUsername, password: ossrhPassword)
-      }
-
-      pom.project {
-        name 'Canonical JSON'
-        packaging 'jar'
+      pom {
+        name = 'Canonical JSON'
+        packaging = 'jar'
         // optionally artifactId can be defined here
-        description 'An implementation of the Canonical JSON format with support for javax.json and Jackson'
-        url 'https://github.com/setl/canonical-json'
+        description = 'An implementation of the Canonical JSON format with support for javax.json and Jackson'
+        url = 'https://github.com/setl/canonical-json'
 
         scm {
-          connection 'scm:git:https://github.com/setl/canonical-json.git'
-          developerConnection 'scm:git:https://github.com/setl/canonical-json.git'
-          url 'https://github.com/setl/canonical-json'
+          connection = 'scm:git:https://github.com/setl/canonical-json.git'
+          developerConnection = 'scm:git:https://github.com/setl/canonical-json.git'
+          url = 'https://github.com/setl/canonical-json'
         }
 
         licenses {
           license {
-            name 'The Apache License, Version 2.0'
-            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            name = 'The Apache License, Version 2.0'
+            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
           }
         }
 
         developers {
           developer {
-            id 'simon-greatrix'
-            name 'Simon Greatrix'
-            email 'simon.greatrix@setl.io'
-            organization 'SETL'
-            organizationUrl 'https://setl.io'
+            id = 'simon-greatrix'
+            name = 'Simon Greatrix'
+            email = 'simon.greatrix@setl.io'
+            organization = 'SETL'
+            organizationUrl = 'https://setl.io'
           }
         }
       }
     }
   }
+
+  repositories {
+    maven {
+      name = 'central'
+      credentials {
+        username = "$ossrhUsername"
+        password = "$ossrhPassword"
+      }
+
+      if (version.endsWith("SNAPSHOT")) {
+        url = "https://oss.sonatype.org/content/repositories/snapshots/"
+      } else {
+        url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+      }
+    }
+  }
 }
+
+signing {
+  useGpgCmd()
+  sign publishing.publications.mavenJava
+}
+
+

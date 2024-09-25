@@ -22,6 +22,12 @@ public class Replace extends PatchOperation {
   private final JsonValue value;
 
 
+  /**
+   * New instance.
+   *
+   * @param path  the path to replace
+   * @param value the value to replace with
+   */
   @JsonCreator
   public Replace(
       @JsonProperty("path") String path,
@@ -32,6 +38,11 @@ public class Replace extends PatchOperation {
   }
 
 
+  /**
+   * New instance from the JSON representation.
+   *
+   * @param object the representation of the replace operation
+   */
   public Replace(CJObject object) {
     super(object);
     value = object.getJsonValue("value");
@@ -68,6 +79,11 @@ public class Replace extends PatchOperation {
   }
 
 
+  /**
+   * Get the value to replace with.
+   *
+   * @return the value
+   */
   public JsonValue getValue() {
     return value;
   }

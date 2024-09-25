@@ -14,6 +14,14 @@ import io.setl.json.jackson.CJBaseSerializer;
 public abstract class CJBase implements Canonical {
 
   /**
+   * New instance.
+   */
+  public CJBase() {
+    // nothing to do
+  }
+
+
+  /**
    * Returns this. As most Canonicals are not mutable, this is the sensible default.
    *
    * @return this

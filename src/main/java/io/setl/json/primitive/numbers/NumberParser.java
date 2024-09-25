@@ -5,6 +5,9 @@ import static io.setl.json.parser.Parser.safe;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import javax.json.stream.JsonParsingException;
 
 import io.setl.json.io.Input;
@@ -17,6 +20,12 @@ import io.setl.json.primitive.cache.ICache;
  * @author Simon Greatrix on 13/01/2020.
  */
 public class NumberParser {
+
+  /** Integer wrapper types. These classes are final so cannot be sub-classed. */
+  private static final Set<Class<?>> INTEGER_TYPES = Set.of(
+      Byte.class, Short.class, Integer.class, Long.class);
+
+
 
   private enum Step {
     /** Processing the starting character. */
@@ -31,6 +40,7 @@ public class NumberParser {
         return INTEGER_PART;
       }
     },
+
     /** Seen leading minus sign, must be followed by digit. */
     LEADING_MINUS(false) {
       Step apply(int r, NumberParser p) {
@@ -43,13 +53,18 @@ public class NumberParser {
         return ERROR;
       }
     },
+
     /** Parsing step failed. */
     ERROR(true) {
       Step apply(int r, NumberParser p) {
         throw new IllegalStateException("Step invoked after error");
       }
     },
-    /** Seen leading zero, must be followed by '.', 'e', or 'E'. */
+
+    /**
+     * Seen leading zero, must be followed by '.', 'e', or 'E'.
+     * Note that JSON does not allow multiple redundant leading zeroes.
+     */
     LEADING_ZERO(true) {
       Step apply(int r, NumberParser p) {
         if (r == '.') {
@@ -62,6 +77,7 @@ public class NumberParser {
         return ERROR;
       }
     },
+
     /** Seen leading 1 to 9, can be followed by any digit, '.', 'e', or 'E'. */
     INTEGER_PART(true) {
       Step apply(int r, NumberParser p) {
@@ -77,6 +93,7 @@ public class NumberParser {
         return ERROR;
       }
     },
+
     /** Seen a '.', so read fractional part. */
     START_FRACTION(false) {
       Step apply(int r, NumberParser p) {
@@ -87,6 +104,7 @@ public class NumberParser {
         return ERROR;
       }
     },
+
     /** Seen a '.' and a digit, now reading fractional part. */
     FRACTION_PART(true) {
       Step apply(int r, NumberParser p) {
@@ -99,6 +117,7 @@ public class NumberParser {
         return ERROR;
       }
     },
+
     /** seen 'e' or 'E', read exponent part. Can be '+', '-' or '0' to '9' */
     START_EXPONENT(false) {
       Step apply(int r, NumberParser p) {
@@ -112,12 +131,14 @@ public class NumberParser {
         return ERROR;
       }
     },
+
     /** Seen "E+" or "E-". A digit is required. */
     SIGNED_EXPONENT(false) {
       Step apply(int r, NumberParser p) {
         return isDigit(r) ? EXPONENT_PART : ERROR;
       }
     },
+
     EXPONENT_PART(true) {
       Step apply(int r, NumberParser p) {
         return isDigit(r) ? EXPONENT_PART : ERROR;
@@ -157,32 +178,34 @@ public class NumberParser {
   }
 
 
+  /**
+   * Create a JSON number from a string with an appropriate backing type.
+   *
+   * @param txt the string
+   *
+   * @return the JSON number
+   */
   protected static CJNumber doCreate(String txt) {
     int length = txt.length();
+
     // Integer.MAX_VALUE takes 10 characters
     if (length < 10) {
       return CJNumber.create(Integer.parseInt(txt));
     }
-    // Integer.MIN_VALUE takes 11 characters
+
+    // Integer.MIN_VALUE takes 11 characters, so this one could be a long or an int.
     if (length < 12) {
-      // 10 or 11 characters could be a long or an int
-      long l = Long.parseLong(txt);
-      if (Integer.MIN_VALUE <= l && l <= Integer.MAX_VALUE) {
-        return CJNumber.create((int) l);
-      }
-      return new CJLong(l);
+      return doCreateLargeInt(txt);
     }
+
     // Long.MAX_VALUE takes 19 characters
     if (length < 19) {
       return new CJLong(Long.parseLong(txt));
     }
+
     // Long.MIN_VALUE takes 20 characters
     if (length < 21) {
-      BigInteger bi = new BigInteger(txt);
-      if (bi.bitLength() <= 63) {
-        return new CJLong(bi.longValueExact());
-      }
-      return new CJBigInteger(bi);
+      return doCreateLargeLong(txt);
     }
 
     // Could be a big integer, unless it has too many trailing zeros.
@@ -194,6 +217,7 @@ public class NumberParser {
         break;
       }
     }
+
     if (s < CJBigInteger.MIN_SCALE) {
       return new CJBigDecimal(new BigDecimal(txt));
     }
@@ -203,8 +227,35 @@ public class NumberParser {
   }
 
 
+  /**
+   * Create a JSON number from a string.
+   *
+   * @param txt the string
+   *
+   * @return the JSON number
+   */
   protected static CJNumber doCreateBigDecimal(String txt) {
     return CJNumber.cast(new BigDecimal(txt));
+  }
+
+
+  /** Create a JSON number from a string with 10 or 11 characters and hence could be a long or a large int. */
+  private static CJNumber doCreateLargeInt(String txt) {
+    long l = Long.parseLong(txt);
+    if (Integer.MIN_VALUE <= l && l <= Integer.MAX_VALUE) {
+      return CJNumber.create((int) l);
+    }
+    return new CJLong(l);
+  }
+
+
+  /** Create a JSON number from a string with 19 to 21 characters and hence could be a long or a BigInteger. */
+  private static CJNumber doCreateLargeLong(String txt) {
+    BigInteger bi = new BigInteger(txt);
+    if (bi.bitLength() <= 63) {
+      return new CJLong(bi.longValueExact());
+    }
+    return new CJBigInteger(bi);
   }
 
 
@@ -217,11 +268,35 @@ public class NumberParser {
     return r == ',' || r == ']' || r == '}';
   }
 
+
+  /**
+   * Test if the number's type is something whose value can be safely represented by a long, int, short or byte.
+   *
+   * @param n the number to test
+   *
+   * @return true if the number's type is an integer of 64 bits ore less.
+   */
+  public static boolean isPrimitiveIntegerType(Number n) {
+    if (n == null) {
+      return false;
+    }
+    if (INTEGER_TYPES.contains(n.getClass())) {
+      return true;
+    }
+    return n instanceof AtomicInteger || n instanceof AtomicLong;
+  }
+
+
   final Input input;
 
   boolean needBigDecimal;
 
 
+  /**
+   * New instance.
+   *
+   * @param input the input to read from
+   */
   public NumberParser(Input input) {
     this.input = input;
   }

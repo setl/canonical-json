@@ -33,11 +33,19 @@ public class Pointer implements JsonExtendedPointer {
   }
 
 
+  /** The path. */
   protected final String path;
 
+  /** The root of this path. */
   protected final PathElement root;
 
 
+  /**
+   * New instance.
+   *
+   * @param path the path
+   * @param root the root of this path
+   */
   public Pointer(String path, PathElement root) {
     this.path = path;
     this.root = root;
@@ -115,7 +123,7 @@ public class Pointer implements JsonExtendedPointer {
 
   @Nullable
   @Override
-  public PathElement getRoot() {
+  public PathElement getPathElement() {
     return root;
   }
 

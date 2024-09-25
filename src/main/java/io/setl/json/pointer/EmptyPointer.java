@@ -19,6 +19,7 @@ import io.setl.json.exception.PointerMismatchException;
  */
 public class EmptyPointer implements JsonExtendedPointer {
 
+  /** The singleton instance. */
   public static final EmptyPointer INSTANCE = new EmptyPointer();
 
 
@@ -89,7 +90,7 @@ public class EmptyPointer implements JsonExtendedPointer {
 
 
   @Override
-  public PathElement getRoot() {
+  public PathElement getPathElement() {
     return null;
   }
 

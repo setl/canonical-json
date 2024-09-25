@@ -22,6 +22,19 @@ public class PointerTreeBuilder {
   private boolean seenRoot = false;
 
 
+  /** New instance. */
+  public PointerTreeBuilder() {
+    // do nothing
+  }
+
+
+  /**
+   * Add a path to the pointer.
+   *
+   * @param path the path
+   *
+   * @return this
+   */
   public PointerTreeBuilder add(String path) {
     return add(PointerFactory.create(path));
   }
@@ -40,6 +53,7 @@ public class PointerTreeBuilder {
       pointers.clear();
       seenRoot = true;
     }
+
     // If we've seen the root, nothing else matters
     if (seenRoot) {
       return this;

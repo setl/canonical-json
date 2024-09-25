@@ -4,27 +4,18 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import javax.json.JsonNumber;
 import javax.json.JsonString;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 
 import io.setl.json.exception.IncorrectTypeException;
-import io.setl.json.exception.NotJsonException;
 import io.setl.json.io.Utf8Appendable;
-import io.setl.json.primitive.CJFalse;
 import io.setl.json.primitive.CJNull;
-import io.setl.json.primitive.CJString;
-import io.setl.json.primitive.CJTrue;
-import io.setl.json.primitive.numbers.CJNumber;
+import io.setl.json.primitive.numbers.NumberParser;
 
 /**
  * JSON values in canonical form.
@@ -53,30 +44,7 @@ public interface Canonical extends JsonValue, FormattedJson {
    * @return the Canonical
    */
   static Canonical cast(JsonValue value) {
-    if (value == null) {
-      return CJNull.NULL;
-    }
-    if (value instanceof Canonical) {
-      return (Canonical) value;
-    }
-    switch (value.getValueType()) {
-      case ARRAY:
-        return CJArray.asArray(value.asJsonArray());
-      case FALSE:
-        return CJFalse.FALSE;
-      case NUMBER:
-        return CJNumber.castUnsafe(((JsonNumber) value).numberValue());
-      case NULL:
-        return CJNull.NULL;
-      case OBJECT:
-        return CJObject.asJObject(value.asJsonObject());
-      case STRING:
-        return CJString.create(((JsonString) value).getString());
-      case TRUE:
-        return CJTrue.TRUE;
-      default:
-        throw new NotJsonException("Unknown Json Value type:" + value.getValueType());
-    }
+    return CanonicalCreator.cast(value);
   }
 
 
@@ -109,38 +77,7 @@ public interface Canonical extends JsonValue, FormattedJson {
    * @return the Canonical
    */
   static Canonical create(Object value) {
-    if (value == null) {
-      return CJNull.NULL;
-    }
-    if (value instanceof Canonical) {
-      return ((Canonical) value).copy();
-    }
-    if (value instanceof JsonValue) {
-      // JsonValue but not a Canonical, so use "cast" to create a new Canonical
-      return cast((JsonValue) value);
-    }
-    if (value instanceof Boolean) {
-      return ((Boolean) value).booleanValue() ? CJTrue.TRUE : CJFalse.FALSE;
-    }
-    if (value instanceof AtomicBoolean) {
-      return ((AtomicBoolean) value).get() ? CJTrue.TRUE : CJFalse.FALSE;
-    }
-    if (value instanceof String) {
-      return CJString.create((String) value);
-    }
-    if (value instanceof Number) {
-      return CJNumber.castUnsafe((Number) value);
-    }
-    if (value instanceof Collection<?>) {
-      return CJArray.asArray((Collection<?>) value);
-    }
-    if (value instanceof Map<?, ?>) {
-      return CJObject.asJObject((Map<?, ?>) value);
-    }
-    if (value.getClass().isArray()) {
-      return CJArray.asArrayFromArray(value);
-    }
-    throw new NotJsonException(value);
+    return CanonicalCreator.create(value);
   }
 
 
@@ -257,9 +194,6 @@ public interface Canonical extends JsonValue, FormattedJson {
     return (jv != null) && (jv.getValueType() == ValueType.TRUE || jv.getValueType() == ValueType.FALSE);
   }
 
-  private static boolean isIntegerType(Number n) {
-    return (n instanceof Long || n instanceof Integer || n instanceof Short || n instanceof Byte || n instanceof AtomicInteger || n instanceof AtomicLong);
-  }
 
   /**
    * Test if the value is a JSON null.
@@ -322,7 +256,7 @@ public interface Canonical extends JsonValue, FormattedJson {
     if (n instanceof BigInteger) {
       return new BigDecimal((BigInteger) n);
     }
-    if (isIntegerType(n)) {
+    if (NumberParser.isPrimitiveIntegerType(n)) {
       return BigDecimal.valueOf(n.longValue());
     }
     if (n instanceof Double || n instanceof Float) {
@@ -351,7 +285,7 @@ public interface Canonical extends JsonValue, FormattedJson {
     if (n instanceof BigDecimal) {
       return ((BigDecimal) n).toBigInteger();
     }
-    if (isIntegerType(n)) {
+    if (NumberParser.isPrimitiveIntegerType(n)) {
       return BigInteger.valueOf(n.longValue());
     }
     return new BigDecimal(n.toString()).toBigInteger();

@@ -12,8 +12,19 @@ public class CJJson extends CJBase {
   private final String json;
 
 
+  /**
+   * New instance.
+   *
+   * @param json the JSON which must be in canonical form.
+   */
   public CJJson(String json) {
     this.json = json;
+  }
+
+
+  @Override
+  public boolean equals(Object other) {
+    return super.equals(other);
   }
 
 
@@ -30,6 +41,12 @@ public class CJJson extends CJBase {
 
 
   @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+
+  @Override
   public String toString() {
     return json;
   }
@@ -38,18 +55,6 @@ public class CJJson extends CJBase {
   @Override
   public void writeTo(Appendable writer) throws IOException {
     writer.append(json);
-  }
-
-
-  @Override
-  public boolean equals(Object other) {
-    return super.equals(other);
-  }
-
-
-  @Override
-  public int hashCode() {
-    return super.hashCode();
   }
 
 }

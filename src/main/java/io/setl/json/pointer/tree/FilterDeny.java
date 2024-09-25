@@ -10,8 +10,9 @@ import io.setl.json.pointer.PathElement;
  *
  * @author Simon Greatrix on 17/02/2020.
  */
-public class FilterDeny implements Filter {
+class FilterDeny implements Filter {
 
+  /** The singleton instance. */
   public static final Filter DENY = new FilterDeny();
 
 

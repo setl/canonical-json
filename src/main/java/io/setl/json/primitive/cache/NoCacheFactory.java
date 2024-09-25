@@ -7,6 +7,12 @@ package io.setl.json.primitive.cache;
  */
 public class NoCacheFactory implements ICacheFactory {
 
+  /** New instance. */
+  public NoCacheFactory() {
+    // do nothing
+  }
+
+
   @Override
   public <K, V> ICache<K, V> create(CacheType type, int maxSize) {
     return new NoCache<>();

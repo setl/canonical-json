@@ -14,6 +14,17 @@ import io.setl.json.jackson.JsonModule;
 @Configuration
 public class ConfigureCanonicalJson {
 
+  /** New instance. */
+  public ConfigureCanonicalJson() {
+    // do nothing
+  }
+
+
+  /**
+   * Register the Canonical JSON module.
+   *
+   * @return the module
+   */
   @Bean
   @ConditionalOnExpression("${setl.json.enabled:true}")
   public com.fasterxml.jackson.databind.Module canonicalJsonModule() {

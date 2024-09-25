@@ -22,6 +22,12 @@ import io.setl.json.jackson.JsonModule;
 @ConditionalOnClass(name = "org.springframework.web.servlet.config.annotation.WebMvcConfigurer")
 public class ConfigureCanonicalWebMvc {
 
+  /** New instance. */
+  public ConfigureCanonicalWebMvc() {
+    // do nothing
+  }
+
+
   /**
    * Configure the Web MVC to generate JSON responses in canonical form.
    *

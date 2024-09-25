@@ -42,7 +42,7 @@ import io.setl.json.primitive.numbers.CJNumber;
 @SuppressWarnings("checkstyle:AvoidEscapedUnicodeCharacters")
 public class CJObjectTest {
 
-  private CJObject json = new CJObject();
+  private final CJObject json = new CJObject();
 
 
   @Test

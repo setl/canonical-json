@@ -10,6 +10,7 @@ import javax.json.JsonValue;
  */
 public class CJFalse extends CJBase implements CJBoolean {
 
+  /** The singleton instance. */
   public static final CJFalse FALSE = new CJFalse();
 
 

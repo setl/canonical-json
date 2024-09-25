@@ -15,8 +15,11 @@ public interface JsonExtendedPointer extends JsonPointer {
 
   /** The result of an add operation. The add operation will always create items in an array, but may create or update them in an object. */
   enum ResultOfAdd {
+    /** The operation will create the item. */
     CREATE,
+    /** The operation will update the item. */
     UPDATE,
+    /** The operation will fail. */
     FAIL
   }
 
@@ -49,7 +52,7 @@ public interface JsonExtendedPointer extends JsonPointer {
    * @return the root element
    */
   @Nullable
-  PathElement getRoot();
+  PathElement getPathElement();
 
 
   /**

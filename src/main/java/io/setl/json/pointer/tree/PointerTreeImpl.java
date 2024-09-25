@@ -30,7 +30,7 @@ public class PointerTreeImpl implements PointerTree {
     this.pointers = pointers;
     filter = new FilterTree();
     for (JsonExtendedPointer p : pointers) {
-      filter.add(p.getRoot());
+      filter.add(p.getPathElement());
     }
   }
 

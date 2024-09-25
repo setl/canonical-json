@@ -9,7 +9,7 @@ import javax.json.JsonValue;
 
 import org.junit.jupiter.api.Test;
 
-import io.setl.json.pointer.ObjectTerminal;
+import io.setl.json.pointer.FilterTestHelper;
 
 /**
  * @author Simon Greatrix on 17/02/2020.
@@ -18,14 +18,15 @@ public class FilterTest {
 
   @Test
   public void add1() {
-    FilterAccept.ACCEPT_ALL.add(new ObjectTerminal("boo", "boo"));
+    FilterAccept.ACCEPT_ALL.add(FilterTestHelper.createObjectTerminal("boo", "boo"));
     assertTrue(FilterAccept.ACCEPT_ALL.containsAll(JsonValue.EMPTY_JSON_OBJECT));
   }
 
 
   @Test
   public void add2() {
-    UnsupportedOperationException e = assertThrows(UnsupportedOperationException.class, () -> FilterDeny.DENY.add(new ObjectTerminal("boo", "boo")));
+    UnsupportedOperationException e =
+        assertThrows(UnsupportedOperationException.class, () -> FilterDeny.DENY.add(FilterTestHelper.createObjectTerminal("boo", "boo")));
     assertEquals("The DENY filter is immutable.", e.getMessage());
   }
 

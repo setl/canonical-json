@@ -12,6 +12,7 @@ import io.setl.json.Canonical;
  */
 public class CJTrue extends CJBase implements CJBoolean {
 
+  /** The singleton instance. */
   public static final CJTrue TRUE = new CJTrue();
 
 

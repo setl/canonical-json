@@ -222,6 +222,11 @@ public class Test extends PatchOperation {
   }
 
 
+  /**
+   * Get the expected digest of the value at the test path.
+   *
+   * @return the expected digest
+   */
   public String getDigest() {
     return digest;
   }
@@ -233,11 +238,21 @@ public class Test extends PatchOperation {
   }
 
 
+  /**
+   * Get the expected result of an "add" operation on the test path.
+   *
+   * @return the expected result
+   */
   public ResultOfAdd getResultOfAdd() {
     return resultOfAdd;
   }
 
 
+  /**
+   * Get the value to test against.
+   *
+   * @return the value
+   */
   public JsonValue getValue() {
     return value;
   }

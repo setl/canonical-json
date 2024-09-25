@@ -3,6 +3,7 @@ package io.setl.json.pointer.tree;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 
+import io.setl.json.pointer.JsonExtendedPointer;
 import io.setl.json.pointer.PathElement;
 
 /**
@@ -10,7 +11,7 @@ import io.setl.json.pointer.PathElement;
  *
  * @author Simon Greatrix on 17/02/2020.
  */
-public interface Filter {
+interface Filter {
 
   /**
    * Add a new path element to this filter.

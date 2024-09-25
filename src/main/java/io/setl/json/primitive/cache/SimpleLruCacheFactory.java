@@ -7,6 +7,12 @@ package io.setl.json.primitive.cache;
  */
 public class SimpleLruCacheFactory implements ICacheFactory {
 
+  /** New instance. */
+  public SimpleLruCacheFactory() {
+    // do nothing
+  }
+
+
   @Override
   public <K, V> ICache<K, V> create(CacheType type, int maxSize) {
     if (type == CacheType.STRINGS) {

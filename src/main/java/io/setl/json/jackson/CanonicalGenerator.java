@@ -376,7 +376,7 @@ public class CanonicalGenerator extends JsonGenerator {
 
   @Override
   // Allow labels, and ignore cognitive complexity. Code is copied from Jackson and refactoring to address these issues is a higher risk than leaving them be.
-  @SuppressWarnings({"java:S1119", "java:S3776"})
+  @SuppressWarnings({"java:S1119", "java:S3776", "CyclomaticComplexity", "NPathComplexity"})
   public int writeBinary(Base64Variant bv, InputStream data, int dataLength) throws IOException {
     // Jackson's Base64Variant class forces callers to do most of the encoding themselves. This code is copied from the Jackson implementation.
     int length = 0;

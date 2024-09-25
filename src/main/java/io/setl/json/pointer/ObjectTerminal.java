@@ -22,7 +22,7 @@ class ObjectTerminal implements PathElement {
   protected final String path;
 
 
-  ObjectTerminal(String path, String key) {
+  public ObjectTerminal(String path, String key) {
     this.path = path;
     this.key = key;
   }

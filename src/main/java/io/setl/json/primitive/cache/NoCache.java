@@ -10,6 +10,12 @@ import javax.annotation.Nonnull;
  */
 public class NoCache<K, V> implements ICache<K, V> {
 
+  /** New instance. */
+  public NoCache() {
+    // do nothing
+  }
+
+
   @Nonnull
   @Override
   public V get(K key, Function<K, V> creator) {

@@ -10,8 +10,9 @@ import io.setl.json.pointer.PathElement;
  *
  * @author Simon Greatrix on 17/02/2020.
  */
-public class FilterAccept implements Filter {
+class FilterAccept implements Filter {
 
+  /** The singleton instance. */
   public static final Filter ACCEPT_ALL = new FilterAccept();
 
 

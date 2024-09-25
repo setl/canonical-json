@@ -35,6 +35,11 @@ public class SimpleLruCache<K, V> implements ICache<K, V> {
   private final Map<K, V> myCache;
 
 
+  /**
+   * New instance.
+   *
+   * @param maxSize number of items to hold in the cache
+   */
   public SimpleLruCache(int maxSize) {
     myCache = new Cache<>(maxSize);
   }

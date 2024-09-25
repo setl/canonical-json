@@ -80,11 +80,21 @@ public class Move extends PatchOperation {
   }
 
 
+  /**
+   * Get the "from" path.
+   *
+   * @return the "from" path
+   */
   public String getFrom() {
     return from;
   }
 
 
+  /**
+   * Get the "from" pointer.
+   *
+   * @return the "from" pointer
+   */
   @JsonIgnore
   public JsonExtendedPointer getFromPointer() {
     return fromPointer;

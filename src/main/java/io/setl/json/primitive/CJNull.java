@@ -10,6 +10,7 @@ import javax.json.JsonValue;
  */
 public class CJNull extends CJBase {
 
+  /** The singleton instance. */
   public static final CJNull NULL = new CJNull();
 
 

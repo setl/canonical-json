@@ -25,12 +25,16 @@ import io.setl.json.primitive.cache.ICache;
  */
 public abstract class CJNumber extends CJBase implements JsonNumber {
 
+  /** The number is represented by a BigInteger. */
   public static final int TYPE_BIG_INT = 2;
 
+  /** The number is represented by a BigDecimal. */
   public static final int TYPE_DECIMAL = 3;
 
+  /** The number is represented by an int. */
   public static final int TYPE_INT = 0;
 
+  /** The number is represented by a long. */
   public static final int TYPE_LONG = 1;
 
   private static final Map<Class<? extends Number>, Function<Number, CJNumber>> CREATORS = Map.of(
@@ -39,7 +43,6 @@ public abstract class CJNumber extends CJBase implements JsonNumber {
       Integer.class, n -> create(n.intValue()),
       Long.class, n -> new CJLong(n.longValue())
   );
-
 
   private static final Map<Class<? extends Number>, UnaryOperator<Number>> SIMPLIFIERS = Map.of(
       AtomicInteger.class, Number::intValue,
@@ -273,6 +276,13 @@ public abstract class CJNumber extends CJBase implements JsonNumber {
   }
 
 
+  /** New instance. */
+  public CJNumber() {
+    // do nothing
+  }
+
+
+  /** Check if the number is valid. */
   protected void check() {
     // do nothing
   }
@@ -308,15 +318,40 @@ public abstract class CJNumber extends CJBase implements JsonNumber {
   }
 
 
+  /**
+   * Test if this equals a 64-bit long.
+   *
+   * @param other the long to compare to
+   *
+   * @return true if equal in value
+   */
   protected abstract boolean equalsValue(long other);
 
 
+  /**
+   * Test if this equals a BigInteger.
+   *
+   * @param other the BigInteger to compare to
+   *
+   * @return true if equal in value
+   */
   protected abstract boolean equalsValue(BigInteger other);
 
-
+  /**
+   * Test if this equals a BigDecimal.
+   *
+   * @param other the BigDecimal to compare to
+   *
+   * @return true if equal in value
+   */
   protected abstract boolean equalsValue(BigDecimal other);
 
 
+  /**
+   * Get the type of number this is. The result will be one of the TYPE_ constants.
+   *
+   * @return the type of number
+   */
   public abstract int getNumberType();
 
 

@@ -17,12 +17,22 @@ import io.setl.json.patch.PatchOperation;
  */
 public class Remove extends PatchOperation {
 
+  /**
+   * New instance.
+   *
+   * @param path the path to remove
+   */
   @JsonCreator
   public Remove(@JsonProperty("path") String path) {
     super(path);
   }
 
 
+  /**
+   * New instance.
+   *
+   * @param object the specification of the remove operation
+   */
   public Remove(CJObject object) {
     super(object);
   }

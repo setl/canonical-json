@@ -153,8 +153,8 @@ publishing {
     maven {
       name = 'central'
       credentials {
-        username = "$ossrhUsername"
-        password = "$ossrhPassword"
+        username = "$ossrhUsernameToken"
+        password = "$ossrhPasswordToken"
       }
 
       if (version.endsWith("SNAPSHOT")) {

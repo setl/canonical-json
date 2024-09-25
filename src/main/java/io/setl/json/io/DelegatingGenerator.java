@@ -1,6 +1,6 @@
 package io.setl.json.io;
 
-import javax.json.stream.JsonGenerator;
+import jakarta.json.stream.JsonGenerator;
 
 import io.setl.json.Canonical;
 

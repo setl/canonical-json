@@ -1,6 +1,6 @@
 package io.setl.json.io;
 
-import javax.json.stream.JsonGenerationException;
+import jakarta.json.stream.JsonGenerationException;
 
 import io.setl.json.Canonical;
 import io.setl.json.builder.ArrayBuilder;

@@ -1,6 +1,6 @@
 package io.setl.json.io;
 
-import javax.json.stream.JsonLocation;
+import jakarta.json.stream.JsonLocation;
 
 /**
  * Implementation of the JsonLocation interface.

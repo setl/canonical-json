@@ -1,14 +1,16 @@
 package io.setl.json.io;
 
 import java.io.Reader;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-import javax.json.JsonStructure;
-import javax.json.JsonValue;
-import javax.json.JsonValue.ValueType;
-import javax.json.stream.JsonParser;
-import javax.json.stream.JsonParsingException;
+
+import jakarta.json.JsonArray;
+import jakarta.json.JsonConfig.KeyStrategy;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+import jakarta.json.JsonStructure;
+import jakarta.json.JsonValue;
+import jakarta.json.JsonValue.ValueType;
+import jakarta.json.stream.JsonParser;
+import jakarta.json.stream.JsonParsingException;
 
 import io.setl.json.parser.Parser;
 
@@ -27,10 +29,11 @@ public class CJReader implements JsonReader {
   /**
    * New instance.
    *
-   * @param reader the text source
+   * @param reader      the text source
+   * @param keyStrategy the key strategy
    */
-  CJReader(Reader reader) {
-    jParser = new Parser(reader);
+  CJReader(Reader reader, KeyStrategy keyStrategy) {
+    jParser = new Parser(reader, keyStrategy);
   }
 
 

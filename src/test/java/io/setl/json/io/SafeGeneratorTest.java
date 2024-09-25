@@ -11,8 +11,8 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import javax.json.JsonValue;
-import javax.json.stream.JsonGenerationException;
+import jakarta.json.JsonValue;
+import jakarta.json.stream.JsonGenerationException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

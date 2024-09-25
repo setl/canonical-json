@@ -1,8 +1,8 @@
 package io.setl.json.jackson;
 
 import java.io.IOException;
-import javax.json.JsonStructure;
-import javax.json.stream.JsonParsingException;
+import jakarta.json.JsonStructure;
+import jakarta.json.stream.JsonParsingException;
 
 import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -33,7 +33,7 @@ public class JsonStructureDeserializer extends JsonDeserializer<JsonStructure> {
     } catch (JsonIOException jsonIOException) {
       throw jsonIOException.cause();
     } catch (JsonParsingException jsonParsingException) {
-      javax.json.stream.JsonLocation l = jsonParsingException.getLocation();
+      jakarta.json.stream.JsonLocation l = jsonParsingException.getLocation();
       JsonLocation location = new JsonLocation(null, l.getStreamOffset(), (int) l.getLineNumber(), (int) l.getColumnNumber());
       throw new JsonParseException(p, jsonParsingException.getMessage(), location, jsonParsingException);
     }

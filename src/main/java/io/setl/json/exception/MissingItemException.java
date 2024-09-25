@@ -3,7 +3,7 @@ package io.setl.json.exception;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
-import javax.json.JsonValue.ValueType;
+import jakarta.json.JsonValue.ValueType;
 
 import io.setl.json.primitive.CJString;
 

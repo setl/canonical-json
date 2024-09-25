@@ -1,6 +1,6 @@
 package io.setl.json.builder;
 
-import javax.json.JsonStructure;
+import jakarta.json.JsonStructure;
 
 import io.setl.json.CJArray;
 import io.setl.json.CJObject;

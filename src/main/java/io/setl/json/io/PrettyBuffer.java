@@ -1,6 +1,6 @@
 package io.setl.json.io;
 
-import javax.json.stream.JsonGenerationException;
+import jakarta.json.stream.JsonGenerationException;
 
 /**
  * A circular char buffer used by the PrettyFormatter to limit the expansion of small structures.

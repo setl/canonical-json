@@ -3,8 +3,8 @@ package io.setl.json.pointer.tree;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.json.JsonStructure;
-import javax.json.JsonValue;
+import jakarta.json.JsonStructure;
+import jakarta.json.JsonValue;
 
 import io.setl.json.pointer.JsonExtendedPointer;
 

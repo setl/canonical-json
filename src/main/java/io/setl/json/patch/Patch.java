@@ -2,9 +2,9 @@ package io.setl.json.patch;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.json.JsonArray;
-import javax.json.JsonPatch;
-import javax.json.JsonStructure;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonPatch;
+import jakarta.json.JsonStructure;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;

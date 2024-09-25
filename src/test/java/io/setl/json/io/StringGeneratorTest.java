@@ -3,8 +3,8 @@ package io.setl.json.io;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Map;
-import javax.json.JsonValue;
-import javax.json.stream.JsonGenerator;
+import jakarta.json.JsonValue;
+import jakarta.json.stream.JsonGenerator;
 
 import org.junit.jupiter.api.Test;
 

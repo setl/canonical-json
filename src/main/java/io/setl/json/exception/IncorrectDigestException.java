@@ -1,6 +1,6 @@
 package io.setl.json.exception;
 
-import javax.json.JsonException;
+import jakarta.json.JsonException;
 
 /**
  * Exception thrown when a digest test in a patch fails.

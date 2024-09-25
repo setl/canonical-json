@@ -2,8 +2,8 @@ package io.setl.json.io;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import javax.json.JsonValue;
-import javax.json.stream.JsonGenerator;
+import jakarta.json.JsonValue;
+import jakarta.json.stream.JsonGenerator;
 
 import io.setl.json.Canonical;
 import io.setl.json.primitive.CJNull;

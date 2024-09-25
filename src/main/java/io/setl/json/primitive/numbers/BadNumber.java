@@ -3,7 +3,7 @@ package io.setl.json.primitive.numbers;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import javax.json.stream.JsonParsingException;
+import jakarta.json.stream.JsonParsingException;
 
 /**
  * An invalid number parsed in the JSON.

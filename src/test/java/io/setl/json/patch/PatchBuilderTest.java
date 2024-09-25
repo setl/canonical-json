@@ -2,7 +2,7 @@ package io.setl.json.patch;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import javax.json.JsonValue;
+import jakarta.json.JsonValue;
 
 import org.junit.jupiter.api.Test;
 

@@ -6,10 +6,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Objects;
-import javax.json.JsonException;
-import javax.json.JsonPatch.Operation;
-import javax.json.JsonStructure;
-import javax.json.JsonValue;
+import jakarta.json.JsonException;
+import jakarta.json.JsonPatch.Operation;
+import jakarta.json.JsonStructure;
+import jakarta.json.JsonValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;

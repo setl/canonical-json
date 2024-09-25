@@ -7,10 +7,10 @@ import java.math.BigInteger;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
-import javax.json.JsonNumber;
-import javax.json.JsonString;
-import javax.json.JsonStructure;
-import javax.json.JsonValue;
+import jakarta.json.JsonNumber;
+import jakarta.json.JsonString;
+import jakarta.json.JsonStructure;
+import jakarta.json.JsonValue;
 
 import io.setl.json.exception.IncorrectTypeException;
 import io.setl.json.io.Utf8Appendable;

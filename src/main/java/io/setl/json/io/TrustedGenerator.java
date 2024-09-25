@@ -1,7 +1,7 @@
 package io.setl.json.io;
 
-import javax.json.JsonValue.ValueType;
-import javax.json.stream.JsonGenerationException;
+import jakarta.json.JsonValue.ValueType;
+import jakarta.json.stream.JsonGenerationException;
 
 import io.setl.json.CJArray;
 import io.setl.json.CJObject;

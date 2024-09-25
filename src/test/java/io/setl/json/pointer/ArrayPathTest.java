@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.StringReader;
-import javax.json.JsonArray;
-import javax.json.JsonPointer;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonPointer;
 
 import org.junit.jupiter.api.Test;
 

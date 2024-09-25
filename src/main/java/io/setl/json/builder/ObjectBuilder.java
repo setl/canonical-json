@@ -2,9 +2,9 @@ package io.setl.json.builder;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
-import javax.json.JsonValue;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonValue;
 
 import io.setl.json.CJObject;
 import io.setl.json.FormattedJson;

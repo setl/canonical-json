@@ -1,10 +1,10 @@
 package io.setl.json.merge;
 
 import java.util.Map.Entry;
-import javax.json.JsonMergePatch;
-import javax.json.JsonObject;
-import javax.json.JsonValue;
-import javax.json.JsonValue.ValueType;
+import jakarta.json.JsonMergePatch;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
+import jakarta.json.JsonValue.ValueType;
 
 import io.setl.json.CJObject;
 import io.setl.json.Canonical;

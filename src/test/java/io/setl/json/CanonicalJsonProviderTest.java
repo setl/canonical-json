@@ -10,9 +10,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Map;
-import javax.json.Json;
-import javax.json.JsonValue;
-import javax.json.spi.JsonProvider;
+import jakarta.json.Json;
+import jakarta.json.JsonValue;
+import jakarta.json.spi.JsonProvider;
 
 import org.junit.jupiter.api.Test;
 

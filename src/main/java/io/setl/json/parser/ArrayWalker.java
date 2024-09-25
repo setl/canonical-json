@@ -1,9 +1,9 @@
 package io.setl.json.parser;
 
 import java.util.NoSuchElementException;
-import javax.json.JsonArray;
-import javax.json.JsonValue;
-import javax.json.stream.JsonParser.Event;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonValue;
+import jakarta.json.stream.JsonParser.Event;
 
 /**
  * Walk through the elements of an array.

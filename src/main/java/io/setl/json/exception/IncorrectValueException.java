@@ -1,6 +1,6 @@
 package io.setl.json.exception;
 
-import javax.json.JsonException;
+import jakarta.json.JsonException;
 
 /**
  * An exception thrown when a patch "test" operation mismatches.

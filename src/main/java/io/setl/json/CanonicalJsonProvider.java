@@ -8,28 +8,28 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Map;
-import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonBuilderFactory;
-import javax.json.JsonMergePatch;
-import javax.json.JsonNumber;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.json.JsonPatch;
-import javax.json.JsonPatchBuilder;
-import javax.json.JsonPointer;
-import javax.json.JsonReader;
-import javax.json.JsonReaderFactory;
-import javax.json.JsonString;
-import javax.json.JsonStructure;
-import javax.json.JsonValue;
-import javax.json.JsonWriter;
-import javax.json.JsonWriterFactory;
-import javax.json.spi.JsonProvider;
-import javax.json.stream.JsonGenerator;
-import javax.json.stream.JsonGeneratorFactory;
-import javax.json.stream.JsonParser;
-import javax.json.stream.JsonParserFactory;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonBuilderFactory;
+import jakarta.json.JsonMergePatch;
+import jakarta.json.JsonNumber;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonPatch;
+import jakarta.json.JsonPatchBuilder;
+import jakarta.json.JsonPointer;
+import jakarta.json.JsonReader;
+import jakarta.json.JsonReaderFactory;
+import jakarta.json.JsonString;
+import jakarta.json.JsonStructure;
+import jakarta.json.JsonValue;
+import jakarta.json.JsonWriter;
+import jakarta.json.JsonWriterFactory;
+import jakarta.json.spi.JsonProvider;
+import jakarta.json.stream.JsonGenerator;
+import jakarta.json.stream.JsonGeneratorFactory;
+import jakarta.json.stream.JsonParser;
+import jakarta.json.stream.JsonParserFactory;
 
 import io.setl.json.builder.BuilderFactory;
 import io.setl.json.io.GeneratorFactory;
@@ -160,8 +160,10 @@ public class CanonicalJsonProvider extends JsonProvider {
 
 
   @Override
-  public JsonObjectBuilder createObjectBuilder(Map<String, Object> map) {
-    return createBuilderFactory(null).createObjectBuilder(map);
+  public JsonObjectBuilder createObjectBuilder(Map<String, ?> map) {
+    @SuppressWarnings("unchecked")
+    Map<String, Object> map2 = (Map<String, Object>) map;
+    return createBuilderFactory(null).createObjectBuilder(map2);
   }
 
 
@@ -227,8 +229,7 @@ public class CanonicalJsonProvider extends JsonProvider {
 
   @Override
   public JsonReaderFactory createReaderFactory(Map<String, ?> config) {
-    // Configuration is ignored
-    return new ReaderFactory();
+    return new ReaderFactory(config);
   }
 
 

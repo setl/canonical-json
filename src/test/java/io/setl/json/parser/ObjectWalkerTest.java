@@ -8,8 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.NoSuchElementException;
-import javax.json.JsonValue;
-import javax.json.stream.JsonParser.Event;
+import jakarta.json.JsonValue;
+import jakarta.json.stream.JsonParser.Event;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

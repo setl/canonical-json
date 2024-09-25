@@ -1,8 +1,8 @@
 package io.setl.json.exception;
 
 import javax.annotation.Nullable;
-import javax.json.JsonException;
-import javax.json.JsonValue.ValueType;
+import jakarta.json.JsonException;
+import jakarta.json.JsonValue.ValueType;
 
 /**
  * A pointer cannot be used on the specified JSON structure.

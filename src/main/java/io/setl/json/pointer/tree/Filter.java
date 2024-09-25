@@ -1,7 +1,7 @@
 package io.setl.json.pointer.tree;
 
-import javax.json.JsonArray;
-import javax.json.JsonObject;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
 
 import io.setl.json.pointer.JsonExtendedPointer;
 import io.setl.json.pointer.PathElement;

@@ -1,7 +1,7 @@
 package io.setl.json.pointer;
 
-import javax.json.JsonArray;
-import javax.json.JsonValue;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonValue;
 
 import io.setl.json.exception.PointerIndexException;
 import io.setl.json.pointer.JsonExtendedPointer.ResultOfAdd;

@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonPatch;
-import javax.json.JsonStructure;
-import javax.json.JsonValue;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonPatch;
+import jakarta.json.JsonStructure;
+import jakarta.json.JsonValue;
 
 import org.junit.jupiter.api.Test;
 

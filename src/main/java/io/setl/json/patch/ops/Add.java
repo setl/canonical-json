@@ -1,8 +1,8 @@
 package io.setl.json.patch.ops;
 
-import javax.json.JsonPatch.Operation;
-import javax.json.JsonStructure;
-import javax.json.JsonValue;
+import jakarta.json.JsonPatch.Operation;
+import jakarta.json.JsonStructure;
+import jakarta.json.JsonValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Spliterator;
-import javax.json.JsonString;
-import javax.json.JsonValue;
-import javax.json.JsonValue.ValueType;
+import jakarta.json.JsonString;
+import jakarta.json.JsonValue;
+import jakarta.json.JsonValue.ValueType;
 
 import org.junit.jupiter.api.Test;
 
@@ -750,7 +750,7 @@ public class CJArrayTest {
   public void testGetValueAs() {
     CJArray ja = new CJArray(Arrays.asList(0, 1, 2));
     ClassCastException e = assertThrows(ClassCastException.class, () -> ja.getValuesAs(JsonString.class));
-    assertEquals("Cannot cast io.setl.json.primitive.numbers.CJInt to javax.json.JsonString", e.getMessage());
+    assertEquals("Cannot cast io.setl.json.primitive.numbers.CJInt to jakarta.json.JsonString", e.getMessage());
   }
 
 

@@ -2,7 +2,7 @@ package io.setl.json.parser;
 
 import static io.setl.json.parser.Parser.safe;
 
-import javax.json.stream.JsonParsingException;
+import jakarta.json.stream.JsonParsingException;
 
 import io.setl.json.io.Input;
 

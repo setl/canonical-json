@@ -1,7 +1,7 @@
 package io.setl.json.jackson.objects;
 
 import java.util.Objects;
-import javax.json.JsonValue;
+import jakarta.json.JsonValue;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;

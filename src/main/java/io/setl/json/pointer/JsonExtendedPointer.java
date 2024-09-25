@@ -2,9 +2,9 @@ package io.setl.json.pointer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.json.JsonPointer;
-import javax.json.JsonStructure;
-import javax.json.JsonValue;
+import jakarta.json.JsonPointer;
+import jakarta.json.JsonStructure;
+import jakarta.json.JsonValue;
 
 /**
  * Extensions to the standard pointer functionality.

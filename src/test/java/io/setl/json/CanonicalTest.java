@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.json.JsonValue.ValueType;
+import jakarta.json.JsonValue.ValueType;
 
 import org.junit.jupiter.api.Test;
 

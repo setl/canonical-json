@@ -8,8 +8,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
-import javax.json.JsonNumber;
-import javax.json.JsonValue;
+import jakarta.json.JsonNumber;
+import jakarta.json.JsonValue;
 
 import io.setl.json.Canonical;
 import io.setl.json.exception.NonFiniteNumberException;

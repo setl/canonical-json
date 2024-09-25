@@ -2,8 +2,8 @@ package io.setl.json.io;
 
 import java.io.IOException;
 import java.io.Reader;
-import javax.json.stream.JsonLocation;
-import javax.json.stream.JsonParsingException;
+import jakarta.json.stream.JsonLocation;
+import jakarta.json.stream.JsonParsingException;
 
 /**
  * Input for parsing.

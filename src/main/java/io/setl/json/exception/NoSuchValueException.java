@@ -1,6 +1,6 @@
 package io.setl.json.exception;
 
-import javax.json.JsonException;
+import jakarta.json.JsonException;
 
 /**
  * A JSON Structure did not contain the item required by a pointer.

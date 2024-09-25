@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import javax.json.JsonValue.ValueType;
+import jakarta.json.JsonValue.ValueType;
 
 import org.junit.jupiter.api.Test;
 

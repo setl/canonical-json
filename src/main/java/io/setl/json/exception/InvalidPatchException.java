@@ -1,6 +1,6 @@
 package io.setl.json.exception;
 
-import javax.json.JsonException;
+import jakarta.json.JsonException;
 
 /**
  * The JSON specification of a patch was invalid.

@@ -11,15 +11,19 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonStructure;
-import javax.json.JsonValue;
-import javax.json.stream.JsonParsingException;
+import java.util.Map;
 
+import jakarta.json.JsonArray;
+import jakarta.json.JsonConfig;
+import jakarta.json.JsonConfig.KeyStrategy;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonStructure;
+import jakarta.json.JsonValue;
+import jakarta.json.stream.JsonParsingException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import io.setl.json.CJObject;
 import io.setl.json.primitive.CJTrue;
 
 /**
@@ -50,12 +54,6 @@ public class CJReaderTest {
     Mockito.doThrow(new IOException()).when(reader).close();
     CJReader jReader = new ReaderFactory().createReader(reader);
     assertThrows(JsonParsingException.class, () -> jReader.close());
-  }
-
-
-  @Test
-  public void emptyConfig() {
-    assertTrue(new ReaderFactory().getConfigInUse().isEmpty());
   }
 
 
@@ -134,7 +132,54 @@ public class CJReaderTest {
     CJReader reader = new ReaderFactory().createReader(new StringReader("   true   false"));
     JsonValue value = reader.readValue();
     JsonParsingException e = assertThrows(JsonParsingException.class, () -> reader.close());
-    assertEquals("Saw 'f' after root value.",e.getMessage());
+    assertEquals("Saw 'f' after root value.", e.getMessage());
   }
 
+
+  @Test
+  public void singleEntryInConfig() {
+    assertEquals(1, new ReaderFactory().getConfigInUse().size());
+  }
+
+  @Test
+  public void keyStrategyFirst1() {
+    ReaderFactory factory = new ReaderFactory(Map.of(JsonConfig.KEY_STRATEGY, KeyStrategy.FIRST));
+    CJReader reader = factory.createReader(new StringReader("{ \"a\":1, \"a\":2 }"));
+    JsonObject object =reader.readObject();
+    assertEquals(1, object.getInt("a"));
+  }
+
+  @Test
+  public void keyStrategyFirst2() {
+    ReaderFactory factory = new ReaderFactory(Map.of(JsonConfig.KEY_STRATEGY, "First"));
+    CJReader reader = factory.createReader(new StringReader("{ \"a\":1, \"a\":2 }"));
+    JsonObject object =reader.readObject();
+    assertEquals(1, object.getInt("a"));
+  }
+
+
+  @Test
+  public void keyStrategyLast() {
+    ReaderFactory factory = new ReaderFactory(Map.of(JsonConfig.KEY_STRATEGY, KeyStrategy.LAST));
+    CJReader reader = factory.createReader(new StringReader("{ \"a\":1, \"a\":2 }"));
+    JsonObject object =reader.readObject();
+    assertEquals(2, object.getInt("a"));
+  }
+
+
+  @Test
+  public void keyStrategyNone() {
+    ReaderFactory factory = new ReaderFactory(Map.of(JsonConfig.KEY_STRATEGY, KeyStrategy.NONE));
+    CJReader reader = factory.createReader(new StringReader("{ \"a\":1, \"a\":2 }"));
+    assertThrows(JsonParsingException.class, () -> reader.readObject());
+  }
+
+
+  @Test
+  public void keyStrategyDefault() {
+    ReaderFactory factory = new ReaderFactory(Map.of(JsonConfig.KEY_STRATEGY, "Default"));
+    CJReader reader = factory.createReader(new StringReader("{ \"a\":1, \"a\":2 }"));
+    JsonObject object =reader.readObject();
+    assertEquals(2, object.getInt("a"));
+  }
 }

@@ -3,7 +3,7 @@ package io.setl.json.merge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Map;
-import javax.json.JsonValue;
+import jakarta.json.JsonValue;
 
 import org.junit.jupiter.api.Test;
 

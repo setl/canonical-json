@@ -3,7 +3,7 @@ package io.setl.json.exception;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
-import javax.json.JsonValue.ValueType;
+import jakarta.json.JsonValue.ValueType;
 
 /**
  * An exception thrown when a type-checking accessor finds data of the wrong type. The javax.json API requires that this extends from ClassCastException.

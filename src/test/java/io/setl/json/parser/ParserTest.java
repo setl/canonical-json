@@ -9,8 +9,8 @@ import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
-import javax.json.JsonValue;
-import javax.json.stream.JsonParser.Event;
+import jakarta.json.JsonValue;
+import jakarta.json.stream.JsonParser.Event;
 
 import org.junit.jupiter.api.Test;
 

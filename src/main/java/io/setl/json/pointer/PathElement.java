@@ -1,8 +1,8 @@
 package io.setl.json.pointer;
 
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonValue;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
 
 import io.setl.json.pointer.JsonExtendedPointer.ResultOfAdd;
 

@@ -8,7 +8,7 @@ import java.math.BigInteger;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.json.stream.JsonParsingException;
+import jakarta.json.stream.JsonParsingException;
 
 import io.setl.json.io.Input;
 import io.setl.json.primitive.cache.CacheManager;

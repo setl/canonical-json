@@ -1,9 +1,9 @@
 package io.setl.json.parser;
 
 import java.util.NoSuchElementException;
-import javax.json.JsonObject;
-import javax.json.JsonValue;
-import javax.json.stream.JsonParser.Event;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
+import jakarta.json.stream.JsonParser.Event;
 
 import io.setl.json.primitive.CJNull;
 import io.setl.json.primitive.CJString;

@@ -69,7 +69,7 @@ repositories {
 }
 
 dependencies {
-  api group: 'javax.json', name: 'javax.json-api', version: '1.1.4'
+  api group: 'jakarta.json', name: 'jakarta.json-api', version: '2.1.3'
 
   // We need this library for the Longest Common Subsequence solver which is needed for creating patches
   implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'

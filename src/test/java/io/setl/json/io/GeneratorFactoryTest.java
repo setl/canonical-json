@@ -13,8 +13,8 @@ import static io.setl.json.io.GeneratorFactory.TRUST_KEY_ORDER;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.util.Map;
-import javax.json.JsonException;
-import javax.json.stream.JsonGenerator;
+import jakarta.json.JsonException;
+import jakarta.json.stream.JsonGenerator;
 
 import org.junit.jupiter.api.Test;
 

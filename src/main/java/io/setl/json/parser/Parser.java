@@ -4,11 +4,13 @@ import java.io.Reader;
 import java.math.BigDecimal;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
-import javax.json.JsonValue;
-import javax.json.JsonValue.ValueType;
-import javax.json.stream.JsonLocation;
-import javax.json.stream.JsonParser;
-import javax.json.stream.JsonParsingException;
+
+import jakarta.json.JsonConfig.KeyStrategy;
+import jakarta.json.JsonValue;
+import jakarta.json.JsonValue.ValueType;
+import jakarta.json.stream.JsonLocation;
+import jakarta.json.stream.JsonParser;
+import jakarta.json.stream.JsonParsingException;
 
 import io.setl.json.CJArray;
 import io.setl.json.CJObject;
@@ -86,6 +88,8 @@ public class Parser extends BaseIterator<JsonParser.Event> implements JsonParser
    */
   private final Input input;
 
+  private final KeyStrategy keyStrategy;
+
   /**
    * Depth of nesting containers from document root.
    */
@@ -135,7 +139,19 @@ public class Parser extends BaseIterator<JsonParser.Event> implements JsonParser
    * @param reader the reader
    */
   public Parser(Reader reader) {
+    this(reader, KeyStrategy.LAST);
+  }
+
+
+  /**
+   * New instance reading from the specified character reader.
+   *
+   * @param reader      the reader
+   * @param keyStrategy the key strategy to use
+   */
+  public Parser(Reader reader, KeyStrategy keyStrategy) {
     input = new Input(reader);
+    this.keyStrategy = keyStrategy;
   }
 
 
@@ -375,7 +391,22 @@ public class Parser extends BaseIterator<JsonParser.Event> implements JsonParser
       if (lastEvent == Event.KEY_NAME || lastEvent == Event.END_ARRAY || lastEvent == Event.END_OBJECT) {
         throw new IllegalStateException("Invalid event generated during parsing: " + lastEvent);
       }
-      object.put(key, doValue(recursion));
+
+      Canonical value = doValue(recursion);
+      switch (keyStrategy) {
+        case FIRST:
+          object.putIfAbsent(key, value);
+          break;
+        case NONE:
+          if (object.containsKey(key)) {
+            throw new JsonParsingException("Duplicate key: " + key, input.getLocation());
+          }
+          object.put(key, value);
+          break;
+        default:
+          object.put(key, value);
+          break;
+      }
     }
 
     return object;

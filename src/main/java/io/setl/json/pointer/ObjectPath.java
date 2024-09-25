@@ -2,10 +2,10 @@ package io.setl.json.pointer;
 
 import java.util.Objects;
 import javax.annotation.Nonnull;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonValue;
-import javax.json.JsonValue.ValueType;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
+import jakarta.json.JsonValue.ValueType;
 
 import io.setl.json.CJArray;
 import io.setl.json.CJObject;

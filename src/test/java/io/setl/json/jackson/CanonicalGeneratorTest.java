@@ -77,6 +77,7 @@ public class CanonicalGeneratorTest {
   }
 
 
+  @SuppressWarnings("deprecation")
   @Test
   public void disable_bad() {
     UnsupportedOperationException e = assertThrows(UnsupportedOperationException.class, () -> instance.disable(Feature.QUOTE_FIELD_NAMES));
@@ -84,6 +85,7 @@ public class CanonicalGeneratorTest {
   }
 
 
+  @SuppressWarnings("deprecation")
   @Test
   public void enable_bad() {
     UnsupportedOperationException e = assertThrows(UnsupportedOperationException.class, () -> instance.enable(Feature.ESCAPE_NON_ASCII));
@@ -109,6 +111,7 @@ public class CanonicalGeneratorTest {
   }
 
 
+  @SuppressWarnings("deprecation")
   @Test
   public void getFeatureMask() {
     int m = instance.getFeatureMask();
@@ -129,6 +132,7 @@ public class CanonicalGeneratorTest {
   }
 
 
+  @SuppressWarnings("deprecation")
   @Test
   public void isEnabled() {
     assertTrue(instance.isEnabled(Feature.QUOTE_FIELD_NAMES));
@@ -290,7 +294,7 @@ public class CanonicalGeneratorTest {
   public void writeNull_Bad() throws IOException {
     instance.writeStartObject();
     JsonGenerationException e = assertThrows(JsonGenerationException.class, () -> instance.writeNull());
-    assertEquals("Can not write NULL, expecting field name (context: Object)",e.getMessage());
+    assertEquals("Can not write NULL, expecting field name (context: Object)", e.getMessage());
   }
 
 

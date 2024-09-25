@@ -2,9 +2,9 @@ package io.setl.json.parser;
 
 import java.util.EnumSet;
 import java.util.function.Supplier;
-import javax.json.JsonValue;
-import javax.json.stream.JsonParser;
-import javax.json.stream.JsonParser.Event;
+import jakarta.json.JsonValue;
+import jakarta.json.stream.JsonParser;
+import jakarta.json.stream.JsonParser.Event;
 
 /**
  * Iterate over JSON values as they are parsed.

@@ -3,7 +3,7 @@ package io.setl.json.primitive;
 import java.io.IOException;
 import java.util.Objects;
 import javax.annotation.Nonnull;
-import javax.json.JsonString;
+import jakarta.json.JsonString;
 
 import io.setl.json.primitive.cache.CacheManager;
 import io.setl.json.primitive.cache.ICache;

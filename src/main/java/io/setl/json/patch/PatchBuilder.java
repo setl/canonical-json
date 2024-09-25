@@ -5,10 +5,10 @@ import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 import javax.annotation.Nonnull;
-import javax.json.JsonArray;
-import javax.json.JsonPatch;
-import javax.json.JsonPatchBuilder;
-import javax.json.JsonValue;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonPatch;
+import jakarta.json.JsonPatchBuilder;
+import jakarta.json.JsonValue;
 
 import io.setl.json.patch.ops.Add;
 import io.setl.json.patch.ops.Copy;

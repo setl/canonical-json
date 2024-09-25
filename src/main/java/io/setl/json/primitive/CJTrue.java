@@ -1,7 +1,7 @@
 package io.setl.json.primitive;
 
 import java.io.IOException;
-import javax.json.JsonValue;
+import jakarta.json.JsonValue;
 
 import io.setl.json.Canonical;
 

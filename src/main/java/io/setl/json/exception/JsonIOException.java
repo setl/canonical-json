@@ -1,7 +1,7 @@
 package io.setl.json.exception;
 
 import java.io.IOException;
-import javax.json.JsonException;
+import jakarta.json.JsonException;
 
 /**
  * A JSON Exception which wraps the checked IOException.
